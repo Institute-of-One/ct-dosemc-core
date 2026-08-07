@@ -1,0 +1,466 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-07T07:50:02+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "HEAD",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "phase": "1 -- CTDI validation anchor",
+  "tag": "120kV_32cm_NT2cm_1e9",
+  "engine": {
+    "name": "MC-GPU v1.3 (DIDSR/FDA, public domain)",
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+    "executable_sha256": "1be93c0832a6edab03b338473629b3278b770b2b2a0d168accf4a327d01084d0",
+    "build_info": {
+      "engine": "MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain",
+      "engine_source": "https://github.com/DIDSR/MCGPU",
+      "target": "cpu",
+      "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+      "executable_sha256": "1BE93C0832A6EDAB03B338473629B3278B770B2B2A0D168ACCF4A327D01084D0",
+      "source_sha256": "18110A6DEB965FBAD64E332ED2A4DC591840E24EFB82F37EE4457C15101BBACA",
+      "patched_source": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_win_cpu.cu",
+      "patched_sha256": "DB2E8E1E6C50861C6278CF9481D0D6A6D36915573D1F4789B8F831B9098DA2FE",
+      "patches": [
+        {
+          "from": "fopen(file_binary, \"w\")",
+          "to": "fopen(file_binary, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary image file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_mean, \"w\")",
+          "to": "fopen(file_binary_mean, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_sigma, \"w\")",
+          "to": "fopen(file_binary_sigma, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "track_particles(CPU_batch, histories_per_thread, num_p, seed_input, image,",
+          "to": "track_particles(CPU_batch + num_p*total_threads, histories_per_thread, num_p, seed_input, image,",
+          "occurrences": 1,
+          "reason": "CPU branch reused one random sequence for every projection; offset the PRNG batch index per projection"
+        }
+      ],
+      "compiler": "MSVC cl.exe (/TC /O2 /std:c17)",
+      "vs_installation": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools",
+      "zlib": "zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in"
+    },
+    "wall_seconds": null,
+    "rescored_from_existing_tally": true,
+    "histories_simulated": 1008000000.0,
+    "histories_per_projection": 5600000.0,
+    "projections": 180,
+    "random_seed": 1234567890
+  },
+  "spectrum": {
+    "kvp": 120.0,
+    "anode_angle_deg": 7.0,
+    "filtration": [
+      "5 mm Al"
+    ],
+    "reference_distance_cm": 100.0,
+    "hvl1_al_mm": 6.258407442807731,
+    "hvl2_al_mm": 8.314591619646027,
+    "homogeneity_coefficient": 0.7527017235603168,
+    "mean_energy_kev": 59.49886833342927,
+    "total_fluence_photons_per_cm2_per_mas": 237488224.92867076,
+    "air_kerma_ugy_per_mas": 88.76328581541085,
+    "spekpy_version": "2.5.4",
+    "mcgpu_file": {
+      "path": "D:\\DevGit\\ct_dosemc_core\\results\\phase1\\120kV_32cm_NT2cm_1e9\\spectrum.spc",
+      "n_bins": 255,
+      "e_min_kev": 5.0,
+      "e_max_kev": 120.0,
+      "photon_fraction_retained": 0.9999999999999999,
+      "mean_energy_kev_after_rebinning": 59.49911577496235
+    }
+  },
+  "geometry": {
+    "phantom": {
+      "diameter_cm": 32.0,
+      "length_cm": 15.0,
+      "voxel_size_cm": 0.25,
+      "n_voxels_xyz": [
+        144,
+        144,
+        76
+      ],
+      "pmma_density_g_cm3": 1.19,
+      "pmma_mass_kg": 14.382637499999994,
+      "chamber_diameter_cm": 1.31,
+      "chamber_length_cm": 10.0,
+      "chamber_depth_cm": 1.0,
+      "standard": "IEC 60601-2-44"
+    },
+    "beam": {
+      "sad_cm": 60.0,
+      "sdd_cm": 100.0,
+      "collimation_cm": 2.0,
+      "fan_aperture_deg": 32.932019906841106,
+      "polar_aperture_deg": 1.9096825077443773,
+      "solid_angle_sr": {
+        "value": 0.01915641212883323,
+        "unit": "sr",
+        "uncertainty": null,
+        "uncertainty_kind": null,
+        "provenance": {
+          "formula": "Omega = 2*sin(theta_ap/2) * phi_ap[rad]",
+          "inputs": {
+            "theta_ap_deg": 1.9096825077443773,
+            "phi_ap_deg": 32.932019906841106,
+            "sad_cm": 60.0,
+            "collimation_cm": 2.0
+          },
+          "assumptions": [
+            "MC-GPU samples cos(theta) and phi uniformly, i.e. uniformly in solid angle over a rectangular (cos theta, phi) window",
+            "no bowtie filter: the fluence is flat across the fan",
+            "point focal spot"
+          ],
+          "source": "vendor/MCGPU/MC-GPU_v1.3.cu:1378-1381 and MC-GPU_kernel_v1.3.cu:652-653"
+        }
+      },
+      "pitch": 1.0
+    }
+  },
+  "normalisation": {
+    "photons_per_sr_per_mas": {
+      "value": 2374882249286.7075,
+      "unit": "photons/sr/mAs",
+      "uncertainty": null,
+      "uncertainty_kind": null,
+      "provenance": {
+        "formula": "N_Omega = Phi(z) * z^2",
+        "inputs": {
+          "Phi(z)_photons_per_cm2_per_mAs": 237488224.92867076,
+          "z_cm": 100.0
+        },
+        "assumptions": [
+          "point focal spot (focal-spot size is not modelled)",
+          "inverse-square law with no air attenuation between focus and z",
+          "SpekPy fluence is reported per mAs at distance z"
+        ],
+        "source": "SpekPy 2.5.4; Poludniowski et al., Phys. Med. Biol. 54 (2009) 5293 and Bujila et al., Phys. Med. 75 (2020) 44"
+      }
+    },
+    "histories_for_reported_mas": {
+      "value": 4549422312478.663,
+      "unit": "photons",
+      "uncertainty": null,
+      "uncertainty_kind": null,
+      "provenance": {
+        "formula": "N_hist = N_Omega * Omega * mAs",
+        "inputs": {
+          "N_Omega_photons_per_sr_per_mAs": 2374882249286.7075,
+          "Omega_sr": 0.01915641212883323,
+          "mAs": 100.0
+        },
+        "assumptions": [
+          "tube output is linear in mAs",
+          "the whole emitted solid angle is the simulated one (no extra-focal radiation, no off-focus leakage)"
+        ],
+        "source": "ct_dosemc_core.source_model.histories_for_mas"
+      }
+    },
+    "reported_mas": 100.0,
+    "note": "The Monte Carlo ran a different number of histories than the reported mAs implies; dose per history is scaled to the reported mAs, which leaves the relative statistical uncertainty unchanged."
+  },
+  "materials": [
+    {
+      "index": 1,
+      "name": "air, dry (PENELOPE #104)",
+      "file": "air_5-120keV.mcgpu.gz",
+      "sha256": "08981c72535af30af6dd1b00b58612664898461d94beecdb17e151bfe8fd4b5d",
+      "nominal_density_g_cm3": 0.00120479
+    },
+    {
+      "index": 2,
+      "name": "PMMA (PENELOPE #224)",
+      "file": "PMMA_5-120keV.mcgpu.gz",
+      "sha256": "01cae13a8988729061a0418170dfc5a90d40aca1a9066d6d7497dd1ebe39f208",
+      "nominal_density_g_cm3": 1.19
+    }
+  ],
+  "results": {
+    "ctdi100_pmma_mgy": {
+      "centre": {
+        "value": 4.155064295843114,
+        "unit": "mGy",
+        "uncertainty": 0.0006550389982096107,
+        "uncertainty_kind": "1sigma_mc_statistical",
+        "provenance": {
+          "formula": "CTDI100 = D_mean_over_chamber * L_chamber / (N*T)",
+          "inputs": {
+            "position": "centre",
+            "D_mean_mGy": 0.8310128591686228,
+            "L_chamber_cm": 10.0,
+            "collimation_NT_cm": 2.0,
+            "n_voxels": 960,
+            "chamber_mass_g": 17.849999999999998
+          },
+          "assumptions": [
+            "dose is absorbed dose to PMMA, not air kerma in a bore; the conversion by (mu_en/rho)_air/(mu_en/rho)_PMMA is not applied",
+            "the chamber responds uniformly over its 100 mm length",
+            "the phantom is homogeneous: bores are not cut out, matching a measurement with the unused bores plugged"
+          ],
+          "source": "IEC 60601-2-44; AAPM Report 96"
+        }
+      },
+      "12_o_clock": {
+        "value": 14.175929388365255,
+        "unit": "mGy",
+        "uncertainty": 0.0012017370635130987,
+        "uncertainty_kind": "1sigma_mc_statistical",
+        "provenance": {
+          "formula": "CTDI100 = D_mean_over_chamber * L_chamber / (N*T)",
+          "inputs": {
+            "position": "12_o_clock",
+            "D_mean_mGy": 2.8351858776730507,
+            "L_chamber_cm": 10.0,
+            "collimation_NT_cm": 2.0,
+            "n_voxels": 960,
+            "chamber_mass_g": 17.849999999999998
+          },
+          "assumptions": [
+            "dose is absorbed dose to PMMA, not air kerma in a bore; the conversion by (mu_en/rho)_air/(mu_en/rho)_PMMA is not applied",
+            "the chamber responds uniformly over its 100 mm length",
+            "the phantom is homogeneous: bores are not cut out, matching a measurement with the unused bores plugged"
+          ],
+          "source": "IEC 60601-2-44; AAPM Report 96"
+        }
+      },
+      "3_o_clock": {
+        "value": 14.18104502427761,
+        "unit": "mGy",
+        "uncertainty": 0.00120191098172798,
+        "uncertainty_kind": "1sigma_mc_statistical",
+        "provenance": {
+          "formula": "CTDI100 = D_mean_over_chamber * L_chamber / (N*T)",
+          "inputs": {
+            "position": "3_o_clock",
+            "D_mean_mGy": 2.836209004855522,
+            "L_chamber_cm": 10.0,
+            "collimation_NT_cm": 2.0,
+            "n_voxels": 960,
+            "chamber_mass_g": 17.849999999999998
+          },
+          "assumptions": [
+            "dose is absorbed dose to PMMA, not air kerma in a bore; the conversion by (mu_en/rho)_air/(mu_en/rho)_PMMA is not applied",
+            "the chamber responds uniformly over its 100 mm length",
+            "the phantom is homogeneous: bores are not cut out, matching a measurement with the unused bores plugged"
+          ],
+          "source": "IEC 60601-2-44; AAPM Report 96"
+        }
+      },
+      "6_o_clock": {
+        "value": 14.193271550402894,
+        "unit": "mGy",
+        "uncertainty": 0.0012029468887137862,
+        "uncertainty_kind": "1sigma_mc_statistical",
+        "provenance": {
+          "formula": "CTDI100 = D_mean_over_chamber * L_chamber / (N*T)",
+          "inputs": {
+            "position": "6_o_clock",
+            "D_mean_mGy": 2.838654310080579,
+            "L_chamber_cm": 10.0,
+            "collimation_NT_cm": 2.0,
+            "n_voxels": 960,
+            "chamber_mass_g": 17.849999999999998
+          },
+          "assumptions": [
+            "dose is absorbed dose to PMMA, not air kerma in a bore; the conversion by (mu_en/rho)_air/(mu_en/rho)_PMMA is not applied",
+            "the chamber responds uniformly over its 100 mm length",
+            "the phantom is homogeneous: bores are not cut out, matching a measurement with the unused bores plugged"
+          ],
+          "source": "IEC 60601-2-44; AAPM Report 96"
+        }
+      },
+      "9_o_clock": {
+        "value": 14.174107240608727,
+        "unit": "mGy",
+        "uncertainty": 0.0012013499467862288,
+        "uncertainty_kind": "1sigma_mc_statistical",
+        "provenance": {
+          "formula": "CTDI100 = D_mean_over_chamber * L_chamber / (N*T)",
+          "inputs": {
+            "position": "9_o_clock",
+            "D_mean_mGy": 2.8348214481217453,
+            "L_chamber_cm": 10.0,
+            "collimation_NT_cm": 2.0,
+            "n_voxels": 960,
+            "chamber_mass_g": 17.849999999999998
+          },
+          "assumptions": [
+            "dose is absorbed dose to PMMA, not air kerma in a bore; the conversion by (mu_en/rho)_air/(mu_en/rho)_PMMA is not applied",
+            "the chamber responds uniformly over its 100 mm length",
+            "the phantom is homogeneous: bores are not cut out, matching a measurement with the unused bores plugged"
+          ],
+          "source": "IEC 60601-2-44; AAPM Report 96"
+        }
+      }
+    },
+    "ctdi100_peripheral_mean_mgy": {
+      "value": 14.18108830091362,
+      "unit": "mGy",
+      "uncertainty": 0.0006009931826531425,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "CTDI100_peripheral = mean of the four cardinal positions",
+        "inputs": {
+          "12_o_clock": 14.175929388365255,
+          "3_o_clock": 14.18104502427761,
+          "6_o_clock": 14.193271550402894,
+          "9_o_clock": 14.174107240608727
+        },
+        "assumptions": [
+          "a full 360 degree rotation makes the four positions equivalent; the spread between them is reported as a symmetry check"
+        ],
+        "source": "IEC 60601-2-44"
+      }
+    },
+    "ctdiw_pmma_mgy": {
+      "value": 10.83908029922345,
+      "unit": "mGy",
+      "uncertainty": 0.0004562951422486771,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "CTDIw = (1/3)*CTDI100_centre + (2/3)*CTDI100_peripheral",
+        "inputs": {
+          "CTDI100_centre": 4.155064295843114,
+          "CTDI100_peripheral": 14.18108830091362
+        },
+        "assumptions": [
+          "the four peripheral positions are averaged before weighting",
+          "central and peripheral uncertainties are combined in quadrature; they share Monte-Carlo histories, so this slightly understates the correlated component"
+        ],
+        "source": "IEC 60601-2-44; AAPM Report 96"
+      }
+    },
+    "ctdivol_pmma_mgy": {
+      "value": 10.83908029922345,
+      "unit": "mGy",
+      "uncertainty": 0.0004562951422486771,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "CTDIvol = CTDIw / pitch",
+        "inputs": {
+          "CTDIw": 10.83908029922345,
+          "pitch": 1.0
+        },
+        "assumptions": [
+          "pitch = table travel per rotation / (N*T)"
+        ],
+        "source": "IEC 60601-2-44"
+      }
+    },
+    "ratio_centre_over_peripheral": {
+      "value": 0.2930003824583352,
+      "unit": "dimensionless",
+      "uncertainty": null,
+      "uncertainty_kind": null,
+      "provenance": {
+        "formula": "CTDI100_centre / CTDI100_peripheral",
+        "inputs": {
+          "centre_mGy": 4.155064295843114,
+          "peripheral_mGy": 14.18108830091362
+        },
+        "assumptions": [
+          "medium-independent to first order, so it is comparable with the published air-kerma ratio without the PMMA-to-air conversion"
+        ],
+        "source": "compared against published 32 cm body-phantom values at 120 kVp"
+      }
+    },
+    "peripheral_symmetry_spread_fraction": 0.001351399087821243,
+    "uncertainty_cross_check": {
+      "quoted_sigma_peripheral_mean_mgy": 0.0006009931826531425,
+      "sigma_from_four_position_scatter_mgy": 0.004318400771189855,
+      "understatement_factor": 7.185440527171802,
+      "note": "The four peripheral positions are physically equivalent under a full rotation, so their scatter is an independent estimate of the same uncertainty -- one that does not assume voxel tallies are uncorrelated, which they are not. Where the two disagree the larger should be quoted. Replacing the quadrature estimate with independent-seed replicas is an open item (docs/MC_SOURCE_MODEL.md section 6)."
+    },
+    "beam_geometry_checks": {
+      "engine_apertures_deg": {
+        "azimuthal": 32.93202,
+        "polar": 1.909683
+      },
+      "peripheral_z_profile_fwhm_cm": 1.5,
+      "geometric_beam_width_at_peripheral_chamber_cm": 1.5,
+      "radial_surface_over_centre": 3.570188792372065,
+      "note": "FWHM should match the geometric beam width to within the voxel size plus scatter broadening; the radial ratio must exceed 1 for a 32 cm phantom. Both are shape checks that a mis-parsed beam aperture cannot pass, unlike the CTDI values themselves."
+    },
+    "air_kerma_free_in_air_at_isocentre_mgy": {
+      "value": 24.656468282058572,
+      "unit": "mGy",
+      "uncertainty": null,
+      "uncertainty_kind": null,
+      "provenance": {
+        "formula": "K_air(SAD) = K_air(z_ref) * (z_ref/SAD)^2 * mAs",
+        "inputs": {
+          "K_air_uGy_per_mAs_at_z_ref": 88.76328581541085,
+          "z_ref_cm": 100.0,
+          "SAD_cm": 60.0,
+          "mAs": 100.0
+        },
+        "assumptions": [
+          "inverse-square law, no air attenuation",
+          "no bowtie filter, so this is the unattenuated central-ray value"
+        ],
+        "source": "SpekPy 2.5.4"
+      }
+    },
+    "region_dose_detail": {
+      "centre": {
+        "dose_mgy": 0.8310128591686228,
+        "sigma_mgy": 0.00013100779964192214,
+        "relative_sigma": 0.00015764834225668586,
+        "n_voxels": 960,
+        "mass_g": 17.849999999999998,
+        "dose_ev_per_g_per_history": 1.1400951473042369
+      },
+      "12_o_clock": {
+        "dose_mgy": 2.8351858776730507,
+        "sigma_mgy": 0.00024034741270261974,
+        "relative_sigma": 8.477307064603551e-05,
+        "n_voxels": 960,
+        "mass_g": 17.849999999999998,
+        "dose_ev_per_g_per_history": 3.8896891006889445
+      },
+      "3_o_clock": {
+        "dose_mgy": 2.836209004855522,
+        "sigma_mgy": 0.000240382196345596,
+        "relative_sigma": 8.475475394587192e-05,
+        "n_voxels": 960,
+        "mass_g": 17.849999999999998,
+        "dose_ev_per_g_per_history": 3.891092764089506
+      },
+      "6_o_clock": {
+        "dose_mgy": 2.838654310080579,
+        "sigma_mgy": 0.00024058937774275725,
+        "relative_sigma": 8.475472934072335e-05,
+        "n_voxels": 960,
+        "mass_g": 17.849999999999998,
+        "dose_ev_per_g_per_history": 3.894447562502077
+      },
+      "9_o_clock": {
+        "dose_mgy": 2.8348214481217453,
+        "sigma_mgy": 0.00024026998935724577,
+        "relative_sigma": 8.475665707850502e-05,
+        "n_voxels": 960,
+        "mass_g": 17.849999999999998,
+        "dose_ev_per_g_per_history": 3.8891891272428136
+      }
+    }
+  },
+  "known_gaps": [
+    "Absorbed dose to PMMA is reported, not air kerma in the bore: the (mu_en/rho)_air/(mu_en/rho)_PMMA conversion is not yet implemented.",
+    "No bowtie filter. The beam is flat across the fan, so the peripheral dose is overestimated relative to a real scanner and the centre/peripheral ratio is biased low.",
+    "MC-GPU tallies collision kerma; electrons are not transported.",
+    "Point focal spot, no anti-scatter grid, no gantry or table attenuation."
+  ]
+}

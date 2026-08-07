@@ -1,0 +1,119 @@
+cff-version: 1.2.0
+title: >-
+  ct-dosemc-core: patient-specific absorbed organ dose in CT by open Monte Carlo
+message: >-
+  If you use this software, please cite it, and cite MC-GPU for the transport
+  engine and SpekPy for the spectra it depends on.
+type: software
+authors:
+  - family-names: Yamamoto
+    given-names: Shuji
+    email: yamamoto@lisit.jp
+    orcid: 'https://orcid.org/0000-0001-9211-1071'
+    affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+repository-code: https://github.com/Institute-of-One/ct-dosemc-core
+url: https://github.com/Institute-of-One/ct-dosemc-core
+abstract: >-
+  A Python package that computes patient-specific absorbed organ dose in
+  computed tomography, in mGy, by Monte-Carlo photon transport through the
+  patient's own segmented and density-mapped anatomy. Transport uses MC-GPU
+  (public domain); x-ray spectra come from SpekPy (BSD-3); material
+  cross-sections are generated locally from the photon subset of the PENELOPE
+  2006 database rather than transcribed; organ boundaries come from
+  TotalSegmentator run at inference. Because every dose coefficient is computed
+  rather than looked up, the pipeline carries none of the licensing exposure of
+  published organ-dose coefficient tables, and no such table is redistributed.
+  Validation is anchored to the CTDI dosimetry phantom of IEC 60601-2-44, a
+  physical standard, before any patient dose is computed. Every reported value
+  carries its formula, inputs, assumptions and Monte-Carlo statistical
+  uncertainty, and the test suite re-derives the quoted figures from the recorded
+  inputs. No imaging is redistributed; public series are identified by Series
+  Instance UID, collection and licence so they can be re-fetched.
+keywords:
+  - computed tomography
+  - Monte Carlo
+  - organ dose
+  - absorbed dose
+  - CTDI
+  - MC-GPU
+  - SpekPy
+  - TotalSegmentator
+  - DICOM
+  - reproducibility
+license: MIT
+version: 0.1.0.dev0
+# The *concept* DOI goes here once the first release is minted; it resolves to
+# the latest version, which is what a citation of the project should point at.
+# A result should cite the version DOI of the release it was produced with.
+# doi: 10.5281/zenodo.XXXXXXXX
+references:
+  - type: article
+    title: >-
+      Accelerating Monte Carlo simulations of photon transport in a voxelized
+      geometry using a massively parallel Graphics Processing Unit
+    doi: 10.1118/1.3231824
+    year: 2009
+    notes: >-
+      MC-GPU, the public-domain photon transport engine this work is built on.
+      Users of this software must cite it.
+    authors:
+      - family-names: Badal
+        given-names: Andreu
+      - family-names: Badano
+        given-names: Aldo
+  - type: article
+    title: >-
+      Technical Note: spekpy v2.0 - a software toolkit for modelling x-ray tube
+      spectra
+    doi: 10.1002/mp.14945
+    year: 2021
+    notes: Supplies every x-ray spectrum, HVL and absolute tube output used here.
+    authors:
+      - family-names: Bujila
+        given-names: Robert
+      - family-names: Omar
+        given-names: Artur
+      - family-names: Poludniowski
+        given-names: Gavin
+  - type: software
+    title: >-
+      ctsegdose-core: anatomy-weighted CTDIvol from routine CT metadata, using
+      deep-learning organ segmentation
+    doi: 10.5281/zenodo.21817234
+    notes: >-
+      The organ-index predecessor. It supplies the segmentation and HU-to-density
+      pipeline and the multi-vendor cohort, and it is the work whose deliberate
+      stopping point -- an index rather than mGy -- this project moves past.
+    authors:
+      - family-names: Yamamoto
+        given-names: Shuji
+        orcid: 'https://orcid.org/0000-0001-9211-1071'
+        affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+  - type: software
+    title: >-
+      ctdose-core: open, auditable CT dose surveillance from DICOM, with a
+      physics reconstruction when the dose attributes are missing
+    doi: 10.5281/zenodo.21636082
+    notes: The whole-scan CTDIvol predecessor.
+    authors:
+      - family-names: Yamamoto
+        given-names: Shuji
+        orcid: 'https://orcid.org/0000-0001-9211-1071'
+        affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+  - type: report
+    title: >-
+      PENELOPE -- A code system for Monte Carlo simulation of electron and photon
+      transport
+    year: 2006
+    institution:
+      name: NEA-OECD, Issy-les-Moulineaux
+    notes: >-
+      Source of the photon interaction physics and of the cross-section database
+      from which the material files are generated locally.
+    authors:
+      - family-names: Salvat
+        given-names: Francesc
+      - family-names: Fernandez-Varea
+        given-names: Jose M.
+      - family-names: Sempau
+        given-names: Josep

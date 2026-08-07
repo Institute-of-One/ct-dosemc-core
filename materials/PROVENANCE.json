@@ -1,0 +1,62 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-07T05:09:46+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": null,
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "generator": {
+    "repository": "https://github.com/andreubs/MCGPU_materials",
+    "program": "MCGPU_materials.f + penelope_photons.f",
+    "database": "PENDBASE_photons (photon-only subset of PENELOPE 2006 PENDBASE)",
+    "licence": "Universitat de Barcelona permissive notice; see docs/MC_SOURCE_MODEL.md",
+    "reference": "F. Salvat, J. M. Fernandez-Varea, J. Sempau, PENELOPE -- A code system for Monte Carlo simulation of electron and photon transport, NEA-OECD (2006)"
+  },
+  "materials": [
+    {
+      "material": "PMMA",
+      "file": "PMMA_5-120keV.mcgpu.gz",
+      "sha256": "01cae13a8988729061a0418170dfc5a90d40aca1a9066d6d7497dd1ebe39f208",
+      "pendbase_id": 224,
+      "pendbase_label": "POLYMETHYL METHACRALATE (LUCITE, PERSPEX, PLEXIGLASS)",
+      "nominal_density_g_cm3": 1.19,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "air",
+      "file": "air_5-120keV.mcgpu.gz",
+      "sha256": "08981c72535af30af6dd1b00b58612664898461d94beecdb17e151bfe8fd4b5d",
+      "pendbase_id": 104,
+      "pendbase_label": "AIR, DRY (NEAR SEA LEVEL)",
+      "nominal_density_g_cm3": 0.00120479,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "water",
+      "file": "water_5-120keV.mcgpu.gz",
+      "sha256": "c7b5f1cca27e73aef2bf70f6835615f03a9f8000ff72bb437d5c0f2112ca010a",
+      "pendbase_id": 278,
+      "pendbase_label": "WATER, LIQUID",
+      "nominal_density_g_cm3": 1.0,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        120000
+      ],
+      "energy_step_ev": 5
+    }
+  ]
+}

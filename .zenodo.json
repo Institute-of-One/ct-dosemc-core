@@ -1,0 +1,63 @@
+{
+  "title": "ct-dosemc-core: patient-specific absorbed organ dose in CT by open Monte Carlo",
+  "description": "<p>A Python package (MIT) that computes <em>patient-specific absorbed organ dose in milligray</em> by Monte-Carlo photon transport through the patient's own segmented, density-mapped anatomy. Transport uses MC-GPU v1.3 (DIDSR/FDA, public domain); x-ray spectra, half-value layers and absolute tube output come from SpekPy (BSD-3); material cross-sections are generated locally from the photon subset of the PENELOPE 2006 database rather than transcribed; organ boundaries come from TotalSegmentator (Apache-2.0) run at inference.</p><p><strong>Every dose coefficient is computed, not looked up.</strong> That is the point of the project: published organ-dose coefficient tables (Turner, Tian, ImPACT, NCICT) are copyrighted and cannot be redistributed, which is why the predecessor projects stopped at an index rather than an absorbed dose. No such table is shipped, transcribed or paraphrased here.</p><p><strong>Validation is anchored to a physical standard.</strong> The CTDI dosimetry phantom of IEC 60601-2-44 is simulated and scored before any patient dose is computed, so the pipeline is tied to a published standard rather than to a previous paper's index.</p><p><strong>Every reported value carries provenance</strong> &mdash; its formula, its inputs, its assumptions, its source, and its Monte-Carlo statistical uncertainty &mdash; and the test suite re-derives the quoted figures from the recorded inputs, so a hand-edited number fails the build.</p><p><strong>No imaging data is redistributed.</strong> Public series are identified in <code>data/PROVENANCE.json</code> by collection, Series Instance UID and licence, and can be re-fetched from The Cancer Imaging Archive by following <code>docs/REPRODUCING_DATA.md</code>.</p>",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "version": "0.1.0.dev0",
+  "language": "eng",
+  "creators": [
+    {
+      "name": "Yamamoto, Shuji",
+      "affiliation": "Institute of One, LISIT Co., Ltd., Tokyo, Japan",
+      "orcid": "0000-0001-9211-1071"
+    }
+  ],
+  "keywords": [
+    "computed tomography",
+    "Monte Carlo",
+    "organ dose",
+    "absorbed dose",
+    "CTDI",
+    "MC-GPU",
+    "SpekPy",
+    "PENELOPE",
+    "TotalSegmentator",
+    "DICOM",
+    "reproducibility",
+    "open data"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Institute-of-One/ct-dosemc-core",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.21817234",
+      "relation": "isDerivedFrom",
+      "resource_type": "software",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.21636082",
+      "relation": "isDerivedFrom",
+      "resource_type": "software",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1118/1.3231824",
+      "relation": "requires",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1002/mp.14945",
+      "relation": "requires",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    }
+  ],
+  "notes": "The concept DOI must be recorded as an isVersionOf relation rather than as a top-level 'doi' once the first release is minted -- a top-level 'doi' tells Zenodo the DOI was assigned elsewhere and stops it versioning releases. Add the article DOI as an isSupplementTo relation once the accompanying manuscript is accepted. MC-GPU and SpekPy are listed as 'requires' because a user of this software must cite them."
+}

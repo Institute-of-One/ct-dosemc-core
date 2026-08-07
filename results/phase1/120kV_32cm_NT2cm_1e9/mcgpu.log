@@ -1,0 +1,3920 @@
+
+
+     *****************************************************************************
+     ***         MC-GPU, version 1.3 (http://code.google.com/p/mcgpu/)         ***
+     ***                                                                       ***
+     ***  A. Badal and A. Badano, "Accelerating Monte Carlo simulations of     *** 
+     ***  photon transport in a voxelized geometry using a massively parallel  *** 
+     ***  Graphics Processing Unit", Medical Physics 36, pp. 4878??880 (2009)  ***
+     ***                                                                       ***
+     ***                     Andreu Badal (Andreu.Badal-Soler@fda.hhs.gov)     ***
+     *****************************************************************************
+
+****** Code execution started on: Fri Aug  7 16:20:06 2026
+
+
+
+             *** SIMULATION IN THE CPU ***
+
+    -- INITIALIZATION phase:
+
+    -- Reading the input file 'ctdi.in':
+       Material dose deposition tally ENABLED.
+       3D voxel dose deposition tally ENABLED.
+
+       Rotations from the input direction to +Y [deg]: rotZ = 0.000000 , rotX = 0.000000
+       Rotations from +Y to the input direction for the fan beam source model [deg]: rotZ = 0.000000 , rotX = 0.000000
+       Array for 4 scatter images correctly allocated (64 pixels, 0.001953 Mbytes)
+       Array for the deposited dose ROI (and uncertainty) correctly allocated (1575936 voxels, 24.046875 Mbytes)
+    -- Reading the energy spectrum and initializing the Walker aliasing sampling algorithm.
+              x-ray tracks to simulate = 5600000
+                   initial random seed = 1234567890
+      azimuthal (phi), polar apertures = 32.932020 , 1.909683 degrees
+                   focal spot position = (18.000000, -42.000000, 9.500000)
+                      source direction = (0.000000, 1.000000, 0.000000)
+                  initial angle from X = 270.000000
+              source-detector distance = 100.000000 cm
+                       detector center = (18.000000, 58.000000, 9.500000)
+           detector low corner (at +Y) = (-11.556831, 58.000000, 7.833333)
+                number of pixels image = 8x8 = 64
+                            pixel size = 7.389x0.417 cm
+                 number of projections = 180
+         source-rotation axis-distance = 60.000000 cm
+             angle between projections = 2.000000
+            angular region of interest = [-0.000010,5000.000010] degrees
+   vertical translation per projection = 0.000000 cm
+                      Input voxel file = ctdi_phantom.vox.gz
+                     Output image file = image.dat
+                      Output dose file = dose.dat
+         Input region of interest dose = X[1,144], Y[1,144], Z[1,76]
+
+                  Energy spectrum file = spectrum.spc
+            number of energy bins read = 255
+             minimum, maximum energies = 5.000, 120.000 keV
+                  mean energy spectrum = 59.499 keV
+
+
+    -- Setting the sources and detectors for the 180 CT projections (MAX_NUM_PROJECTIONS=720):
+         << Projection #1 >> initial_angle=270.00000000 , D_angle=2.00000000
+                             Source direction=(0.00000000,1.00000000,0.00000000), position=(18.00000000,-42.00000000,9.50000000)
+         << Projection #2 >> current_angle=272.00000000 degrees (rotation around Z axis = -1.99999951)
+                             Source direction = (-0.03489949,0.99939084,0.00000000) , position = (20.09396935,-41.96345139,9.50000000)
+         << Projection #3 >> current_angle=274.00000000 degrees (rotation around Z axis = -4.00000001)
+                             Source direction = (-0.06975648,0.99756408,0.00000000) , position = (22.18538857,-41.85384369,9.50000000)
+         << Projection #4 >> current_angle=276.00000000 degrees (rotation around Z axis = -5.99999963)
+                             Source direction = (-0.10452846,0.99452192,0.00000000) , position = (24.27170753,-41.67131424,9.50000000)
+         << Projection #5 >> current_angle=278.00000000 degrees (rotation around Z axis = -7.99999963)
+                             Source direction = (-0.13917309,0.99026805,0.00000000) , position = (26.35038567,-41.41608429,9.50000000)
+         << Projection #6 >> current_angle=280.00000000 degrees (rotation around Z axis = -9.99999949)
+                             Source direction = (-0.17364816,0.98480773,0.00000000) , position = (28.41889000,-41.08846664,9.50000000)
+         << Projection #7 >> current_angle=282.00000000 degrees (rotation around Z axis = -11.99999894)
+                             Source direction = (-0.20791169,0.97814763,0.00000000) , position = (30.47470093,-40.68885422,9.50000000)
+         << Projection #8 >> current_angle=284.00000000 degrees (rotation around Z axis = -13.99999860)
+                             Source direction = (-0.24192187,0.97029573,0.00000000) , position = (32.51531219,-40.21774292,9.50000000)
+         << Projection #9 >> current_angle=286.00000000 degrees (rotation around Z axis = -16.00000193)
+                             Source direction = (-0.27563739,0.96126169,0.00000000) , position = (34.53824234,-39.67570114,9.50000000)
+         << Projection #10 >> current_angle=288.00000000 degrees (rotation around Z axis = -17.99999870)
+                             Source direction = (-0.30901697,0.95105654,0.00000000) , position = (36.54101944,-39.06339264,9.50000000)
+         << Projection #11 >> current_angle=290.00000000 degrees (rotation around Z axis = -20.00000065)
+                             Source direction = (-0.34202015,0.93969262,0.00000000) , position = (38.52120972,-38.38155746,9.50000000)
+         << Projection #12 >> current_angle=292.00000000 degrees (rotation around Z axis = -21.99999914)
+                             Source direction = (-0.37460658,0.92718387,0.00000000) , position = (40.47639465,-37.63103104,9.50000000)
+         << Projection #13 >> current_angle=294.00000000 degrees (rotation around Z axis = -23.99999807)
+                             Source direction = (-0.40673661,0.91354549,0.00000000) , position = (42.40419769,-36.81272888,9.50000000)
+         << Projection #14 >> current_angle=296.00000000 degrees (rotation around Z axis = -26.00000031)
+                             Source direction = (-0.43837115,0.89879405,0.00000000) , position = (44.30226898,-35.92764282,9.50000000)
+         << Projection #15 >> current_angle=298.00000000 degrees (rotation around Z axis = -27.99999878)
+                             Source direction = (-0.46947154,0.88294762,0.00000000) , position = (46.16829300,-34.97685623,9.50000000)
+         << Projection #16 >> current_angle=300.00000000 degrees (rotation around Z axis = -30.00000000)
+                             Source direction = (-0.50000000,0.86602539,0.00000000) , position = (48.00000000,-33.96152496,9.50000000)
+         << Projection #17 >> current_angle=302.00000000 degrees (rotation around Z axis = -32.00000017)
+                             Source direction = (-0.52991927,0.84804809,0.00000000) , position = (49.79515457,-32.88288498,9.50000000)
+         << Projection #18 >> current_angle=304.00000000 degrees (rotation around Z axis = -33.99999948)
+                             Source direction = (-0.55919290,0.82903761,0.00000000) , position = (51.55157471,-31.74225426,9.50000000)
+         << Projection #19 >> current_angle=306.00000000 degrees (rotation around Z axis = -35.99999941)
+                             Source direction = (-0.58778524,0.80901700,0.00000000) , position = (53.26711655,-30.54101944,9.50000000)
+         << Projection #20 >> current_angle=308.00000000 degrees (rotation around Z axis = -37.99999760)
+                             Source direction = (-0.61566144,0.78801078,0.00000000) , position = (54.93968964,-29.28064537,9.50000000)
+         << Projection #21 >> current_angle=310.00000000 degrees (rotation around Z axis = -39.99999889)
+                             Source direction = (-0.64278758,0.76604444,0.00000000) , position = (56.56725693,-27.96266747,9.50000000)
+         << Projection #22 >> current_angle=312.00000000 degrees (rotation around Z axis = -41.99999671)
+                             Source direction = (-0.66913056,0.74314487,0.00000000) , position = (58.14783478,-26.58868980,9.50000000)
+         << Projection #23 >> current_angle=314.00000000 degrees (rotation around Z axis = -43.99999750)
+                             Source direction = (-0.69465834,0.71933985,0.00000000) , position = (59.67950058,-25.16038895,9.50000000)
+         << Projection #24 >> current_angle=316.00000000 degrees (rotation around Z axis = -45.99999898)
+                             Source direction = (-0.71933979,0.69465840,0.00000000) , position = (61.16038895,-23.67950249,9.50000000)
+         << Projection #25 >> current_angle=318.00000000 degrees (rotation around Z axis = -47.99999869)
+                             Source direction = (-0.74314481,0.66913062,0.00000000) , position = (62.58868790,-22.14783669,9.50000000)
+         << Projection #26 >> current_angle=320.00000000 degrees (rotation around Z axis = -49.99999953)
+                             Source direction = (-0.76604444,0.64278764,0.00000000) , position = (63.96266556,-20.56725693,9.50000000)
+         << Projection #27 >> current_angle=322.00000000 degrees (rotation around Z axis = -52.00000209)
+                             Source direction = (-0.78801078,0.61566144,0.00000000) , position = (65.28064728,-18.93968773,9.50000000)
+         << Projection #28 >> current_angle=324.00000000 degrees (rotation around Z axis = -54.00000661)
+                             Source direction = (-0.80901706,0.58778518,0.00000000) , position = (66.54102325,-17.26711464,9.50000000)
+         << Projection #29 >> current_angle=326.00000000 degrees (rotation around Z axis = -56.00000350)
+                             Source direction = (-0.82903761,0.55919290,0.00000000) , position = (67.74225616,-15.55157375,9.50000000)
+         << Projection #30 >> current_angle=328.00000000 degrees (rotation around Z axis = -57.99999944)
+                             Source direction = (-0.84804809,0.52991921,0.00000000) , position = (68.88288879,-13.79515553,9.50000000)
+         << Projection #31 >> current_angle=330.00000000 degrees (rotation around Z axis = -59.99999822)
+                             Source direction = (-0.86602539,0.50000000,0.00000000) , position = (69.96152496,-12.00000000,9.50000000)
+         << Projection #32 >> current_angle=332.00000000 degrees (rotation around Z axis = -61.99999970)
+                             Source direction = (-0.88294756,0.46947157,0.00000000) , position = (70.97685242,-10.16829395,9.50000000)
+         << Projection #33 >> current_angle=334.00000000 degrees (rotation around Z axis = -64.00000114)
+                             Source direction = (-0.89879405,0.43837115,0.00000000) , position = (71.92764282,-8.30226898,9.50000000)
+         << Projection #34 >> current_angle=336.00000000 degrees (rotation around Z axis = -66.00000446)
+                             Source direction = (-0.91354549,0.40673661,0.00000000) , position = (72.81272888,-6.40419865,9.50000000)
+         << Projection #35 >> current_angle=338.00000000 degrees (rotation around Z axis = -68.00000183)
+                             Source direction = (-0.92718387,0.37460655,0.00000000) , position = (73.63103485,-4.47639561,9.50000000)
+         << Projection #36 >> current_angle=340.00000000 degrees (rotation around Z axis = -69.99999928)
+                             Source direction = (-0.93969262,0.34202015,0.00000000) , position = (74.38155365,-2.52120852,9.50000000)
+         << Projection #37 >> current_angle=342.00000000 degrees (rotation around Z axis = -72.00000440)
+                             Source direction = (-0.95105654,0.30901697,0.00000000) , position = (75.06339264,-0.54101968,9.50000000)
+         << Projection #38 >> current_angle=344.00000000 degrees (rotation around Z axis = -73.99999870)
+                             Source direction = (-0.96126169,0.27563736,0.00000000) , position = (75.67570496,1.46175861,9.50000000)
+         << Projection #39 >> current_angle=346.00000000 degrees (rotation around Z axis = -76.00000023)
+                             Source direction = (-0.97029573,0.24192190,0.00000000) , position = (76.21774292,3.48468637,9.50000000)
+         << Projection #40 >> current_angle=348.00000000 degrees (rotation around Z axis = -77.99999087)
+                             Source direction = (-0.97814763,0.20791167,0.00000000) , position = (76.68885803,5.52529860,9.50000000)
+         << Projection #41 >> current_angle=350.00000000 degrees (rotation around Z axis = -80.00000200)
+                             Source direction = (-0.98480773,0.17364818,0.00000000) , position = (77.08846283,7.58110952,9.50000000)
+         << Projection #42 >> current_angle=352.00000000 degrees (rotation around Z axis = -82.00000510)
+                             Source direction = (-0.99026805,0.13917309,0.00000000) , position = (77.41608429,9.64961433,9.50000000)
+         << Projection #43 >> current_angle=354.00000000 degrees (rotation around Z axis = -84.00001126)
+                             Source direction = (-0.99452192,0.10452846,0.00000000) , position = (77.67131042,11.72829247,9.50000000)
+         << Projection #44 >> current_angle=356.00000000 degrees (rotation around Z axis = -85.99997344)
+                             Source direction = (-0.99756408,0.06975648,0.00000000) , position = (77.85384369,13.81461143,9.50000000)
+         << Projection #45 >> current_angle=358.00000000 degrees (rotation around Z axis = -88.00002218)
+                             Source direction = (-0.99939084,0.03489949,0.00000000) , position = (77.96344757,15.90603065,9.50000000)
+         << Projection #46 >> current_angle=-0.00000000 degrees (rotation around Z axis = -90.00000000)
+                             Source direction = (-1.00000000,0.00000000,0.00000000) , position = (78.00000000,18.00000000,9.50000000)
+         << Projection #47 >> current_angle=2.00000000 degrees (rotation around Z axis = 268.00002218)
+                             Source direction = (-0.99939084,-0.03489949,0.00000000) , position = (77.96344757,20.09396935,9.50000000)
+         << Projection #48 >> current_angle=4.00000000 degrees (rotation around Z axis = 265.99997344)
+                             Source direction = (-0.99756408,-0.06975648,0.00000000) , position = (77.85384369,22.18538857,9.50000000)
+         << Projection #49 >> current_angle=6.00000000 degrees (rotation around Z axis = 264.00001126)
+                             Source direction = (-0.99452192,-0.10452846,0.00000000) , position = (77.67131042,24.27170753,9.50000000)
+         << Projection #50 >> current_angle=8.00000000 degrees (rotation around Z axis = 262.00000510)
+                             Source direction = (-0.99026805,-0.13917309,0.00000000) , position = (77.41608429,26.35038567,9.50000000)
+         << Projection #51 >> current_angle=10.00000000 degrees (rotation around Z axis = 260.00000200)
+                             Source direction = (-0.98480773,-0.17364818,0.00000000) , position = (77.08846283,28.41889000,9.50000000)
+         << Projection #52 >> current_angle=12.00000000 degrees (rotation around Z axis = 257.99999087)
+                             Source direction = (-0.97814763,-0.20791167,0.00000000) , position = (76.68885803,30.47470093,9.50000000)
+         << Projection #53 >> current_angle=14.00000000 degrees (rotation around Z axis = 256.00000023)
+                             Source direction = (-0.97029573,-0.24192187,0.00000000) , position = (76.21774292,32.51531219,9.50000000)
+         << Projection #54 >> current_angle=16.00000000 degrees (rotation around Z axis = 253.99999870)
+                             Source direction = (-0.96126169,-0.27563736,0.00000000) , position = (75.67570496,34.53824234,9.50000000)
+         << Projection #55 >> current_angle=18.00000000 degrees (rotation around Z axis = 252.00000440)
+                             Source direction = (-0.95105654,-0.30901697,0.00000000) , position = (75.06339264,36.54101944,9.50000000)
+         << Projection #56 >> current_angle=20.00000000 degrees (rotation around Z axis = 249.99999928)
+                             Source direction = (-0.93969262,-0.34202018,0.00000000) , position = (74.38155365,38.52120972,9.50000000)
+         << Projection #57 >> current_angle=22.00000000 degrees (rotation around Z axis = 248.00000183)
+                             Source direction = (-0.92718387,-0.37460655,0.00000000) , position = (73.63103485,40.47639465,9.50000000)
+         << Projection #58 >> current_angle=24.00000000 degrees (rotation around Z axis = 246.00000446)
+                             Source direction = (-0.91354549,-0.40673661,0.00000000) , position = (72.81272888,42.40419769,9.50000000)
+         << Projection #59 >> current_angle=26.00000000 degrees (rotation around Z axis = 244.00000114)
+                             Source direction = (-0.89879405,-0.43837115,0.00000000) , position = (71.92764282,44.30226898,9.50000000)
+         << Projection #60 >> current_angle=28.00000000 degrees (rotation around Z axis = 241.99999970)
+                             Source direction = (-0.88294756,-0.46947157,0.00000000) , position = (70.97685242,46.16829300,9.50000000)
+         << Projection #61 >> current_angle=30.00000000 degrees (rotation around Z axis = 239.99999822)
+                             Source direction = (-0.86602539,-0.50000000,0.00000000) , position = (69.96152496,48.00000000,9.50000000)
+         << Projection #62 >> current_angle=32.00000000 degrees (rotation around Z axis = 237.99999944)
+                             Source direction = (-0.84804809,-0.52991921,0.00000000) , position = (68.88288879,49.79515457,9.50000000)
+         << Projection #63 >> current_angle=34.00000000 degrees (rotation around Z axis = 236.00000350)
+                             Source direction = (-0.82903761,-0.55919290,0.00000000) , position = (67.74225616,51.55157471,9.50000000)
+         << Projection #64 >> current_angle=36.00000000 degrees (rotation around Z axis = 234.00000080)
+                             Source direction = (-0.80901700,-0.58778524,0.00000000) , position = (66.54102325,53.26711655,9.50000000)
+         << Projection #65 >> current_angle=38.00000000 degrees (rotation around Z axis = 232.00000209)
+                             Source direction = (-0.78801078,-0.61566144,0.00000000) , position = (65.28064728,54.93968964,9.50000000)
+         << Projection #66 >> current_angle=40.00000000 degrees (rotation around Z axis = 229.99999953)
+                             Source direction = (-0.76604444,-0.64278764,0.00000000) , position = (63.96266556,56.56725693,9.50000000)
+         << Projection #67 >> current_angle=42.00000000 degrees (rotation around Z axis = 227.99999869)
+                             Source direction = (-0.74314481,-0.66913062,0.00000000) , position = (62.58868790,58.14783478,9.50000000)
+         << Projection #68 >> current_angle=44.00000000 degrees (rotation around Z axis = 226.00000390)
+                             Source direction = (-0.71933985,-0.69465834,0.00000000) , position = (61.16038895,59.67950058,9.50000000)
+         << Projection #69 >> current_angle=46.00000000 degrees (rotation around Z axis = 223.99999750)
+                             Source direction = (-0.69465834,-0.71933985,0.00000000) , position = (59.67950058,61.16038895,9.50000000)
+         << Projection #70 >> current_angle=48.00000000 degrees (rotation around Z axis = 222.00000131)
+                             Source direction = (-0.66913062,-0.74314481,0.00000000) , position = (58.14783478,62.58868790,9.50000000)
+         << Projection #71 >> current_angle=50.00000000 degrees (rotation around Z axis = 220.00000192)
+                             Source direction = (-0.64278764,-0.76604444,0.00000000) , position = (56.56725693,63.96266556,9.50000000)
+         << Projection #72 >> current_angle=52.00000000 degrees (rotation around Z axis = 217.99999760)
+                             Source direction = (-0.61566144,-0.78801078,0.00000000) , position = (54.93968964,65.28064728,9.50000000)
+         << Projection #73 >> current_angle=54.00000000 degrees (rotation around Z axis = 215.99999941)
+                             Source direction = (-0.58778524,-0.80901700,0.00000000) , position = (53.26711655,66.54102325,9.50000000)
+         << Projection #74 >> current_angle=56.00000000 degrees (rotation around Z axis = 213.99999948)
+                             Source direction = (-0.55919290,-0.82903761,0.00000000) , position = (51.55157471,67.74225616,9.50000000)
+         << Projection #75 >> current_angle=58.00000000 degrees (rotation around Z axis = 211.99999614)
+                             Source direction = (-0.52991921,-0.84804809,0.00000000) , position = (49.79515457,68.88288879,9.50000000)
+         << Projection #76 >> current_angle=60.00000000 degrees (rotation around Z axis = 210.00000000)
+                             Source direction = (-0.50000000,-0.86602539,0.00000000) , position = (48.00000000,69.96152496,9.50000000)
+         << Projection #77 >> current_angle=62.00000000 degrees (rotation around Z axis = 208.00000162)
+                             Source direction = (-0.46947157,-0.88294756,0.00000000) , position = (46.16829300,70.97685242,9.50000000)
+         << Projection #78 >> current_angle=64.00000000 degrees (rotation around Z axis = 206.00000031)
+                             Source direction = (-0.43837115,-0.89879405,0.00000000) , position = (44.30226898,71.92764282,9.50000000)
+         << Projection #79 >> current_angle=66.00000000 degrees (rotation around Z axis = 203.99999807)
+                             Source direction = (-0.40673661,-0.91354549,0.00000000) , position = (42.40419769,72.81272888,9.50000000)
+         << Projection #80 >> current_angle=68.00000000 degrees (rotation around Z axis = 201.99999730)
+                             Source direction = (-0.37460655,-0.92718387,0.00000000) , position = (40.47639465,73.63103485,9.50000000)
+         << Projection #81 >> current_angle=70.00000000 degrees (rotation around Z axis = 200.00000247)
+                             Source direction = (-0.34202018,-0.93969262,0.00000000) , position = (38.52120972,74.38155365,9.50000000)
+         << Projection #82 >> current_angle=72.00000000 degrees (rotation around Z axis = 197.99999870)
+                             Source direction = (-0.30901697,-0.95105654,0.00000000) , position = (36.54101944,75.06339264,9.50000000)
+         << Projection #83 >> current_angle=74.00000000 degrees (rotation around Z axis = 196.00000016)
+                             Source direction = (-0.27563736,-0.96126169,0.00000000) , position = (34.53824234,75.67570496,9.50000000)
+         << Projection #84 >> current_angle=76.00000000 degrees (rotation around Z axis = 193.99999860)
+                             Source direction = (-0.24192187,-0.97029573,0.00000000) , position = (32.51531219,76.21774292,9.50000000)
+         << Projection #85 >> current_angle=78.00000000 degrees (rotation around Z axis = 191.99999807)
+                             Source direction = (-0.20791167,-0.97814763,0.00000000) , position = (30.47470093,76.68885803,9.50000000)
+         << Projection #86 >> current_angle=80.00000000 degrees (rotation around Z axis = 190.00000035)
+                             Source direction = (-0.17364818,-0.98480773,0.00000000) , position = (28.41889000,77.08846283,9.50000000)
+         << Projection #87 >> current_angle=82.00000000 degrees (rotation around Z axis = 187.99999963)
+                             Source direction = (-0.13917309,-0.99026805,0.00000000) , position = (26.35038567,77.41608429,9.50000000)
+         << Projection #88 >> current_angle=84.00000000 degrees (rotation around Z axis = 186.00000006)
+                             Source direction = (-0.10452846,-0.99452192,0.00000000) , position = (24.27170753,77.67131042,9.50000000)
+         << Projection #89 >> current_angle=86.00000000 degrees (rotation around Z axis = 184.00000001)
+                             Source direction = (-0.06975648,-0.99756408,0.00000000) , position = (22.18538857,77.85384369,9.50000000)
+         << Projection #90 >> current_angle=88.00000000 degrees (rotation around Z axis = 181.99999972)
+                             Source direction = (-0.03489949,-0.99939084,0.00000000) , position = (20.09396935,77.96344757,9.50000000)
+         << Projection #91 >> current_angle=90.00000000 degrees (rotation around Z axis = 180.00000000)
+                             Source direction = (0.00000000,-1.00000000,0.00000000) , position = (18.00000000,78.00000000,9.50000000)
+         << Projection #92 >> current_angle=92.00000000 degrees (rotation around Z axis = 178.00000028)
+                             Source direction = (0.03489949,-0.99939084,0.00000000) , position = (15.90603065,77.96344757,9.50000000)
+         << Projection #93 >> current_angle=94.00000000 degrees (rotation around Z axis = 175.99999999)
+                             Source direction = (0.06975648,-0.99756408,0.00000000) , position = (13.81461143,77.85384369,9.50000000)
+         << Projection #94 >> current_angle=96.00000000 degrees (rotation around Z axis = 173.99999994)
+                             Source direction = (0.10452846,-0.99452192,0.00000000) , position = (11.72829247,77.67131042,9.50000000)
+         << Projection #95 >> current_angle=98.00000000 degrees (rotation around Z axis = 172.00000037)
+                             Source direction = (0.13917309,-0.99026805,0.00000000) , position = (9.64961433,77.41608429,9.50000000)
+         << Projection #96 >> current_angle=100.00000000 degrees (rotation around Z axis = 169.99999965)
+                             Source direction = (0.17364818,-0.98480773,0.00000000) , position = (7.58110952,77.08846283,9.50000000)
+         << Projection #97 >> current_angle=102.00000000 degrees (rotation around Z axis = 168.00000193)
+                             Source direction = (0.20791167,-0.97814763,0.00000000) , position = (5.52529860,76.68885803,9.50000000)
+         << Projection #98 >> current_angle=104.00000000 degrees (rotation around Z axis = 165.99999964)
+                             Source direction = (0.24192190,-0.97029573,0.00000000) , position = (3.48468637,76.21774292,9.50000000)
+         << Projection #99 >> current_angle=106.00000000 degrees (rotation around Z axis = 163.99999984)
+                             Source direction = (0.27563736,-0.96126169,0.00000000) , position = (1.46175861,75.67570496,9.50000000)
+         << Projection #100 >> current_angle=108.00000000 degrees (rotation around Z axis = 162.00000130)
+                             Source direction = (0.30901697,-0.95105654,0.00000000) , position = (-0.54101968,75.06339264,9.50000000)
+         << Projection #101 >> current_angle=110.00000000 degrees (rotation around Z axis = 159.99999935)
+                             Source direction = (0.34202015,-0.93969262,0.00000000) , position = (-2.52120852,74.38155365,9.50000000)
+         << Projection #102 >> current_angle=112.00000000 degrees (rotation around Z axis = 158.00000270)
+                             Source direction = (0.37460655,-0.92718387,0.00000000) , position = (-4.47639561,73.63103485,9.50000000)
+         << Projection #103 >> current_angle=114.00000000 degrees (rotation around Z axis = 156.00000193)
+                             Source direction = (0.40673661,-0.91354549,0.00000000) , position = (-6.40419865,72.81272888,9.50000000)
+         << Projection #104 >> current_angle=116.00000000 degrees (rotation around Z axis = 153.99999969)
+                             Source direction = (0.43837115,-0.89879405,0.00000000) , position = (-8.30226898,71.92764282,9.50000000)
+         << Projection #105 >> current_angle=118.00000000 degrees (rotation around Z axis = 151.99999838)
+                             Source direction = (0.46947157,-0.88294756,0.00000000) , position = (-10.16829395,70.97685242,9.50000000)
+         << Projection #106 >> current_angle=120.00000000 degrees (rotation around Z axis = 150.00000000)
+                             Source direction = (0.50000000,-0.86602539,0.00000000) , position = (-12.00000000,69.96152496,9.50000000)
+         << Projection #107 >> current_angle=122.00000000 degrees (rotation around Z axis = 148.00000386)
+                             Source direction = (0.52991921,-0.84804809,0.00000000) , position = (-13.79515553,68.88288879,9.50000000)
+         << Projection #108 >> current_angle=124.00000000 degrees (rotation around Z axis = 146.00000052)
+                             Source direction = (0.55919290,-0.82903761,0.00000000) , position = (-15.55157375,67.74225616,9.50000000)
+         << Projection #109 >> current_angle=126.00000000 degrees (rotation around Z axis = 144.00000481)
+                             Source direction = (0.58778518,-0.80901706,0.00000000) , position = (-17.26711464,66.54102325,9.50000000)
+         << Projection #110 >> current_angle=128.00000000 degrees (rotation around Z axis = 142.00000240)
+                             Source direction = (0.61566144,-0.78801078,0.00000000) , position = (-18.93968773,65.28064728,9.50000000)
+         << Projection #111 >> current_angle=130.00000000 degrees (rotation around Z axis = 139.99999808)
+                             Source direction = (0.64278764,-0.76604444,0.00000000) , position = (-20.56725693,63.96266556,9.50000000)
+         << Projection #112 >> current_angle=132.00000000 degrees (rotation around Z axis = 137.99999869)
+                             Source direction = (0.66913062,-0.74314481,0.00000000) , position = (-22.14783669,62.58868790,9.50000000)
+         << Projection #113 >> current_angle=134.00000000 degrees (rotation around Z axis = 135.99999776)
+                             Source direction = (0.69465840,-0.71933979,0.00000000) , position = (-23.67950249,61.16038895,9.50000000)
+         << Projection #114 >> current_angle=136.00000000 degrees (rotation around Z axis = 133.99999610)
+                             Source direction = (0.71933985,-0.69465834,0.00000000) , position = (-25.16038895,59.67950058,9.50000000)
+         << Projection #115 >> current_angle=138.00000000 degrees (rotation around Z axis = 131.99999620)
+                             Source direction = (0.74314487,-0.66913056,0.00000000) , position = (-26.58868980,58.14783478,9.50000000)
+         << Projection #116 >> current_angle=140.00000000 degrees (rotation around Z axis = 129.99999843)
+                             Source direction = (0.76604444,-0.64278758,0.00000000) , position = (-27.96266747,56.56725693,9.50000000)
+         << Projection #117 >> current_angle=142.00000000 degrees (rotation around Z axis = 127.99999791)
+                             Source direction = (0.78801078,-0.61566144,0.00000000) , position = (-29.28064537,54.93968964,9.50000000)
+         << Projection #118 >> current_angle=144.00000000 degrees (rotation around Z axis = 125.99999920)
+                             Source direction = (0.80901700,-0.58778524,0.00000000) , position = (-30.54101944,53.26711655,9.50000000)
+         << Projection #119 >> current_angle=146.00000000 degrees (rotation around Z axis = 123.99999650)
+                             Source direction = (0.82903761,-0.55919290,0.00000000) , position = (-31.74225426,51.55157471,9.50000000)
+         << Projection #120 >> current_angle=148.00000000 degrees (rotation around Z axis = 122.00000056)
+                             Source direction = (0.84804809,-0.52991927,0.00000000) , position = (-32.88288498,49.79515457,9.50000000)
+         << Projection #121 >> current_angle=150.00000000 degrees (rotation around Z axis = 120.00000178)
+                             Source direction = (0.86602539,-0.50000000,0.00000000) , position = (-33.96152496,48.00000000,9.50000000)
+         << Projection #122 >> current_angle=152.00000000 degrees (rotation around Z axis = 117.99999623)
+                             Source direction = (0.88294762,-0.46947154,0.00000000) , position = (-34.97685623,46.16829300,9.50000000)
+         << Projection #123 >> current_angle=154.00000000 degrees (rotation around Z axis = 115.99999886)
+                             Source direction = (0.89879405,-0.43837115,0.00000000) , position = (-35.92764282,44.30226898,9.50000000)
+         << Projection #124 >> current_angle=156.00000000 degrees (rotation around Z axis = 113.99999554)
+                             Source direction = (0.91354549,-0.40673661,0.00000000) , position = (-36.81272888,42.40419769,9.50000000)
+         << Projection #125 >> current_angle=158.00000000 degrees (rotation around Z axis = 111.99999817)
+                             Source direction = (0.92718387,-0.37460658,0.00000000) , position = (-37.63103104,40.47639465,9.50000000)
+         << Projection #126 >> current_angle=160.00000000 degrees (rotation around Z axis = 110.00000072)
+                             Source direction = (0.93969262,-0.34202015,0.00000000) , position = (-38.38155746,38.52120972,9.50000000)
+         << Projection #127 >> current_angle=162.00000000 degrees (rotation around Z axis = 107.99999560)
+                             Source direction = (0.95105654,-0.30901697,0.00000000) , position = (-39.06339264,36.54101944,9.50000000)
+         << Projection #128 >> current_angle=164.00000000 degrees (rotation around Z axis = 106.00000130)
+                             Source direction = (0.96126169,-0.27563739,0.00000000) , position = (-39.67570114,34.53824234,9.50000000)
+         << Projection #129 >> current_angle=166.00000000 degrees (rotation around Z axis = 103.99999977)
+                             Source direction = (0.97029573,-0.24192187,0.00000000) , position = (-40.21774292,32.51531219,9.50000000)
+         << Projection #130 >> current_angle=168.00000000 degrees (rotation around Z axis = 102.00000913)
+                             Source direction = (0.97814763,-0.20791169,0.00000000) , position = (-40.68885422,30.47470093,9.50000000)
+         << Projection #131 >> current_angle=170.00000000 degrees (rotation around Z axis = 99.99999800)
+                             Source direction = (0.98480773,-0.17364816,0.00000000) , position = (-41.08846664,28.41889000,9.50000000)
+         << Projection #132 >> current_angle=172.00000000 degrees (rotation around Z axis = 97.99999490)
+                             Source direction = (0.99026805,-0.13917309,0.00000000) , position = (-41.41608429,26.35038567,9.50000000)
+         << Projection #133 >> current_angle=174.00000000 degrees (rotation around Z axis = 95.99998874)
+                             Source direction = (0.99452192,-0.10452846,0.00000000) , position = (-41.67131424,24.27170753,9.50000000)
+         << Projection #134 >> current_angle=176.00000000 degrees (rotation around Z axis = 94.00002656)
+                             Source direction = (0.99756408,-0.06975648,0.00000000) , position = (-41.85384369,22.18538857,9.50000000)
+         << Projection #135 >> current_angle=178.00000000 degrees (rotation around Z axis = 91.99997782)
+                             Source direction = (0.99939084,-0.03489949,0.00000000) , position = (-41.96345139,20.09396935,9.50000000)
+         << Projection #136 >> current_angle=180.00000000 degrees (rotation around Z axis = 90.00000000)
+                             Source direction = (1.00000000,0.00000000,0.00000000) , position = (-42.00000000,18.00000000,9.50000000)
+         << Projection #137 >> current_angle=182.00000000 degrees (rotation around Z axis = 88.00002218)
+                             Source direction = (0.99939084,0.03489949,0.00000000) , position = (-41.96345139,15.90603065,9.50000000)
+         << Projection #138 >> current_angle=184.00000000 degrees (rotation around Z axis = 85.99997344)
+                             Source direction = (0.99756408,0.06975648,0.00000000) , position = (-41.85384369,13.81461143,9.50000000)
+         << Projection #139 >> current_angle=186.00000000 degrees (rotation around Z axis = 84.00001126)
+                             Source direction = (0.99452192,0.10452846,0.00000000) , position = (-41.67131424,11.72829247,9.50000000)
+         << Projection #140 >> current_angle=188.00000000 degrees (rotation around Z axis = 82.00000510)
+                             Source direction = (0.99026805,0.13917309,0.00000000) , position = (-41.41608429,9.64961433,9.50000000)
+         << Projection #141 >> current_angle=190.00000000 degrees (rotation around Z axis = 80.00000200)
+                             Source direction = (0.98480773,0.17364816,0.00000000) , position = (-41.08846664,7.58110952,9.50000000)
+         << Projection #142 >> current_angle=192.00000000 degrees (rotation around Z axis = 77.99999087)
+                             Source direction = (0.97814763,0.20791169,0.00000000) , position = (-40.68885422,5.52529860,9.50000000)
+         << Projection #143 >> current_angle=194.00000000 degrees (rotation around Z axis = 76.00000023)
+                             Source direction = (0.97029573,0.24192190,0.00000000) , position = (-40.21774292,3.48468637,9.50000000)
+         << Projection #144 >> current_angle=196.00000000 degrees (rotation around Z axis = 73.99999870)
+                             Source direction = (0.96126169,0.27563739,0.00000000) , position = (-39.67570114,1.46175861,9.50000000)
+         << Projection #145 >> current_angle=198.00000000 degrees (rotation around Z axis = 72.00000440)
+                             Source direction = (0.95105654,0.30901697,0.00000000) , position = (-39.06339264,-0.54101968,9.50000000)
+         << Projection #146 >> current_angle=200.00000000 degrees (rotation around Z axis = 70.00000397)
+                             Source direction = (0.93969262,0.34202012,0.00000000) , position = (-38.38155746,-2.52120852,9.50000000)
+         << Projection #147 >> current_angle=202.00000000 degrees (rotation around Z axis = 68.00000183)
+                             Source direction = (0.92718387,0.37460658,0.00000000) , position = (-37.63103104,-4.47639561,9.50000000)
+         << Projection #148 >> current_angle=204.00000000 degrees (rotation around Z axis = 66.00000446)
+                             Source direction = (0.91354549,0.40673661,0.00000000) , position = (-36.81272888,-6.40419865,9.50000000)
+         << Projection #149 >> current_angle=206.00000000 degrees (rotation around Z axis = 64.00000114)
+                             Source direction = (0.89879405,0.43837115,0.00000000) , position = (-35.92764282,-8.30226898,9.50000000)
+         << Projection #150 >> current_angle=208.00000000 degrees (rotation around Z axis = 62.00000377)
+                             Source direction = (0.88294762,0.46947154,0.00000000) , position = (-34.97685623,-10.16829395,9.50000000)
+         << Projection #151 >> current_angle=210.00000000 degrees (rotation around Z axis = 59.99999822)
+                             Source direction = (0.86602539,0.50000000,0.00000000) , position = (-33.96152496,-12.00000000,9.50000000)
+         << Projection #152 >> current_angle=212.00000000 degrees (rotation around Z axis = 57.99999944)
+                             Source direction = (0.84804809,0.52991927,0.00000000) , position = (-32.88288498,-13.79515553,9.50000000)
+         << Projection #153 >> current_angle=214.00000000 degrees (rotation around Z axis = 56.00000350)
+                             Source direction = (0.82903761,0.55919290,0.00000000) , position = (-31.74225426,-15.55157375,9.50000000)
+         << Projection #154 >> current_angle=216.00000000 degrees (rotation around Z axis = 54.00000080)
+                             Source direction = (0.80901700,0.58778524,0.00000000) , position = (-30.54101944,-17.26711464,9.50000000)
+         << Projection #155 >> current_angle=218.00000000 degrees (rotation around Z axis = 52.00000209)
+                             Source direction = (0.78801078,0.61566144,0.00000000) , position = (-29.28064537,-18.93968773,9.50000000)
+         << Projection #156 >> current_angle=220.00000000 degrees (rotation around Z axis = 50.00000157)
+                             Source direction = (0.76604444,0.64278758,0.00000000) , position = (-27.96266747,-20.56725693,9.50000000)
+         << Projection #157 >> current_angle=222.00000000 degrees (rotation around Z axis = 48.00000380)
+                             Source direction = (0.74314487,0.66913056,0.00000000) , position = (-26.58868980,-22.14783669,9.50000000)
+         << Projection #158 >> current_angle=224.00000000 degrees (rotation around Z axis = 45.99999898)
+                             Source direction = (0.71933979,0.69465840,0.00000000) , position = (-25.16038895,-23.67950249,9.50000000)
+         << Projection #159 >> current_angle=226.00000000 degrees (rotation around Z axis = 44.00000224)
+                             Source direction = (0.69465840,0.71933979,0.00000000) , position = (-23.67950249,-25.16038895,9.50000000)
+         << Projection #160 >> current_angle=228.00000000 degrees (rotation around Z axis = 41.99999671)
+                             Source direction = (0.66913056,0.74314487,0.00000000) , position = (-22.14783669,-26.58868980,9.50000000)
+         << Projection #161 >> current_angle=230.00000000 degrees (rotation around Z axis = 39.99999889)
+                             Source direction = (0.64278758,0.76604444,0.00000000) , position = (-20.56725693,-27.96266747,9.50000000)
+         << Projection #162 >> current_angle=232.00000000 degrees (rotation around Z axis = 37.99999760)
+                             Source direction = (0.61566144,0.78801078,0.00000000) , position = (-18.93968773,-29.28064537,9.50000000)
+         << Projection #163 >> current_angle=234.00000000 degrees (rotation around Z axis = 35.99999941)
+                             Source direction = (0.58778524,0.80901700,0.00000000) , position = (-17.26711464,-30.54101944,9.50000000)
+         << Projection #164 >> current_angle=236.00000000 degrees (rotation around Z axis = 33.99999948)
+                             Source direction = (0.55919290,0.82903761,0.00000000) , position = (-15.55157375,-31.74225426,9.50000000)
+         << Projection #165 >> current_angle=238.00000000 degrees (rotation around Z axis = 32.00000017)
+                             Source direction = (0.52991927,0.84804809,0.00000000) , position = (-13.79515553,-32.88288498,9.50000000)
+         << Projection #166 >> current_angle=240.00000000 degrees (rotation around Z axis = 30.00000000)
+                             Source direction = (0.50000000,0.86602539,0.00000000) , position = (-12.00000000,-33.96152496,9.50000000)
+         << Projection #167 >> current_angle=242.00000000 degrees (rotation around Z axis = 27.99999878)
+                             Source direction = (0.46947154,0.88294762,0.00000000) , position = (-10.16829395,-34.97685623,9.50000000)
+         << Projection #168 >> current_angle=244.00000000 degrees (rotation around Z axis = 26.00000031)
+                             Source direction = (0.43837115,0.89879405,0.00000000) , position = (-8.30226898,-35.92764282,9.50000000)
+         << Projection #169 >> current_angle=246.00000000 degrees (rotation around Z axis = 23.99999807)
+                             Source direction = (0.40673661,0.91354549,0.00000000) , position = (-6.40419865,-36.81272888,9.50000000)
+         << Projection #170 >> current_angle=248.00000000 degrees (rotation around Z axis = 21.99999914)
+                             Source direction = (0.37460658,0.92718387,0.00000000) , position = (-4.47639561,-37.63103104,9.50000000)
+         << Projection #171 >> current_angle=250.00000000 degrees (rotation around Z axis = 19.99999946)
+                             Source direction = (0.34202012,0.93969262,0.00000000) , position = (-2.52120852,-38.38155746,9.50000000)
+         << Projection #172 >> current_angle=252.00000000 degrees (rotation around Z axis = 17.99999870)
+                             Source direction = (0.30901697,0.95105654,0.00000000) , position = (-0.54101968,-39.06339264,9.50000000)
+         << Projection #173 >> current_angle=254.00000000 degrees (rotation around Z axis = 16.00000193)
+                             Source direction = (0.27563739,0.96126169,0.00000000) , position = (1.46175861,-39.67570114,9.50000000)
+         << Projection #174 >> current_angle=256.00000000 degrees (rotation around Z axis = 14.00000036)
+                             Source direction = (0.24192190,0.97029573,0.00000000) , position = (3.48468637,-40.21774292,9.50000000)
+         << Projection #175 >> current_angle=258.00000000 degrees (rotation around Z axis = 11.99999894)
+                             Source direction = (0.20791169,0.97814763,0.00000000) , position = (5.52529860,-40.68885422,9.50000000)
+         << Projection #176 >> current_angle=260.00000000 degrees (rotation around Z axis = 9.99999949)
+                             Source direction = (0.17364816,0.98480773,0.00000000) , position = (7.58110952,-41.08846664,9.50000000)
+         << Projection #177 >> current_angle=262.00000000 degrees (rotation around Z axis = 7.99999963)
+                             Source direction = (0.13917309,0.99026805,0.00000000) , position = (9.64961433,-41.41608429,9.50000000)
+         << Projection #178 >> current_angle=264.00000000 degrees (rotation around Z axis = 5.99999963)
+                             Source direction = (0.10452846,0.99452192,0.00000000) , position = (11.72829247,-41.67131424,9.50000000)
+         << Projection #179 >> current_angle=266.00000000 degrees (rotation around Z axis = 4.00000001)
+                             Source direction = (0.06975648,0.99756408,0.00000000) , position = (13.81461143,-41.85384369,9.50000000)
+         << Projection #180 >> current_angle=268.00000000 degrees (rotation around Z axis = 1.99999951)
+                             Source direction = (0.03489949,0.99939084,0.00000000) , position = (15.90603065,-41.96345139,9.50000000)
+
+    -- Reading voxel file 'ctdi_phantom.vox.gz':
+       Number of voxels in the input geometry file: 144 x 144 x 76 =  1575936
+       Size of the input voxels: 0.250000 x 0.250000 x 0.250000 cm  (voxel volume=0.015625 cm^3)
+       Voxel bounding box size: 36.000000 x 36.000000 x 19.000000 cm
+       The voxel dose tally ROI covers the entire voxelized phantom: the dose to every voxel will be tallied.
+
+    -- Initializing the voxel material and density vector (12.023438 Mbytes)...
+       Total number of voxels read: 1575936
+       Total CPU memory allocated for voxels vector and data structures = 13.494566 Mbytes
+
+    -- Reading the material data files (MAX_MATERIALS=15):
+         Mat 1: File 'air_5-120keV.mcgpu.gz'
+                Nominal density = 0.001205 g/cm^3; Max density in voxels = 0.001205 g/cm^3
+                Number of energy values in the mean free path database: 23002.
+                Linear interpolation data correctly allocated (8.072601 Mbytes)
+                Lowest energy first bin = 5000.000000 eV, last bin = 120005.000000 eV; bin width = 5.000000 eV
+         Mat 2: File 'PMMA_5-120keV.mcgpu.gz'
+                Nominal density = 1.190000 g/cm^3; Max density in voxels = 1.190000 g/cm^3
+
+    -- INITIALIZATION finished: elapsed time = 0.457 s. 
+
+
+
+    -- MONTE CARLO LOOP phase. Time: Fri Aug  7 16:20:06 2026
+
+
+
+
+
+   << Simulating Projection 1 of 180 >> Angle: 270.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+          [... a Compton event tried to increase the x ray energy due to precision error. Keeping initial energy. (This warning will not be repeated.)]
+               scaling=1.00000321865082, costh_Compton=0.99689273594528
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 1 of 180: angle from X axis = 270.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.76
+              Speed [x-rays/s]:    638977.64
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.352166 eV/cm^2
+
+
+
+
+   << Simulating Projection 2 of 180 >> Angle: 272.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 2 of 180: angle from X axis = 272.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.84
+              Speed [x-rays/s]:    633340.87
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.746%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 90.984234 eV/cm^2
+
+
+
+
+   << Simulating Projection 3 of 180 >> Angle: 274.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 3 of 180: angle from X axis = 274.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.96
+              Speed [x-rays/s]:    625209.33
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.327222 eV/cm^2
+
+
+
+
+   << Simulating Projection 4 of 180 >> Angle: 276.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 4 of 180: angle from X axis = 276.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629001.46
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.756%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.267348 eV/cm^2
+
+
+
+
+   << Simulating Projection 5 of 180 >> Angle: 278.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 5 of 180: angle from X axis = 278.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625908.13
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.756%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.653806 eV/cm^2
+
+
+
+
+   << Simulating Projection 6 of 180 >> Angle: 280.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 6 of 180: angle from X axis = 280.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.98
+              Speed [x-rays/s]:    623677.47
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.744%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.628393 eV/cm^2
+
+
+
+
+   << Simulating Projection 7 of 180 >> Angle: 282.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 7 of 180: angle from X axis = 282.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627310.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.762%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.757150 eV/cm^2
+
+
+
+
+   << Simulating Projection 8 of 180 >> Angle: 284.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 8 of 180: angle from X axis = 284.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.17
+              Speed [x-rays/s]:    610953.52
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.753%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.178046 eV/cm^2
+
+
+
+
+   << Simulating Projection 9 of 180 >> Angle: 286.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 9 of 180: angle from X axis = 286.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.99
+              Speed [x-rays/s]:    623052.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.770%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.544013 eV/cm^2
+
+
+
+
+   << Simulating Projection 10 of 180 >> Angle: 288.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 10 of 180: angle from X axis = 288.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.05
+              Speed [x-rays/s]:    618921.31
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.749%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.729272 eV/cm^2
+
+
+
+
+   << Simulating Projection 11 of 180 >> Angle: 290.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 11 of 180: angle from X axis = 290.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.99
+              Speed [x-rays/s]:    622775.80
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.291390 eV/cm^2
+
+
+
+
+   << Simulating Projection 12 of 180 >> Angle: 292.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 12 of 180: angle from X axis = 292.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624303.23
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.252722 eV/cm^2
+
+
+
+
+   << Simulating Projection 13 of 180 >> Angle: 294.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 13 of 180: angle from X axis = 294.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.85
+              Speed [x-rays/s]:    632625.40
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.460795 eV/cm^2
+
+
+
+
+   << Simulating Projection 14 of 180 >> Angle: 296.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 14 of 180: angle from X axis = 296.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.85
+              Speed [x-rays/s]:    632696.87
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.745%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.952980 eV/cm^2
+
+
+
+
+   << Simulating Projection 15 of 180 >> Angle: 298.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 15 of 180: angle from X axis = 298.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.10
+              Speed [x-rays/s]:    615655.23
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.768%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.367962 eV/cm^2
+
+
+
+
+   << Simulating Projection 16 of 180 >> Angle: 300.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 16 of 180: angle from X axis = 300.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630985.92
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.769%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.733644 eV/cm^2
+
+
+
+
+   << Simulating Projection 17 of 180 >> Angle: 302.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 17 of 180: angle from X axis = 302.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630346.69
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.756%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.267099 eV/cm^2
+
+
+
+
+   << Simulating Projection 18 of 180 >> Angle: 304.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 18 of 180: angle from X axis = 304.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630488.63
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 92.070519 eV/cm^2
+
+
+
+
+   << Simulating Projection 19 of 180 >> Angle: 306.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 19 of 180: angle from X axis = 306.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631128.14
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.749%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.371632 eV/cm^2
+
+
+
+
+   << Simulating Projection 20 of 180 >> Angle: 308.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 20 of 180: angle from X axis = 308.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    630063.01
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.757%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.070044 eV/cm^2
+
+
+
+
+   << Simulating Projection 21 of 180 >> Angle: 310.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 21 of 180: angle from X axis = 310.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.08
+              Speed [x-rays/s]:    616875.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.772%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.708172 eV/cm^2
+
+
+
+
+   << Simulating Projection 22 of 180 >> Angle: 312.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 22 of 180: angle from X axis = 312.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 10.19
+              Speed [x-rays/s]:    549720.23
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.759%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.437039 eV/cm^2
+
+
+
+
+   << Simulating Projection 23 of 180 >> Angle: 314.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 23 of 180: angle from X axis = 314.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619606.11
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.367195 eV/cm^2
+
+
+
+
+   << Simulating Projection 24 of 180 >> Angle: 316.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 24 of 180: angle from X axis = 316.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.00
+              Speed [x-rays/s]:    622153.09
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.665380 eV/cm^2
+
+
+
+
+   << Simulating Projection 25 of 180 >> Angle: 318.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 25 of 180: angle from X axis = 318.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624094.51
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.773%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 92.023677 eV/cm^2
+
+
+
+
+   << Simulating Projection 26 of 180 >> Angle: 320.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 26 of 180: angle from X axis = 320.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.08
+              Speed [x-rays/s]:    617011.90
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.781%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 92.006161 eV/cm^2
+
+
+
+
+   << Simulating Projection 27 of 180 >> Angle: 322.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 27 of 180: angle from X axis = 322.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.39
+              Speed [x-rays/s]:    596125.19
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 92.033456 eV/cm^2
+
+
+
+
+   << Simulating Projection 28 of 180 >> Angle: 324.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 28 of 180: angle from X axis = 324.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.35
+              Speed [x-rays/s]:    599122.71
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.775%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.874420 eV/cm^2
+
+
+
+
+   << Simulating Projection 29 of 180 >> Angle: 326.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 29 of 180: angle from X axis = 326.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.12
+              Speed [x-rays/s]:    614304.52
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.525975 eV/cm^2
+
+
+
+
+   << Simulating Projection 30 of 180 >> Angle: 328.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 30 of 180: angle from X axis = 328.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.24
+              Speed [x-rays/s]:    606257.44
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.745%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.470437 eV/cm^2
+
+
+
+
+   << Simulating Projection 31 of 180 >> Angle: 330.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 31 of 180: angle from X axis = 330.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.65
+              Speed [x-rays/s]:    580310.88
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.453525 eV/cm^2
+
+
+
+
+   << Simulating Projection 32 of 180 >> Angle: 332.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 32 of 180: angle from X axis = 332.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.08
+              Speed [x-rays/s]:    616468.52
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.775%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.412898 eV/cm^2
+
+
+
+
+   << Simulating Projection 33 of 180 >> Angle: 334.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 33 of 180: angle from X axis = 334.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628295.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.787%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 92.011821 eV/cm^2
+
+
+
+
+   << Simulating Projection 34 of 180 >> Angle: 336.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 34 of 180: angle from X axis = 336.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629708.76
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.745%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 90.845819 eV/cm^2
+
+
+
+
+   << Simulating Projection 35 of 180 >> Angle: 338.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 35 of 180: angle from X axis = 338.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.09
+              Speed [x-rays/s]:    615926.09
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.737%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.360986 eV/cm^2
+
+
+
+
+   << Simulating Projection 36 of 180 >> Angle: 340.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 36 of 180: angle from X axis = 340.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.15
+              Speed [x-rays/s]:    611754.42
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.728%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.101662 eV/cm^2
+
+
+
+
+   << Simulating Projection 37 of 180 >> Angle: 342.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 37 of 180: angle from X axis = 342.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.01
+              Speed [x-rays/s]:    621324.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.718%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.055795 eV/cm^2
+
+
+
+
+   << Simulating Projection 38 of 180 >> Angle: 344.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 38 of 180: angle from X axis = 344.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.00
+              Speed [x-rays/s]:    622153.09
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.785%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 92.003711 eV/cm^2
+
+
+
+
+   << Simulating Projection 39 of 180 >> Angle: 346.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 39 of 180: angle from X axis = 346.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624512.10
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.743%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.280537 eV/cm^2
+
+
+
+
+   << Simulating Projection 40 of 180 >> Angle: 348.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 40 of 180: angle from X axis = 348.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629001.46
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.763%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.345271 eV/cm^2
+
+
+
+
+   << Simulating Projection 41 of 180 >> Angle: 350.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 41 of 180: angle from X axis = 350.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.14
+              Speed [x-rays/s]:    612892.63
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.731%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.158065 eV/cm^2
+
+
+
+
+   << Simulating Projection 42 of 180 >> Angle: 352.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 42 of 180: angle from X axis = 352.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624512.10
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.746%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.227408 eV/cm^2
+
+
+
+
+   << Simulating Projection 43 of 180 >> Angle: 354.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 43 of 180: angle from X axis = 354.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.11
+              Speed [x-rays/s]:    614574.19
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.766%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.400710 eV/cm^2
+
+
+
+
+   << Simulating Projection 44 of 180 >> Angle: 356.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 44 of 180: angle from X axis = 356.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628577.84
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.565333 eV/cm^2
+
+
+
+
+   << Simulating Projection 45 of 180 >> Angle: 358.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 45 of 180: angle from X axis = 358.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619195.05
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.759%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.332988 eV/cm^2
+
+
+
+
+   << Simulating Projection 46 of 180 >> Angle: 360.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 46 of 180: angle from X axis = 360.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.03
+              Speed [x-rays/s]:    620086.37
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.740%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 90.995568 eV/cm^2
+
+
+
+
+   << Simulating Projection 47 of 180 >> Angle: 362.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 47 of 180: angle from X axis = 362.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.27
+              Speed [x-rays/s]:    603968.94
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.731%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.823187 eV/cm^2
+
+
+
+
+   << Simulating Projection 48 of 180 >> Angle: 364.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 48 of 180: angle from X axis = 364.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.10
+              Speed [x-rays/s]:    615519.89
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.762%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.412190 eV/cm^2
+
+
+
+
+   << Simulating Projection 49 of 180 >> Angle: 366.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 49 of 180: angle from X axis = 366.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.36
+              Speed [x-rays/s]:    598162.79
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.737%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.282623 eV/cm^2
+
+
+
+
+   << Simulating Projection 50 of 180 >> Angle: 368.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 50 of 180: angle from X axis = 368.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.30
+              Speed [x-rays/s]:    602150.54
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.483140 eV/cm^2
+
+
+
+
+   << Simulating Projection 51 of 180 >> Angle: 370.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 51 of 180: angle from X axis = 370.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 10.19
+              Speed [x-rays/s]:    549666.27
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.562138 eV/cm^2
+
+
+
+
+   << Simulating Projection 52 of 180 >> Angle: 372.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 52 of 180: angle from X axis = 372.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.10
+              Speed [x-rays/s]:    615519.89
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.767%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.288242 eV/cm^2
+
+
+
+
+   << Simulating Projection 53 of 180 >> Angle: 374.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 53 of 180: angle from X axis = 374.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.67
+              Speed [x-rays/s]:    579230.45
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.745%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.009324 eV/cm^2
+
+
+
+
+   << Simulating Projection 54 of 180 >> Angle: 376.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 54 of 180: angle from X axis = 376.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.23
+              Speed [x-rays/s]:    606388.74
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.737%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.016069 eV/cm^2
+
+
+
+
+   << Simulating Projection 55 of 180 >> Angle: 378.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 55 of 180: angle from X axis = 378.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.07
+              Speed [x-rays/s]:    617352.00
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.743%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.257303 eV/cm^2
+
+
+
+
+   << Simulating Projection 56 of 180 >> Angle: 380.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 56 of 180: angle from X axis = 380.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.31
+              Speed [x-rays/s]:    601568.37
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.722%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.243717 eV/cm^2
+
+
+
+
+   << Simulating Projection 57 of 180 >> Angle: 382.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 57 of 180: angle from X axis = 382.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628507.30
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.360259 eV/cm^2
+
+
+
+
+   << Simulating Projection 58 of 180 >> Angle: 384.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 58 of 180: angle from X axis = 384.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626118.07
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.751%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 90.748140 eV/cm^2
+
+
+
+
+   << Simulating Projection 59 of 180 >> Angle: 386.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 59 of 180: angle from X axis = 386.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.08
+              Speed [x-rays/s]:    616875.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.744%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.503375 eV/cm^2
+
+
+
+
+   << Simulating Projection 60 of 180 >> Angle: 388.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 60 of 180: angle from X axis = 388.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619811.84
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.759%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.406690 eV/cm^2
+
+
+
+
+   << Simulating Projection 61 of 180 >> Angle: 390.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 61 of 180: angle from X axis = 390.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.07
+              Speed [x-rays/s]:    617215.92
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.625315 eV/cm^2
+
+
+
+
+   << Simulating Projection 62 of 180 >> Angle: 392.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 62 of 180: angle from X axis = 392.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    623955.43
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.728%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.034400 eV/cm^2
+
+
+
+
+   << Simulating Projection 63 of 180 >> Angle: 394.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 63 of 180: angle from X axis = 394.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.03
+              Speed [x-rays/s]:    620086.37
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.237033 eV/cm^2
+
+
+
+
+   << Simulating Projection 64 of 180 >> Angle: 396.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 64 of 180: angle from X axis = 396.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619674.67
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.776%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.366747 eV/cm^2
+
+
+
+
+   << Simulating Projection 65 of 180 >> Angle: 398.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 65 of 180: angle from X axis = 398.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.01
+              Speed [x-rays/s]:    621393.70
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.749%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 90.962785 eV/cm^2
+
+
+
+
+   << Simulating Projection 66 of 180 >> Angle: 400.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 66 of 180: angle from X axis = 400.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.05
+              Speed [x-rays/s]:    618921.31
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.666455 eV/cm^2
+
+
+
+
+   << Simulating Projection 67 of 180 >> Angle: 402.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 67 of 180: angle from X axis = 402.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.26
+              Speed [x-rays/s]:    604882.26
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.757%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.534447 eV/cm^2
+
+
+
+
+   << Simulating Projection 68 of 180 >> Angle: 404.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 68 of 180: angle from X axis = 404.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.81
+              Speed [x-rays/s]:    570962.48
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.753032 eV/cm^2
+
+
+
+
+   << Simulating Projection 69 of 180 >> Angle: 406.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 69 of 180: angle from X axis = 406.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.31
+              Speed [x-rays/s]:    601762.30
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.767%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.227175 eV/cm^2
+
+
+
+
+   << Simulating Projection 70 of 180 >> Angle: 408.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 70 of 180: angle from X axis = 408.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619469.03
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.760%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.678345 eV/cm^2
+
+
+
+
+   << Simulating Projection 71 of 180 >> Angle: 410.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 71 of 180: angle from X axis = 410.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624581.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.766%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 92.084378 eV/cm^2
+
+
+
+
+   << Simulating Projection 72 of 180 >> Angle: 412.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 72 of 180: angle from X axis = 412.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627029.45
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.137155 eV/cm^2
+
+
+
+
+   << Simulating Projection 73 of 180 >> Angle: 414.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 73 of 180: angle from X axis = 414.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627661.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.749%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.083791 eV/cm^2
+
+
+
+
+   << Simulating Projection 74 of 180 >> Angle: 416.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 74 of 180: angle from X axis = 416.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624024.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.753%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.348903 eV/cm^2
+
+
+
+
+   << Simulating Projection 75 of 180 >> Angle: 418.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 75 of 180: angle from X axis = 418.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    626889.06
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.749%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 90.882460 eV/cm^2
+
+
+
+
+   << Simulating Projection 76 of 180 >> Angle: 420.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 76 of 180: angle from X axis = 420.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624372.84
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.755%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.297714 eV/cm^2
+
+
+
+
+   << Simulating Projection 77 of 180 >> Angle: 422.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 77 of 180: angle from X axis = 422.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.98
+              Speed [x-rays/s]:    623816.42
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.744%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.858284 eV/cm^2
+
+
+
+
+   << Simulating Projection 78 of 180 >> Angle: 424.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 78 of 180: angle from X axis = 424.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.01
+              Speed [x-rays/s]:    621531.63
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.768%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.196390 eV/cm^2
+
+
+
+
+   << Simulating Projection 79 of 180 >> Angle: 426.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 79 of 180: angle from X axis = 426.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.98
+              Speed [x-rays/s]:    623469.16
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.083008 eV/cm^2
+
+
+
+
+   << Simulating Projection 80 of 180 >> Angle: 428.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 80 of 180: angle from X axis = 428.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.05
+              Speed [x-rays/s]:    618442.85
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.781%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.906499 eV/cm^2
+
+
+
+
+   << Simulating Projection 81 of 180 >> Angle: 430.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 81 of 180: angle from X axis = 430.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.02
+              Speed [x-rays/s]:    620773.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.751%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.443620 eV/cm^2
+
+
+
+
+   << Simulating Projection 82 of 180 >> Angle: 432.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 82 of 180: angle from X axis = 432.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627943.49
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.417572 eV/cm^2
+
+
+
+
+   << Simulating Projection 83 of 180 >> Angle: 434.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 83 of 180: angle from X axis = 434.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629708.76
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.756%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.723539 eV/cm^2
+
+
+
+
+   << Simulating Projection 84 of 180 >> Angle: 436.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 84 of 180: angle from X axis = 436.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629567.17
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.763%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.119699 eV/cm^2
+
+
+
+
+   << Simulating Projection 85 of 180 >> Angle: 438.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 85 of 180: angle from X axis = 438.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630488.63
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.743%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.315190 eV/cm^2
+
+
+
+
+   << Simulating Projection 86 of 180 >> Angle: 440.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 86 of 180: angle from X axis = 440.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.83
+              Speed [x-rays/s]:    634057.97
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.503338 eV/cm^2
+
+
+
+
+   << Simulating Projection 87 of 180 >> Angle: 442.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 87 of 180: angle from X axis = 442.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627943.49
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.778%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 92.054768 eV/cm^2
+
+
+
+
+   << Simulating Projection 88 of 180 >> Angle: 444.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 88 of 180: angle from X axis = 444.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629637.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 90.984076 eV/cm^2
+
+
+
+
+   << Simulating Projection 89 of 180 >> Angle: 446.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 89 of 180: angle from X axis = 446.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.84
+              Speed [x-rays/s]:    633269.25
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.798884 eV/cm^2
+
+
+
+
+   << Simulating Projection 90 of 180 >> Angle: 448.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 90 of 180: angle from X axis = 448.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631199.28
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.744%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.159626 eV/cm^2
+
+
+
+
+   << Simulating Projection 91 of 180 >> Angle: 450.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 91 of 180: angle from X axis = 450.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628718.99
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.774%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.277676 eV/cm^2
+
+
+
+
+   << Simulating Projection 92 of 180 >> Angle: 452.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 92 of 180: angle from X axis = 452.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629779.58
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.755%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.837666 eV/cm^2
+
+
+
+
+   << Simulating Projection 93 of 180 >> Angle: 454.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 93 of 180: angle from X axis = 454.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629072.12
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.746%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 90.837277 eV/cm^2
+
+
+
+
+   << Simulating Projection 94 of 180 >> Angle: 456.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 94 of 180: angle from X axis = 456.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.03
+              Speed [x-rays/s]:    620429.87
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.752%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.622850 eV/cm^2
+
+
+
+
+   << Simulating Projection 95 of 180 >> Angle: 458.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 95 of 180: angle from X axis = 458.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629921.26
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.329377 eV/cm^2
+
+
+
+
+   << Simulating Projection 96 of 180 >> Angle: 460.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 96 of 180: angle from X axis = 460.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.86
+              Speed [x-rays/s]:    632339.66
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.589042 eV/cm^2
+
+
+
+
+   << Simulating Projection 97 of 180 >> Angle: 462.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 97 of 180: angle from X axis = 462.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    628154.80
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.756%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.530353 eV/cm^2
+
+
+
+
+   << Simulating Projection 98 of 180 >> Angle: 464.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 98 of 180: angle from X axis = 464.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625838.18
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.273311 eV/cm^2
+
+
+
+
+   << Simulating Projection 99 of 180 >> Angle: 466.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 99 of 180: angle from X axis = 466.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.85
+              Speed [x-rays/s]:    633054.49
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.759%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.288042 eV/cm^2
+
+
+
+
+   << Simulating Projection 100 of 180 >> Angle: 468.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 100 of 180: angle from X axis = 468.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629637.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.769%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.606885 eV/cm^2
+
+
+
+
+   << Simulating Projection 101 of 180 >> Angle: 470.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 101 of 180: angle from X axis = 470.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.12
+              Speed [x-rays/s]:    613765.89
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.732%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 90.896463 eV/cm^2
+
+
+
+
+   << Simulating Projection 102 of 180 >> Angle: 472.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 102 of 180: angle from X axis = 472.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.04
+              Speed [x-rays/s]:    619674.67
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.726%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 90.833842 eV/cm^2
+
+
+
+
+   << Simulating Projection 103 of 180 >> Angle: 474.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 103 of 180: angle from X axis = 474.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629850.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.524084 eV/cm^2
+
+
+
+
+   << Simulating Projection 104 of 180 >> Angle: 476.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 104 of 180: angle from X axis = 476.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627240.14
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.767%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.616677 eV/cm^2
+
+
+
+
+   << Simulating Projection 105 of 180 >> Angle: 478.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 105 of 180: angle from X axis = 478.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628648.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.757%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.389118 eV/cm^2
+
+
+
+
+   << Simulating Projection 106 of 180 >> Angle: 480.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 106 of 180: angle from X axis = 480.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626678.60
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.736%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.166835 eV/cm^2
+
+
+
+
+   << Simulating Projection 107 of 180 >> Angle: 482.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 107 of 180: angle from X axis = 482.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.99
+              Speed [x-rays/s]:    622775.80
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.737%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.076549 eV/cm^2
+
+
+
+
+   << Simulating Projection 108 of 180 >> Angle: 484.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 108 of 180: angle from X axis = 484.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624372.84
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.753%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.597057 eV/cm^2
+
+
+
+
+   << Simulating Projection 109 of 180 >> Angle: 486.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 109 of 180: angle from X axis = 486.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625558.53
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.779538 eV/cm^2
+
+
+
+
+   << Simulating Projection 110 of 180 >> Angle: 488.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 110 of 180: angle from X axis = 488.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627029.45
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.763%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.351771 eV/cm^2
+
+
+
+
+   << Simulating Projection 111 of 180 >> Angle: 490.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 111 of 180: angle from X axis = 490.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    623955.43
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 92.054979 eV/cm^2
+
+
+
+
+   << Simulating Projection 112 of 180 >> Angle: 492.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 112 of 180: angle from X axis = 492.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627661.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.776%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.572116 eV/cm^2
+
+
+
+
+   << Simulating Projection 113 of 180 >> Angle: 494.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 113 of 180: angle from X axis = 494.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626468.29
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.786%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.217383 eV/cm^2
+
+
+
+
+   << Simulating Projection 114 of 180 >> Angle: 496.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 114 of 180: angle from X axis = 496.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625768.24
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.759%
+              Maximum energy detected in pixel 24: (x,y)=(0,3). Maximum pixel value = 91.603541 eV/cm^2
+
+
+
+
+   << Simulating Projection 115 of 180 >> Angle: 498.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 115 of 180: angle from X axis = 498.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625698.32
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.776%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 92.282483 eV/cm^2
+
+
+
+
+   << Simulating Projection 116 of 180 >> Angle: 500.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 116 of 180: angle from X axis = 500.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625838.18
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.775%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.396262 eV/cm^2
+
+
+
+
+   << Simulating Projection 117 of 180 >> Angle: 502.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 117 of 180: angle from X axis = 502.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.96
+              Speed [x-rays/s]:    624721.11
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.743%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.228560 eV/cm^2
+
+
+
+
+   << Simulating Projection 118 of 180 >> Angle: 504.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 118 of 180: angle from X axis = 504.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626328.15
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.628401 eV/cm^2
+
+
+
+
+   << Simulating Projection 119 of 180 >> Angle: 506.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 119 of 180: angle from X axis = 506.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627732.32
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.758%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.953166 eV/cm^2
+
+
+
+
+   << Simulating Projection 120 of 180 >> Angle: 508.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 120 of 180: angle from X axis = 508.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627661.96
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.770%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.543139 eV/cm^2
+
+
+
+
+   << Simulating Projection 121 of 180 >> Angle: 510.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 121 of 180: angle from X axis = 510.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.99
+              Speed [x-rays/s]:    622637.31
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.347285 eV/cm^2
+
+
+
+
+   << Simulating Projection 122 of 180 >> Angle: 512.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 122 of 180: angle from X axis = 512.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627240.14
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 90.689526 eV/cm^2
+
+
+
+
+   << Simulating Projection 123 of 180 >> Angle: 514.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 123 of 180: angle from X axis = 514.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630843.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.753%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 90.966897 eV/cm^2
+
+
+
+
+   << Simulating Projection 124 of 180 >> Angle: 516.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 124 of 180: angle from X axis = 516.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    626889.06
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.904674 eV/cm^2
+
+
+
+
+   << Simulating Projection 125 of 180 >> Angle: 518.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 125 of 180: angle from X axis = 518.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630346.69
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.751%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.568643 eV/cm^2
+
+
+
+
+   << Simulating Projection 126 of 180 >> Angle: 520.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 126 of 180: angle from X axis = 520.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630914.83
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.725%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.192665 eV/cm^2
+
+
+
+
+   << Simulating Projection 127 of 180 >> Angle: 522.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 127 of 180: angle from X axis = 522.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627029.45
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.747%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 91.223778 eV/cm^2
+
+
+
+
+   << Simulating Projection 128 of 180 >> Angle: 524.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 128 of 180: angle from X axis = 524.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.16
+              Speed [x-rays/s]:    611153.55
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.758%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.038225 eV/cm^2
+
+
+
+
+   << Simulating Projection 129 of 180 >> Angle: 526.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 129 of 180: angle from X axis = 526.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.84
+              Speed [x-rays/s]:    633699.22
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.150500 eV/cm^2
+
+
+
+
+   << Simulating Projection 130 of 180 >> Angle: 528.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 130 of 180: angle from X axis = 528.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    630133.90
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 90.902634 eV/cm^2
+
+
+
+
+   << Simulating Projection 131 of 180 >> Angle: 530.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 131 of 180: angle from X axis = 530.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.86
+              Speed [x-rays/s]:    632054.18
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.202262 eV/cm^2
+
+
+
+
+   << Simulating Projection 132 of 180 >> Angle: 532.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 132 of 180: angle from X axis = 532.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631199.28
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.275586 eV/cm^2
+
+
+
+
+   << Simulating Projection 133 of 180 >> Angle: 534.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 133 of 180: angle from X axis = 534.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628436.76
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.280959 eV/cm^2
+
+
+
+
+   << Simulating Projection 134 of 180 >> Angle: 536.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 134 of 180: angle from X axis = 536.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627732.32
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.767%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.674733 eV/cm^2
+
+
+
+
+   << Simulating Projection 135 of 180 >> Angle: 538.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 135 of 180: angle from X axis = 538.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626328.15
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.397537 eV/cm^2
+
+
+
+
+   << Simulating Projection 136 of 180 >> Angle: 540.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 136 of 180: angle from X axis = 540.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626468.29
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.748%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 90.856129 eV/cm^2
+
+
+
+
+   << Simulating Projection 137 of 180 >> Angle: 542.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 137 of 180: angle from X axis = 542.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.85
+              Speed [x-rays/s]:    633126.06
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.723%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 90.825262 eV/cm^2
+
+
+
+
+   << Simulating Projection 138 of 180 >> Angle: 544.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 138 of 180: angle from X axis = 544.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627591.62
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.395320 eV/cm^2
+
+
+
+
+   << Simulating Projection 139 of 180 >> Angle: 546.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 139 of 180: angle from X axis = 546.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627310.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.760%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.361877 eV/cm^2
+
+
+
+
+   << Simulating Projection 140 of 180 >> Angle: 548.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 140 of 180: angle from X axis = 548.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630772.70
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.866736 eV/cm^2
+
+
+
+
+   << Simulating Projection 141 of 180 >> Angle: 550.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 141 of 180: angle from X axis = 550.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629779.58
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.766%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.499317 eV/cm^2
+
+
+
+
+   << Simulating Projection 142 of 180 >> Angle: 552.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 142 of 180: angle from X axis = 552.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628366.25
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.774%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.911970 eV/cm^2
+
+
+
+
+   << Simulating Projection 143 of 180 >> Angle: 554.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 143 of 180: angle from X axis = 554.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631626.44
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.782%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.796054 eV/cm^2
+
+
+
+
+   << Simulating Projection 144 of 180 >> Angle: 556.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 144 of 180: angle from X axis = 556.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630630.63
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.789%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.820818 eV/cm^2
+
+
+
+
+   << Simulating Projection 145 of 180 >> Angle: 558.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 145 of 180: angle from X axis = 558.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631270.43
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.775%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.572385 eV/cm^2
+
+
+
+
+   << Simulating Projection 146 of 180 >> Angle: 560.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 146 of 180: angle from X axis = 560.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630772.70
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.743%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.137370 eV/cm^2
+
+
+
+
+   << Simulating Projection 147 of 180 >> Angle: 562.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 147 of 180: angle from X axis = 562.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629921.26
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.747%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.258353 eV/cm^2
+
+
+
+
+   << Simulating Projection 148 of 180 >> Angle: 564.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 148 of 180: angle from X axis = 564.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    626048.07
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.773%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.522807 eV/cm^2
+
+
+
+
+   << Simulating Projection 149 of 180 >> Angle: 566.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 149 of 180: angle from X axis = 566.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629072.12
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.768%
+              Maximum energy detected in pixel 48: (x,y)=(0,6). Maximum pixel value = 91.174074 eV/cm^2
+
+
+
+
+   << Simulating Projection 150 of 180 >> Angle: 568.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 150 of 180: angle from X axis = 568.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628295.75
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.777%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.648431 eV/cm^2
+
+
+
+
+   << Simulating Projection 151 of 180 >> Angle: 570.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 151 of 180: angle from X axis = 570.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628436.76
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.762%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.675944 eV/cm^2
+
+
+
+
+   << Simulating Projection 152 of 180 >> Angle: 572.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 152 of 180: angle from X axis = 572.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629213.48
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.771%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.728455 eV/cm^2
+
+
+
+
+   << Simulating Projection 153 of 180 >> Angle: 574.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 153 of 180: angle from X axis = 574.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626398.21
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.751%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.512783 eV/cm^2
+
+
+
+
+   << Simulating Projection 154 of 180 >> Angle: 576.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 154 of 180: angle from X axis = 576.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    626818.89
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.765%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.361908 eV/cm^2
+
+
+
+
+   << Simulating Projection 155 of 180 >> Angle: 578.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 155 of 180: angle from X axis = 578.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.96
+              Speed [x-rays/s]:    625139.54
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.354531 eV/cm^2
+
+
+
+
+   << Simulating Projection 156 of 180 >> Angle: 580.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 156 of 180: angle from X axis = 580.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628648.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.755%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.180869 eV/cm^2
+
+
+
+
+   << Simulating Projection 157 of 180 >> Angle: 582.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 157 of 180: angle from X axis = 582.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627310.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.763%
+              Maximum energy detected in pixel 7: (x,y)=(7,0). Maximum pixel value = 91.651162 eV/cm^2
+
+
+
+
+   << Simulating Projection 158 of 180 >> Angle: 584.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 158 of 180: angle from X axis = 584.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626678.60
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.785%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.821425 eV/cm^2
+
+
+
+
+   << Simulating Projection 159 of 180 >> Angle: 586.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 159 of 180: angle from X axis = 586.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    627943.49
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.768%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.673645 eV/cm^2
+
+
+
+
+   << Simulating Projection 160 of 180 >> Angle: 588.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 160 of 180: angle from X axis = 588.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.92
+              Speed [x-rays/s]:    628013.91
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.741%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.443050 eV/cm^2
+
+
+
+
+   << Simulating Projection 161 of 180 >> Angle: 590.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 161 of 180: angle from X axis = 590.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.98
+              Speed [x-rays/s]:    623677.47
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.789%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 92.279768 eV/cm^2
+
+
+
+
+   << Simulating Projection 162 of 180 >> Angle: 592.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 162 of 180: angle from X axis = 592.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.97
+              Speed [x-rays/s]:    624442.46
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.776%
+              Maximum energy detected in pixel 8: (x,y)=(0,1). Maximum pixel value = 91.626577 eV/cm^2
+
+
+
+
+   << Simulating Projection 163 of 180 >> Angle: 594.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 163 of 180: angle from X axis = 594.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    627380.69
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.757%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.161343 eV/cm^2
+
+
+
+
+   << Simulating Projection 164 of 180 >> Angle: 596.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 164 of 180: angle from X axis = 596.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629708.76
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.762%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.391724 eV/cm^2
+
+
+
+
+   << Simulating Projection 165 of 180 >> Angle: 598.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 165 of 180: angle from X axis = 598.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626188.08
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.773%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.035295 eV/cm^2
+
+
+
+
+   << Simulating Projection 166 of 180 >> Angle: 600.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 166 of 180: angle from X axis = 600.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.93
+              Speed [x-rays/s]:    626818.89
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.761%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.602176 eV/cm^2
+
+
+
+
+   << Simulating Projection 167 of 180 >> Angle: 602.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 167 of 180: angle from X axis = 602.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    625768.24
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.750%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 90.941718 eV/cm^2
+
+
+
+
+   << Simulating Projection 168 of 180 >> Angle: 604.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 168 of 180: angle from X axis = 604.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.07
+              Speed [x-rays/s]:    617692.48
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.754%
+              Maximum energy detected in pixel 16: (x,y)=(0,2). Maximum pixel value = 91.511094 eV/cm^2
+
+
+
+
+   << Simulating Projection 169 of 180 >> Angle: 606.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 169 of 180: angle from X axis = 606.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.95
+              Speed [x-rays/s]:    626048.07
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.744%
+              Maximum energy detected in pixel 39: (x,y)=(7,4). Maximum pixel value = 91.152546 eV/cm^2
+
+
+
+
+   << Simulating Projection 170 of 180 >> Angle: 608.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 170 of 180: angle from X axis = 608.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.91
+              Speed [x-rays/s]:    628225.26
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.774%
+              Maximum energy detected in pixel 32: (x,y)=(0,4). Maximum pixel value = 91.236935 eV/cm^2
+
+
+
+
+   << Simulating Projection 171 of 180 >> Angle: 610.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 171 of 180: angle from X axis = 610.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.98
+              Speed [x-rays/s]:    623330.37
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.760%
+              Maximum energy detected in pixel 63: (x,y)=(7,7). Maximum pixel value = 91.818863 eV/cm^2
+
+
+
+
+   << Simulating Projection 172 of 180 >> Angle: 612.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 172 of 180: angle from X axis = 612.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.94
+              Speed [x-rays/s]:    626468.29
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.733%
+              Maximum energy detected in pixel 23: (x,y)=(7,2). Maximum pixel value = 90.824615 eV/cm^2
+
+
+
+
+   << Simulating Projection 173 of 180 >> Angle: 614.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 173 of 180: angle from X axis = 614.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.88
+              Speed [x-rays/s]:    630417.65
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 40: (x,y)=(0,5). Maximum pixel value = 91.353334 eV/cm^2
+
+
+
+
+   << Simulating Projection 174 of 180 >> Angle: 616.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 174 of 180: angle from X axis = 616.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.84
+              Speed [x-rays/s]:    633412.51
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.026859 eV/cm^2
+
+
+
+
+   << Simulating Projection 175 of 180 >> Angle: 618.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 175 of 180: angle from X axis = 618.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 9.10
+              Speed [x-rays/s]:    615114.24
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.742%
+              Maximum energy detected in pixel 31: (x,y)=(7,3). Maximum pixel value = 91.471284 eV/cm^2
+
+
+
+
+   << Simulating Projection 176 of 180 >> Angle: 620.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 176 of 180: angle from X axis = 620.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.90
+              Speed [x-rays/s]:    629142.79
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.786%
+              Maximum energy detected in pixel 0: (x,y)=(0,0). Maximum pixel value = 91.806756 eV/cm^2
+
+
+
+
+   << Simulating Projection 177 of 180 >> Angle: 622.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 177 of 180: angle from X axis = 622.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629850.41
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.760%
+              Maximum energy detected in pixel 15: (x,y)=(7,1). Maximum pixel value = 91.936310 eV/cm^2
+
+
+
+
+   << Simulating Projection 178 of 180 >> Angle: 624.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 178 of 180: angle from X axis = 624.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.89
+              Speed [x-rays/s]:    629567.17
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.733%
+              Maximum energy detected in pixel 47: (x,y)=(7,5). Maximum pixel value = 91.488314 eV/cm^2
+
+
+
+
+   << Simulating Projection 179 of 180 >> Angle: 626.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 179 of 180: angle from X axis = 626.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.84
+              Speed [x-rays/s]:    633484.16
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.775%
+              Maximum energy detected in pixel 55: (x,y)=(7,6). Maximum pixel value = 91.415350 eV/cm^2
+
+
+
+
+   << Simulating Projection 180 of 180 >> Angle: 628.000000 degrees.
+
+
+       Executing 5600 history batches in the CPU, with 1000 histories in each batch: 5600000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              CT projection 180 of 180: angle from X axis = 628.000000 
+              Simulated x rays:    5600000
+              Simulation time [s]: 8.87
+              Speed [x-rays/s]:    631199.28
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  7.768%
+              Maximum energy detected in pixel 56: (x,y)=(0,7). Maximum pixel value = 91.640074 eV/cm^2
+
+
+
+          *** VOXEL ROI DOSE TALLY REPORT ***
+
+              Reporting the 3D voxel dose distribution as binary floats in the .raw file, and the 2D dose for Z plane 38 as ASCII text.
+
+              Total energy absorved inside the dose deposition ROI: 27.63612 keV/hist
+              Maximum voxel dose (+-2 sigma): 61.241308 +- 0.050490 eV/g per history.
+              Dose deposited in the different materials inside the input ROI computed post-processing the 3D voxel dose results:
+
+  [MAT]  [DOSE_ROI eV/g/hist]  [2*std_dev]  [Rel error %]  [Peak voxel dose]  [2*std_dev]  [Rel error %]  [Peak voxel coord]  [E_dep eV/hist]  [MASS_ROI g]  [NUM_VOXELS_ROI]
+ ===============================================================================================================================================================================
+	1	1.76116	0.00385	0.219		61.24131	0.10098	0.165	(102,14,35)		26.60301	15.10536	802416
+	2	1.91964	-0.00000	-0.000		21.99816	0.04863	0.221	(78,135,38)		27609.51303	14382.63819	773520
+
+
+
+          *** MATERIALS TOTAL DOSE TALLY REPORT ***
+
+              Dose deposited in each material defined in the input file (tallied directly per material, not per voxel):
+              The results of this tally should be equal to the voxel tally doses for an ROI covering all voxels.
+
+  [MAT]  [DOSE eV/g/hist]  [2*std_dev]  [Rel_error 2*std_dev, %]  [E_dep eV/hist]  [MASS_TOTAL g]
+ =================================================================================================
+	1	1.76116		0.00385		0.22		26.60		15.10536
+	2	1.91964		-nan(ind)		-nan(ind)		27609.51		14382.63819
+
+     WARNING: it is possible that the unsigned long long int counter used to tally the standard deviation overflowed (>2^64).
+              The standard deviation may be incorrectly measured, but it will surely be very small (<< 1%).
+              Max counter (mat=2): E_dep = 2783038913291634 , E_dep^2 = 758443582055924616
+
+
+
+       ==> CUDA: Time reporting the dose data: 0.152000 s
+
+
+
+    -- SIMULATION FINISHED!
+
+
+       ****** TOTAL SIMULATION PERFORMANCE (including initialization and reporting) ******
+
+          >>> Execution time including initialization, transport and report: 1620.649 s.
+          >>> Time spent in the Monte Carlo transport only: 1619.211 s.
+          >>> Time spent in initialization, reporting and clean up: 1.438 s.
+
+          >>> Total number of simulated x rays:  1008000000
+          >>> Total speed (using 1 thread, including initialization time) [x-rays/s]:  621973.05
+
+
+****** Code execution finished on: Fri Aug  7 16:47:06 2026
+
+
