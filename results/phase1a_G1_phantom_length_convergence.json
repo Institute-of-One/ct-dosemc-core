@@ -1,0 +1,79 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-08T01:00:16+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "TG-195 Case 4 first test: convergence in phantom_length",
+  "parameter": "phantom_length",
+  "parameter_meaning": "cm of PMMA cylinder (TG-195 specifies 300)",
+  "values": [
+    40.0,
+    60.0,
+    100.0,
+    200.0
+  ],
+  "fixed": {
+    "air_margin": 44.0,
+    "voxel_size": 0.5,
+    "sub_fans": 4,
+    "histories": 12000000.0
+  },
+  "results_ev_per_photon": {
+    "40": {
+      "segment_1": 11576.782841844739,
+      "segment_2": 2577.805375080543,
+      "segment_3": 1770.5191444936186,
+      "segment_4": 1327.8550432326451
+    },
+    "60": {
+      "segment_1": 11586.004802296166,
+      "segment_2": 2577.4773734650184,
+      "segment_3": 1767.8865509835355,
+      "segment_4": 1331.017820012172
+    },
+    "100": {
+      "segment_1": 11571.345052983675,
+      "segment_2": 2580.5390206084976,
+      "segment_3": 1773.6502362743533,
+      "segment_4": 1327.5194698166679
+    },
+    "200": {
+      "segment_1": 11573.77304477864,
+      "segment_2": 2577.8911960045507,
+      "segment_3": 1768.9467247194689,
+      "segment_4": 1329.7253223759528
+    }
+  },
+  "deviation_from_tg195_mean": {
+    "40": {
+      "segment_1": -0.0013362034139579038,
+      "segment_2": 0.0004225148424266134,
+      "segment_3": 0.0020739526240007855,
+      "segment_4": -0.002013576922714866
+    },
+    "60": {
+      "segment_1": -0.0005406768706854859,
+      "segment_2": 0.00029522043756280425,
+      "segment_3": 0.0005839639997571311,
+      "segment_4": 0.0003634960125262765
+    },
+    "100": {
+      "segment_1": -0.0018052908057843986,
+      "segment_2": 0.0014834174847289106,
+      "segment_3": 0.0038460800401360906,
+      "segment_4": -0.002265786465313502
+    },
+    "200": {
+      "segment_1": -0.0015958416404018294,
+      "segment_2": 0.00045582115230247133,
+      "segment_3": 0.001183998452555235,
+      "segment_4": -0.000607916567016975
+    }
+  },
+  "note": "Each entry is a full G1 run; the deviation column is against the same four-code TG-195 mean the gate is judged on, so the size of the approximation is read directly rather than argued."
+}

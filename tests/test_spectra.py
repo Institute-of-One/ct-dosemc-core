@@ -15,6 +15,7 @@ from ct_dosemc_core.spectra import (
     MCGPU_MAX_ENERGY_BINS,
     Filter,
     generate_spectrum,
+    half_value_layer_mm_al,
     write_mcgpu_spectrum,
 )
 
@@ -73,6 +74,65 @@ def test_photons_per_sr_is_distance_independent():
     assert near.photons_per_sr_per_mas().value == pytest.approx(
         far.photons_per_sr_per_mas().value, rel=1e-6
     )
+
+
+def test_spekpy_applies_no_air_attenuation_between_the_focus_and_z():
+    """The absolute normalisation asserts inverse-square with no air path.
+
+    That assertion is only safe if SpekPy is not *already* attenuating through
+    the air between the focal spot and its reference distance -- if it were,
+    ``Phi(z) * z^2`` would fall with z and every absolute dose would be
+    systematically low by a few percent at 120 kVp over a metre.  Rather than
+    trust the docstring, measure it: N_Omega must be exactly invariant, and the
+    beam must not harden with distance either.
+    """
+    distances = (1.0, 25.0, 50.0, 100.0, 200.0)
+    spectra = [
+        generate_spectrum(120.0, (Filter("Al", 5.0),), reference_distance_cm=z)
+        for z in distances
+    ]
+    n_omega = [s.photons_per_sr_per_mas().value for s in spectra]
+    assert all(n == pytest.approx(n_omega[0], rel=1e-9) for n in n_omega), (
+        f"Phi(z)*z^2 varies with z: {n_omega}. SpekPy is attenuating through air, "
+        "so source_model's inverse-square assumption double-counts or omits it."
+    )
+    hvls = [s.hvl1_al_mm for s in spectra]
+    assert all(h == pytest.approx(hvls[0], rel=1e-9) for h in hvls)
+
+
+# -- HVL estimator ----------------------------------------------------------
+
+
+def test_hvl_estimator_agrees_with_spekpy_on_spekpy_own_spectrum(spectrum_120kv):
+    """Our estimator exists to put an externally distributed spectrum and ours on
+    the same footing; it must first agree with SpekPy on SpekPy's own beam."""
+    ours = half_value_layer_mm_al(
+        spectrum_120kv.energy_kev, spectrum_120kv.differential_fluence
+    )
+    assert ours == pytest.approx(spectrum_120kv.hvl1_al_mm, rel=0.02)
+
+
+def test_second_hvl_exceeds_the_first(spectrum_120kv):
+    first = half_value_layer_mm_al(
+        spectrum_120kv.energy_kev, spectrum_120kv.differential_fluence, order=1
+    )
+    second = half_value_layer_mm_al(
+        spectrum_120kv.energy_kev, spectrum_120kv.differential_fluence, order=2
+    )
+    assert second > first
+
+
+def test_hvl_estimator_ranks_beams_by_hardness():
+    soft = generate_spectrum(80.0, (Filter("Al", 2.0),))
+    hard = generate_spectrum(140.0, (Filter("Al", 10.0),))
+    assert half_value_layer_mm_al(
+        soft.energy_kev, soft.differential_fluence
+    ) < half_value_layer_mm_al(hard.energy_kev, hard.differential_fluence)
+
+
+def test_hvl_estimator_refuses_an_empty_spectrum():
+    with pytest.raises(ValueError, match="no photons"):
+        half_value_layer_mm_al(np.array([50.0, 60.0]), np.array([0.0, 0.0]))
 
 
 def test_written_spectrum_obeys_the_mcgpu_format(tmp_path, spectrum_120kv):

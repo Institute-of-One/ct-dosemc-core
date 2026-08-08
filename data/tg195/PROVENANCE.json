@@ -1,0 +1,108 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-07T16:08:08+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "source": {
+    "landing_page": "https://www.aapm.org/pubs/reports/report195.asp",
+    "citation": "Sechopoulos I, Ali ESM, Badal A, Badano A, Boone JM, Kyprianou IS, Mainegra-Hing E, McMillan KL, McNitt-Gray MF, Rogers DWO, Samei E, Turner AC. 'Monte Carlo reference data sets for imaging research: Executive summary of the report of AAPM Research Committee Task Group 195', Med. Phys. 42(10), 5679-5691 (2015). doi:10.1118/1.4928676",
+    "licence": "(c) 2015 American Association of Physicists in Medicine. All rights reserved. Distributed free of charge by AAPM. Downloaded for local use only; NOT redistributed by this repository. See docs/REPRODUCING_DATA.md."
+  },
+  "files": [
+    {
+      "file": "00-DISCLAIMER.pdf",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!00-DISCLAIMER.pdf",
+      "sha256": "821e8f8e86506ec764600568c47b9b5e26cae812688b1d6bdedd86c92b639a00",
+      "bytes": 38715
+    },
+    {
+      "file": "01-Material Definitions.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!01-Material Definitions.xlsx",
+      "sha256": "fd7383ec5dcaaa01a50ddabbf764498a74b0491182e1e8907263e6a466127e33",
+      "bytes": 12723
+    },
+    {
+      "file": "02-Case 5 Material Definitions.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!02-Case 5 Material Definitions.xlsx",
+      "sha256": "d005867e3eb9eca68d0dba1745f6967dae9de8fee852e4bc6f8e691d071b70ef",
+      "bytes": 13835
+    },
+    {
+      "file": "03-X-Ray Spectra Definition.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!03-X-Ray Spectra Definition.xlsx",
+      "sha256": "99d1b70aeeb31ea07bab4ac38840ed41b3e5dc0e009e36351f2ca22fe20c3e63",
+      "bytes": 28954
+    },
+    {
+      "file": "04-Case 1 Air Mass Energy Absorption Coefficients.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!04-Case 1 Air Mass Energy Absorption Coefficients.xlsx",
+      "sha256": "0f734602983088fc2299f4634133d42c7862516b0b14bdfaeae1b2422a239066",
+      "bytes": 16815
+    },
+    {
+      "file": "05-Case 5 Voxelized Volume.zip",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!05-Case 5 Voxelized Volume.zip",
+      "sha256": "f1b5737efc52a5a520b348a4f24a1690e8531a9904cf4d324c1d83df0e681820",
+      "bytes": 1240204
+    },
+    {
+      "file": "06-Case 1 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!06-Case 1 Results.xlsx",
+      "sha256": "019adb7d2722ae4fb7d9d39ae0c49fe5a7609fb8678d7b02b8796cb2a62fbd51",
+      "bytes": 1527092
+    },
+    {
+      "file": "07-Case 2 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!07-Case 2 Results.xlsx",
+      "sha256": "a3be7c785c9180dad3ad97d43e538db0abbdd926b5be62b66087e51ad3c30a83",
+      "bytes": 230733
+    },
+    {
+      "file": "08-Case 3 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!08-Case 3 Results.xlsx",
+      "sha256": "81283e7fef0b0156abef5616f5733177104ddbc26295cce896eb70159388a2ea",
+      "bytes": 234771
+    },
+    {
+      "file": "09-Case 4 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!09-Case 4 Results.xlsx",
+      "sha256": "7177f6a676d58bca3018551eb6536932fd7481891f8faae54c6b8e317ac2cdb6",
+      "bytes": 240453
+    },
+    {
+      "file": "10-Case 5 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!10-Case 5 Results.xlsx",
+      "sha256": "fc2b082030184003f3c0df85e0ebf50cecb1bcc5f5a911fa05149be4818dc33e",
+      "bytes": 185268
+    },
+    {
+      "file": "11-Case 6 Results.xlsx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!11-Case 6 Results.xlsx",
+      "sha256": "1b624a802059ed961f02a964e6a9ff994a6f8233038cbb0221e19ea48d628ba3",
+      "bytes": 288637
+    },
+    {
+      "file": "12-README.docx",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip!12-README.docx",
+      "sha256": "6b637afea31fda0c42da7f626e26d1041d2a3f6b2f753b53bdb6c8d5f118a9af",
+      "bytes": 14640
+    },
+    {
+      "file": "RPT_195.pdf",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195.pdf",
+      "sha256": "a3088790891db4aeee840faea928a87cfc2414fa86262270bd279ecea1cd8aa8",
+      "bytes": 2881627
+    },
+    {
+      "file": "RPT_195ElectronicResources.zip",
+      "url": "https://www.aapm.org/pubs/reports/RPT_195ElectronicResources.zip",
+      "sha256": "32ef845e5a05f1931a3b079d1ec3cc3939d5460b995356293c2e3896074238b6",
+      "bytes": 3467276
+    }
+  ]
+}

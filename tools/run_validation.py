@@ -270,7 +270,13 @@ def main(argv: list[str] | None = None) -> int:
     # measured and reported rather than assumed.
     zc = (np.arange(dz) + 0.5) * dose.voxel_size_cm[2]
     z_axis = zc - zc.mean()
-    peri_mask = masks["12_o_clock"].any(axis=0)
+    # Use whichever peripheral chamber received the most dose. Over a full
+    # rotation the four are equivalent, so this is any of them; for a single
+    # projection it picks the one facing the source, which is the only one with a
+    # collimated primary peak to measure a width from.
+    peripheral_names = [n for n in CHAMBER_POSITIONS if n != "centre"]
+    hottest = max(peripheral_names, key=lambda n: float(dose.dose_ev_per_g[masks[n]].sum()))
+    peri_mask = masks[hottest].any(axis=0)
     z_profile = (dose.dose_ev_per_g * peri_mask[None, :, :]).sum(axis=(1, 2)) / peri_mask.sum()
     half = 0.5 * float(z_profile.max())
     above = np.flatnonzero(z_profile >= half)
@@ -308,6 +314,42 @@ def main(argv: list[str] | None = None) -> int:
         f"(geometric {geometric_fwhm_cm:.3f} cm)"
     )
     print(f"[check] surface/centre radial dose = {radial_surface_over_centre:.3f} (must be > 1)")
+
+    # -- single-projection geometry check ---------------------------------
+    # The FWHM above is only sensitive to gantry angles near the chamber: the
+    # peripheral peak is dominated by the ~30 degrees where the source faces it,
+    # and a rotation average can hide a wrong beam definition. With one
+    # projection there is no averaging to hide behind, and both the longitudinal
+    # and the in-plane extent can be read against plain geometry.
+    #
+    # This is the cheap in-repo version. The decisive test of the beam definition
+    # is tools/run_tg195.py --gate G1, which puts the same single-projection
+    # geometry against four independent Monte Carlo codes; a wrong fan width
+    # would show up there directly as a normalisation error.
+    fan_check = None
+    if int(args.projections) == 1:
+        entry_slab = np.abs(z_axis) <= 0.5 * args.collimation
+        entry = dose.dose_ev_per_g[entry_slab].sum(axis=0)
+        # Restrict to PMMA so the measured width is directly comparable with the
+        # phantom diameter; the beam also lights up the air margin either side.
+        entry = np.where(in_pmma, entry, 0.0)
+        in_beam = entry > 0.5 * entry[entry > 0].max()
+        xs = np.nonzero(in_beam.any(axis=0))[0]
+        measured_width = (xs[-1] - xs[0] + 1) * dose.voxel_size_cm[0]
+        geometric_width = 2.0 * args.sad * math.tan(math.radians(0.5 * fan_deg))
+        covered = min(geometric_width, 2.0 * spec.radius_cm)
+        fan_check = {
+            "measured_irradiated_width_cm": float(measured_width),
+            "geometric_fan_width_at_isocentre_cm": geometric_width,
+            "expected_width_clipped_by_phantom_cm": covered,
+            "note": "Single projection, so no rotation average can mask a wrong "
+            "beam definition. The measured width is clipped by the phantom "
+            "whenever the fan is wider than it.",
+        }
+        print(
+            f"[check] in-plane irradiated width = {measured_width:.2f} cm "
+            f"(geometric fan {geometric_width:.2f} cm, phantom {2 * spec.radius_cm:.2f} cm)"
+        )
 
     peripheral = ctdi_mod.average_peripheral(ctdi100)
     cw = ctdi_w(ctdi100["centre"], peripheral)
@@ -465,6 +507,7 @@ def main(argv: list[str] | None = None) -> int:
                 "peripheral_z_profile_fwhm_cm": fwhm_cm,
                 "geometric_beam_width_at_peripheral_chamber_cm": geometric_fwhm_cm,
                 "radial_surface_over_centre": radial_surface_over_centre,
+                "single_projection_fan_check": fan_check,
                 "note": "FWHM should match the geometric beam width to within the "
                 "voxel size plus scatter broadening; the radial ratio must exceed 1 "
                 "for a 32 cm phantom. Both are shape checks that a mis-parsed beam "

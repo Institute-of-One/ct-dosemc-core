@@ -1,0 +1,469 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-07T16:32:05+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G1 -- TG-195 Case 4 (56.4 keV, first test, single projection)",
+  "tag": "airscan_30",
+  "passed": false,
+  "engine": {
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+    "executable_sha256": "00e4ba139f89388ee924ee7a8c21251d7a2c8fff36c4ac1df9c86130de1b74cb",
+    "build_info": {
+      "engine": "MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain",
+      "engine_source": "https://github.com/DIDSR/MCGPU",
+      "target": "cpu",
+      "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+      "executable_sha256": "00E4BA139F89388EE924EE7A8C21251D7A2C8FFF36C4AC1DF9C86130DE1B74CB",
+      "source_sha256": "18110A6DEB965FBAD64E332ED2A4DC591840E24EFB82F37EE4457C15101BBACA",
+      "patched_source": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_win_cpu.cu",
+      "patched_sha256": "4DDD5589C14F55A316757AD1E558D470D3CC0AC01BBEC067D23EBDBC1DBACC42",
+      "patches": [
+        {
+          "from": "fopen(file_binary, \"w\")",
+          "to": "fopen(file_binary, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary image file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_mean, \"w\")",
+          "to": "fopen(file_binary_mean, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_sigma, \"w\")",
+          "to": "fopen(file_binary_sigma, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "if (abs(theta_aperture) < 1.0e-7)",
+          "to": "if (fabs(theta_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "if (abs(phi_aperture) < 1.0e-7)",
+          "to": "if (fabs(phi_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "track_particles(CPU_batch, histories_per_thread, num_p, seed_input, image,",
+          "to": "track_particles(CPU_batch + num_p*total_threads, histories_per_thread, num_p, seed_input, image,",
+          "occurrences": 1,
+          "reason": "CPU branch reused one random sequence for every projection; offset the PRNG batch index per projection"
+        }
+      ],
+      "compiler": "MSVC cl.exe (/TC /O2 /std:c17)",
+      "vs_installation": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools",
+      "zlib": "zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in"
+    },
+    "random_seed": 1234567890
+  },
+  "spectrum": {
+    "path": "D:\\DevGit\\ct_dosemc_core\\results\\phase1a\\airscan_30\\mono.spc",
+    "energy_kev": 56.4,
+    "bin_width_ev": 0.001,
+    "n_bins": 1
+  },
+  "geometry": {
+    "spec": {
+      "phantom_radius_cm": 16.0,
+      "phantom_length_specified_cm": 300.0,
+      "sad_cm": 60.0,
+      "fan_width_at_isocentre_cm": 32.0,
+      "fan_thickness_at_isocentre_cm": 1.0,
+      "half_fan_deg": 14.931417178137552,
+      "standard": "AAPM Report 195 (TG-195) Case 4, section 3.4"
+    },
+    "phantom_length_cm": 40.0,
+    "voxel_size_cm": 0.5,
+    "n_voxels_xyz": [
+      184,
+      184,
+      200
+    ],
+    "dose_roi_z_index": [
+      89,
+      113
+    ],
+    "n_sub_fans": 8,
+    "omega_total_sr": 0.008589982445784178,
+    "omega_specified_sr": 0.008588755018677743,
+    "omega_excess_fraction": 0.00014291094620411116,
+    "histories_total": 4000000.0,
+    "n_projections": 1,
+    "sub_fans": [
+      {
+        "index": 0,
+        "centre_psi_deg": -13.064990030870359,
+        "azimuthal_aperture_deg": 3.7328542945343877,
+        "polar_aperture_deg": 0.9301901836556683,
+        "solid_angle_sr": 0.0010577006130776162,
+        "weight": 0.12313187131094991,
+        "histories": 500000.0,
+        "wall_seconds": 2.823692799953278,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 10749.20815443389,
+            "sigma": 9.370479501090179
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2069.909892403483,
+            "sigma": 4.222654816525885
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1373.5330400568541,
+            "sigma": 3.442301711421477
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 999.8830936527136,
+            "sigma": 2.9314579661828617
+          }
+        }
+      },
+      {
+        "index": 1,
+        "centre_psi_deg": -9.332135736335971,
+        "azimuthal_aperture_deg": 3.7328542945343886,
+        "polar_aperture_deg": 0.9422698519112029,
+        "solid_angle_sr": 0.0010714358541308176,
+        "weight": 0.12473085491072927,
+        "histories": 500000.0,
+        "wall_seconds": 2.8863813999923877,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 11691.112409733343,
+            "sigma": 9.79164721665256
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2650.722834524151,
+            "sigma": 4.769917738951945
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1784.8382642516137,
+            "sigma": 3.9154097496828784
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1342.111902221059,
+            "sigma": 3.3921916933461334
+          }
+        }
+      },
+      {
+        "index": 2,
+        "centre_psi_deg": -5.5992814418015815,
+        "azimuthal_aperture_deg": 3.7328542945343886,
+        "polar_aperture_deg": 0.9503515407711781,
+        "solid_angle_sr": 0.0010806251681149052,
+        "weight": 0.12580062589595375,
+        "histories": 500000.0,
+        "wall_seconds": 2.9111619999748655,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 11925.607197202706,
+            "sigma": 9.896477944837525
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2785.2063548200013,
+            "sigma": 4.892736574205983
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1935.5816353981675,
+            "sigma": 4.08186233281874
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1469.2716173330716,
+            "sigma": 3.556172971199565
+          }
+        }
+      },
+      {
+        "index": 3,
+        "centre_psi_deg": -1.8664271472671938,
+        "azimuthal_aperture_deg": 3.7328542945343877,
+        "polar_aperture_deg": 0.954400972729189,
+        "solid_angle_sr": 0.0010852295875687498,
+        "weight": 0.12633664788236704,
+        "histories": 500000.0,
+        "wall_seconds": 2.9143143000546843,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 11968.165529985112,
+            "sigma": 9.906338417251067
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2841.826205318186,
+            "sigma": 4.941918294571174
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1976.248983795226,
+            "sigma": 4.112567478417558
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1515.7645482750002,
+            "sigma": 3.617967770246935
+          }
+        }
+      },
+      {
+        "index": 4,
+        "centre_psi_deg": 1.8664271472671947,
+        "azimuthal_aperture_deg": 3.7328542945343894,
+        "polar_aperture_deg": 0.954400972729189,
+        "solid_angle_sr": 0.0010852295875687502,
+        "weight": 0.1263366478823671,
+        "histories": 500000.0,
+        "wall_seconds": 2.9548084000125527,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 12030.056825341919,
+            "sigma": 9.962219130956285
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2841.477676972784,
+            "sigma": 4.933771365606085
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1957.3879720037223,
+            "sigma": 4.091950720559071
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1505.4547144249534,
+            "sigma": 3.588919853412356
+          }
+        }
+      },
+      {
+        "index": 5,
+        "centre_psi_deg": 5.599281441801583,
+        "azimuthal_aperture_deg": 3.7328542945343877,
+        "polar_aperture_deg": 0.9503515407711781,
+        "solid_angle_sr": 0.001080625168114905,
+        "weight": 0.12580062589595373,
+        "histories": 500000.0,
+        "wall_seconds": 2.9293533000163734,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 11960.989241445212,
+            "sigma": 9.9385927155198
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2779.3005911001105,
+            "sigma": 4.87938298445886
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1908.7637553921088,
+            "sigma": 4.043954988547244
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1470.3095753364134,
+            "sigma": 3.5568258646609783
+          }
+        }
+      },
+      {
+        "index": 6,
+        "centre_psi_deg": 9.332135736335971,
+        "azimuthal_aperture_deg": 3.7328542945343877,
+        "polar_aperture_deg": 0.9422698519112029,
+        "solid_angle_sr": 0.0010714358541308174,
+        "weight": 0.12473085491072924,
+        "histories": 500000.0,
+        "wall_seconds": 2.860580199980177,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 11683.357630435918,
+            "sigma": 9.796318620381841
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2621.656277929261,
+            "sigma": 4.752135781144003
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1798.3765253031302,
+            "sigma": 3.9344092384474747
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1344.9781912014382,
+            "sigma": 3.402562981310299
+          }
+        }
+      },
+      {
+        "index": 7,
+        "centre_psi_deg": 13.064990030870359,
+        "azimuthal_aperture_deg": 3.7328542945343877,
+        "polar_aperture_deg": 0.9301901836556683,
+        "solid_angle_sr": 0.0010577006130776162,
+        "weight": 0.12313187131094991,
+        "histories": 500000.0,
+        "wall_seconds": 2.887744300009217,
+        "voi": {
+          "segment_1": {
+            "ev_per_photon_in_subfan": 10800.98733030405,
+            "sigma": 9.409540810933764
+          },
+          "segment_2": {
+            "ev_per_photon_in_subfan": 2102.4382764064726,
+            "sigma": 4.257331560690881
+          },
+          "segment_3": {
+            "ev_per_photon_in_subfan": 1371.0216066126286,
+            "sigma": 3.4385911132303386
+          },
+          "segment_4": {
+            "ev_per_photon_in_subfan": 1004.0795219637365,
+            "sigma": 2.938525759394555
+          }
+        }
+      }
+    ]
+  },
+  "results": {
+    "segment_1": {
+      "value": 11605.837278361774,
+      "unit": "eV per emitted photon",
+      "uncertainty": 3.4528109334216803,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "segment_1",
+          "n_sub_fans": 8,
+          "histories_total": 4000000.0,
+          "omega_total_sr": 0.008589982445784178
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "segment_2": {
+      "value": 2589.405409880787,
+      "unit": "eV per emitted photon",
+      "uncertainty": 1.668658117756794,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "segment_2",
+          "n_sub_fans": 8,
+          "histories_total": 4000000.0,
+          "omega_total_sr": 0.008589982445784178
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "segment_3": {
+      "value": 1765.463156892988,
+      "unit": "eV per emitted photon",
+      "uncertainty": 1.377661587273779,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "segment_3",
+          "n_sub_fans": 8,
+          "histories_total": 4000000.0,
+          "omega_total_sr": 0.008589982445784178
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "segment_4": {
+      "value": 1333.4065795497227,
+      "unit": "eV per emitted photon",
+      "uncertainty": 1.1980012809050942,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "segment_4",
+          "n_sub_fans": 8,
+          "histories_total": 4000000.0,
+          "omega_total_sr": 0.008589982445784178
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    }
+  },
+  "comparison_with_tg195": {
+    "segment_1": {
+      "ours_ev_per_photon": 11605.837278361774,
+      "ours_sigma": 3.4528109334216803,
+      "reference_mean": 11592.27247590257,
+      "reference_min": 11581.99,
+      "reference_max": 11618.3,
+      "inter_code_spread_fraction": 0.003132259017848216,
+      "ratio_to_reference_mean": 1.0011701590423623,
+      "deviation_fraction": 0.0011701590423622843,
+      "within_inter_code_range": true
+    },
+    "segment_2": {
+      "ours_ev_per_photon": 2589.405409880787,
+      "ours_sigma": 1.668658117756794,
+      "reference_mean": 2576.7166740410325,
+      "reference_min": 2564.74,
+      "reference_max": 2581.85,
+      "inter_code_spread_fraction": 0.006640233352923016,
+      "ratio_to_reference_mean": 1.0049243814687063,
+      "deviation_fraction": 0.004924381468706329,
+      "within_inter_code_range": false
+    },
+    "segment_3": {
+      "ours_ev_per_photon": 1765.463156892988,
+      "ours_sigma": 1.377661587273779,
+      "reference_mean": 1766.8547714042363,
+      "reference_min": 1759.77,
+      "reference_max": 1774.79,
+      "inter_code_spread_fraction": 0.008500981655703708,
+      "ratio_to_reference_mean": 0.9992123775344919,
+      "deviation_fraction": -0.0007876224655081199,
+      "within_inter_code_range": true
+    },
+    "segment_4": {
+      "ours_ev_per_photon": 1333.4065795497227,
+      "ours_sigma": 1.1980012809050942,
+      "reference_mean": 1330.5341761446134,
+      "reference_min": 1329.8,
+      "reference_max": 1331.27,
+      "inter_code_spread_fraction": 0.0011048194224214016,
+      "ratio_to_reference_mean": 1.0021588347421728,
+      "deviation_fraction": 0.0021588347421728216,
+      "within_inter_code_range": false
+    }
+  },
+  "reference_note": "Reference values are read at run time from the AAPM electronic resources in data/tg195/, which are copyrighted and are not redistributed by this repository. Only the comparison is recorded here.",
+  "known_gaps": [
+    "MC-GPU tallies collision kerma; electrons are not transported.",
+    "Phantom modelled at 40 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
+    "Voxelised cylinder: the curved surface is stair-stepped at the 0.5 cm voxel scale.",
+    "The fan is approximated by 8 azimuthal sub-fans; the residual solid-angle error is +0.0143 %."
+  ]
+}

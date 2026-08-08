@@ -153,6 +153,14 @@ def test_physics_shape_checks_are_recorded_and_pass(anchor):
     checks = anchor["results"].get("beam_geometry_checks")
     if checks is None:
         pytest.skip("results file predates the beam-geometry diagnostics")
+    if anchor["engine"]["projections"] < 2:
+        # A single-projection run is a beam-geometry diagnostic, not a CTDI
+        # measurement: without a rotation the four peripheral positions are not
+        # equivalent and the longitudinal profile is not rotation-averaged, so
+        # the checks below do not apply. The single-projection geometry check
+        # recorded under 'single_projection_fan_check' is the relevant one, and
+        # tools/run_tg195.py --gate G1 is the decisive version of it.
+        pytest.skip("single-projection diagnostic run, not a rotation")
     # Surface dose must exceed central dose in a body phantom.
     assert checks["radial_surface_over_centre"] > 1.0
     # The measured longitudinal beam width must match the geometric prediction.

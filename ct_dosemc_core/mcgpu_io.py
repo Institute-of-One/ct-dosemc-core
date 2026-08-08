@@ -70,16 +70,20 @@ def write_voxel_file(path: str | Path, phantom: VoxelPhantom, *, compress: bool 
     pairs, inverse = np.unique(np.stack([mat.astype(np.float64), dens], axis=1), axis=0,
                                return_inverse=True)
     opener = gzip.open if compress else open
-    if pairs.shape[0] <= 4096:
-        table = np.array([f"{int(m)} {d:.6g}" for m, d in pairs], dtype=object)
-        body = "\n".join(table[inverse].tolist()) + "\n"
-        with opener(out, "wt", encoding="ascii") as fh:  # type: ignore[operator]
-            fh.write(header)
-            fh.write(body)
-    else:  # pragma: no cover - exercised by the Phase-2 patient phantoms
-        with opener(out, "wt", encoding="ascii") as fh:  # type: ignore[operator]
-            fh.write(header)
-            np.savetxt(fh, np.stack([mat, dens], axis=1), fmt=["%d", "%.6g"])
+    # Written in chunks: the TG-195 Case 4 phantom is 3 m long, which is 22
+    # million voxels, and materialising that many Python strings at once costs
+    # more memory than the simulation itself.
+    chunk = 1 << 20
+    with opener(out, "wt", encoding="ascii") as fh:  # type: ignore[operator]
+        fh.write(header)
+        if pairs.shape[0] <= 4096:
+            table = np.array([f"{int(m)} {d:.6g}\n" for m, d in pairs], dtype=object)
+            for start in range(0, inverse.size, chunk):
+                fh.write("".join(table[inverse[start : start + chunk]].tolist()))
+        else:  # pragma: no cover - exercised by the Phase-2 patient phantoms
+            stacked = np.stack([mat, dens], axis=1)
+            for start in range(0, stacked.shape[0], chunk):
+                np.savetxt(fh, stacked[start : start + chunk], fmt=["%d", "%.6g"])
     return out
 
 

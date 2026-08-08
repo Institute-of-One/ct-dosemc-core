@@ -79,7 +79,20 @@ powershell -File tools/build_mcgpu.ps1 -Target gpu -CudaSamples <clone of NVIDIA
 
 ### 2.1 Patches applied, and why
 
-Three are needed on Windows; the fourth only for the CUDA target.
+Four defects, of which **three produce wrong results silently**. Full write-ups,
+ready to file upstream, are in [`UPSTREAM_ISSUES.md`](UPSTREAM_ISSUES.md); record
+the issue URLs there once they are posted.
+
+0. **`abs()` on a `double` collapses any aperture below 1° to a pencil beam**
+   (`MC-GPU_v1.3.cu:1386`, `:1393`). In C, `abs` is `int abs(int)`, so the
+   argument is truncated before the comparison against `1.0e-7`. A 10 mm
+   collimation at 600 mm SAD subtends 0.95° — an ordinary CT beam, and the
+   TG-195 Case 4 beam — and silently becomes a pencil beam with no diagnostic.
+   Only the CPU build is affected: `nvcc` compiles `.cu` as C++, where `abs` has
+   a `double` overload. Fixed with `fabs`.
+
+   *Caught by asserting the engine's own echoed apertures against the requested
+   ones. The dose values it produced looked entirely reasonable.*
 
 1. **`fopen(..., "w")` → `fopen(..., "wb")`** for the three files upstream marks
    `!!BINARY!!` (the projection image and the two dose `.raw` files). On Linux
@@ -153,19 +166,17 @@ which is why the CTDI chamber positions are scored in PMMA (§5.2).
 
 MC-GPU v1.3 has no bowtie, and real bowtie geometry is vendor-proprietary. The
 current simulation therefore uses a **flat fan** — the fluence is uniform across
-the fan angle. This is the single largest known bias in the Phase-1 anchor:
+the fan angle. This is the single largest known bias against a *real scanner*:
 
 * the periphery of the phantom receives relatively more fluence than on a real
   scanner, so the central/peripheral dose ratio is biased **low**;
 * the beam is not hardened off-axis, so the peripheral spectrum is too soft.
 
-The planned treatment, still to be implemented, is a **documented approximation**:
-an aluminium (or graphite) wedge of stated shape placed as an attenuating object
-in the geometry, with its thickness profile fitted so that the simulated
-free-in-air fluence versus fan angle matches a published, openly-licensed bowtie
-profile. The fitted profile and its residuals will be reported as data, and the
-sensitivity of every organ dose to it will be quoted. Until then, no number from
-this pipeline should be compared to a measured scanner CTDI without that caveat.
+It is **not** a defect for the Phase-1a gate: AAPM TG-195 Case 4 specifies a
+source with no bowtie, so the flat fan is the specification there (§5.0). The
+bowtie is a Phase-1b item (G6), implemented as a per-sub-fan spectrum rather than
+as a wedge in the voxel geometry — see §5.2. Until it exists, no number from this
+pipeline should be compared to a measured scanner CTDI without that caveat.
 
 ### 4.3 Point focal spot
 
@@ -188,6 +199,26 @@ The spectrum is resampled onto at most 255 bins because MC-GPU compiles with
 differential fluence at the bin centre, and the retained photon fraction is
 recorded in every results file.
 
+### 4.4a The air that is not there
+
+MC-GPU moves each photon from the focal spot to the voxel bounding box in a
+straight line **without interaction**. Whatever lies outside the box — the air
+gap between the tube and the patient, the couch, the gantry cover — simply does
+not exist. This is easy to overlook because it never produces a warning.
+
+Measured on TG-195 Case 4, where the source sits 44 cm beyond the phantom surface
+in air: modelling 1 cm of that path instead of 44 cm biases the scored energy by
+about **+0.8%**, and the bias falls monotonically to ≈0 as the modelled path
+approaches the full distance (§5.3). It matters just as much for patient
+geometry, where the same 40–50 cm of air sits between the focal spot and the skin.
+
+Consequence for Phase 2: the voxel box must extend far enough transversely to
+carry the air path, or the omission must be quantified and corrected. The
+transverse and longitudinal margins are separate parameters for exactly this
+reason — the beam travels in the scan plane, so only the transverse margin needs
+to be large, which is the difference between a 9-million-voxel geometry and a
+130-million-voxel one.
+
 ### 4.5 Absolute normalisation
 
 MC-GPU knows nothing about mAs. The bridge is:
@@ -202,9 +233,22 @@ D [mGy]  = d [eV/g/history] * N_hist * 1.602176634e-16 * 1e3
 `Omega` follows from MC-GPU sampling `cos(theta)` and `phi` uniformly
 (`MC-GPU_kernel_v1.3.cu:652`, aperture convention at `MC-GPU_v1.3.cu:1378`).
 
+SpekPy applies **no** air attenuation between the focal spot and its reference
+distance: `Phi(z) * z^2` is exactly invariant from z = 1 cm to z = 200 cm, and the
+HVL does not change with z. That is measured, not assumed — see
+`tests/test_spectra.py::test_spekpy_applies_no_air_attenuation_between_the_focus_and_z`.
+Had it been otherwise, every absolute dose would have been low by a few percent
+over a metre of air.
+
 This makes the absolute dose **entirely dependent on SpekPy's absolute tube
 output**, which is a model of an ideal tube and not a calibration of any real
-scanner. For patient dose the intended anchor is different and stronger:
+scanner. Gate G0 measures how far that model sits from another published one:
+against the IPEM-78-derived spectra TG-195 distributes, a SpekPy beam of the same
+nominal tube (120 kVp, 11° W anode, 2.861 mm Al) is about **7.7% softer in HVL**
+and 1.4% lower in mean energy — a difference between tube models, not a defect in
+either, but not something to absorb silently.
+
+For patient dose the intended anchor is different and stronger:
 normalise so that the simulated free-in-air air kerma at the isocentre reproduces
 the scanner's stated output, or so that the simulated CTDIvol reproduces the
 CTDIvol recorded in the DICOM/RDSR. Which normalisation was used will be stated
@@ -232,9 +276,136 @@ over voxel size is required before any number is quoted.
 
 ---
 
-## 5. The CTDI anchor (Phase 1)
+## 5. Validation: code verification first, physical anchor second
 
-### 5.1 Geometry
+### 5.0 Why the gate changed
+
+The first attempt made the Phase-1 gate "reproduce a measured CTDIvol". That was
+the wrong criterion, and it is worth stating why, because the reasoning applies to
+the whole project.
+
+The simulated system has no bowtie, a flat fan, a homogeneous PMMA cylinder and a
+point source. Every published CTDIvol was measured on a real scanner with a
+bowtie. The two are not comparable, so any disagreement is **unattributable** —
+it could be a coding error or a missing physical component, and no amount of
+argument decides between them. Judging the central/peripheral ratio of 0.293
+against a literature "≈0.5" was comparing two different experiments.
+
+**AAPM TG-195 Case 4 specifies the configuration we already have**: a PMMA
+cylinder of radius 160 mm, an isotropic point source at 600 mm, a flat fan with no
+bowtie, and energy scored directly in PMMA in eV per emitted photon. Four
+independent Monte Carlo packages published results for it. It is the de-facto
+standard for verifying a CT dose Monte Carlo, and it is free to download.
+
+Three obstacles vanish at that gate, none of them by being ignored:
+
+| Obstacle | Why it does not apply to TG-195 Case 4 |
+|---|---|
+| no bowtie model | Case 4 has no bowtie — the flat fan is the specification |
+| PMMA → air-kerma conversion | Case 4 scores energy deposited in PMMA directly |
+| absolute mAs normalisation | the unit is per emitted photon, so SpekPy's absolute output drops out |
+
+Reproducing a measured CTDIvol remains a goal. It moves to **Phase 1b**, where it
+belongs: a test of the *scanner* model, once the *code* is known to be right.
+
+### 5.1 Phase 1a — code verification (the gate)
+
+Run by `tools/run_tg195.py`. Reference data is fetched by `tools/fetch_tg195.py`
+and is copyrighted (§5.4).
+
+| # | Test | Criterion | State |
+|---|---|---|---|
+| **G0** | spectrum beam quality vs TG-195 | our HVL estimator reproduces TG-195's stated HVL from TG-195's own table | **done** — −2.3% (120 kVp), −1.8% (100 kVp) |
+| **G1** | Case 4 first test: 56.4 keV monoenergetic, single projection, four 10 mm axial sections | within 1% of the four-code mean | **PASSED** — worst deviation 0.147% |
+| **G2** | Case 4 second test: 120 kVp W/Al, 36 projections, two 10 mm PMMA cylinders | within 1% of the four-code mean | running |
+| G3 | convergence in voxel size, phantom length, air margin, sub-fan count | each smaller than the G1/G2 margin | partly done (§5.3) |
+| G4 | replica-based uncertainty, K ≥ 10 independent seeds | consistent with the sub-fan quadrature estimate | not started |
+| G5 | CPU/GPU agreement | within statistics on the full G1/G2 set | blocked on a CUDA toolkit |
+
+G1 is run **first** on purpose. It removes the spectrum, the rebinning, the
+255-bin limit and the source rotation from the problem: if the monoenergetic
+single-projection case disagrees, nothing downstream of it means anything.
+
+**Phase 2 (patient cohort) is released by G0–G5, not by G6–G9.**
+
+### 5.2 Phase 1b — physical anchor (after the gate, not before)
+
+| # | Test | Criterion |
+|---|---|---|
+| G6 | bowtie approximation implemented; profile and fit residuals published to `results/` | — |
+| G7 | added filtration tuned to a measured HVL; HVL1/HVL2 reported | inside the published CT range |
+| G8 | PMMA → air kerma from open NIST data, with a sensitivity interval | — |
+| G9 | CTDIw/CTDIvol against published and measured values | reported with the bowtie sensitivity; claiming "agreement" is optional |
+
+The CTDI results already in `results/` belong here, and none of them is a
+validated reproduction of a measured CTDIvol. The dimensionless ratios reported
+alongside them (central/peripheral, four-position spread) were the right thing to
+report *given* that a measured comparison was unavailable, but they are still
+comparisons against bowtie-equipped scanners and are moved here with that caveat
+attached.
+
+#### The bowtie: sub-fan decomposition, not a wedge in the geometry
+
+The earlier plan was to place an aluminium wedge in the voxel geometry. MC-GPU has
+only voxel geometry, so a wedge near the focal spot would mean extending the voxel
+grid all the way to the source — which is exactly the cost that makes the TG-195
+air path expensive (§5.3).
+
+The chosen approach instead splits the fan into K azimuthal **sub-fans**, each run
+as its own MC-GPU invocation and combined by solid-angle weight. A bowtie then
+becomes a per-sub-fan spectrum: attenuate the SpekPy spectrum through the fitted
+bowtie thickness `t(ψ_k)` before writing sub-fan `k`'s spectrum file. This gives
+**both** fluence shaping and off-axis beam hardening, costs no extra histories,
+touches no MC-GPU source, and reduces the bowtie to a single published
+angle-versus-equivalent-thickness profile that ships in `results/` as data.
+
+That machinery is already built and in use — TG-195's field is a rectangle on the
+isocentre plane, which is not the same shape as MC-GPU's `(cos θ, φ)` rectangle,
+and sub-fans are what reconciles them (§5.3).
+
+### 5.3 What the approximations are actually worth
+
+Each "we modelled it this way instead" is a claim about a number.
+`tools/run_tg195.py --scan PARAM=v1,v2,...` turns each into a measurement against
+the TG-195 reference. Measured so far, on the Case 4 first test:
+
+* **Air path — the largest effect, and previously invisible.** MC-GPU jumps each
+  photon from the focal spot to the voxel bounding box *without interaction*, so
+  air outside the box does not exist. TG-195 fills the geometry with air and puts
+  the source 44 cm beyond the cylinder surface. Modelling 1 cm of that instead of
+  44 cm biases the scored segments by about **+0.8%**; the deviation falls
+  monotonically to ≈0 as the modelled path approaches the full 44 cm. This is not
+  a TG-195 quirk — it applies to every patient simulation, where the air gap and
+  the table sit outside any sensible voxel box.
+* **Fan discretisation.** A single aperture overshoots the specified solid angle
+  by 1.14%; K = 8 sub-fans reduce that to 0.014%. Measured and predicted change
+  agree to 0.001% (K = 4 → 16 moved the answer by 0.066% for a predicted 0.066%),
+  which confirms the effect is pure normalisation.
+* **Voxel size.** 2.5 mm → 1.25 mm moved segment 1 by 0.02%. In a homogeneous
+  cylinder, voxel size affects only the boundary of the cylinder and of the VOIs,
+  not the transport, because Woodcock tracking does not resolve voxel walls.
+* **Phantom length.** Not yet scanned to the specified 3,000 mm; runs to date use
+  40–60 cm.
+
+### 5.4 Licensing of the reference data
+
+AAPM Report No. 195 and its electronic resources are free to download but are
+**copyrighted** ("© 2015 by American Association of Physicists in Medicine. All
+rights reserved."). They are treated exactly like the TCIA DICOM: fetched by
+`tools/fetch_tg195.py`, used locally, **never committed**. Only
+`data/tg195/PROVENANCE.json` — URLs, retrieval date, SHA-256 of every file — is in
+the repository, so a reviewer can confirm they obtained the same bytes.
+
+The Case 4 *specification values* in `ct_dosemc_core/tg195.py` are transcribed
+from the report's prose, because a phantom's dimensions are a specification anyone
+may build to, not a dataset. The distributed spectra and the tabulated reference
+results are read from `data/tg195/` at run time and never copied into source.
+
+---
+
+## 6. The CTDI anchor (Phase 1b)
+
+### 6.1 Geometry
 
 IEC 60601-2-44 dosimetry phantom: homogeneous PMMA (ρ = 1.19 g/cm³, PENELOPE
 material #224) cylinder, 15 cm long, 32 cm diameter (body) or 16 cm (head),
@@ -246,7 +417,7 @@ Chamber regions are cylinders of 1.31 cm diameter and 10 cm length — the volum
 100 mm pencil chamber occupies — on the axis and at 1 cm depth at the four
 cardinal positions.
 
-### 5.2 What is reported, and the gap that remains
+### 6.2 What is reported, and the gap that remains
 
 `CTDI100 = (1/(N·T)) ∫ D(z) dz` over ±50 mm. The Monte Carlo's mean dose over the
 chamber volume *is* that integral divided by the chamber length, so
@@ -265,14 +436,22 @@ spectrum range.
 Until then the meaningful comparisons are **dimensionless**, and insensitive to
 that factor to first order:
 
-* central / peripheral CTDI100 ratio, against published 32 cm body-phantom values;
+* central / peripheral CTDI100 ratio;
 * the spread across the four peripheral positions, which must be consistent with
   the quoted Monte-Carlo uncertainty (a *sensitive* test — see §2.1);
 * HVL against published CT values;
 * free-in-air air kerma at the isocentre, computed by SpekPy without the Monte
   Carlo at all.
 
-### 5.3 Uncertainty
+**But note what these can and cannot settle.** Every published central/peripheral
+ratio was measured on a scanner with a bowtie, and this simulation has none, so
+the comparison is between two different experiments. The measured ratio of 0.293
+against a literature "≈0.5" is *expected* — a flat fan over-illuminates the
+periphery — and is not evidence of an error. It becomes a real test only after G6
+(bowtie) and G7 (filtration matched to a measured HVL). Code correctness is
+settled by TG-195 (§5.1), not here.
+
+### 6.3 Uncertainty
 
 MC-GPU reports a per-voxel relative error at 2σ; `mcgpu_io.read_dose_map`
 converts to 1σ immediately. Region uncertainties combine per-voxel σ in
@@ -282,26 +461,51 @@ The observed spread across the four (physically equivalent) peripheral chambers 
 therefore reported as an independent, and more trustworthy, estimate. Where the
 two disagree, the larger is quoted.
 
-An independent-replica estimate (K runs, different seeds, sample standard
-deviation of CTDIw) is the gold standard and is the intended final method.
+The measured understatement on the Phase-1 CTDI run was a factor of **7.2**. That
+figure is itself a weak estimate: a sample standard deviation from four points has
+three degrees of freedom, so its own relative uncertainty is about
+`sqrt(1/(2·3)) ≈ 41%`. Honestly stated, the quadrature estimate understates σ by
+**roughly 4× to 13×**, and writing "7.2×" without that interval claims more
+precision than four points can carry.
+
+An independent-replica estimate (K ≥ 10 runs, different seeds, sample standard
+deviation of the reported quantity) brings that down to ≤23% and is the intended
+final method — gate G4. The TG-195 sub-fan runs already combine *genuinely*
+independent runs in quadrature, which is the correct use of the same arithmetic.
 
 ---
 
-## 6. Open items before Phase 2
+## 7. Open items before Phase 2
 
-Phase 2 is gated on these, in order:
+Phase 2 is released by the Phase-1a gates in §5.1 — G0–G5 — **not** by the
+physical anchor. Remaining, in order:
 
-1. Bowtie approximation implemented and its fit reported (§4.2).
-2. PMMA → air kerma conversion from open data (§5.2).
-3. Voxel-size and projection-count convergence studies (§4.6, §4.7).
-4. CPU/GPU agreement on the anchor (§2.2).
-5. Replica-based uncertainty replacing the quadrature estimate (§5.3).
-6. Fixed-seed reproducibility and anti-fabrication tests green (`tests/`).
+1. **G2** complete: TG-195 Case 4 second test (120 kVp, 36 projections).
+2. **G3** convergence: phantom length to the specified 3,000 mm; projection count.
+3. **G4** replica-based uncertainty, K ≥ 10 independent seeds (§6.3).
+4. **G5** CPU/GPU agreement — blocked on a CUDA toolkit installation.
+5. Fixed-seed reproducibility and anti-fabrication tests green (`tests/`).
+
+Phase 1b (G6–G9: bowtie, filtration, μ_en/ρ, measured CTDIvol) may run in
+parallel with Phase 2. Normalising patient dose to the CTDIvol recorded in the
+DICOM/RDSR (§4.5) removes most of the dependence on the bowtie's absolute
+transmission — but not its effect on the *radial* fluence distribution, so the G6
+sensitivity analysis is required before the manuscript regardless.
 
 ---
 
 ## References
 
+* I. Sechopoulos, E. S. M. Ali, A. Badal, A. Badano, J. M. Boone, I. S. Kyprianou,
+  E. Mainegra-Hing, K. L. McMillan, M. F. McNitt-Gray, D. W. O. Rogers, E. Samei,
+  A. C. Turner, *Monte Carlo reference data sets for imaging research: Executive
+  summary of the report of AAPM Research Committee Task Group 195*,
+  Med. Phys. **42**(10), 5679–5691 (2015). Report and electronic resources:
+  https://www.aapm.org/pubs/reports/report195.asp — **© 2015 AAPM, all rights
+  reserved; downloaded, not redistributed.**
+* IPEM Report 78, *Catalogue of Diagnostic X-ray Spectra and Other Data* — the
+  model TG-195 used to generate its spectra (report §2.3, p.9), and the reason a
+  SpekPy spectrum of the same nominal tube is not identical to theirs.
 * A. Badal and A. Badano, *Accelerating Monte Carlo simulations of photon
   transport in a voxelized geometry using a massively parallel Graphics
   Processing Unit*, Med. Phys. **36**, 4878–4880 (2009).

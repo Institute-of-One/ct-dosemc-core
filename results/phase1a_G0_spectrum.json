@@ -1,0 +1,72 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-07T23:12:57+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G0 -- spectrum beam quality against TG-195",
+  "comparison": {
+    "120 kVp": {
+      "tg195_header": {
+        "target": "W/Al",
+        "kvp": "120 kVp",
+        "anode_angle": "11 deg anode angle",
+        "ripple": "0% Ripple",
+        "filtration": "Al filter thickness: 2.861 mm",
+        "mean_energy": "Mean Energy: 56.4 keV",
+        "hvl": "HVL: 5.010 mm Al"
+      },
+      "estimator_check": {
+        "hvl_stated": 5.01,
+        "hvl_from_tg195_table_our_estimator": 4.894479882627772,
+        "deviation_fraction": -0.023057907659127297,
+        "mean_energy_stated": 56.4,
+        "mean_energy_from_tg195_table": 56.14313216828213,
+        "mean_energy_deviation_fraction": -0.0045543941793948495
+      },
+      "model_comparison_same_estimator": {
+        "hvl_tg195": 4.894479882627772,
+        "hvl_spekpy": 4.515797102605438,
+        "hvl_deviation_fraction": -0.07736936081122991,
+        "mean_energy_tg195": 56.14313216828213,
+        "mean_energy_spekpy": 55.355459308083795,
+        "mean_energy_deviation_fraction": -0.014029727765052069
+      },
+      "spekpy_reported_hvl1": 4.583845988767171
+    },
+    "100 kVp": {
+      "tg195_header": {
+        "target": "W/Al",
+        "kvp": "100 kVp",
+        "anode_angle": "11 deg anode angle",
+        "ripple": "0% Ripple",
+        "filtration": "Al filter thickness: 2.708 mm",
+        "mean_energy": "Mean Energy: 50.6 keV",
+        "hvl": "HVL: 3.950 mm Al"
+      },
+      "estimator_check": {
+        "hvl_stated": 3.95,
+        "hvl_from_tg195_table_our_estimator": 3.8804215285238337,
+        "deviation_fraction": -0.01761480290535855,
+        "mean_energy_stated": 50.6,
+        "mean_energy_from_tg195_table": 50.397680647982746,
+        "mean_energy_deviation_fraction": -0.0039984061663489445
+      },
+      "model_comparison_same_estimator": {
+        "hvl_tg195": 3.8804215285238337,
+        "hvl_spekpy": 3.606804640801852,
+        "hvl_deviation_fraction": -0.07051215588582449,
+        "mean_energy_tg195": 50.397680647982746,
+        "mean_energy_spekpy": 49.72819109028598,
+        "mean_energy_deviation_fraction": -0.013284134291278393
+      },
+      "spekpy_reported_hvl1": 3.665053425400262
+    }
+  },
+  "interpretation": "Two separate questions, deliberately not conflated. (1) Applying our HVL estimator to TG-195's own distributed spectrum reproduces the HVL the report states, which validates the estimator. (2) Applying the same estimator to a SpekPy spectrum of the same nominal tube gives a harder/softer beam -- that residual is a difference between tube MODELS. TG-195 generated its spectra with the IPEM Report 78 software (report section 2.3, p.9); SpekPy implements a different model. The difference is not a defect in either, but it must not be absorbed silently: TG-195 gates use TG-195's distributed spectrum, and Phase-1b tunes filtration to a measured HVL, which makes the model choice second-order.",
+  "note": "No Monte Carlo is involved. This checks the spectrum layer alone, before it is used for any dose."
+}

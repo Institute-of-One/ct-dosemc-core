@@ -2,9 +2,18 @@
 # TCIA collections are CC BY, but this project does not redistribute DICOM.
 # data/PROVENANCE.json records collection, Series Instance UID, licence and
 # retrieval date so the series can be re-fetched; the pixels stay local.
-data/**
-!data/PROVENANCE.json
+# Exclude the contents level by level rather than with data/**: git will not
+# descend into an excluded directory, so a nested !negation can never re-include
+# anything underneath one.
+data/*
 !data/README.md
+!data/PROVENANCE.json
+!data/tg195/
+# AAPM Report 195 and its electronic resources are free to download but
+# copyrighted ((c) 2015 AAPM, all rights reserved).  Same rule as the DICOM:
+# fetch and use locally, never redistribute.  Only the digests are committed.
+data/tg195/*
+!data/tg195/PROVENANCE.json
 *.dcm
 *.DCM
 *.nii
@@ -34,13 +43,17 @@ materials/*.mcgpu.gz
 # --- per-run Monte-Carlo scratch ------------------------------------------
 # results/*.json is committed -- every paper number lives there.  The bulky
 # per-run artefacts (voxel geometry, raw tallies, projection images) are not.
-results/phase1/**/*.raw
-results/phase1/**/*.vox.gz
-results/phase1/**/*.mcgpu.gz
-results/phase1/**/image.dat*
-results/phase1/**/dose.dat
-results/phase2/**/*.raw
-results/phase2/**/*.vox.gz
+results/**/*.raw
+results/**/*.vox.gz
+results/**/*.mcgpu.gz
+results/**/image*.dat*
+results/**/dose*.dat
+# The TG-195 gates make one engine invocation per (projection, sub-fan) -- up to
+# several hundred logs and input decks per run. The gate JSON is the record; the
+# per-beamlet scratch is regenerated.
+results/phase1a/**/case4_*.in
+results/phase1a/**/mcgpu_*.log
+results/phase1a/**/*.spc
 
 # --- python ---------------------------------------------------------------
 __pycache__/

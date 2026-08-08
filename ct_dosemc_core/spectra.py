@@ -27,7 +27,13 @@ import numpy as np
 
 from .provenance import Provenance, Value
 
-__all__ = ["Filter", "Spectrum", "generate_spectrum", "write_mcgpu_spectrum"]
+__all__ = [
+    "Filter",
+    "Spectrum",
+    "generate_spectrum",
+    "half_value_layer_mm_al",
+    "write_mcgpu_spectrum",
+]
 
 # MC-GPU v1.3 hard-codes MAX_ENERGY_BINS=256 for the source spectrum
 # (vendor/MCGPU/MC-GPU_v1.3.h:68).  One slot is consumed by the terminating
@@ -166,6 +172,55 @@ def generate_spectrum(
         air_kerma_ugy_per_mas=float(spek.get_kerma()),
         spekpy_version=str(getattr(sp, "__version__", "unknown")),
     )
+
+
+def half_value_layer_mm_al(
+    energy_kev: np.ndarray,
+    fluence: np.ndarray,
+    *,
+    order: int = 1,
+    al_density_g_cm3: float = 2.6989,
+) -> float:
+    """First or second HVL in mm Al, for an arbitrary tabulated spectrum.
+
+    SpekPy reports the HVL of the spectra *it* generates, but comparing our beam
+    against an externally distributed one -- the TG-195 tables, say -- means both
+    must go through the same estimator, or a difference in the HVL definition is
+    indistinguishable from a difference in the beam.  This is that common
+    estimator: narrow-beam attenuation of air kerma,
+
+        K(t) = sum_i  Phi_i * E_i * (mu_en/rho)_air(E_i) * exp(-mu_Al(E_i) * t)
+
+    solved for ``K(t)/K(0) = 1/2`` (or 1/4 for the second HVL).
+
+    Attenuation and air energy-absorption coefficients come from SpekPy's bundled
+    NIST tables (Hubbell & Seltzer, public domain), so no coefficient table is
+    transcribed into this repository.
+    """
+    from spekpy import SpekTools as st
+
+    e = np.asarray(energy_kev, dtype=float)
+    f = np.asarray(fluence, dtype=float)
+    keep = f > 0.0
+    if not keep.any():
+        raise ValueError("spectrum has no photons")
+    e, f = e[keep], f[keep]
+
+    mu_data, muen_air, _ = st.load_mu_data("nist")
+    mu_al_per_cm = np.asarray(mu_data.get_mu_over_rho(13, e)) * al_density_g_cm3
+    weight = f * e * np.asarray(muen_air.get_muen_over_rho_air(e))
+    if not (np.isfinite(mu_al_per_cm).all() and np.isfinite(weight).all()):
+        raise ValueError("attenuation data does not cover the spectrum's energy range")
+
+    target = weight.sum() * (0.5**order)
+    lo, hi = 0.0, 100.0  # mm
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if float(np.sum(weight * np.exp(-mu_al_per_cm * mid / 10.0))) > target:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
 
 
 def write_mcgpu_spectrum(

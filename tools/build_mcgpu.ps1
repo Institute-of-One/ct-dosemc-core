@@ -70,7 +70,18 @@ $patches = @(
     @{ from = 'fopen(file_binary_mean, "w")'; to = 'fopen(file_binary_mean, "wb")';
        why = 'binary dose file opened in text mode corrupts the .raw output on Windows' },
     @{ from = 'fopen(file_binary_sigma, "w")'; to = 'fopen(file_binary_sigma, "wb")';
-       why = 'binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows' }
+       why = 'binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows' },
+    #  The pencil-beam guard calls abs() on a double.  In C that is
+    #  <stdlib.h>'s int abs(int), so the argument is truncated: EVERY aperture
+    #  smaller than 1 degree tests as zero and is silently replaced by a pencil
+    #  beam.  A 10 mm collimation at 600 mm SAD is 0.95 degrees, so a perfectly
+    #  ordinary CT beam vanishes.  Only the CPU build is affected -- nvcc
+    #  compiles .cu as C++, where abs() has a double overload -- which is why it
+    #  has survived in the build upstream documents as "gcc -x c".
+    @{ from = 'if (abs(theta_aperture) < 1.0e-7)'; to = 'if (fabs(theta_aperture) < 1.0e-7)';
+       why = 'abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams' },
+    @{ from = 'if (abs(phi_aperture) < 1.0e-7)'; to = 'if (fabs(phi_aperture) < 1.0e-7)';
+       why = 'abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams' }
 )
 if ($Target -eq 'gpu') {
     $patches += @{ from = 'cudaThreadSynchronize'; to = 'cudaDeviceSynchronize';
