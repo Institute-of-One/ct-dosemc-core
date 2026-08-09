@@ -870,7 +870,7 @@ def convergence_scan(args) -> int:
         print(f"    worst deviation from the TG-195 mean: {100 * worst:+.3f} %")
 
     out = write_results(
-        REPO / "results" / f"phase1a_G1_{param}_convergence.json",
+        REPO / "results" / f"phase1a_{param}_convergence_{beam_choice}_{test_choice}.json",
         {
             "gate": f"TG-195 Case 4 first test: convergence in {param}",
             "parameter": param,

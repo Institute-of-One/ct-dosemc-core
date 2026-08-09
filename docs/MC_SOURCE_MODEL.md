@@ -552,7 +552,35 @@ the TG-195 reference. Measured so far, on the Case 4 first test:
   with any residual geometric bias.
 * **Phantom length.** 40 → 200 cm moves the answer by at most 0.4%, with no trend,
   so the specified 3,000 mm "infinite cylinder" is not needed at these VOIs. Runs
-  use 40–60 cm and record the fact.
+  use 40–60 cm and record the fact. Re-measured on the *centre* VOI at 120 kVp
+  (§5.3.2), which is where a long-range-scatter deficit would show, with the same
+  answer.
+
+### 5.3.2 The residual −0.8% at the centre VOI: both candidates eliminated
+
+The perimeter VOI agrees with all four codes to ±0.12% while the centre sits 0.8%
+below their mean, and the asymmetry is informative: the perimeter is dominated by
+primary photons entering on the near side, the centre by scatter that has crossed
+roughly 16 cm of PMMA. A deficit confined to the centre therefore points at
+scatter transport rather than at geometry, normalisation or the beam — all of
+which the perimeter would have exposed. Two mechanisms could produce it, and both
+were tested rather than argued:
+
+1. **Phantom length** — the centre VOI collects the longest-range scatter, and the
+   specification is 3,000 mm. Re-run on the centre VOI at 120 kVp (the earlier
+   scan was the monoenergetic first test, where the scatter travels differently):
+   worst deviation **0.806% / 0.781% / 0.858%** at 40 / 100 / 200 cm. Flat, no
+   trend. *Not the explanation.* The 300 cm point did not complete and is not
+   claimed.
+2. **Low-energy cutoff** — see §4.0a: ≤0.012% at 1 keV versus 5 keV tables.
+   *Not the explanation.*
+
+The residual is therefore recorded as a residual. In context: the four reference
+codes disagree with each other by 1.01% at this VOI, and our value sits 0.22% from
+the nearest of them — which is PENELOPE, the package that shares our
+cross-section library. A −0.80% deviation from a four-code mean whose own spread
+is 1.01% is not a validation failure, and it is reported alongside the per-code
+comparison (§5.1.2) rather than alone.
 
 ### 5.3.1 The volume of a scored region is not a detail
 
