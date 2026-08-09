@@ -698,13 +698,46 @@ Three things belong beside it:
   §5.1.2a still applies: most of the deviation from the four-code mean is the
   cross-section library, not this implementation.
 
-The open question is therefore whether the remaining centre deficit is the
-transport-implementation residual of §5.1.2a, now larger because a genuine
-attenuation path was added, or whether the air path is being over-modelled at
-44 cm. The sub-fan scan at the G2 configuration (§6.1) is the next input; it is
-running.
+### 5.3.0a Why none of this can be settled at the statistics used so far
 
-**Until this is settled, the Phase-1a gate is not closed.**
+The sub-fan scan was re-run at the G2 configuration to check that K = 4 is
+converged. It does not show convergence — it does not show a trend at all:
+
+| K | centre | perimeter | Ω excess (predicted effect) |
+|---|---|---|---|
+| 1 | −0.373% | +0.069% | +1.14% |
+| 2 | −2.274% | −0.135% | +0.28% |
+| 4 | −0.681% | +0.410% | +0.07% |
+| 8 | −1.520% | −0.064% | +0.01% |
+
+The centre values span 1.9% while the geometric effect being looked for is below
+0.07% beyond K = 4. **This is not a K-dependence; it is run-to-run scatter**, and
+its size matches the replica SD measured independently in §5.1.3a (0.48% at
+5×10⁷ histories, ≈0.34% here).
+
+That reframes everything currently open on this gate:
+
+* The **air-margin difference** of §5.3.0 (−0.798% at 30 cm against −1.294% at
+  44 cm, a shift of 0.50%) is between one and two replica SDs. It may be entirely
+  noise. The physical direction is right, but the magnitude is not established.
+* The **K-dependence** is unresolvable, so K = 4 cannot be *shown* converged here.
+  It remains the choice, on the solid-angle argument of §5.3, which is geometric
+  and does not depend on these runs.
+* The **centre deviation itself** — pass at one setting, fail at another — is
+  being read at a precision the runs do not support.
+
+**The honest position is that the Phase-1a gate is not closed, and cannot be
+closed at this history count.** The centre VOI is 7.85 cm³ and fed by scatter
+across ~16 cm of PMMA, which makes it expensive: bringing its replica SD to 0.1%
+needs roughly 20× the histories used here, and the per-projection driver
+multiplies that by 144 engine invocations per replica.
+
+What that costs is now the design question, and it is a GPU question. This is the
+concrete reason G5 is on the critical path rather than a formality: the CPU build
+cannot reach the statistics the gate needs in reasonable time.
+
+**No number from the second test should be quoted, in either direction, until it
+is backed by a replica SD rather than by an in-run σ.**
 
 ### 5.3.3 Never tune the sub-fan count towards better agreement
 

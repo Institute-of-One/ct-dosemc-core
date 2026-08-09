@@ -1,0 +1,67 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T13:12:09+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "29c7638730be391765a0b2bfe4e8c9314d8158b5",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "TG-195 Case 4 first test: convergence in sub_fans",
+  "parameter": "sub_fans",
+  "parameter_meaning": "azimuthal fan subdivisions",
+  "beam": "120 kVp",
+  "test": "second",
+  "n_projections": 36,
+  "angular_reference_case": "discrete",
+  "values": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "fixed": {
+    "phantom_length": 40.0,
+    "air_margin": 30.0,
+    "voxel_size": 0.25,
+    "histories": 100000000.0
+  },
+  "results_ev_per_photon": {
+    "1": {
+      "center": 11.339707447550897,
+      "perimeter": 39.78870108732686
+    },
+    "2": {
+      "center": 11.123262982454971,
+      "perimeter": 39.707797961623555
+    },
+    "4": {
+      "center": 11.30465755323206,
+      "perimeter": 39.9243238573174
+    },
+    "8": {
+      "center": 11.209058903988076,
+      "perimeter": 39.7360934939746
+    }
+  },
+  "deviation_from_tg195_mean": {
+    "1": {
+      "center": -0.003726073459935697,
+      "perimeter": 0.0006871629370586163
+    },
+    "2": {
+      "center": -0.022742258676032634,
+      "perimeter": -0.0013475533798951167
+    },
+    "4": {
+      "center": -0.006805455886629841,
+      "perimeter": 0.004098080137739046
+    },
+    "8": {
+      "center": -0.015204476945572698,
+      "perimeter": -0.0006359197950234208
+    }
+  },
+  "note": "Each entry is a full G1 run; the deviation column is against the same four-code TG-195 mean the gate is judged on, so the size of the approximation is read directly rather than argued."
+}
