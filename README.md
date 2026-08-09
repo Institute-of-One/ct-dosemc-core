@@ -7,12 +7,13 @@ using a public-domain engine, open spectra and openly-licensed inputs — so the
 dose coefficients are *computed* rather than looked up, and there is no licensing
 exposure anywhere in the chain.
 
-> **Status: Phase 1a — code verification. Not yet usable for patient dose.**
-> All four physics gates against **AAPM TG-195 Case 4** now pass, against a ±1%
-> tolerance: G1 (56.4 keV, single projection) 0.147%, G1′ (120 kVp) 0.338%,
-> G2 (120 kVp, 36 projections) −0.798% / +0.034%. Convergence and replica gates
-> are running; CPU/GPU agreement is blocked on a CUDA toolkit. Remaining items:
-> [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.1 and §7.
+> **Status: Phase 1a — code verification, NOT closed.**
+> G1 (56.4 keV, single projection) passes at 0.147% and G1′ (120 kVp) at 0.338%.
+> **G2 does not pass at the documented default configuration**: re-taken with the
+> voxel box reaching the focal spot, the central VOI is −1.29% against a ±1%
+> tolerance, while the perimeter is −0.02%. The earlier −0.80% pass was computed
+> at an air margin the project has since deprecated. See
+> [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.3.0.
 
 Institute of One, LISIT Co., Ltd., Tokyo, Japan · MIT licence.
 
@@ -131,7 +132,7 @@ The CPU build needs no CUDA toolkit and is the reference; the CUDA build is
 | Phase | What | State |
 |---|---|---|
 | 0 | scaffold, engine build, spectra, source model | done |
-| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | **G0/G1/G1′/G2 passed**; G3, G4 running; G5 blocked on CUDA |
+| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | G0/G1/G1′ pass; **G2 open** (§5.3.0); G3/G4 done; G5 awaiting CUDA |
 | 1b | physical anchor: bowtie, filtration, μ_en/ρ, measured CTDIvol | not started; may run in parallel with Phase 2 |
 | 2 | multi-vendor cohort → per-organ mGy + MC uncertainty | released by Phase 1a |
 | 3 | cross-check against published ranges (comparison only) | — |

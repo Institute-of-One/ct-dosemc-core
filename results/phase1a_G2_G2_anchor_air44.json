@@ -1,0 +1,4000 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T10:19:08+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "bb210e1e7ec859cea553b62810af902609ac7abd",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G2 -- TG-195 Case 4 (120 kVp, second test, 36 projection(s))",
+  "tag": "G2_anchor_air44",
+  "passed": false,
+  "angular_reference_case": "discrete",
+  "anchor_quality": {
+    "usable_as_anchor": true,
+    "n_sub_fans": 4,
+    "solid_angle_excess_fraction": 0.0006737627655568623,
+    "note": "Sub-fan count is fixed by solid-angle convergence, not by agreement with the reference."
+  },
+  "tolerance": {
+    "criterion": "relative difference from the four-code mean within 1%",
+    "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
+    "also_within_inter_code_range": false,
+    "note": "The inter-code range is reported separately and is a stricter bar than the report asks for -- for some VOIs the four packages agree to 0.1%, tighter than their own stated statistics."
+  },
+  "engine": {
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+    "executable_sha256": "00e4ba139f89388ee924ee7a8c21251d7a2c8fff36c4ac1df9c86130de1b74cb",
+    "build_info": {
+      "engine": "MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain",
+      "engine_source": "https://github.com/DIDSR/MCGPU",
+      "target": "cpu",
+      "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+      "executable_sha256": "00E4BA139F89388EE924EE7A8C21251D7A2C8FFF36C4AC1DF9C86130DE1B74CB",
+      "source_sha256": "18110A6DEB965FBAD64E332ED2A4DC591840E24EFB82F37EE4457C15101BBACA",
+      "patched_source": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_win_cpu.cu",
+      "patched_sha256": "4DDD5589C14F55A316757AD1E558D470D3CC0AC01BBEC067D23EBDBC1DBACC42",
+      "patches": [
+        {
+          "from": "fopen(file_binary, \"w\")",
+          "to": "fopen(file_binary, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary image file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_mean, \"w\")",
+          "to": "fopen(file_binary_mean, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_sigma, \"w\")",
+          "to": "fopen(file_binary_sigma, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "if (abs(theta_aperture) < 1.0e-7)",
+          "to": "if (fabs(theta_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "if (abs(phi_aperture) < 1.0e-7)",
+          "to": "if (fabs(phi_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "track_particles(CPU_batch, histories_per_thread, num_p, seed_input, image,",
+          "to": "track_particles(CPU_batch + num_p*total_threads, histories_per_thread, num_p, seed_input, image,",
+          "occurrences": 1,
+          "reason": "CPU branch reused one random sequence for every projection; offset the PRNG batch index per projection"
+        }
+      ],
+      "compiler": "MSVC cl.exe (/TC /O2 /std:c17)",
+      "vs_installation": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools",
+      "zlib": "zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in"
+    },
+    "random_seed": 1234567890
+  },
+  "spectrum": {
+    "path": "D:\\DevGit\\ct_dosemc_core\\results\\phase1a\\G2_anchor_air44\\tg195_120kvp.spc",
+    "n_bins": 207,
+    "bin_width_kev": 0.5,
+    "e_min_kev": 16.5,
+    "e_max_kev": 120.0,
+    "mean_energy_kev": 56.14313216828212,
+    "tg195_header": {
+      "target": "W/Al",
+      "kvp": "120 kVp",
+      "anode_angle": "11 deg anode angle",
+      "ripple": "0% Ripple",
+      "filtration": "Al filter thickness: 2.861 mm",
+      "mean_energy": "Mean Energy: 56.4 keV",
+      "hvl": "HVL: 5.010 mm Al"
+    }
+  },
+  "geometry": {
+    "spec": {
+      "phantom_radius_cm": 16.0,
+      "phantom_length_specified_cm": 300.0,
+      "sad_cm": 60.0,
+      "fan_width_at_isocentre_cm": 32.0,
+      "fan_thickness_at_isocentre_cm": 1.0,
+      "half_fan_deg": 14.931417178137552,
+      "standard": "AAPM Report 195 (TG-195) Case 4, section 3.4"
+    },
+    "phantom_length_cm": 40.0,
+    "voxel_size_cm": 0.25,
+    "n_voxels_xyz": [
+      480,
+      480,
+      208
+    ],
+    "dose_roi_z_index": [
+      81,
+      129
+    ],
+    "n_sub_fans": 4,
+    "omega_total_sr": 0.008594541802011819,
+    "omega_specified_sr": 0.008588755018677743,
+    "omega_excess_fraction": 0.0006737627655568623,
+    "histories_total": 200000000.0,
+    "n_projections": 36,
+    "projections_driven_externally": true,
+    "engine_invocations": 144,
+    "air_margin_cm": 44.0,
+    "air_margin_z_cm": 6.0,
+    "beamlets": [
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.086306100012735,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.044654282112839,
+            "sigma": 0.041717158591384834,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.27468198996048887,
+            "sigma": 0.010492489661264735,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.35923309996724,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.61832562587297,
+            "sigma": 0.07425611096238156,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.8137866857681821,
+            "sigma": 0.014981080811899163,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 18.173825899953954,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.556507785015995,
+            "sigma": 0.07878179884145912,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.7453729156407923,
+            "sigma": 0.01505315840733352,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.862323599983938,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.186959560026133,
+            "sigma": 0.04198650784695419,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.49598670611764045,
+            "sigma": 0.013405186427227404,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 1,
+        "gantry_angle_deg": 10.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.005303199985065,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.8161901023740725,
+            "sigma": 0.03940081196661473,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.36287329206309604,
+            "sigma": 0.00995657276273788,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 1,
+        "gantry_angle_deg": 10.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.205899499938823,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.24770604353159,
+            "sigma": 0.07620420914517095,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.1411014989566062,
+            "sigma": 0.020773903599579476,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 1,
+        "gantry_angle_deg": 10.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.98485070001334,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.5556410213744,
+            "sigma": 0.0749281198777429,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5612874291797008,
+            "sigma": 0.012484501642753968,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 1,
+        "gantry_angle_deg": 10.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.57810840010643,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.440143958561973,
+            "sigma": 0.037475375524916185,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.38160139876513544,
+            "sigma": 0.011369544117731827,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 2,
+        "gantry_angle_deg": 20.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.268809400033206,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.584814105548706,
+            "sigma": 0.038098405490893904,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.575062129046508,
+            "sigma": 0.013171624358362185,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 2,
+        "gantry_angle_deg": 20.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.923007900011726,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.834784120567722,
+            "sigma": 0.07543512993845153,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.1868583703456526,
+            "sigma": 0.01715645557034498,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 2,
+        "gantry_angle_deg": 20.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.347074800054543,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.46128127597735,
+            "sigma": 0.07853015823798798,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.47114403299318997,
+            "sigma": 0.012504397194861908,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 2,
+        "gantry_angle_deg": 20.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.792704800027423,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.79693273002757,
+            "sigma": 0.0405476697996657,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.14810897532963774,
+            "sigma": 0.006224197072496202,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 3,
+        "gantry_angle_deg": 29.999999999999996,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.003145099966787,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.055291490674778,
+            "sigma": 0.04193758569833016,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0342353375337487,
+            "sigma": 0.017939971737197177,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 3,
+        "gantry_angle_deg": 29.999999999999996,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.950277600088157,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.664631773350997,
+            "sigma": 0.07113680778146979,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.448075468059788,
+            "sigma": 0.020427511242985672,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 3,
+        "gantry_angle_deg": 29.999999999999996,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.812927299994044,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.473527973692512,
+            "sigma": 0.07562862788240544,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.44227661237578514,
+            "sigma": 0.012239771179335727,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 3,
+        "gantry_angle_deg": 29.999999999999996,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.60551490006037,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.011108903507536,
+            "sigma": 0.04037841380002139,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.19712334616525892,
+            "sigma": 0.008230630166556277,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 4,
+        "gantry_angle_deg": 40.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.916747299954295,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.42434571252724,
+            "sigma": 0.03910362946759443,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.0974013946601575,
+            "sigma": 0.02725860978842619,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 4,
+        "gantry_angle_deg": 40.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.178143199998885,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.782880801212947,
+            "sigma": 0.07404236408345585,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.7075735201505988,
+            "sigma": 0.02541409254987609,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 4,
+        "gantry_angle_deg": 40.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.040831300080754,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.650695284797692,
+            "sigma": 0.07503579699759372,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.4196632223798742,
+            "sigma": 0.012199630875180082,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 4,
+        "gantry_angle_deg": 40.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.022322800010443,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.6446370025356885,
+            "sigma": 0.03983083094149073,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.1425694992968963,
+            "sigma": 0.006286410593934577,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 5,
+        "gantry_angle_deg": 50.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.711161899962462,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.141296119255319,
+            "sigma": 0.04207448591562522,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.386305312595212,
+            "sigma": 0.031130168245965574,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 5,
+        "gantry_angle_deg": 50.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.705428500077687,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.380505077928714,
+            "sigma": 0.07456991785193103,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0490446177235149,
+            "sigma": 0.01751325439043373,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 5,
+        "gantry_angle_deg": 50.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.8715741999913,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.415007829065196,
+            "sigma": 0.078201717036933,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.590696068381432,
+            "sigma": 0.015714654496052475,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 5,
+        "gantry_angle_deg": 50.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.928040799917653,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.134488532258583,
+            "sigma": 0.04238752590773911,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.14211055429699027,
+            "sigma": 0.00639689283098878,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 6,
+        "gantry_angle_deg": 59.99999999999999,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.041182000073604,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.903432120028246,
+            "sigma": 0.040405274522345186,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.750433812599545,
+            "sigma": 0.04684222588736088,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 6,
+        "gantry_angle_deg": 59.99999999999999,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.291873199981637,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.086542619483936,
+            "sigma": 0.0733226820894841,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.3654698650310606,
+            "sigma": 0.02160151109770333,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 6,
+        "gantry_angle_deg": 59.99999999999999,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.260255599976517,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.51412836554608,
+            "sigma": 0.07527027080015433,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5187254351000309,
+            "sigma": 0.01271099859488983,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 6,
+        "gantry_angle_deg": 59.99999999999999,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.553589800023474,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.902871567777404,
+            "sigma": 0.04216859192822631,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.1523262025802424,
+            "sigma": 0.0065835947218893095,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 7,
+        "gantry_angle_deg": 70.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.539347599959,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.721866529144002,
+            "sigma": 0.03927551032434987,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 11.603740992127564,
+            "sigma": 0.05820942031414992,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 7,
+        "gantry_angle_deg": 70.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.61206920002587,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.465241508106214,
+            "sigma": 0.07370878652370494,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.6348849888759371,
+            "sigma": 0.02297242379814998,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 7,
+        "gantry_angle_deg": 70.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.605854099965654,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.80445612645127,
+            "sigma": 0.07671376278514881,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.364187437869152,
+            "sigma": 0.010597863204710381,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 7,
+        "gantry_angle_deg": 70.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.792354499921203,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.405628710622814,
+            "sigma": 0.036433834059690993,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.0947714980616823,
+            "sigma": 0.00545022077755067,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 8,
+        "gantry_angle_deg": 80.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.270360599970445,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.068415347055374,
+            "sigma": 0.0405957553121132,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 22.297551054904197,
+            "sigma": 0.08428607413926123,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 8,
+        "gantry_angle_deg": 80.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 19.398326799971983,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.174416180666675,
+            "sigma": 0.07623287438621808,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.790603400311458,
+            "sigma": 0.022097979321042745,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 8,
+        "gantry_angle_deg": 80.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 19.504934199969284,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.81432701252195,
+            "sigma": 0.07478535645870378,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5218898909786351,
+            "sigma": 0.013589858946194348,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 8,
+        "gantry_angle_deg": 80.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.418572499998845,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.785091961863656,
+            "sigma": 0.04093204922472757,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.09133033002681801,
+            "sigma": 0.004547478124035587,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 9,
+        "gantry_angle_deg": 90.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.66679419996217,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.820162710979847,
+            "sigma": 0.0391167130377814,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 46.8212630245436,
+            "sigma": 0.12196478865000655,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 9,
+        "gantry_angle_deg": 90.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.02161169995088,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.073878010364332,
+            "sigma": 0.07573523061666369,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.6924792015667935,
+            "sigma": 0.030205341356983245,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 9,
+        "gantry_angle_deg": 90.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 18.701935299905017,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.015257805504532,
+            "sigma": 0.07341708527800332,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5745884688546877,
+            "sigma": 0.01326034538247123,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 9,
+        "gantry_angle_deg": 90.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.48954929993488,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.810012330745265,
+            "sigma": 0.040487971952051886,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.23298995149010013,
+            "sigma": 0.008532161763831732,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 10,
+        "gantry_angle_deg": 100.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.96914140006993,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.89033517433967,
+            "sigma": 0.040948758503325876,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 88.8819912774643,
+            "sigma": 0.1667630963893057,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 10,
+        "gantry_angle_deg": 100.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.864203399978578,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.858180054794037,
+            "sigma": 0.07156237719919532,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.478997794132132,
+            "sigma": 0.03373753038556987,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 10,
+        "gantry_angle_deg": 100.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.243932600016706,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.85482952708856,
+            "sigma": 0.07427187120890523,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.7524071516994288,
+            "sigma": 0.01567115579012823,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 10,
+        "gantry_angle_deg": 100.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.60344089998398,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.716991527802016,
+            "sigma": 0.037827485061851615,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.20342416430231072,
+            "sigma": 0.008314016651657579,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 11,
+        "gantry_angle_deg": 109.99999999999999,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.337913000024855,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.149931926355176,
+            "sigma": 0.03502889815363632,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 159.0521717878379,
+            "sigma": 0.224748902494359,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 11,
+        "gantry_angle_deg": 109.99999999999999,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.599467599997297,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.49214741039218,
+            "sigma": 0.07682728326887929,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 4.771923772967344,
+            "sigma": 0.040152842995369496,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 11,
+        "gantry_angle_deg": 109.99999999999999,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.65659070003312,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.546712803927914,
+            "sigma": 0.07928749146623222,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.8656431026367204,
+            "sigma": 0.015902977692479565,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 11,
+        "gantry_angle_deg": 109.99999999999999,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.21566750004422,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.600476522484984,
+            "sigma": 0.03957678386993191,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.22994800845033547,
+            "sigma": 0.008091275672546245,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 12,
+        "gantry_angle_deg": 119.99999999999999,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.741739400080405,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.351217768198966,
+            "sigma": 0.03837878411598785,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 246.21320815668537,
+            "sigma": 0.28140681715384197,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 12,
+        "gantry_angle_deg": 119.99999999999999,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.55889920005575,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.3389293914081,
+            "sigma": 0.07573563017912874,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 7.628302196317885,
+            "sigma": 0.048992949860915624,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 12,
+        "gantry_angle_deg": 119.99999999999999,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.106056099990383,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.649826279424357,
+            "sigma": 0.07704829407332704,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.7160306221282056,
+            "sigma": 0.025637302059515775,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 12,
+        "gantry_angle_deg": 119.99999999999999,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.66938930004835,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.646293827427661,
+            "sigma": 0.03944286818784844,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.31808491727837984,
+            "sigma": 0.00952343458498449,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 13,
+        "gantry_angle_deg": 130.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.64925969997421,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.984819951829079,
+            "sigma": 0.0419294232409318,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 301.89354645337505,
+            "sigma": 0.30904359869473164,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 13,
+        "gantry_angle_deg": 130.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.71902920003049,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.96901702703036,
+            "sigma": 0.07658788961429627,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 12.694323289120586,
+            "sigma": 0.06432963353802934,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 13,
+        "gantry_angle_deg": 130.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.930108799948357,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.384300796696344,
+            "sigma": 0.07416807608218436,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.166289979415919,
+            "sigma": 0.02749445126983458,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 13,
+        "gantry_angle_deg": 130.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.38030229997821,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 3.9459335534429467,
+            "sigma": 0.03422540578315134,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.4721856369205864,
+            "sigma": 0.012984160359095963,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 14,
+        "gantry_angle_deg": 140.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.586822999990545,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.804364409428537,
+            "sigma": 0.039501946391911125,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 344.20354074783063,
+            "sigma": 0.3322768578700337,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 14,
+        "gantry_angle_deg": 140.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.722151199937798,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.393259463859057,
+            "sigma": 0.07463650616302335,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 23.817726612867077,
+            "sigma": 0.0886008021858243,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 14,
+        "gantry_angle_deg": 140.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.691852700081654,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.794390043658986,
+            "sigma": 0.07665451436219109,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.4773941438669183,
+            "sigma": 0.03238773882580089,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 14,
+        "gantry_angle_deg": 140.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.538383100065403,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.833042013135573,
+            "sigma": 0.03900009050749326,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.6923559540201616,
+            "sigma": 0.014930870591362846,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 15,
+        "gantry_angle_deg": 149.99999999999997,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.264062299975194,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.6964150857666525,
+            "sigma": 0.03868188607583176,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 354.6612985864143,
+            "sigma": 0.3345006022001681,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 15,
+        "gantry_angle_deg": 149.99999999999997,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.807983299950138,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.32229582383283,
+            "sigma": 0.07885522699331919,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 51.25921142110903,
+            "sigma": 0.12874054097946747,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 15,
+        "gantry_angle_deg": 149.99999999999997,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.895104499999434,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.022053727088966,
+            "sigma": 0.07721112828159968,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.264046963455432,
+            "sigma": 0.04676401676349236,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 15,
+        "gantry_angle_deg": 149.99999999999997,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.227598699973896,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.692382387600665,
+            "sigma": 0.03998458563445999,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0334436497204127,
+            "sigma": 0.0181425495543609,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 16,
+        "gantry_angle_deg": 160.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.304626199998893,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.690728200573866,
+            "sigma": 0.03945467799343216,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 43.03000334038037,
+            "sigma": 0.11888034628068002,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 16,
+        "gantry_angle_deg": 160.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.659362300066277,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.49218871681731,
+            "sigma": 0.07489414105764997,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 381.67390147155965,
+            "sigma": 0.3461627781165759,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 16,
+        "gantry_angle_deg": 160.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.28570230002515,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.246709034428573,
+            "sigma": 0.07703803276223228,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 11.274295839071645,
+            "sigma": 0.05993371881272358,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 16,
+        "gantry_angle_deg": 160.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.488409500103444,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.032621219721434,
+            "sigma": 0.042506163054498086,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.8652397202960769,
+            "sigma": 0.025240320014488858,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 17,
+        "gantry_angle_deg": 170.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.330000799964182,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.605394230218293,
+            "sigma": 0.039409054961880255,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 12.446543102355275,
+            "sigma": 0.06407317909038529,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 17,
+        "gantry_angle_deg": 170.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.680859299958684,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.683121001530225,
+            "sigma": 0.07496657044947565,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 415.92717907289057,
+            "sigma": 0.36227909829479316,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 17,
+        "gantry_angle_deg": 170.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.937883300008252,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.662155162180202,
+            "sigma": 0.07597444879444208,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 27.221349178560878,
+            "sigma": 0.09466242342493723,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 17,
+        "gantry_angle_deg": 170.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.744973100023344,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.241380266382725,
+            "sigma": 0.04150235373839428,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.86378944996466,
+            "sigma": 0.029129843075754093,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 18,
+        "gantry_angle_deg": 180.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.850654499954544,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.883051726107096,
+            "sigma": 0.04051365030825434,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.098325269886364,
+            "sigma": 0.04533460376648188,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 18,
+        "gantry_angle_deg": 180.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.767113500041887,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.62293691511913,
+            "sigma": 0.07458869334946501,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 225.82794176946683,
+            "sigma": 0.2675766347515824,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 18,
+        "gantry_angle_deg": 180.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.531542900018394,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.559485841850545,
+            "sigma": 0.07554663578455666,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 226.87187477871282,
+            "sigma": 0.2689866483394442,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 18,
+        "gantry_angle_deg": 180.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.09999549994245,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 3.9399479927242878,
+            "sigma": 0.03428572860547441,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 5.597841863620065,
+            "sigma": 0.04217256972590316,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 19,
+        "gantry_angle_deg": 190.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.77551309997216,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.861953925794019,
+            "sigma": 0.04043945280077586,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.8445000700886798,
+            "sigma": 0.0316939828093003,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 19,
+        "gantry_angle_deg": 190.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.660993700032122,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.29535510231618,
+            "sigma": 0.07424666081521833,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 27.351493854708053,
+            "sigma": 0.09593819113264145,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 19,
+        "gantry_angle_deg": 190.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.337159999995492,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.917135074767053,
+            "sigma": 0.07471334480626546,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 415.89295899028343,
+            "sigma": 0.36242593523375605,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 19,
+        "gantry_angle_deg": 190.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.265309100039303,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.539185007001237,
+            "sigma": 0.0373813771548947,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 13.2492067326718,
+            "sigma": 0.06478272831182282,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 20,
+        "gantry_angle_deg": 200.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.4613119000569,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.682343492514266,
+            "sigma": 0.038411613062074974,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.4879231375024777,
+            "sigma": 0.021562940810143264,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 20,
+        "gantry_angle_deg": 200.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.925176799995825,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.584104674812366,
+            "sigma": 0.07862774808136308,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 12.245038915068577,
+            "sigma": 0.06331961519181188,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 20,
+        "gantry_angle_deg": 200.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.60189970000647,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.294794000191516,
+            "sigma": 0.07467997273393592,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 383.78650993981995,
+            "sigma": 0.34953786816658283,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 20,
+        "gantry_angle_deg": 200.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.1516456999816,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.111135679348003,
+            "sigma": 0.04099552541522571,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 42.94694757535892,
+            "sigma": 0.11957021787486503,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 21,
+        "gantry_angle_deg": 210.00000000000003,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.27834509999957,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.3538264750035705,
+            "sigma": 0.03625701978344494,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0389884449451583,
+            "sigma": 0.018910344374111578,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 21,
+        "gantry_angle_deg": 210.00000000000003,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.798815099988133,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.856702914656047,
+            "sigma": 0.07221380577148881,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.20293338805401,
+            "sigma": 0.04541840879671363,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 21,
+        "gantry_angle_deg": 210.00000000000003,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.753976100008003,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.933506349234253,
+            "sigma": 0.07774466490900706,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 51.24087416365661,
+            "sigma": 0.12883067161582823,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 21,
+        "gantry_angle_deg": 210.00000000000003,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.249317100038752,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.589650442409714,
+            "sigma": 0.03878729676009211,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 354.39220767826396,
+            "sigma": 0.33464370907352536,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 22,
+        "gantry_angle_deg": 219.99999999999997,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.246658300049603,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.275747212815006,
+            "sigma": 0.036138883338767906,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.6462411250572613,
+            "sigma": 0.014623142423271859,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 22,
+        "gantry_angle_deg": 219.99999999999997,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.25739969999995,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.65555124167031,
+            "sigma": 0.07974370506683667,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.4393512960829957,
+            "sigma": 0.034992063666681505,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 22,
+        "gantry_angle_deg": 219.99999999999997,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.30065189988818,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.104899969846308,
+            "sigma": 0.07454109103873637,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 23.708186478493527,
+            "sigma": 0.08837180717639449,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 22,
+        "gantry_angle_deg": 219.99999999999997,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.357331500039436,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.719481227267197,
+            "sigma": 0.038848734544341575,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 345.0515198328584,
+            "sigma": 0.33193340355299683,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 23,
+        "gantry_angle_deg": 230.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.47333589999471,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.4035330412535565,
+            "sigma": 0.042698116298375687,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.6336559397581292,
+            "sigma": 0.01586636323846411,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 23,
+        "gantry_angle_deg": 230.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.283273199922405,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.469484311956517,
+            "sigma": 0.07438635218369928,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.08311032777226,
+            "sigma": 0.025084581093563277,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 23,
+        "gantry_angle_deg": 230.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.553507499978878,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.00970022188436,
+            "sigma": 0.07696293714716489,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 12.057545715472957,
+            "sigma": 0.06325760827019444,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 23,
+        "gantry_angle_deg": 230.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.50290209997911,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.865131015469363,
+            "sigma": 0.04018853155448444,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 303.6893087711246,
+            "sigma": 0.3113909712094544,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 24,
+        "gantry_angle_deg": 239.99999999999997,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.380786700057797,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.92373900818521,
+            "sigma": 0.04054164030398282,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.352031949636301,
+            "sigma": 0.011747135268468463,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 24,
+        "gantry_angle_deg": 239.99999999999997,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.636371599975973,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.299062448927288,
+            "sigma": 0.0736643017442926,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.6240977737923177,
+            "sigma": 0.023890011008871937,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 24,
+        "gantry_angle_deg": 239.99999999999997,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 18.152045499999076,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 19.088236035209373,
+            "sigma": 0.07920140903208016,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.811405069441157,
+            "sigma": 0.046260598021439905,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 24,
+        "gantry_angle_deg": 239.99999999999997,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.43585000000894,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.011737429894538,
+            "sigma": 0.0403312686774668,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 244.83022825415654,
+            "sigma": 0.278837494774372,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 25,
+        "gantry_angle_deg": 250.00000000000003,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.14362800004892,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.443947240845064,
+            "sigma": 0.037030992313808235,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.16742429127137795,
+            "sigma": 0.007905314841114945,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 25,
+        "gantry_angle_deg": 250.00000000000003,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.57656339998357,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.8938448300451,
+            "sigma": 0.07423153515292426,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0030091172153914,
+            "sigma": 0.01760719707512754,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 25,
+        "gantry_angle_deg": 250.00000000000003,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.66623260010965,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.579521048037748,
+            "sigma": 0.0754673239666529,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 4.309332228433071,
+            "sigma": 0.036684844738875864,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 25,
+        "gantry_angle_deg": 250.00000000000003,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 17.248957099975087,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.083188525612785,
+            "sigma": 0.04190069684005327,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 162.55015148644975,
+            "sigma": 0.2292605140179496,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 26,
+        "gantry_angle_deg": 260.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.164107199991122,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.605623978332337,
+            "sigma": 0.03852639849788923,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.2592495909726024,
+            "sigma": 0.010231205221359497,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 26,
+        "gantry_angle_deg": 260.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.349155199946836,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.73819371931139,
+            "sigma": 0.0749084250384536,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.9298739721697055,
+            "sigma": 0.019416516571309227,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 26,
+        "gantry_angle_deg": 260.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.56635490001645,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.15163764923593,
+            "sigma": 0.07726238312170668,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.2468669827482977,
+            "sigma": 0.030862194169668615,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 26,
+        "gantry_angle_deg": 260.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.29044440004509,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.5105004165087355,
+            "sigma": 0.038470802307857155,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 88.96125645994037,
+            "sigma": 0.16791569539018292,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 27,
+        "gantry_angle_deg": 270.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.08800790004898,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.90808949887958,
+            "sigma": 0.04070629385449589,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.2061935884480055,
+            "sigma": 0.007936273336887302,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 27,
+        "gantry_angle_deg": 270.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.673024000017904,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.81542891998565,
+            "sigma": 0.07235767774332788,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.8301353804133855,
+            "sigma": 0.0175289366848211,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 27,
+        "gantry_angle_deg": 270.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.69037580001168,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.47309802662903,
+            "sigma": 0.07518943985305435,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.843687195610091,
+            "sigma": 0.030691944050713627,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 27,
+        "gantry_angle_deg": 270.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.356251399964094,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.685529446237744,
+            "sigma": 0.03755764010313332,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 46.71640233029596,
+            "sigma": 0.12258122790700866,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 28,
+        "gantry_angle_deg": 280.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.12141729996074,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.506981869716201,
+            "sigma": 0.038893612078138164,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.27171312085207555,
+            "sigma": 0.009255024578642704,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 28,
+        "gantry_angle_deg": 280.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.570592900039628,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.19071684950355,
+            "sigma": 0.07481298818233878,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.606564777423735,
+            "sigma": 0.015518743403549182,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 28,
+        "gantry_angle_deg": 280.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.811984100029804,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.45826315414485,
+            "sigma": 0.07011122751829726,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.1121531507645246,
+            "sigma": 0.025095459597704373,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 28,
+        "gantry_angle_deg": 280.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.23134130006656,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.487102602852747,
+            "sigma": 0.03858633586049068,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 24.29198322088984,
+            "sigma": 0.09094584003413358,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 29,
+        "gantry_angle_deg": 290.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.399335500085726,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.992950565158679,
+            "sigma": 0.04089637294253554,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.2066321722879041,
+            "sigma": 0.009180356913476594,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 29,
+        "gantry_angle_deg": 290.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.60499600006733,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.635314715081343,
+            "sigma": 0.07511295287734761,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.38690124012216537,
+            "sigma": 0.011352474714418382,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 29,
+        "gantry_angle_deg": 290.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.599681800114922,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.74135430139392,
+            "sigma": 0.07598906299249157,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.9422581412369355,
+            "sigma": 0.027732308660822255,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 29,
+        "gantry_angle_deg": 290.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.55274539999664,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.614583557108989,
+            "sigma": 0.039957211499844096,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 11.630559946694007,
+            "sigma": 0.06104490070965949,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 30,
+        "gantry_angle_deg": 299.99999999999994,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.498729700106196,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.617977439926378,
+            "sigma": 0.03866596299324966,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.20853059283148767,
+            "sigma": 0.00887035679650421,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 30,
+        "gantry_angle_deg": 299.99999999999994,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.557992200017907,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.176208411593638,
+            "sigma": 0.07733335561051734,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.3873100815517281,
+            "sigma": 0.012136222375007453,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 30,
+        "gantry_angle_deg": 299.99999999999994,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.746476599946618,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.462801097623746,
+            "sigma": 0.07518708363259596,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.1560412208995086,
+            "sigma": 0.016965197851890913,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 30,
+        "gantry_angle_deg": 299.99999999999994,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.33801800000947,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.233597607211207,
+            "sigma": 0.037002636504290407,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 6.489824238647051,
+            "sigma": 0.044930652808567735,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 31,
+        "gantry_angle_deg": 310.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.425763300037943,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.1436791620322255,
+            "sigma": 0.041665052600796275,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.16913711485855182,
+            "sigma": 0.007942024456820442,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 31,
+        "gantry_angle_deg": 310.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.56077959993854,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.92522942513802,
+            "sigma": 0.07243999104828314,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.3508598564689319,
+            "sigma": 0.011770657596723518,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 31,
+        "gantry_angle_deg": 310.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.77598949999083,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.88317844292822,
+            "sigma": 0.0753893760444189,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.3242258563944598,
+            "sigma": 0.02172704478575603,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 31,
+        "gantry_angle_deg": 310.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.3338809000561,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.701485618746323,
+            "sigma": 0.039925450208716386,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 3.958743268628054,
+            "sigma": 0.03631683390553798,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 32,
+        "gantry_angle_deg": 320.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.158567899954505,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.4634027296260985,
+            "sigma": 0.037774586443520226,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.16497979454256645,
+            "sigma": 0.006330866189525252,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 32,
+        "gantry_angle_deg": 320.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.781521699973382,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.937397416491816,
+            "sigma": 0.07280461362881135,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5108338510826678,
+            "sigma": 0.012833483422665775,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 32,
+        "gantry_angle_deg": 320.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.429023999953642,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 16.68506412200026,
+            "sigma": 0.07016621353843239,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.4834228741612656,
+            "sigma": 0.022897815553321894,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 32,
+        "gantry_angle_deg": 320.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.35687549994327,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.067199104735759,
+            "sigma": 0.03520481779585685,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 2.172705504087306,
+            "sigma": 0.025380225049805038,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 33,
+        "gantry_angle_deg": 330.00000000000006,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.80786550010089,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.527942215930028,
+            "sigma": 0.03715220450616165,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.14455475487463526,
+            "sigma": 0.0073699299474021185,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 33,
+        "gantry_angle_deg": 330.00000000000006,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.635178999975324,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.42635921822518,
+            "sigma": 0.07440551100641893,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.44002401051903706,
+            "sigma": 0.013838710360006584,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 33,
+        "gantry_angle_deg": 330.00000000000006,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.593649800051935,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.275144616388168,
+            "sigma": 0.07409893835814996,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.4245231149355833,
+            "sigma": 0.02112348063691554,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 33,
+        "gantry_angle_deg": 330.00000000000006,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.457317099906504,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.656286200614623,
+            "sigma": 0.03875198794985503,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.1559046498212864,
+            "sigma": 0.020226873392763692,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 34,
+        "gantry_angle_deg": 340.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.610979999997653,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 5.062496211759701,
+            "sigma": 0.04015060701452249,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.1567278448065741,
+            "sigma": 0.0064008985443748485,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 34,
+        "gantry_angle_deg": 340.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.39377070008777,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.044330668172464,
+            "sigma": 0.07685714646519973,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.47268445605883097,
+            "sigma": 0.011979535840778474,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 34,
+        "gantry_angle_deg": 340.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.68379979999736,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.127518322759265,
+            "sigma": 0.07361412235629924,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.108073599288259,
+            "sigma": 0.019101543641070702,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 34,
+        "gantry_angle_deg": 340.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.25673980009742,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.480505567216031,
+            "sigma": 0.037060890893724996,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.8749701033270776,
+            "sigma": 0.01916345882732631,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 35,
+        "gantry_angle_deg": 350.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": -11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.13283609994687,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.556057364042568,
+            "sigma": 0.03790955520410907,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.21447240947861768,
+            "sigma": 0.007561449820900367,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 35,
+        "gantry_angle_deg": 350.0,
+        "sub_fan_index": 1,
+        "centre_psi_deg": -3.732854294534388,
+        "azimuthal_aperture_deg": 7.465708589068776,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351747,
+        "weight": 0.007003813143385958,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.533873099950142,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 18.171413498729358,
+            "sigma": 0.0747060654303673,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.5201456034958065,
+            "sigma": 0.012915422619526558,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 35,
+        "gantry_angle_deg": 350.0,
+        "sub_fan_index": 2,
+        "centre_psi_deg": 3.7328542945343886,
+        "azimuthal_aperture_deg": 7.465708589068777,
+        "polar_aperture_deg": 0.9528817643475709,
+        "solid_angle_sr": 0.0021670043340351755,
+        "weight": 0.00700381314338596,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.29714210005477,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 17.431387121936897,
+            "sigma": 0.07510049874466154,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 1.0609912234352745,
+            "sigma": 0.017219597563903795,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      },
+      {
+        "projection_index": 35,
+        "gantry_angle_deg": 350.0,
+        "sub_fan_index": 3,
+        "centre_psi_deg": 11.198562883603165,
+        "azimuthal_aperture_deg": 7.465708589068775,
+        "polar_aperture_deg": 0.9367269582696586,
+        "solid_angle_sr": 0.0021302665669707347,
+        "weight": 0.006885075745502931,
+        "histories": 1388888.888888889,
+        "wall_seconds": 16.790981699945405,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 4.548206505193852,
+            "sigma": 0.03867766885384478,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 0.4958122576937698,
+            "sigma": 0.013409128442030552,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      }
+    ]
+  },
+  "results": {
+    "center": {
+      "value": 11.234779628012221,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.005031418290862396,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "center",
+          "n_sub_fans": 4,
+          "histories_total": 200000000.0,
+          "omega_total_sr": 0.008594541802011819
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "perimeter": {
+      "value": 39.75254617340459,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.009370531014402708,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "perimeter",
+          "n_sub_fans": 4,
+          "histories_total": 200000000.0,
+          "omega_total_sr": 0.008594541802011819
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    }
+  },
+  "comparison_with_tg195": {
+    "center": {
+      "ours_ev_per_photon": 11.234779628012221,
+      "ours_sigma": 0.005031418290862396,
+      "ours_relative_sigma": 0.0004478430781425669,
+      "per_code": {
+        "EGSnrc": {
+          "reference": 11.395583333333333,
+          "deviation_fraction": -0.014111055188438026
+        },
+        "Geant4": {
+          "reference": 11.431352777777777,
+          "deviation_fraction": -0.017195965655761092
+        },
+        "MCNP": {
+          "reference": 11.385319444444445,
+          "deviation_fraction": -0.013222274277572499
+        },
+        "Penelope": {
+          "reference": 11.316216666666667,
+          "deviation_fraction": -0.007196489874069734
+        }
+      },
+      "closest_code": "Penelope",
+      "reference_mean": 11.382118055555557,
+      "reference_min": 11.316216666666667,
+      "reference_max": 11.431352777777777,
+      "inter_code_spread_fraction": 0.010115525998688087,
+      "ratio_to_reference_mean": 0.9870552715387256,
+      "deviation_fraction": -0.012944728461274368,
+      "passes_tg195_tolerance": false,
+      "within_inter_code_range": false,
+      "angular_case": "discrete (36-angle average)",
+      "n_codes_in_reference": 4
+    },
+    "perimeter": {
+      "ours_ev_per_photon": 39.75254617340459,
+      "ours_sigma": 0.009370531014402708,
+      "ours_relative_sigma": 0.0002357215302267058,
+      "per_code": {
+        "EGSnrc": {
+          "reference": 39.76631638888889,
+          "deviation_fraction": -0.00034627837664513716
+        },
+        "Geant4": {
+          "reference": 39.74766286111111,
+          "deviation_fraction": 0.0001228578472787234
+        },
+        "MCNP": {
+          "reference": 39.72858919444444,
+          "deviation_fraction": 0.0006030161011481017
+        },
+        "Penelope": {
+          "reference": 39.802945722222226,
+          "deviation_fraction": -0.0012662266046681303
+        }
+      },
+      "closest_code": "Geant4",
+      "reference_mean": 39.761378541666666,
+      "reference_min": 39.72858919444444,
+      "reference_max": 39.802945722222226,
+      "inter_code_spread_fraction": 0.0018700691601994637,
+      "ratio_to_reference_mean": 0.9997778656428418,
+      "deviation_fraction": -0.00022213435715823238,
+      "passes_tg195_tolerance": true,
+      "within_inter_code_range": true,
+      "angular_case": "discrete (36-angle average)",
+      "n_codes_in_reference": 4
+    }
+  },
+  "reference_note": "Reference values are read at run time from the AAPM electronic resources in data/tg195/, which are copyrighted and are not redistributed by this repository. Only the comparison is recorded here.",
+  "known_gaps": [
+    "MC-GPU tallies collision kerma; electrons are not transported.",
+    "Phantom modelled at 40 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
+    "Voxelised cylinder: the curved surface is stair-stepped at the 0.25 cm voxel scale.",
+    "The fan is approximated by 4 azimuthal sub-fans; the residual solid-angle error is +0.0674 %.",
+    "Only 44 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
+  ]
+}

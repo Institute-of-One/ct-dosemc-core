@@ -548,22 +548,45 @@ explanation was wrong and is withdrawn**, for two reasons:
 
 The correct statement is that neither difference is significant once the
 uncertainty is calibrated. Against the quoted in-run σ they are 5.2σ and 3.2σ —
-but G4 measured that this estimator understates the replica SD by 1.9–4.0×, and
-applying that:
+but that estimator is badly understated, and the inflation was then **measured on
+these very VOIs** rather than borrowed from the first test (§6.3a):
 
-| inflation | centre (+0.331%) | perimeter (+0.107%) |
-|---|---|---|
-| ×1.89 | 2.8σ | 1.7σ |
-| ×2.39 | 2.2σ | 1.3σ |
-| ×4.00 | 1.3σ | 0.8σ |
+| VOI | difference | replica SD | significance |
+|---|---|---|---|
+| centre | +0.331% | 0.484% | **0.68σ** |
+| perimeter | +0.107% | 0.442% | **0.24σ** |
 
-so both are consistent with statistical fluctuation. The manuscript sentence is
-stronger this way than with an explanation attached:
+Neither is significant. The manuscript sentence is stronger this way than with an
+explanation attached:
 
 > The two reference codes that reported both angular sub-cases differ from
 > themselves by +2.23% and +2.51% at the central VOI. The two sub-cases of this
-> pipeline agreed **within statistical uncertainty** (+0.33% and +0.11%; ≤2.8σ
+> pipeline agreed **within statistical uncertainty** (+0.33% and +0.11%; ≤0.7σ
 > using replica-calibrated uncertainties).
+
+### 5.1.3a The uncertainty on these VOIs is 5–9× the in-run estimate
+
+G4 was originally run only on the first test's axial sections, where the in-run
+estimator understates the replica SD by 1.9–4.0×. Applying that factor to the
+second test's small cylinders would have been assuming the thing in question, so
+it was measured there too (K = 1, ten independent seeds, 5×10⁷ histories each):
+
+| VOI | replica SD | in-run quadrature | ratio |
+|---|---|---|---|
+| centre | 0.484% | 0.010% | **5.43×** |
+| perimeter | 0.442% | 0.019% | **9.36×** |
+
+The 10 mm VOIs are far worse than the axial sections, which is not surprising —
+they contain a few hundred voxels rather than tens of thousands, so the shared
+history correlation the in-run estimator ignores is a much larger part of the
+variance. With K = 10 the SD is itself known only to ±24%.
+
+**Consequence, and it is not small: the σ printed next to every second-test result
+is a lower bound roughly an order of magnitude below the truth.** Any significance
+statement about the centre or perimeter VOI must use the replica SD. That includes
+the G2 deviations themselves — at 2×10⁸ histories the replica SD scales to about
+0.24%, so the anchor's −0.80% is around 3σ rather than the ~18σ its printed σ
+would suggest.
 
 "Not significant" is a stronger claim than "explained".
 
@@ -642,6 +665,46 @@ the TG-195 reference. Measured so far, on the Case 4 first test:
   use 40–60 cm and record the fact. Re-measured on the *centre* VOI at 120 kVp
   (§5.3.2), which is where a long-range-scatter deficit would show, with the same
   answer.
+
+### 5.3.0 The G2 anchor at the documented default: it does not pass
+
+G3 established that the voxel box should reach the focal spot, and the air-margin
+default was changed to 44 cm accordingly. **The `G2_final` anchor, however, was
+computed at 30 cm** — before that default existed. A number quoted in a paper has
+to come from the documented configuration, so it was re-taken at 44 cm with
+everything else identical:
+
+| | air 30 cm | air 44 cm (documented default) |
+|---|---|---|
+| centre | −0.798% | **−1.294%** |
+| perimeter | +0.034% | **−0.022%** |
+| verdict vs ±1% | pass | **centre fails** |
+
+So **G2 does not pass at the documented default configuration**, and the earlier
+pass was obtained at a setting the project itself has since deprecated. Recorded
+plainly rather than resolved by choosing the older configuration, which would be
+exactly the failure mode §5.3.3 warns about.
+
+Three things belong beside it:
+
+* The direction is expected. More modelled air means more attenuation between the
+  focal spot and the phantom, and the G1 air scan showed the same monotonic
+  decrease. This is the correct physics being included, not a regression.
+* The perimeter *improved*, to −0.022%, and now agrees with all four codes to
+  within 0.13%.
+* With replica-calibrated uncertainty (§5.1.3a, ≈0.24% at this history count) the
+  centre deviation is roughly 5σ from the four-code mean but **−0.72%, about 3σ,
+  from PENELOPE** — the code sharing our cross-sections. The decomposition of
+  §5.1.2a still applies: most of the deviation from the four-code mean is the
+  cross-section library, not this implementation.
+
+The open question is therefore whether the remaining centre deficit is the
+transport-implementation residual of §5.1.2a, now larger because a genuine
+attenuation path was added, or whether the air path is being over-modelled at
+44 cm. The sub-fan scan at the G2 configuration (§6.1) is the next input; it is
+running.
+
+**Until this is settled, the Phase-1a gate is not closed.**
 
 ### 5.3.3 Never tune the sub-fan count towards better agreement
 
