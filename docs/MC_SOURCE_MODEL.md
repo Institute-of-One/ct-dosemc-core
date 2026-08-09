@@ -460,6 +460,30 @@ Two things worth stating plainly:
   what should happen; had it not, the implementation would be the thing to
   suspect.
 
+### 5.1.3 Both sub-cases, run here
+
+Rather than only choosing between the published columns, both sub-cases were run
+with this pipeline: 36 discrete projections, and 720 projections as the
+continuous limit. Same geometry, same statistics, one azimuthal sub-fan in both,
+so the sub-fan solid-angle bias is common to the pair and cancels in the
+comparison.
+
+| | discrete (36) | continuous limit (720) | difference |
+|---|---|---|---|
+| centre | 11.3251 | 11.2878 | **+0.330%** |
+| perimeter | 39.7987 | 39.7560 | **+0.107%** |
+
+For comparison, the two packages that submitted both sub-cases to TG-195 disagree
+with *themselves* by +2.23% / −0.61% (Geant4) and +2.51% / +2.58% (MCNP) at
+centre / perimeter.
+
+This is worth stating in the manuscript, because it makes the point without
+criticising the reference: **the two angular sub-cases of this pipeline agree with
+each other to 0.33% and 0.11%, where the two reference codes that reported both
+differ from themselves by up to 2.6%.** The sign is also physically right — a
+36-point quadrature of an angular function that swings by a factor of 225 should
+sit slightly above its own continuum limit.
+
 G1 is run **first** on purpose. It removes the spectrum, the rebinning, the
 255-bin limit and the source rotation from the problem: if the monoenergetic
 single-projection case disagrees, nothing downstream of it means anything.
