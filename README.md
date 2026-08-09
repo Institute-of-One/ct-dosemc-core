@@ -8,10 +8,11 @@ dose coefficients are *computed* rather than looked up, and there is no licensin
 exposure anywhere in the chain.
 
 > **Status: Phase 1a — code verification. Not yet usable for patient dose.**
-> The transport, geometry and source model are verified against **AAPM TG-195
-> Case 4**: the monoenergetic single-projection gate agrees with the four-code
-> published mean to **0.147%** against a ±1% tolerance. Remaining gates and open
-> items: [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.1 and §7.
+> All four physics gates against **AAPM TG-195 Case 4** now pass, against a ±1%
+> tolerance: G1 (56.4 keV, single projection) 0.147%, G1′ (120 kVp) 0.338%,
+> G2 (120 kVp, 36 projections) −0.798% / +0.034%. Convergence and replica gates
+> are running; CPU/GPU agreement is blocked on a CUDA toolkit. Remaining items:
+> [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.1 and §7.
 
 Institute of One, LISIT Co., Ltd., Tokyo, Japan · MIT licence.
 
@@ -130,7 +131,7 @@ The CPU build needs no CUDA toolkit and is the reference; the CUDA build is
 | Phase | What | State |
 |---|---|---|
 | 0 | scaffold, engine build, spectra, source model | done |
-| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | G0 done, **G1 passed (0.147%)**, G2 running, G3–G5 open |
+| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | **G0/G1/G1′/G2 passed**; G3, G4 running; G5 blocked on CUDA |
 | 1b | physical anchor: bowtie, filtration, μ_en/ρ, measured CTDIvol | not started; may run in parallel with Phase 2 |
 | 2 | multi-vendor cohort → per-organ mGy + MC uncertainty | released by Phase 1a |
 | 3 | cross-check against published ranges (comparison only) | — |
@@ -182,8 +183,17 @@ from here. The current state, in brief:
 **Four defects in the vendored engine** were found and patched, three of which
 produce wrong results silently — including one that turns any beam narrower than
 1° into a pencil beam, and one that made every projection of a CT rotation replay
-the same random sequence. Write-ups ready to file upstream:
+the same random sequence. All four are reported upstream:
+[DIDSR/MCGPU#22](https://github.com/DIDSR/MCGPU/issues/22),
+[#23](https://github.com/DIDSR/MCGPU/issues/23),
+[#24](https://github.com/DIDSR/MCGPU/issues/24),
+[#25](https://github.com/DIDSR/MCGPU/issues/25) — see
 [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md).
+
+**The volume of a scored region is not a detail.** A voxel-centre-inside test
+resolves a 10 mm scoring cylinder on a 2.5 mm grid 4.5% short and a 13.1 mm CTDI
+chamber 11.3% long. Since energy deposited scales with the selected volume, the
+first of those was the entire −3.2% G2 discrepancy.
 
 ---
 

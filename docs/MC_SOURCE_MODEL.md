@@ -320,11 +320,37 @@ and is copyrighted (§5.4).
 | # | Test | Criterion | State |
 |---|---|---|---|
 | **G0** | spectrum beam quality vs TG-195 | our HVL estimator reproduces TG-195's stated HVL from TG-195's own table | **done** — −2.3% (120 kVp), −1.8% (100 kVp) |
-| **G1** | Case 4 first test: 56.4 keV monoenergetic, single projection, four 10 mm axial sections | within 1% of the four-code mean | **PASSED** — worst deviation 0.147% |
-| **G2** | Case 4 second test: 120 kVp W/Al, 36 projections, two 10 mm PMMA cylinders | within 1% of the four-code mean | running |
-| G3 | convergence in voxel size, phantom length, air margin, sub-fan count | each smaller than the G1/G2 margin | partly done (§5.3) |
-| G4 | replica-based uncertainty, K ≥ 10 independent seeds | consistent with the sub-fan quadrature estimate | not started |
-| G5 | CPU/GPU agreement | within statistics on the full G1/G2 set | blocked on a CUDA toolkit |
+| **G1** | Case 4 first test: 56.4 keV monoenergetic, single projection, four 10 mm axial sections | within 1% of the four-code mean | **PASSED** — worst 0.147% |
+| **G1′** | as G1, with TG-195's distributed 120 kVp W/Al spectrum | as above | **PASSED** — worst 0.338% |
+| **G2** | Case 4 second test: 120 kVp W/Al, 36 projections, two 10 mm PMMA cylinders | within 1% of the four-code **discrete** mean | **PASSED** — centre −0.798%, perimeter +0.034% |
+| **G3** | convergence in voxel size, phantom length, air margin, sub-fan count | each smaller than the G1/G2 margin | sub-fans, length and air margin done (§5.3); voxel size running |
+| G4 | replica-based uncertainty, K ≥ 10 independent seeds | consistent with the sub-fan quadrature estimate | running |
+| G5 | CPU/GPU agreement | within statistics on the full G1/G2 set | **blocked**: no CUDA toolkit |
+
+**G5 is not a formality.** Defect #22 — `abs()` on a `double` — manifests *only*
+in the CPU build, because `nvcc` compiles `.cu` as C++ where `abs` has a `double`
+overload. A defect that makes the two builds disagree for identical input is
+exactly what this gate exists to catch, and it has already produced one. It needs
+a CUDA toolkit installation (administrator; the pip distribution ships only
+`ptxas` on Windows, not `nvcc`) plus the `cuda-samples` `Common` headers.
+
+### 5.1.1 Which TG-195 sub-case a run is compared against
+
+The second test is published **twice** — 36 discrete projections at 10° steps, and
+a source angle sampled per photon from the continuous 360° distribution — and the
+two are not the same experiment. They differ by 2.13% at the centre VOI and 1.02%
+at the perimeter for the 120 kVp beam. `read_case4_reference(..., angular=...)`
+selects the column and the runner picks it from the projection count; comparing a
+discrete run against the continuous column was worth −2.1% on its own.
+
+The perimeter difference is expected: a 36-point quadrature of an angular function
+that swings by a factor of 225 across the rotation is not the same as its
+integral. The **centre** difference is not obviously explicable — that VOI is on
+the rotation axis of a cylindrically symmetric phantom, so its dose should be
+invariant with gantry angle, and TG-195's own per-angle values confirm that
+(spread 0.48%). Yet their two sub-cases for it differ by 2.13% at 120 kVp against
+0.23% at 56.4 keV. That is an inconsistency *within the published reference*, not
+in this code, and it is recorded here rather than chased.
 
 G1 is run **first** on purpose. It removes the spectrum, the rebinning, the
 255-bin limit and the source rotation from the problem: if the monoenergetic
@@ -388,8 +414,37 @@ the TG-195 reference. Measured so far, on the Case 4 first test:
 * **Voxel size.** 2.5 mm → 1.25 mm moved segment 1 by 0.02%. In a homogeneous
   cylinder, voxel size affects only the boundary of the cylinder and of the VOIs,
   not the transport, because Woodcock tracking does not resolve voxel walls.
-* **Phantom length.** Not yet scanned to the specified 3,000 mm; runs to date use
-  40–60 cm.
+* **Sub-fan count.** Worst deviation from the TG-195 mean is 0.058% at K = 4,
+  0.417% at K = 8 and 0.080% at K = 16 — all inside the gate, and the spread
+  between them is consistent with the Monte-Carlo noise of those runs rather than
+  with any residual geometric bias.
+* **Phantom length.** 40 → 200 cm moves the answer by at most 0.4%, with no trend,
+  so the specified 3,000 mm "infinite cylinder" is not needed at these VOIs. Runs
+  use 40–60 cm and record the fact.
+
+### 5.3.1 The volume of a scored region is not a detail
+
+Two regions in this project are defined analytically and then voxelised, and both
+were wrong by amounts that mattered:
+
+| Region | Voxel-centre volume / true volume |
+|---|---|
+| TG-195 second-test VOI (10 mm ø, 2.5 mm voxels) | **0.955** (−4.5%) |
+| CTDI pencil chamber (13.1 mm ø, 2.5 mm voxels) | **1.113** (+11.3%) |
+| TG-195 first-test section (320 mm ø) | 1.002 (+0.2%) |
+
+Energy deposited is proportional to the selected volume, so the first of these
+came straight off the G2 result. `phantom.cylinder_occupancy` replaces the
+centre-inside test with the analytic volume fraction per voxel (exact in z,
+subdivided only on the boundary ring), reproducing the true volume to 7.5×10⁻⁵.
+
+**It is applied only where the region floats inside a uniform medium.** The
+first-test VOI's edge *is* the phantom edge, which the geometry itself voxelised
+with a centre test, so a voxel whose centre is inside is entirely PMMA and its
+whole mass genuinely absorbed dose; weighting it down discards real deposited
+energy at the entrance surface, measured at −2.2%. And it is never applied to a
+segmentation mask, because such a mask *is* the definition of the organ — there is
+no analytic shape for a voxel to be partially inside of.
 
 ### 5.4 Licensing of the reference data
 
