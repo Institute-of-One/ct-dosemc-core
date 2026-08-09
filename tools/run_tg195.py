@@ -34,6 +34,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from ct_dosemc_core.mcgpu_io import (  # noqa: E402
+    McgpuRun,
     read_dose_map,
     run_mcgpu,
     stage_material_files,
@@ -45,10 +46,10 @@ from ct_dosemc_core.provenance import Provenance, Value, file_digest, write_resu
 from ct_dosemc_core.tg195 import (  # noqa: E402
     Case4Spec,
     build_case4_phantom,
-    first_test_voi_masks,
+    first_test_voi_weights,
     read_case4_reference,
     read_tg195_spectrum,
-    second_test_voi_masks,
+    second_test_voi_weights,
     specified_solid_angle_sr,
     sub_fans,
     write_monoenergetic_spectrum,
@@ -121,6 +122,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--tag", type=str, default=None)
     p.add_argument("--timeout-hours", type=float, default=48.0)
     p.add_argument(
+        "--rescore",
+        action="store_true",
+        help="re-score the tallies already in the run directory instead of running "
+        "the engine. Only valid when every geometry argument is unchanged; the "
+        "engine's own echoed apertures are re-read and asserted, which catches "
+        "the case where they are not.",
+    )
+    p.add_argument(
         "--scan",
         type=str,
         default=None,
@@ -142,6 +151,75 @@ SCANNABLE = {
 
 
 # ---------------------------------------------------------------------------
+
+
+def _score_beamlet(
+    *,
+    run,
+    rundir: Path,
+    stem: str,
+    fan,
+    phantom,
+    spec: Case4Spec,
+    voi_builder,
+    weight: float,
+    totals: dict,
+    variances: dict,
+    fan_records: list,
+    p_index: int,
+    beta: float,
+    histories: float,
+) -> None:
+    """Score one (projection, sub-fan) tally into the running totals.
+
+    The energy in a VOI is ``sum_i f_i * d_i * m_i`` with ``f_i`` the fraction of
+    voxel ``i`` inside the analytic VOI.  Using a voxel-centre-inside test instead
+    -- ``f_i in {0, 1}`` -- costs 4.5% on a 10 mm cylinder at 2.5 mm voxels, which
+    is what the first G2 run was missing.
+    """
+    # The engine echoes the apertures it parsed. Under --rescore this also
+    # catches a geometry argument that no longer matches the stored tally.
+    run.assert_apertures(
+        azimuthal_deg=fan.azimuthal_aperture_deg, polar_deg=fan.polar_aperture_deg
+    )
+    dose = read_dose_map(rundir / f"dose_{stem}.dat")
+    weights = voi_builder(
+        phantom, spec, roi_origin_zyx=dose.roi_origin_zyx, roi_shape_zyx=dose.shape_zyx
+    )
+    z0, y0, x0 = dose.roi_origin_zyx
+    dz, dy, dx = dose.shape_zyx
+    density_roi = phantom.density[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
+    voxel_volume = dose.voxel_size_cm[0] * dose.voxel_size_cm[1] * dose.voxel_size_cm[2]
+
+    per_voi = {}
+    for name, f in weights.items():
+        mass = f * density_roi * voxel_volume  # g, partial-volume weighted
+        energy = float(np.sum(dose.dose_ev_per_g * mass))
+        sigma = float(np.sqrt(np.sum((dose.sigma_ev_per_g * mass) ** 2)))
+        totals[name] = totals.get(name, 0.0) + weight * energy
+        variances[name] = variances.get(name, 0.0) + (weight * sigma) ** 2
+        per_voi[name] = {
+            "ev_per_photon_in_beamlet": energy,
+            "sigma": sigma,
+            "voi_volume_cm3": float(f.sum() * voxel_volume),
+            "n_voxels_touched": int((f > 0).sum()),
+        }
+
+    fan_records.append(
+        {
+            "projection_index": p_index,
+            "gantry_angle_deg": math.degrees(beta),
+            "sub_fan_index": fan.index,
+            "centre_psi_deg": fan.centre_psi_deg,
+            "azimuthal_aperture_deg": fan.azimuthal_aperture_deg,
+            "polar_aperture_deg": fan.polar_aperture_deg,
+            "solid_angle_sr": fan.solid_angle_sr,
+            "weight": weight,
+            "histories": histories,
+            "wall_seconds": run.wall_seconds,
+            "voi": per_voi,
+        }
+    )
 
 
 def run_sub_fan_set(
@@ -205,7 +283,9 @@ def run_sub_fan_set(
         )
 
     materials = stage_material_files((AIR, PMMA), MATERIALS_DIR, rundir)
-    vox = write_voxel_file(rundir / f"case4_{label}.vox.gz", phantom)
+    vox = rundir / f"case4_{label}.vox.gz"
+    if not (args.rescore and vox.is_file()):
+        vox = write_voxel_file(vox, phantom)
     print(
         f"[phant] r={spec.phantom_radius_cm:g} cm, L={phantom_length_cm:g} cm, "
         f"{nx}x{ny}x{nz} voxels of {v:g} cm "
@@ -236,6 +316,40 @@ def run_sub_fan_set(
             uy = d0x * math.sin(psi) + d0y * math.cos(psi)
 
             stem = f"{label}_p{p_index:03d}_fan{fan.index:02d}"
+            if args.rescore:
+                # Re-score an existing tally. The scoring geometry is rebuilt from
+                # the same arguments, so this is only valid when they are
+                # unchanged; assert_apertures below re-reads the engine's own log
+                # and catches the case where they are not.
+                existing = rundir / f"dose_{stem}.dat"
+                if not (existing.parent / (existing.name + ".raw")).is_file():
+                    raise SystemExit(f"--rescore: no tally at {existing}.raw")
+                run = McgpuRun(
+                    executable=Path(args.executable).resolve(),
+                    input_file=rundir / f"case4_{stem}.in",
+                    log_file=rundir / f"mcgpu_{stem}.log",
+                    returncode=0,
+                    wall_seconds=float("nan"),
+                    total_histories=per_fan_histories * engine_projections,
+                )
+                _score_beamlet(
+                    run=run,
+                    rundir=rundir,
+                    stem=stem,
+                    fan=fan,
+                    phantom=phantom,
+                    spec=spec,
+                    voi_builder=voi_builder,
+                    weight=(fan.solid_angle_sr / omega_total) / len(gantry_angles),
+                    totals=totals,
+                    variances=variances,
+                    fan_records=fan_records,
+                    p_index=p_index,
+                    beta=beta,
+                    histories=per_fan_histories * engine_projections,
+                )
+                continue
+
             inp = write_input_file(
                 rundir / f"case4_{stem}.in",
                 histories_per_projection=per_fan_histories,
@@ -269,51 +383,27 @@ def run_sub_fan_set(
                 timeout_s=args.timeout_hours * 3600.0,
             )
             run.check()
-            run.assert_apertures(
-                azimuthal_deg=fan.azimuthal_aperture_deg, polar_deg=fan.polar_aperture_deg
-            )
-
-            dose = read_dose_map(rundir / f"dose_{stem}.dat")
-            masks = voi_builder(
-                phantom, spec, roi_origin_zyx=dose.roi_origin_zyx, roi_shape_zyx=dose.shape_zyx
-            )
-            z0, y0, x0 = dose.roi_origin_zyx
-            dz, dy, dx = dose.shape_zyx
-            density_roi = phantom.density[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
-            voxel_volume = (
-                dose.voxel_size_cm[0] * dose.voxel_size_cm[1] * dose.voxel_size_cm[2]
-            )
-
-            weight = (fan.solid_angle_sr / omega_total) / len(gantry_angles)
-            per_voi = {}
-            for name, mask in masks.items():
-                mass = density_roi[mask] * voxel_volume  # g
-                # eV per history emitted into THIS sub-fan at THIS gantry angle
-                energy = float(np.sum(dose.dose_ev_per_g[mask] * mass))
-                sigma = float(np.sqrt(np.sum((dose.sigma_ev_per_g[mask] * mass) ** 2)))
-                totals[name] = totals.get(name, 0.0) + weight * energy
-                variances[name] = variances.get(name, 0.0) + (weight * sigma) ** 2
-                per_voi[name] = {"ev_per_photon_in_beamlet": energy, "sigma": sigma}
-
-            fan_records.append(
-                {
-                    "projection_index": p_index,
-                    "gantry_angle_deg": math.degrees(beta),
-                    "sub_fan_index": fan.index,
-                    "centre_psi_deg": fan.centre_psi_deg,
-                    "azimuthal_aperture_deg": fan.azimuthal_aperture_deg,
-                    "polar_aperture_deg": fan.polar_aperture_deg,
-                    "solid_angle_sr": fan.solid_angle_sr,
-                    "weight": weight,
-                    "histories": per_fan_histories * engine_projections,
-                    "wall_seconds": run.wall_seconds,
-                    "voi": per_voi,
-                }
+            _score_beamlet(
+                run=run,
+                rundir=rundir,
+                stem=stem,
+                fan=fan,
+                phantom=phantom,
+                spec=spec,
+                voi_builder=voi_builder,
+                weight=(fan.solid_angle_sr / omega_total) / len(gantry_angles),
+                totals=totals,
+                variances=variances,
+                fan_records=fan_records,
+                p_index=p_index,
+                beta=beta,
+                histories=per_fan_histories * engine_projections,
             )
             if len(gantry_angles) == 1:
                 print(
                     f"[fan {fan.index:02d}] psi={fan.centre_psi_deg:+7.3f} deg  "
-                    f"w={weight:.4f}  {run.wall_seconds:6.1f} s"
+                    f"w={fan_records[-1]['weight']:.4f}  "
+                    f"{fan_records[-1]['wall_seconds']:6.1f} s"
                 )
         if len(gantry_angles) > 1:
             print(
@@ -552,10 +642,10 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
     if test_choice == "first":
         # The first test is defined at a single projection: "This simulation is
         # only performed with the x-ray source at the 0 degree position" (§3.4).
-        voi_builder = first_test_voi_masks
+        voi_builder = first_test_voi_weights
         n_projections = 1
     else:
-        voi_builder = second_test_voi_masks
+        voi_builder = second_test_voi_weights
         n_projections = int(args.projections)
     print(f"[{gate}] beam={beam}, {test_choice} test, {n_projections} projection(s)")
 
@@ -570,9 +660,14 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
         label=gate.lower(),
     )
 
+    # A 36-projection run is the DISCRETE sub-case, not the continuous one:
+    # TG-195 publishes both and they differ by 1-2%. Comparing a discrete run
+    # against the continuous column was worth -2.1% on the centre VOI.
+    angular = "discrete" if (test_choice == "second" and n_projections == 36) else "continuous"
     reference = read_case4_reference(
-        CASE4_RESULTS, beam=beam, thickness_cm=args.fan_thickness
+        CASE4_RESULTS, beam=beam, thickness_cm=args.fan_thickness, angular=angular
     )
+    print(f"[{gate}] comparing against the {angular} angular reference")
     rows = compare(values, reference)
     _print_comparison(rows)
 
@@ -583,6 +678,7 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
         f"{n_projections} projection(s))",
         "tag": tag,
         "passed": passed,
+        "angular_reference_case": angular,
         "tolerance": {
             "criterion": "relative difference from the four-code mean within 1%",
             "source": "AAPM Report 195: users are asked to report the relative "
@@ -681,7 +777,7 @@ def convergence_scan(args) -> int:
             args=args,
             rundir=rundir,
             spectrum_file="mono.spc",
-            voi_builder=first_test_voi_masks,
+            voi_builder=first_test_voi_weights,
             phantom_length_cm=args.phantom_length,
             n_projections=1,
             label=f"{param}{value:g}",

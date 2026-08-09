@@ -1,16 +1,17 @@
 {
   "environment": {
-    "generated_utc": "2026-08-08T00:54:50+00:00",
+    "generated_utc": "2026-08-08T23:57:27+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "git_commit": "026933db11ed661c8a0562042404b6fb688eb77e",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
   "gate": "G1 -- TG-195 Case 4 (120 kVp, first test, 1 projection(s))",
   "tag": "G1_120kvp",
   "passed": true,
+  "angular_reference_case": "continuous",
   "tolerance": {
     "criterion": "relative difference from the four-code mean within 1%",
     "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
@@ -132,23 +133,31 @@
         "solid_angle_sr": 0.0010577006130776162,
         "weight": 0.12313187131094991,
         "histories": 7500000.0,
-        "wall_seconds": 18.354025200009346,
+        "wall_seconds": 18.49811679997947,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_beamlet": 12291.927015114958,
-            "sigma": 2.5516896206257624
+            "ev_per_photon_in_beamlet": 12291.927015114961,
+            "sigma": 2.5516896206257624,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
             "ev_per_photon_in_beamlet": 2101.953136591658,
-            "sigma": 1.0703839527148022
+            "sigma": 1.0703839527148022,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
             "ev_per_photon_in_beamlet": 1319.9214623065845,
-            "sigma": 0.8506043958157142
+            "sigma": 0.8506043958157142,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_beamlet": 948.9191410370462,
-            "sigma": 0.7224997676559222
+            "ev_per_photon_in_beamlet": 948.9191410370461,
+            "sigma": 0.7224997676559222,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -162,23 +171,31 @@
         "solid_angle_sr": 0.0010714358541308176,
         "weight": 0.12473085491072927,
         "histories": 7500000.0,
-        "wall_seconds": 19.52849190001143,
+        "wall_seconds": 19.499130900017917,
         "voi": {
           "segment_1": {
             "ev_per_photon_in_beamlet": 13220.560324760721,
-            "sigma": 2.6480860917390823
+            "sigma": 2.6480860917390823,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
             "ev_per_photon_in_beamlet": 2617.2596605376402,
-            "sigma": 1.1944057573683136
+            "sigma": 1.1944057573683136,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
             "ev_per_photon_in_beamlet": 1715.3783687739551,
-            "sigma": 0.9693751345050091
+            "sigma": 0.9693751345050091,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
             "ev_per_photon_in_beamlet": 1260.3743171167046,
-            "sigma": 0.8324697629331462
+            "sigma": 0.8324697629331462,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -192,23 +209,31 @@
         "solid_angle_sr": 0.0010806251681149052,
         "weight": 0.12580062589595375,
         "histories": 7500000.0,
-        "wall_seconds": 20.00617720000446,
+        "wall_seconds": 20.00727280008141,
         "voi": {
           "segment_1": {
             "ev_per_photon_in_beamlet": 13424.832866752768,
-            "sigma": 2.668408675736838
+            "sigma": 2.668408675736838,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_beamlet": 2776.5753898272237,
-            "sigma": 1.2303149823226125
+            "ev_per_photon_in_beamlet": 2776.575389827224,
+            "sigma": 1.2303149823226123,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_beamlet": 1848.9160603080995,
-            "sigma": 1.0071330086690722
+            "ev_per_photon_in_beamlet": 1848.916060308099,
+            "sigma": 1.0071330086690722,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
             "ev_per_photon_in_beamlet": 1378.4088748494173,
-            "sigma": 0.8710545190309664
+            "sigma": 0.8710545190309664,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -222,23 +247,31 @@
         "solid_angle_sr": 0.0010852295875687498,
         "weight": 0.12633664788236704,
         "histories": 7500000.0,
-        "wall_seconds": 19.950979299959727,
+        "wall_seconds": 20.159869799972512,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_beamlet": 13498.189801444565,
-            "sigma": 2.6761858668189875
+            "ev_per_photon_in_beamlet": 13498.189801444567,
+            "sigma": 2.6761858668189875,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_beamlet": 2822.7175918164703,
-            "sigma": 1.2412754900408036
+            "ev_per_photon_in_beamlet": 2822.717591816471,
+            "sigma": 1.2412754900408036,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
             "ev_per_photon_in_beamlet": 1901.1835240428943,
-            "sigma": 1.021914197352567
+            "sigma": 1.021914197352567,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
             "ev_per_photon_in_beamlet": 1417.8317995298548,
-            "sigma": 0.8836695668747488
+            "sigma": 0.8836695668747488,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -252,23 +285,31 @@
         "solid_angle_sr": 0.0010852295875687502,
         "weight": 0.1263366478823671,
         "histories": 7500000.0,
-        "wall_seconds": 20.053837599989492,
+        "wall_seconds": 20.173789000022225,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_beamlet": 13488.157277751085,
-            "sigma": 2.6744659218271547
+            "ev_per_photon_in_beamlet": 13488.157277751083,
+            "sigma": 2.6744659218271547,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
             "ev_per_photon_in_beamlet": 2827.8567931236294,
-            "sigma": 1.2420699108984325
+            "sigma": 1.2420699108984325,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
             "ev_per_photon_in_beamlet": 1902.2714933456296,
-            "sigma": 1.0217553261696852
+            "sigma": 1.0217553261696852,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_beamlet": 1414.368503678817,
-            "sigma": 0.8818414841448028
+            "ev_per_photon_in_beamlet": 1414.3685036788174,
+            "sigma": 0.8818414841448028,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -282,23 +323,31 @@
         "solid_angle_sr": 0.001080625168114905,
         "weight": 0.12580062589595373,
         "histories": 7500000.0,
-        "wall_seconds": 19.979637900018133,
+        "wall_seconds": 20.101356100058183,
         "voi": {
           "segment_1": {
             "ev_per_photon_in_beamlet": 13428.432922885193,
-            "sigma": 2.6682277077873806
+            "sigma": 2.6682277077873806,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
             "ev_per_photon_in_beamlet": 2781.2829686371942,
-            "sigma": 1.231761710424621
+            "sigma": 1.231761710424621,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_beamlet": 1856.6144616900494,
-            "sigma": 1.0080387976184
+            "ev_per_photon_in_beamlet": 1856.6144616900492,
+            "sigma": 1.0080387976184,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_beamlet": 1377.5319204474672,
-            "sigma": 0.8708985560727338
+            "ev_per_photon_in_beamlet": 1377.531920447467,
+            "sigma": 0.8708985560727339,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -312,23 +361,31 @@
         "solid_angle_sr": 0.0010714358541308174,
         "weight": 0.12473085491072924,
         "histories": 7500000.0,
-        "wall_seconds": 19.5389395999955,
+        "wall_seconds": 19.46963519998826,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_beamlet": 13208.283088348566,
-            "sigma": 2.647309541124451
+            "ev_per_photon_in_beamlet": 13208.283088348568,
+            "sigma": 2.6473095411244514,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_beamlet": 2620.881312616766,
-            "sigma": 1.1957494170771727
+            "ev_per_photon_in_beamlet": 2620.8813126167665,
+            "sigma": 1.1957494170771727,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
             "ev_per_photon_in_beamlet": 1722.089818699746,
-            "sigma": 0.9725072591225203
+            "sigma": 0.9725072591225203,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_beamlet": 1264.486625605132,
-            "sigma": 0.8351373625976901
+            "ev_per_photon_in_beamlet": 1264.4866256051323,
+            "sigma": 0.8351373625976901,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
@@ -342,23 +399,31 @@
         "solid_angle_sr": 0.0010577006130776162,
         "weight": 0.12313187131094991,
         "histories": 7500000.0,
-        "wall_seconds": 18.165060300030746,
+        "wall_seconds": 18.683907799888402,
         "voi": {
           "segment_1": {
             "ev_per_photon_in_beamlet": 12291.211530655819,
-            "sigma": 2.5520754074566567
+            "sigma": 2.5520754074566567,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
             "ev_per_photon_in_beamlet": 2102.604282410396,
-            "sigma": 1.0698394325443379
+            "sigma": 1.0698394325443379,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_beamlet": 1324.9426540856844,
-            "sigma": 0.8521161941499938
+            "ev_per_photon_in_beamlet": 1324.9426540856841,
+            "sigma": 0.8521161941499937,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
             "ev_per_photon_in_beamlet": 951.0624335840639,
-            "sigma": 0.7225906722662652
+            "sigma": 0.7225906722662652,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       }
@@ -366,7 +431,7 @@
   },
   "results": {
     "segment_1": {
-      "value": 13110.98235731856,
+      "value": 13110.982357318562,
       "unit": "eV per emitted photon",
       "uncertainty": 0.9324319304222807,
       "uncertainty_kind": "1sigma_mc_statistical",
@@ -387,7 +452,7 @@
       }
     },
     "segment_2": {
-      "value": 2584.129511299711,
+      "value": 2584.1295112997113,
       "unit": "eV per emitted photon",
       "uncertainty": 0.4199354450919244,
       "uncertainty_kind": "1sigma_mc_statistical",
@@ -452,28 +517,28 @@
   },
   "comparison_with_tg195": {
     "segment_1": {
-      "ours_ev_per_photon": 13110.98235731856,
+      "ours_ev_per_photon": 13110.982357318562,
       "ours_sigma": 0.9324319304222807,
-      "ours_relative_sigma": 7.111838800559414e-05,
+      "ours_relative_sigma": 7.111838800559413e-05,
       "reference_mean": 13137.016475909299,
       "reference_min": 13115.77,
       "reference_max": 13159.3,
       "inter_code_spread_fraction": 0.0033135377488354594,
-      "ratio_to_reference_mean": 0.9980182624693757,
-      "deviation_fraction": -0.00198173753062425,
+      "ratio_to_reference_mean": 0.9980182624693759,
+      "deviation_fraction": -0.001981737530624139,
       "passes_tg195_tolerance": true,
       "within_inter_code_range": false
     },
     "segment_2": {
-      "ours_ev_per_photon": 2584.129511299711,
+      "ours_ev_per_photon": 2584.1295112997113,
       "ours_sigma": 0.4199354450919244,
-      "ours_relative_sigma": 0.0001625055722848481,
+      "ours_relative_sigma": 0.00016250557228484808,
       "reference_mean": 2585.469909645698,
       "reference_min": 2568.81,
       "reference_max": 2594.24,
       "inter_code_spread_fraction": 0.009835736206067336,
-      "ratio_to_reference_mean": 0.9994815649019985,
-      "deviation_fraction": -0.0005184350980015351,
+      "ratio_to_reference_mean": 0.9994815649019987,
+      "deviation_fraction": -0.000518435098001313,
       "passes_tg195_tolerance": true,
       "within_inter_code_range": true
     },
@@ -510,6 +575,6 @@
     "Phantom modelled at 60 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
     "Voxelised cylinder: the curved surface is stair-stepped at the 0.5 cm voxel scale.",
     "The fan is approximated by 8 azimuthal sub-fans; the residual solid-angle error is +0.0143 %.",
-    "Only 44 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measured sensitivity: see results/phase1a_G1_air_margin_convergence.json."
+    "Only 44 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
   ]
 }

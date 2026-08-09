@@ -25,8 +25,10 @@ from ct_dosemc_core.tg195 import (
     Case4Spec,
     build_case4_phantom,
     first_test_voi_masks,
+    first_test_voi_weights,
     read_case4_reference,
     second_test_voi_masks,
+    second_test_voi_weights,
     specified_solid_angle_sr,
     sub_fans,
     write_monoenergetic_spectrum,
@@ -179,16 +181,64 @@ def test_second_test_vois_are_10_mm_cylinders_at_the_axis_and_at_150_mm():
     masks = second_test_voi_masks(ph, spec)
     assert set(masks) == {"center", "perimeter"}
 
-    x, y, z = ph.axis_coordinates_cm()
-    cx, cy, cz = ph.centre_cm()
+    x, y, _z = ph.axis_coordinates_cm()
+    cx, cy, _cz = ph.centre_cm()
     for name, mask in masks.items():
         assert np.all(ph.material[mask] == PMMA.index)
-        volume = mask.sum() * ph.voxel_volume_cm3
-        assert volume == pytest.approx(math.pi * 0.5**2 * 10.0, rel=0.1), name
         assert (mask.any(axis=(1, 2))).sum() * ph.voxel_size_cm[2] == pytest.approx(10.0)
         ys, xs = np.nonzero(mask.any(axis=0))
         radius = float(np.hypot(x[xs].mean() - cx, y[ys].mean() - cy))
         assert radius == pytest.approx(0.0 if name == "center" else 15.0, abs=0.1)
+
+
+def test_second_test_voi_occupancy_reproduces_the_analytic_volume():
+    """The mask is every voxel the cylinder touches; the *weights* are the volume.
+
+    This is the fix for the -3.2% G2 result: scoring energy deposited is
+    proportional to the selected volume, and a voxel-centre test resolves a 10 mm
+    circle on a 2.5 mm grid as 12 voxels against a true 12.57 -- 4.51% short.
+    """
+    spec = Case4Spec()
+    analytic = math.pi * 0.5**2 * 10.0
+    for voxel in (0.25, 0.125):
+        ph = build_case4_phantom(spec, air=AIR, pmma=PMMA, voxel_size_cm=voxel, length_cm=20.0)
+        weights = second_test_voi_weights(ph, spec)
+        for name, w in weights.items():
+            assert np.all((w >= 0.0) & (w <= 1.0)), name
+            volume = float(w.sum()) * ph.voxel_volume_cm3
+            assert volume == pytest.approx(analytic, rel=1e-3), (name, voxel)
+
+
+def test_the_boolean_mask_is_the_set_of_voxels_the_weights_touch():
+    spec = Case4Spec()
+    ph = build_case4_phantom(spec, air=AIR, pmma=PMMA, voxel_size_cm=0.25, length_cm=20.0)
+    weights = second_test_voi_weights(ph, spec)
+    masks = second_test_voi_masks(ph, spec)
+    for name, w in weights.items():
+        np.testing.assert_array_equal(masks[name], w > 0.0)
+        # Boundary voxels are only partly inside, so the touched volume exceeds
+        # the true one -- which is precisely why the weights exist.
+        assert float((w > 0).sum()) > float(w.sum())
+
+
+def test_first_test_segments_are_not_radially_weighted():
+    """The first test's VOI edge IS the phantom edge.
+
+    The phantom was voxelised by a voxel-centre test, so a voxel whose centre is
+    inside the cylinder is entirely PMMA and its whole mass really did absorb
+    dose. Weighting it down would discard deposited energy at the entrance
+    surface, where the dose is highest -- measured at -2.2% on the segment holding
+    the primary beam. Only the z boundaries, which sit in bulk PMMA, are weighted.
+    """
+    spec = Case4Spec()
+    ph = build_case4_phantom(spec, air=AIR, pmma=PMMA, voxel_size_cm=0.25, length_cm=20.0)
+    weights = first_test_voi_weights(ph, spec)
+    pmma_index = max(m.index for m in ph.materials)
+    for name, w in weights.items():
+        interior = w > 0
+        # every weight is either 0 or the z-fraction; no partial radial values
+        assert set(np.unique(w[interior]).round(9).tolist()) == {1.0}, name
+        assert np.all(ph.material[interior] == pmma_index), name
 
 
 def test_a_voi_outside_the_tally_roi_is_an_error_not_a_silent_zero():

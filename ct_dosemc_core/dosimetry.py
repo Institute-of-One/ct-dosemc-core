@@ -37,6 +37,9 @@ class RegionDose:
     n_voxels: int
     dose_ev_per_g_per_history: float
     n_histories: float
+    partial_volume_weighted: bool = False
+    """True when the region's mass used analytic occupancy rather than a
+    voxel-centre-inside test.  Recorded because it changes the reported number."""
 
     @property
     def relative_sigma(self) -> float:
@@ -58,6 +61,7 @@ class RegionDose:
                     "mass_g": self.mass_g,
                     "dose_eV_per_g_per_history": self.dose_ev_per_g_per_history,
                     "n_histories": self.n_histories,
+                    "partial_volume_weighted": self.partial_volume_weighted,
                 },
                 assumptions=(
                     "MC-GPU tallies collision kerma (electrons are not transported); "
@@ -65,6 +69,17 @@ class RegionDose:
                     "per-voxel Monte-Carlo uncertainties are combined as if independent, "
                     "which slightly understates the region uncertainty because voxel "
                     "tallies share histories",
+                    (
+                        "voxel masses use analytic volume occupancy, so a boundary "
+                        "voxel contributes only the fraction of it inside the region; "
+                        "the dose it contributes is still the whole-voxel average, "
+                        "which leaves a second-order residual where the dose gradient "
+                        "is steep"
+                        if self.partial_volume_weighted
+                        else "region volume is a voxel-centre-inside test, which "
+                        "misstates the volume of a region comparable in size to the "
+                        "voxel grid"
+                    ),
                     *extra_assumptions,
                 ),
                 source="ct_dosemc_core.dosimetry.region_dose",
@@ -78,6 +93,8 @@ def region_dose(
     mask: np.ndarray,
     density_g_cm3: np.ndarray,
     n_histories: float,
+    *,
+    weights: np.ndarray | None = None,
 ) -> RegionDose:
     """Mass-weighted mean absorbed dose over ``mask``, in mGy.
 
@@ -92,6 +109,17 @@ def region_dose(
     n_histories:
         Total photons the scan corresponds to -- from
         :func:`ct_dosemc_core.source_model.histories_for_mas`.
+    weights:
+        Optional per-voxel volume occupancy ``f_i`` in ``[0, 1]``, same shape as
+        ``mask``, so that ``m_i = f_i * rho_i * v^3``.  ``None`` means every
+        selected voxel counts whole, which is the historical behaviour.
+
+        This is for regions with an **analytic** definition -- a scoring cylinder,
+        an ionisation-chamber volume, a standard phantom -- where a
+        voxel-centre-inside test misstates the volume and therefore the deposited
+        energy.  It is **not** for segmentation masks: a TotalSegmentator organ
+        mask *is* the definition of the organ, with no underlying analytic shape
+        to be partially inside of, so weighting it would be meaningless.
     """
     if mask.shape != dose_map.shape_zyx:
         raise ValueError(f"mask {mask.shape} does not match the tally ROI {dose_map.shape_zyx}")
@@ -103,8 +131,16 @@ def region_dose(
 
     dx, dy, dz = dose_map.voxel_size_cm
     voxel_volume = dx * dy * dz
-    m = density_g_cm3[mask] * voxel_volume
-    total_mass = float(m.sum())
+    if weights is None:
+        f = 1.0
+    else:
+        if weights.shape != mask.shape:
+            raise ValueError("weights array does not match the mask")
+        f = weights[mask]
+        if np.any(f < 0.0) or np.any(f > 1.0):
+            raise ValueError("occupancy weights must lie in [0, 1]")
+    m = f * density_g_cm3[mask] * voxel_volume
+    total_mass = float(np.sum(m))
     if total_mass <= 0.0:
         raise ValueError(f"region {name!r} has non-positive mass")
 
@@ -123,4 +159,5 @@ def region_dose(
         n_voxels=n_vox,
         dose_ev_per_g_per_history=mean_ev_per_g,
         n_histories=float(n_histories),
+        partial_volume_weighted=weights is not None,
     )

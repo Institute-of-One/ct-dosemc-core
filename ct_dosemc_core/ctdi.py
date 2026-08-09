@@ -28,7 +28,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .dosimetry import RegionDose
-from .phantom import Material, VoxelPhantom
+from .phantom import Material, VoxelPhantom, cylinder_occupancy
 from .provenance import Provenance, Value
 
 __all__ = [
@@ -36,6 +36,7 @@ __all__ = [
     "CtdiPhantomSpec",
     "build_ctdi_phantom",
     "chamber_masks",
+    "chamber_weights",
     "ctdi_100",
     "ctdi_vol",
     "ctdi_w",
@@ -141,6 +142,55 @@ def build_ctdi_phantom(
     )
 
 
+def chamber_weights(
+    phantom: VoxelPhantom,
+    spec: CtdiPhantomSpec,
+    *,
+    roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
+    roi_shape_zyx: tuple[int, int, int] | None = None,
+    subdivisions: int = 64,
+) -> dict[str, np.ndarray]:
+    """Per-voxel volume occupancy of the five chamber regions, in ``[0, 1]``.
+
+    Each chamber is a cylinder of ``spec.chamber_diameter_cm`` diameter and
+    ``spec.chamber_length_cm`` length centred on the scan plane -- the volume a
+    100 mm pencil chamber occupies.
+
+    A voxel-centre-inside test is badly wrong at this scale: a 13.1 mm circle on a
+    2.5 mm grid resolves as 24 voxels = 1.500 cm^2 against a true 1.348 cm^2,
+    **+11.3%**.  CTDI100 is built from a *mean* dose, so a volume error does not
+    scale the answer the way it does for TG-195's energy scoring -- but it inflates
+    the effective chamber radius from 6.55 mm to about 6.9 mm, which shifts where
+    the mean sits inside the steep radial gradient at the peripheral positions.
+
+    The chambers lie wholly inside bulk PMMA, so unlike the TG-195 first test
+    there is no material boundary here that the weighting would falsely erase.
+    """
+    if roi_shape_zyx is None:
+        roi_shape_zyx = phantom.shape_zyx
+    z0, y0, x0 = roi_origin_zyx
+    dz, dy, dx = roi_shape_zyx
+    cx, cy, cz = phantom.centre_cm()
+    half = 0.5 * spec.chamber_length_cm
+
+    out: dict[str, np.ndarray] = {}
+    for name, (ox, oy) in spec.chamber_offsets_cm().items():
+        full = cylinder_occupancy(
+            phantom.n_voxels,
+            phantom.voxel_size_cm,
+            centre_xy_cm=(cx + ox, cy + oy),
+            radius_cm=0.5 * spec.chamber_diameter_cm,
+            z_min_cm=cz - half,
+            z_max_cm=cz + half,
+            subdivisions=subdivisions,
+        )
+        w = full[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
+        if not w.any():
+            raise ValueError(f"chamber {name!r} falls outside the dose tally ROI")
+        out[name] = w
+    return out
+
+
 def chamber_masks(
     phantom: VoxelPhantom,
     spec: CtdiPhantomSpec,
@@ -148,37 +198,13 @@ def chamber_masks(
     roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
     roi_shape_zyx: tuple[int, int, int] | None = None,
 ) -> dict[str, np.ndarray]:
-    """Boolean masks for the five chamber volumes, cropped to a tally ROI.
-
-    Each chamber is a cylinder of ``spec.chamber_diameter_cm`` diameter and
-    ``spec.chamber_length_cm`` length, centred on the scan plane -- the volume a
-    100 mm pencil chamber would occupy.  A voxel is in the chamber if its centre
-    is inside that cylinder.
-    """
-    v = phantom.voxel_size_cm[0]
-    nz, ny, nx = phantom.shape_zyx
-    x = (np.arange(nx) + 0.5) * v
-    y = (np.arange(ny) + 0.5) * v
-    z = (np.arange(nz) + 0.5) * v
-    cx, cy, cz = phantom.centre_cm()
-
-    in_length = np.abs(z - cz) <= 0.5 * spec.chamber_length_cm
-    r2 = (0.5 * spec.chamber_diameter_cm) ** 2
-
-    z0, y0, x0 = roi_origin_zyx
-    if roi_shape_zyx is None:
-        roi_shape_zyx = phantom.shape_zyx
-    dz, dy, dx = roi_shape_zyx
-
-    masks: dict[str, np.ndarray] = {}
-    for name, (ox, oy) in spec.chamber_offsets_cm().items():
-        disc = ((x[None, :] - (cx + ox)) ** 2 + (y[:, None] - (cy + oy)) ** 2) <= r2
-        full = in_length[:, None, None] & disc[None, :, :]
-        mask = full[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
-        if not mask.any():
-            raise ValueError(f"chamber {name!r} falls outside the dose tally ROI")
-        masks[name] = mask
-    return masks
+    """Boolean form of :func:`chamber_weights` -- every voxel the chamber touches."""
+    return {
+        k: w > 0.0
+        for k, w in chamber_weights(
+            phantom, spec, roi_origin_zyx=roi_origin_zyx, roi_shape_zyx=roi_shape_zyx
+        ).items()
+    }
 
 
 def ctdi_100(

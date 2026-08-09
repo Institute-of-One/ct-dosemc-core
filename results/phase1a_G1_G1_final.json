@@ -1,16 +1,17 @@
 {
   "environment": {
-    "generated_utc": "2026-08-07T23:40:28+00:00",
+    "generated_utc": "2026-08-08T23:54:41+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "git_commit": "026933db11ed661c8a0562042404b6fb688eb77e",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
-  "gate": "G1 -- TG-195 Case 4 (56.4 keV, first test, single projection)",
+  "gate": "G1 -- TG-195 Case 4 (56.4 keV, first test, 1 projection(s))",
   "tag": "G1_final",
   "passed": true,
+  "angular_reference_case": "continuous",
   "tolerance": {
     "criterion": "relative difference from the four-code mean within 1%",
     "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
@@ -106,228 +107,312 @@
     "omega_excess_fraction": 0.00014291094620411116,
     "histories_total": 60000000.0,
     "n_projections": 1,
-    "sub_fans": [
+    "projections_driven_externally": false,
+    "engine_invocations": 8,
+    "air_margin_cm": 44.0,
+    "air_margin_z_cm": 4.0,
+    "beamlets": [
       {
-        "index": 0,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 0,
         "centre_psi_deg": -13.064990030870359,
         "azimuthal_aperture_deg": 3.7328542945343877,
         "polar_aperture_deg": 0.9301901836556683,
         "solid_angle_sr": 0.0010577006130776162,
         "weight": 0.12313187131094991,
         "histories": 7500000.0,
-        "wall_seconds": 18.263694899971597,
+        "wall_seconds": 18.285037699970417,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 10769.559165259023,
-            "sigma": 2.426045884130279
+            "ev_per_photon_in_beamlet": 10769.559165259023,
+            "sigma": 2.4260458841302786,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2074.065586135197,
-            "sigma": 1.0895544152001007
+            "ev_per_photon_in_beamlet": 2074.065586135197,
+            "sigma": 1.0895544152001004,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1364.7152456004296,
-            "sigma": 0.8851159257555985
+            "ev_per_photon_in_beamlet": 1364.7152456004299,
+            "sigma": 0.8851159257555985,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1005.6692130825159,
-            "sigma": 0.7596076269718374
+            "ev_per_photon_in_beamlet": 1005.6692130825159,
+            "sigma": 0.7596076269718374,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 1,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 1,
         "centre_psi_deg": -9.332135736335971,
         "azimuthal_aperture_deg": 3.7328542945343886,
         "polar_aperture_deg": 0.9422698519112029,
         "solid_angle_sr": 0.0010714358541308176,
         "weight": 0.12473085491072927,
         "histories": 7500000.0,
-        "wall_seconds": 19.741870299971197,
+        "wall_seconds": 19.72702799993567,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11678.341846290248,
-            "sigma": 2.530021394151647
+            "ev_per_photon_in_beamlet": 11678.341846290246,
+            "sigma": 2.5300213941516465,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2617.683943041023,
-            "sigma": 1.2244545301784364
+            "ev_per_photon_in_beamlet": 2617.6839430410228,
+            "sigma": 1.2244545301784362,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1780.5823621858535,
-            "sigma": 1.0099803161149838
+            "ev_per_photon_in_beamlet": 1780.5823621858535,
+            "sigma": 1.0099803161149838,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1336.555172661816,
-            "sigma": 0.8751842655731712
+            "ev_per_photon_in_beamlet": 1336.5551726618164,
+            "sigma": 0.8751842655731712,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 2,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 2,
         "centre_psi_deg": -5.5992814418015815,
         "azimuthal_aperture_deg": 3.7328542945343886,
         "polar_aperture_deg": 0.9503515407711781,
         "solid_angle_sr": 0.0010806251681149052,
         "weight": 0.12580062589595375,
         "histories": 7500000.0,
-        "wall_seconds": 19.935201700020116,
+        "wall_seconds": 19.949716900009662,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11886.143323701663,
-            "sigma": 2.5524309230140743
+            "ev_per_photon_in_beamlet": 11886.143323701663,
+            "sigma": 2.5524309230140743,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2783.2535308728907,
-            "sigma": 1.2626968820031936
+            "ev_per_photon_in_beamlet": 2783.253530872891,
+            "sigma": 1.2626968820031939,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1934.2207508771194,
-            "sigma": 1.052780009932811
+            "ev_per_photon_in_beamlet": 1934.2207508771194,
+            "sigma": 1.052780009932811,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1463.8274297639382,
-            "sigma": 0.9158633311212937
+            "ev_per_photon_in_beamlet": 1463.8274297639382,
+            "sigma": 0.9158633311212938,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 3,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 3,
         "centre_psi_deg": -1.8664271472671938,
         "azimuthal_aperture_deg": 3.7328542945343877,
         "polar_aperture_deg": 0.954400972729189,
         "solid_angle_sr": 0.0010852295875687498,
         "weight": 0.12633664788236704,
         "histories": 7500000.0,
-        "wall_seconds": 20.404195599956438,
+        "wall_seconds": 20.151458799955435,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11954.172334023313,
-            "sigma": 2.559745843647839
+            "ev_per_photon_in_beamlet": 11954.172334023315,
+            "sigma": 2.559745843647839,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2830.4716805659696,
-            "sigma": 1.2729813399832477
+            "ev_per_photon_in_beamlet": 2830.47168056597,
+            "sigma": 1.2729813399832477,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1980.7818364925731,
-            "sigma": 1.0660214676186375
+            "ev_per_photon_in_beamlet": 1980.7818364925731,
+            "sigma": 1.0660214676186375,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1509.668510710768,
-            "sigma": 0.9309916864873984
+            "ev_per_photon_in_beamlet": 1509.668510710768,
+            "sigma": 0.9309916864873985,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 4,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 4,
         "centre_psi_deg": 1.8664271472671947,
         "azimuthal_aperture_deg": 3.7328542945343894,
         "polar_aperture_deg": 0.954400972729189,
         "solid_angle_sr": 0.0010852295875687502,
         "weight": 0.1263366478823671,
         "histories": 7500000.0,
-        "wall_seconds": 20.234914500033483,
+        "wall_seconds": 20.03957420005463,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11942.901010329173,
-            "sigma": 2.5574167635768292
+            "ev_per_photon_in_beamlet": 11942.901010329173,
+            "sigma": 2.557416763576829,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2838.3566459618705,
-            "sigma": 1.274699219332238
+            "ev_per_photon_in_beamlet": 2838.3566459618705,
+            "sigma": 1.274699219332238,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1980.0770587862776,
-            "sigma": 1.0651913240335622
+            "ev_per_photon_in_beamlet": 1980.0770587862776,
+            "sigma": 1.0651913240335622,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1506.3343122208357,
-            "sigma": 0.929035728272335
+            "ev_per_photon_in_beamlet": 1506.3343122208357,
+            "sigma": 0.9290357282723352,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 5,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 5,
         "centre_psi_deg": 5.599281441801583,
         "azimuthal_aperture_deg": 3.7328542945343877,
         "polar_aperture_deg": 0.9503515407711781,
         "solid_angle_sr": 0.001080625168114905,
         "weight": 0.12580062589595373,
         "histories": 7500000.0,
-        "wall_seconds": 20.042277699976694,
+        "wall_seconds": 20.43252300005406,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11900.723638641186,
-            "sigma": 2.5552663324268194
+            "ev_per_photon_in_beamlet": 11900.723638641188,
+            "sigma": 2.5552663324268194,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2784.6602730711775,
-            "sigma": 1.2629855613126124
+            "ev_per_photon_in_beamlet": 2784.660273071177,
+            "sigma": 1.2629855613126124,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1937.0018926300222,
-            "sigma": 1.0540893569105425
+            "ev_per_photon_in_beamlet": 1937.001892630022,
+            "sigma": 1.0540893569105425,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1459.6406456506963,
-            "sigma": 0.91436113890087
+            "ev_per_photon_in_beamlet": 1459.6406456506961,
+            "sigma": 0.91436113890087,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 6,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 6,
         "centre_psi_deg": 9.332135736335971,
         "azimuthal_aperture_deg": 3.7328542945343877,
         "polar_aperture_deg": 0.9422698519112029,
         "solid_angle_sr": 0.0010714358541308174,
         "weight": 0.12473085491072924,
         "histories": 7500000.0,
-        "wall_seconds": 19.59609010000713,
+        "wall_seconds": 19.602136500063352,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 11665.068473427764,
-            "sigma": 2.5281743061987676
+            "ev_per_photon_in_beamlet": 11665.068473427764,
+            "sigma": 2.528174306198767,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2614.2193098763455,
-            "sigma": 1.2235315973048184
+            "ev_per_photon_in_beamlet": 2614.2193098763455,
+            "sigma": 1.2235315973048184,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1780.8546816347985,
-            "sigma": 1.0098995056318338
+            "ev_per_photon_in_beamlet": 1780.8546816347985,
+            "sigma": 1.009899505631834,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1336.1991374574154,
-            "sigma": 0.8751596118191005
+            "ev_per_photon_in_beamlet": 1336.1991374574154,
+            "sigma": 0.8751596118191005,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       },
       {
-        "index": 7,
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 7,
         "centre_psi_deg": 13.064990030870359,
         "azimuthal_aperture_deg": 3.7328542945343877,
         "polar_aperture_deg": 0.9301901836556683,
         "solid_angle_sr": 0.0010577006130776162,
         "weight": 0.12313187131094991,
         "histories": 7500000.0,
-        "wall_seconds": 18.369288599991705,
+        "wall_seconds": 18.627917899983004,
         "voi": {
           "segment_1": {
-            "ev_per_photon_in_subfan": 10769.55509943702,
-            "sigma": 2.426104229515633
+            "ev_per_photon_in_beamlet": 10769.55509943702,
+            "sigma": 2.426104229515633,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_2": {
-            "ev_per_photon_in_subfan": 2069.9418291688376,
-            "sigma": 1.0883849099255969
+            "ev_per_photon_in_beamlet": 2069.9418291688376,
+            "sigma": 1.0883849099255969,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_3": {
-            "ev_per_photon_in_subfan": 1362.2095204640132,
-            "sigma": 0.8843282808762944
+            "ev_per_photon_in_beamlet": 1362.2095204640132,
+            "sigma": 0.8843282808762944,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           },
           "segment_4": {
-            "ev_per_photon_in_subfan": 1002.3582214638768,
-            "sigma": 0.7583932508709768
+            "ev_per_photon_in_beamlet": 1002.3582214638768,
+            "sigma": 0.7583932508709768,
+            "voi_volume_cm3": 807.0,
+            "n_voxels_touched": 6456
           }
         }
       }
@@ -337,7 +422,7 @@
     "segment_1": {
       "value": 11575.27386399384,
       "unit": "eV per emitted photon",
-      "uncertainty": 0.8904545926493821,
+      "uncertainty": 0.890454592649382,
       "uncertainty_kind": "1sigma_mc_statistical",
       "provenance": {
         "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
@@ -377,7 +462,7 @@
       }
     },
     "segment_3": {
-      "value": 1767.3963036565522,
+      "value": 1767.396303656552,
       "unit": "eV per emitted photon",
       "uncertainty": 0.3561522235380138,
       "uncertainty_kind": "1sigma_mc_statistical",
@@ -422,8 +507,8 @@
   "comparison_with_tg195": {
     "segment_1": {
       "ours_ev_per_photon": 11575.27386399384,
-      "ours_sigma": 0.8904545926493821,
-      "ours_relative_sigma": 7.692730237849826e-05,
+      "ours_sigma": 0.890454592649382,
+      "ours_relative_sigma": 7.692730237849825e-05,
       "reference_mean": 11592.27247590257,
       "reference_min": 11581.99,
       "reference_max": 11618.3,
@@ -447,15 +532,15 @@
       "within_inter_code_range": true
     },
     "segment_3": {
-      "ours_ev_per_photon": 1767.3963036565522,
+      "ours_ev_per_photon": 1767.396303656552,
       "ours_sigma": 0.3561522235380138,
-      "ours_relative_sigma": 0.00020151237320185252,
+      "ours_relative_sigma": 0.00020151237320185255,
       "reference_mean": 1766.8547714042363,
       "reference_min": 1759.77,
       "reference_max": 1774.79,
       "inter_code_spread_fraction": 0.008500981655703708,
-      "ratio_to_reference_mean": 1.0003064950561191,
-      "deviation_fraction": 0.0003064950561191271,
+      "ratio_to_reference_mean": 1.000306495056119,
+      "deviation_fraction": 0.00030649505611890504,
       "passes_tg195_tolerance": true,
       "within_inter_code_range": true
     },
@@ -479,6 +564,6 @@
     "Phantom modelled at 60 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
     "Voxelised cylinder: the curved surface is stair-stepped at the 0.5 cm voxel scale.",
     "The fan is approximated by 8 azimuthal sub-fans; the residual solid-angle error is +0.0143 %.",
-    "Only 44 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measured sensitivity: see results/phase1a_G1_air_margin_convergence.json."
+    "Only 44 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
   ]
 }

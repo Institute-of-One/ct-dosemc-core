@@ -36,7 +36,7 @@ from ct_dosemc_core.ctdi import (  # noqa: E402
     CHAMBER_POSITIONS,
     CtdiPhantomSpec,
     build_ctdi_phantom,
-    chamber_masks,
+    chamber_weights,
     ctdi_100,
     ctdi_vol,
     ctdi_w,
@@ -236,12 +236,16 @@ def main(argv: list[str] | None = None) -> int:
             f"the stored tally has {dose.voxel_size_cm[0]} cm voxels but "
             f"--voxel-size {args.voxel_size} was given"
         )
-    masks = chamber_masks(
+    # Analytic chamber volumes, partial-volume weighted: a voxel-centre test
+    # overstates a 13.1 mm cylinder on a 2.5 mm grid by 11.3%, which inflates the
+    # effective chamber radius and shifts the mean inside the radial gradient.
+    weights = chamber_weights(
         phantom,
         spec,
         roi_origin_zyx=dose.roi_origin_zyx,
         roi_shape_zyx=dose.shape_zyx,
     )
+    masks = {k: w > 0.0 for k, w in weights.items()}
     z0, y0, x0 = dose.roi_origin_zyx
     dz, dy, dx = dose.shape_zyx
     density_roi = phantom.density[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
@@ -249,7 +253,10 @@ def main(argv: list[str] | None = None) -> int:
     ctdi100: dict[str, Value] = {}
     regions = {}
     for name in CHAMBER_POSITIONS:
-        r = region_dose(name, dose, masks[name], density_roi, n_required.value)
+        r = region_dose(
+            name, dose, masks[name], density_roi, n_required.value,
+            weights=weights[name],
+        )
         regions[name] = r
         ctdi100[name] = ctdi_100(
             r,

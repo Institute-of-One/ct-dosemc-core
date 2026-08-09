@@ -1,16 +1,17 @@
 {
   "environment": {
-    "generated_utc": "2026-08-08T00:26:06+00:00",
+    "generated_utc": "2026-08-08T23:49:53+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": "666773c3aac8328502d399991ef2c039d174c70b",
+    "git_commit": "026933db11ed661c8a0562042404b6fb688eb77e",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
-  "gate": "G2 -- TG-195 Case 4 (120 kVp, second test)",
+  "gate": "G2 -- TG-195 Case 4 (120 kVp, second test, 36 projection(s))",
   "tag": "G2_final",
-  "passed": false,
+  "passed": true,
+  "angular_reference_case": "discrete",
   "tolerance": {
     "criterion": "relative difference from the four-code mean within 1%",
     "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
@@ -132,15 +133,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.794619199994486,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 3.727150274346477,
-            "sigma": 0.03573508455846776
+            "ev_per_photon_in_beamlet": 4.040411719405229,
+            "sigma": 0.034704609436514454,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.48619666775455694,
-            "sigma": 0.016280833703727255
+            "ev_per_photon_in_beamlet": 0.4796727259960313,
+            "sigma": 0.015315553938572219,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -154,15 +159,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.065793000045232,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.073595832869177,
-            "sigma": 0.07813352016235532
+            "ev_per_photon_in_beamlet": 17.968020525198543,
+            "sigma": 0.07514062235660172,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6395719351270236,
-            "sigma": 0.014774653008562441
+            "ev_per_photon_in_beamlet": 0.6563463426362164,
+            "sigma": 0.013886705736571607,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -176,15 +185,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.786959700053558,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.954734248310487,
-            "sigma": 0.08291658204411119
+            "ev_per_photon_in_beamlet": 18.760910389301692,
+            "sigma": 0.07938718077862333,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.7757892300198546,
-            "sigma": 0.017988062983885205
+            "ev_per_photon_in_beamlet": 0.8465233857529788,
+            "sigma": 0.017312971389927045,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -198,15 +211,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.729892099974677,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.295908832187942,
-            "sigma": 0.03961773984669812
+            "ev_per_photon_in_beamlet": 4.5071449328393935,
+            "sigma": 0.03808290271457345,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.23472580482281047,
-            "sigma": 0.008447734603754996
+            "ev_per_photon_in_beamlet": 0.2530656302338328,
+            "sigma": 0.008411143492814077,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -220,15 +237,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.728223200014327,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.036639558365459,
-            "sigma": 0.03878359577920164
+            "ev_per_photon_in_beamlet": 4.259715044171442,
+            "sigma": 0.03738446311810805,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.3809903480618232,
-            "sigma": 0.01172631174990854
+            "ev_per_photon_in_beamlet": 0.37207026887511174,
+            "sigma": 0.010973710986531078,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -242,15 +263,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.80158859997755,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 18.31053589850482,
-            "sigma": 0.08316759687520672
+            "ev_per_photon_in_beamlet": 19.10779408193745,
+            "sigma": 0.08008489322201935,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.093946723585832,
-            "sigma": 0.01971848200893808
+            "ev_per_photon_in_beamlet": 1.0874474341273792,
+            "sigma": 0.018764209032733754,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -264,15 +289,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.76483380002901,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.355701416498487,
-            "sigma": 0.08072727921514178
+            "ev_per_photon_in_beamlet": 17.98714277160578,
+            "sigma": 0.07750482936086144,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6609895860821597,
-            "sigma": 0.015081516697558982
+            "ev_per_photon_in_beamlet": 0.672806732353325,
+            "sigma": 0.014241237949697956,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -286,15 +315,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.863857900025323,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.332506944460692,
-            "sigma": 0.04093707365902944
+            "ev_per_photon_in_beamlet": 4.6176658798665455,
+            "sigma": 0.03947996860607042,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.2950485242057766,
-            "sigma": 0.010956076198288854
+            "ev_per_photon_in_beamlet": 0.3016518034176154,
+            "sigma": 0.010338486708007506,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -308,15 +341,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.14592579996679,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.44106866385624,
-            "sigma": 0.039932658195520984
+            "ev_per_photon_in_beamlet": 4.676087557665155,
+            "sigma": 0.038384085642269805,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.38427687804658484,
-            "sigma": 0.008859799022286518
+            "ev_per_photon_in_beamlet": 0.46435538671331056,
+            "sigma": 0.00914824220639347,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -330,15 +367,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.012574599997606,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.784528941413356,
-            "sigma": 0.07737938813345545
+            "ev_per_photon_in_beamlet": 17.547722613680442,
+            "sigma": 0.07429021769559166,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.0321999574604706,
-            "sigma": 0.020185843978441288
+            "ev_per_photon_in_beamlet": 1.088031255843521,
+            "sigma": 0.01921998726921761,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -352,15 +393,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.083331200003158,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 18.31941761152659,
-            "sigma": 0.08355346374801088
+            "ev_per_photon_in_beamlet": 19.085424001037573,
+            "sigma": 0.08036652663821345,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.578141617996589,
-            "sigma": 0.015386414734919666
+            "ev_per_photon_in_beamlet": 0.5975917784919011,
+            "sigma": 0.014738344326899753,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -374,15 +419,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.72220819996437,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.433016816803265,
-            "sigma": 0.04146642758111408
+            "ev_per_photon_in_beamlet": 4.661407659731768,
+            "sigma": 0.04004570432962728,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.3041703733241593,
-            "sigma": 0.012718315729269248
+            "ev_per_photon_in_beamlet": 0.3068996536793359,
+            "sigma": 0.012400025394944872,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -396,15 +445,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.735795399989001,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.398993413020925,
-            "sigma": 0.040216946443686674
+            "ev_per_photon_in_beamlet": 4.72094535383407,
+            "sigma": 0.0389453509030549,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.997475560967523,
-            "sigma": 0.01816435203958111
+            "ev_per_photon_in_beamlet": 1.0298144389808397,
+            "sigma": 0.017270347120113303,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -418,15 +471,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.105989400006365,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.25636069070875,
-            "sigma": 0.07767588933507602
+            "ev_per_photon_in_beamlet": 17.11416695322003,
+            "sigma": 0.07495702800638636,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.6900238133894527,
-            "sigma": 0.02617889010559135
+            "ev_per_photon_in_beamlet": 1.7477486917109744,
+            "sigma": 0.025099452854317895,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -440,15 +497,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.128455700003542,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.133777442620158,
-            "sigma": 0.07939728059376726
+            "ev_per_photon_in_beamlet": 17.84017291247199,
+            "sigma": 0.07610022135326903,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.4061508084078559,
-            "sigma": 0.0134356658000406
+            "ev_per_photon_in_beamlet": 0.4203168120626706,
+            "sigma": 0.013075149673248394,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -462,15 +523,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.7388061999809,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.143457822685704,
-            "sigma": 0.03826813164094771
+            "ev_per_photon_in_beamlet": 4.291297162495969,
+            "sigma": 0.03668617986352002,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.15385103603208336,
-            "sigma": 0.007015410324803959
+            "ev_per_photon_in_beamlet": 0.16098762186497567,
+            "sigma": 0.006691020643725979,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -484,15 +549,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.920921100012492,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.505253099778856,
-            "sigma": 0.04098642820100766
+            "ev_per_photon_in_beamlet": 4.7528499313110455,
+            "sigma": 0.03959797361270097,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.8857410125109708,
-            "sigma": 0.025893029985011234
+            "ev_per_photon_in_beamlet": 1.9572419938555776,
+            "sigma": 0.024692399699087764,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -506,15 +575,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.987191399966832,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.141401610194006,
-            "sigma": 0.07986054475043249
+            "ev_per_photon_in_beamlet": 17.949580432934084,
+            "sigma": 0.07653229160864097,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.2429004885152972,
-            "sigma": 0.0210109841441498
+            "ev_per_photon_in_beamlet": 1.2591219154150244,
+            "sigma": 0.02001811027319592,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -528,15 +601,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.145695400016848,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.99458394007511,
-            "sigma": 0.07929055190824863
+            "ev_per_photon_in_beamlet": 17.75797437551941,
+            "sigma": 0.0758933583887206,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.3930287112161022,
-            "sigma": 0.011325095868153721
+            "ev_per_photon_in_beamlet": 0.41059524512737333,
+            "sigma": 0.01085549578404512,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -550,15 +627,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.833422900002915,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.504727927309486,
-            "sigma": 0.04112642329765234
+            "ev_per_photon_in_beamlet": 4.728904361525752,
+            "sigma": 0.039715700935158825,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.15987544306204654,
-            "sigma": 0.008079592579652472
+            "ev_per_photon_in_beamlet": 0.16412672595791095,
+            "sigma": 0.007610334697442187,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -572,15 +653,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.806301300006453,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.224445600372201,
-            "sigma": 0.0378245642970331
+            "ev_per_photon_in_beamlet": 4.407684139824458,
+            "sigma": 0.036127416990568206,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.910098350148546,
-            "sigma": 0.03832894802139756
+            "ev_per_photon_in_beamlet": 4.009636824338902,
+            "sigma": 0.036484006910023556,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -594,15 +679,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.157060599944089,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.633703285414228,
-            "sigma": 0.07733613993889747
+            "ev_per_photon_in_beamlet": 17.280513892559284,
+            "sigma": 0.07394068363739444,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3221133180440665,
-            "sigma": 0.021804546044471806
+            "ev_per_photon_in_beamlet": 1.381757257478991,
+            "sigma": 0.0210592540174283,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -616,15 +705,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.069857000024058,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.61525903626385,
-            "sigma": 0.07908922476931031
+            "ev_per_photon_in_beamlet": 17.54988375162709,
+            "sigma": 0.07603469606505991,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.45492930563254047,
-            "sigma": 0.013170288337930821
+            "ev_per_photon_in_beamlet": 0.4519562162800609,
+            "sigma": 0.0124653830438976,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -638,15 +731,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.676158999965992,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.798389908403801,
-            "sigma": 0.041650717231378136
+            "ev_per_photon_in_beamlet": 5.052827578223953,
+            "sigma": 0.040246308628045076,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.270695146938815,
-            "sigma": 0.01149625069194319
+            "ev_per_photon_in_beamlet": 0.27774454033463725,
+            "sigma": 0.01106528006397355,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -660,15 +757,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.802312200015876,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.480518383608196,
-            "sigma": 0.04091906723660758
+            "ev_per_photon_in_beamlet": 4.728253782887136,
+            "sigma": 0.03936626132462061,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 7.113739887996325,
-            "sigma": 0.05251566723328948
+            "ev_per_photon_in_beamlet": 7.3614198518510765,
+            "sigma": 0.050408360075429356,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -682,15 +783,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.206343300000299,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.40163425272447,
-            "sigma": 0.07746612511097488
+            "ev_per_photon_in_beamlet": 17.44606305413039,
+            "sigma": 0.07481032720792023,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.1609598134930272,
-            "sigma": 0.019958680442364197
+            "ev_per_photon_in_beamlet": 1.2543791654867786,
+            "sigma": 0.01926759091113436,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -704,15 +809,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.161268899973948,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.70438561025454,
-            "sigma": 0.08200722130418385
+            "ev_per_photon_in_beamlet": 18.594239121558232,
+            "sigma": 0.07882157717838416,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.4479474191453119,
-            "sigma": 0.013502118258535211
+            "ev_per_photon_in_beamlet": 0.4780736354713069,
+            "sigma": 0.013114715270497769,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -726,15 +835,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.814378599985503,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.163978399917805,
-            "sigma": 0.0380232190691496
+            "ev_per_photon_in_beamlet": 4.398790485136775,
+            "sigma": 0.03655152766912891,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.07275278878230892,
-            "sigma": 0.003626178795134908
+            "ev_per_photon_in_beamlet": 0.08499647541385805,
+            "sigma": 0.0036124029907427307,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -748,15 +861,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.587911000009626,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.710877225971762,
-            "sigma": 0.042148618186413744
+            "ev_per_photon_in_beamlet": 4.94776470893694,
+            "sigma": 0.040579460936101465,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 11.968058979325253,
-            "sigma": 0.06599769194090362
+            "ev_per_photon_in_beamlet": 12.439907213316118,
+            "sigma": 0.06339881047131503,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -770,15 +887,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.036149899999145,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.60628342088137,
-            "sigma": 0.0794546346054621
+            "ev_per_photon_in_beamlet": 18.30872443925423,
+            "sigma": 0.07636327051711203,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.4099359600464778,
-            "sigma": 0.021967400202988825
+            "ev_per_photon_in_beamlet": 1.5195014782785856,
+            "sigma": 0.02128867061855947,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -792,15 +913,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.996461000002455,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.40166609755368,
-            "sigma": 0.08012250702325682
+            "ev_per_photon_in_beamlet": 18.108264913485876,
+            "sigma": 0.0766910192065842,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.5169190073023492,
-            "sigma": 0.014190407999781197
+            "ev_per_photon_in_beamlet": 0.5357093449584484,
+            "sigma": 0.013721859091870672,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -814,15 +939,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.695100800017826,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.671568019232472,
-            "sigma": 0.041667494739817845
+            "ev_per_photon_in_beamlet": 4.870412887647681,
+            "sigma": 0.039861744309695905,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.18887333193335507,
-            "sigma": 0.008506327125903112
+            "ev_per_photon_in_beamlet": 0.20331297396624393,
+            "sigma": 0.008299121033939802,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -836,15 +965,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.642247100011446,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.751510546950039,
-            "sigma": 0.04131517636447238
+            "ev_per_photon_in_beamlet": 4.837403695775061,
+            "sigma": 0.03955161233075982,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 22.30798072158461,
-            "sigma": 0.08908723056238951
+            "ev_per_photon_in_beamlet": 23.423788946761732,
+            "sigma": 0.08565220721129774,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -858,15 +991,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.047918399970513,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.79588713091114,
-            "sigma": 0.08065730848216629
+            "ev_per_photon_in_beamlet": 18.738326920280144,
+            "sigma": 0.077881202035523,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.7454403705102595,
-            "sigma": 0.02434584484166817
+            "ev_per_photon_in_beamlet": 1.83656416031143,
+            "sigma": 0.02341458835518026,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -880,15 +1017,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.984317100024782,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.82671767480351,
-            "sigma": 0.08071391560739709
+            "ev_per_photon_in_beamlet": 18.45271558267896,
+            "sigma": 0.07735685754371885,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.44875029827970137,
-            "sigma": 0.011425154747038308
+            "ev_per_photon_in_beamlet": 0.4591877049607525,
+            "sigma": 0.01093777299733976,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -902,15 +1043,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.653726599994116,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.518960484192793,
-            "sigma": 0.040615498588267546
+            "ev_per_photon_in_beamlet": 4.638600549420227,
+            "sigma": 0.038500413170755296,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.12082381831889506,
-            "sigma": 0.006258306847291524
+            "ev_per_photon_in_beamlet": 0.12788653483770956,
+            "sigma": 0.006005678603778655,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -924,15 +1069,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.850434799969662,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.606118599590991,
-            "sigma": 0.04176572496459893
+            "ev_per_photon_in_beamlet": 4.8467176883898855,
+            "sigma": 0.040324024588242226,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 43.13717543147039,
-            "sigma": 0.1245173707000163
+            "ev_per_photon_in_beamlet": 45.23363844226064,
+            "sigma": 0.11922365165374503,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -946,15 +1095,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.98165859997971,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.633176340033533,
-            "sigma": 0.07706426727217532
+            "ev_per_photon_in_beamlet": 17.57810565994271,
+            "sigma": 0.0741168042836052,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.8315905183272116,
-            "sigma": 0.03256239817270416
+            "ev_per_photon_in_beamlet": 2.9342988033124033,
+            "sigma": 0.031287460388690805,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -968,15 +1121,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.82432020001579,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.887307831034192,
-            "sigma": 0.07758327180032112
+            "ev_per_photon_in_beamlet": 17.61575639103574,
+            "sigma": 0.07451978793858655,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6458829355246416,
-            "sigma": 0.01694949551836279
+            "ev_per_photon_in_beamlet": 0.7030953128958771,
+            "sigma": 0.016243480863216076,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -990,15 +1147,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.581887900014408,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.745409545408728,
-            "sigma": 0.04149193687038313
+            "ev_per_photon_in_beamlet": 4.927271696107029,
+            "sigma": 0.03994116087387649,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.2602480162108258,
-            "sigma": 0.009305284887537858
+            "ev_per_photon_in_beamlet": 0.282833051712884,
+            "sigma": 0.009036782626054313,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1012,15 +1173,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.790463200013619,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.687491440531176,
-            "sigma": 0.0423806885004599
+            "ev_per_photon_in_beamlet": 4.92513058656797,
+            "sigma": 0.04081482651421743,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 85.9089003908349,
-            "sigma": 0.17665534708491076
+            "ev_per_photon_in_beamlet": 89.96569196533643,
+            "sigma": 0.16956067938715277,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1034,15 +1199,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.02379910001764,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 15.950882830899829,
-            "sigma": 0.07694825998391137
+            "ev_per_photon_in_beamlet": 16.990487914473356,
+            "sigma": 0.07475518790715326,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.4636677010877337,
-            "sigma": 0.03661569995338313
+            "ev_per_photon_in_beamlet": 3.644167288239561,
+            "sigma": 0.035128143322171436,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1056,15 +1225,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.161112500005402,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.70799850403433,
-            "sigma": 0.07927725066335112
+            "ev_per_photon_in_beamlet": 17.389342696609738,
+            "sigma": 0.07565486729958018,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.7384904804309189,
-            "sigma": 0.016811322409960767
+            "ev_per_photon_in_beamlet": 0.781738809584545,
+            "sigma": 0.016162332829721883,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1078,15 +1251,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.779494699963834,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 5.138994596935045,
-            "sigma": 0.04405197453321894
+            "ev_per_photon_in_beamlet": 5.312365629700194,
+            "sigma": 0.04203485647179343,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.23228880283415493,
-            "sigma": 0.00974637214666732
+            "ev_per_photon_in_beamlet": 0.23271748871991665,
+            "sigma": 0.00933370986030742,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1100,15 +1277,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.86390209995443,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.648428395971787,
-            "sigma": 0.04279567056708419
+            "ev_per_photon_in_beamlet": 4.895583082869974,
+            "sigma": 0.041375618806453324,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 152.31517107123508,
-            "sigma": 0.23590239381659403
+            "ev_per_photon_in_beamlet": 158.82777769449837,
+            "sigma": 0.2263753380186385,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1122,15 +1303,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.037743899971247,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.818396165448355,
-            "sigma": 0.07738861252763435
+            "ev_per_photon_in_beamlet": 17.493672232832303,
+            "sigma": 0.07402294183725903,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 5.289395538117933,
-            "sigma": 0.04551303530590146
+            "ev_per_photon_in_beamlet": 5.461784494930137,
+            "sigma": 0.04375652167999274,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1144,15 +1329,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.05113659997005,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.583378972473366,
-            "sigma": 0.07836633939035617
+            "ev_per_photon_in_beamlet": 17.39746224846309,
+            "sigma": 0.0755638525412018,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3079548392156222,
-            "sigma": 0.02324123062409349
+            "ev_per_photon_in_beamlet": 1.3877433481450223,
+            "sigma": 0.022443199099079672,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1166,15 +1355,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.821364199975505,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.706109449470677,
-            "sigma": 0.0410545088913825
+            "ev_per_photon_in_beamlet": 4.828452563157509,
+            "sigma": 0.03916272807009047,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.15267399430536896,
-            "sigma": 0.007768454934807509
+            "ev_per_photon_in_beamlet": 0.1696024702313912,
+            "sigma": 0.007394518201227379,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1188,15 +1381,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.882871699985117,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.638347613423084,
-            "sigma": 0.042443495751934276
+            "ev_per_photon_in_beamlet": 4.836451427532897,
+            "sigma": 0.04071009682969915,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 232.58535812759072,
-            "sigma": 0.2899540585286393
+            "ev_per_photon_in_beamlet": 243.22555867433508,
+            "sigma": 0.27847680425076016,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1210,15 +1407,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.051937800017186,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.387379207291232,
-            "sigma": 0.07806416908405175
+            "ev_per_photon_in_beamlet": 17.07455669188989,
+            "sigma": 0.07453762885395436,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 7.6602321602678405,
-            "sigma": 0.05260375048224585
+            "ev_per_photon_in_beamlet": 7.9887218147916785,
+            "sigma": 0.05056521608402226,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1232,15 +1433,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.925732399977278,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.153389917120222,
-            "sigma": 0.08061781272430409
+            "ev_per_photon_in_beamlet": 17.799666226630436,
+            "sigma": 0.07709808275074918,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.661801829955075,
-            "sigma": 0.02562893901104654
+            "ev_per_photon_in_beamlet": 1.7480094034839389,
+            "sigma": 0.024656434960917465,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1254,15 +1459,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.676683500001673,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.513038627796568,
-            "sigma": 0.041162747727361296
+            "ev_per_photon_in_beamlet": 4.748995843873905,
+            "sigma": 0.039813218586361686,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.23440368403724277,
-            "sigma": 0.008640695231230736
+            "ev_per_photon_in_beamlet": 0.23942080636634688,
+            "sigma": 0.008192915636913826,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1276,15 +1485,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.183533800009172,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.1976769988755045,
-            "sigma": 0.03884718503735378
+            "ev_per_photon_in_beamlet": 4.392144403234325,
+            "sigma": 0.037283516048708686,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 287.85371974749256,
-            "sigma": 0.32148768872558553
+            "ev_per_photon_in_beamlet": 302.1246222245361,
+            "sigma": 0.3090307501754868,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1298,15 +1511,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.678208700031973,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.621053933433068,
-            "sigma": 0.07734124328323999
+            "ev_per_photon_in_beamlet": 17.658541791802367,
+            "sigma": 0.0747287470389214,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 12.600763224460678,
-            "sigma": 0.06802991383977623
+            "ev_per_photon_in_beamlet": 13.068728982021446,
+            "sigma": 0.06539563905070694,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1320,15 +1537,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.054057599976659,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 18.073206403754302,
-            "sigma": 0.08199532617243771
+            "ev_per_photon_in_beamlet": 18.759105659310787,
+            "sigma": 0.07855957101002262,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.379716841205518,
-            "sigma": 0.030926361738805325
+            "ev_per_photon_in_beamlet": 2.4401271967629277,
+            "sigma": 0.029576507431173415,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1342,15 +1563,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.746180400019512,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.686147666443539,
-            "sigma": 0.04068849970855773
+            "ev_per_photon_in_beamlet": 4.935182606187512,
+            "sigma": 0.03920878487058007,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.3828801198293513,
-            "sigma": 0.011723746123010676
+            "ev_per_photon_in_beamlet": 0.4334180650486273,
+            "sigma": 0.011416819704895144,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1364,15 +1589,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.663625399989542,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.460734779423892,
-            "sigma": 0.03982553777071171
+            "ev_per_photon_in_beamlet": 4.723226501471247,
+            "sigma": 0.03857468070425504,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 325.5672993320412,
-            "sigma": 0.34138990622114834
+            "ev_per_photon_in_beamlet": 340.36120148242316,
+            "sigma": 0.32767315342027326,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1386,15 +1615,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.075161000015214,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.308061263549206,
-            "sigma": 0.08132277067098515
+            "ev_per_photon_in_beamlet": 17.930207884829144,
+            "sigma": 0.07791032930630896,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 23.04141599459479,
-            "sigma": 0.09192703894832677
+            "ev_per_photon_in_beamlet": 24.10105608615209,
+            "sigma": 0.08834101781218233,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1408,15 +1641,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.995295700035058,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.9595362421505,
-            "sigma": 0.07823024699760486
+            "ev_per_photon_in_beamlet": 17.710979310791217,
+            "sigma": 0.07509407161956366,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.435990885529427,
-            "sigma": 0.03546745582239131
+            "ev_per_photon_in_beamlet": 3.6078903704857086,
+            "sigma": 0.03400196271776221,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1430,15 +1667,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.699633900017943,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.4469849715440795,
-            "sigma": 0.04068411615567862
+            "ev_per_photon_in_beamlet": 4.6397971863294245,
+            "sigma": 0.038809093785166164,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6773482069083456,
-            "sigma": 0.01590414682910048
+            "ev_per_photon_in_beamlet": 0.7155094236914985,
+            "sigma": 0.015298809886867229,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1452,15 +1693,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.598565199994482,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.4042885384702455,
-            "sigma": 0.04114955933373522
+            "ev_per_photon_in_beamlet": 4.66811301963936,
+            "sigma": 0.03981902388973725,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 337.20091993338656,
-            "sigma": 0.34898852277122167
+            "ev_per_photon_in_beamlet": 353.1653472533883,
+            "sigma": 0.33488088885439204,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1474,15 +1719,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.157117600028869,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.453721304537027,
-            "sigma": 0.0760102325464544
+            "ev_per_photon_in_beamlet": 17.381769625162157,
+            "sigma": 0.07328842999991039,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 50.280262276185674,
-            "sigma": 0.13690704937454148
+            "ev_per_photon_in_beamlet": 52.445438350631996,
+            "sigma": 0.13129071411861756,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1496,15 +1745,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.921230499981903,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.128054253800652,
-            "sigma": 0.07555537366915356
+            "ev_per_photon_in_beamlet": 16.92778646849835,
+            "sigma": 0.07241719253850494,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 5.66323602154087,
-            "sigma": 0.045769094264054684
+            "ev_per_photon_in_beamlet": 5.9322155640885645,
+            "sigma": 0.0442307332251685,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1518,15 +1771,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.906185999978334,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.767388635240367,
-            "sigma": 0.04358575958592768
+            "ev_per_photon_in_beamlet": 4.990677899011001,
+            "sigma": 0.04186134875317918,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.0630730033438156,
-            "sigma": 0.020080303522685413
+            "ev_per_photon_in_beamlet": 1.1086826913946348,
+            "sigma": 0.019131614635662174,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1540,15 +1797,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.857248299987987,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.405337245092324,
-            "sigma": 0.039909157563862194
+            "ev_per_photon_in_beamlet": 4.641306661878718,
+            "sigma": 0.03839913636682933,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 39.203481895184375,
-            "sigma": 0.120455514427547
+            "ev_per_photon_in_beamlet": 41.097749132033826,
+            "sigma": 0.11571232400185212,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1562,15 +1823,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.013542400032748,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.62944529979213,
-            "sigma": 0.08090647142446593
+            "ev_per_photon_in_beamlet": 18.357176759186693,
+            "sigma": 0.07765451451772107,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 370.52970615928996,
-            "sigma": 0.36479385731870534
+            "ev_per_photon_in_beamlet": 387.51489192643925,
+            "sigma": 0.35005305731248815,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1584,15 +1849,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.823405200033449,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.746008849228893,
-            "sigma": 0.07964255538851778
+            "ev_per_photon_in_beamlet": 17.511031718692305,
+            "sigma": 0.07630782195936474,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 11.319784867191554,
-            "sigma": 0.06437952634270468
+            "ev_per_photon_in_beamlet": 12.024639442407004,
+            "sigma": 0.062048250468008194,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1606,15 +1875,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.2428470000159,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.136971942116343,
-            "sigma": 0.03806524371995825
+            "ev_per_photon_in_beamlet": 4.46418774449256,
+            "sigma": 0.03708125485881199,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3320923069133277,
-            "sigma": 0.021987211154698885
+            "ev_per_photon_in_beamlet": 1.408032843428682,
+            "sigma": 0.02088185289611093,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1628,15 +1901,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.514136300014798,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.239947524587133,
-            "sigma": 0.03893400668120237
+            "ev_per_photon_in_beamlet": 4.444640976039454,
+            "sigma": 0.03728871048936216,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 12.325288912314136,
-            "sigma": 0.06716215301808157
+            "ev_per_photon_in_beamlet": 12.912377243356952,
+            "sigma": 0.0643613800308283,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1650,15 +1927,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.88520390004851,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.860858943286438,
-            "sigma": 0.07881050691478686
+            "ev_per_photon_in_beamlet": 17.508287672018984,
+            "sigma": 0.0751444045080444,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 402.54391209373955,
-            "sigma": 0.3819629313906586
+            "ev_per_photon_in_beamlet": 421.14013405519694,
+            "sigma": 0.3670890010572192,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1672,15 +1953,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.869950100022834,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.270544105813315,
-            "sigma": 0.07715296094999877
+            "ev_per_photon_in_beamlet": 17.0196279225366,
+            "sigma": 0.07428136850818495,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 25.959842858008926,
-            "sigma": 0.09765762758803596
+            "ev_per_photon_in_beamlet": 27.195130190000743,
+            "sigma": 0.09375887412606468,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1694,15 +1979,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.785772000032011,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.232401979294573,
-            "sigma": 0.03818134563205105
+            "ev_per_photon_in_beamlet": 4.418782357343276,
+            "sigma": 0.03646098687264682,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.615679297838469,
-            "sigma": 0.031222779924202998
+            "ev_per_photon_in_beamlet": 2.9007024894482347,
+            "sigma": 0.030523874326042446,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1716,15 +2005,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.760799899988342,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.593480150503974,
-            "sigma": 0.04164418390488513
+            "ev_per_photon_in_beamlet": 4.777496568142904,
+            "sigma": 0.03992522715969877,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 5.297550625377189,
-            "sigma": 0.043548087650159266
+            "ev_per_photon_in_beamlet": 5.6423566673483485,
+            "sigma": 0.04183530012756809,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1738,15 +2031,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.056581399985589,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.027264181574864,
-            "sigma": 0.07866235341466526
+            "ev_per_photon_in_beamlet": 17.57994449547021,
+            "sigma": 0.07519844312469462,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 216.83414777021898,
-            "sigma": 0.2792867414785585
+            "ev_per_photon_in_beamlet": 226.35215318374748,
+            "sigma": 0.2680019595906441,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1760,15 +2057,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.098860699974466,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.73624272631285,
-            "sigma": 0.07643464732159058
+            "ev_per_photon_in_beamlet": 17.56689449817449,
+            "sigma": 0.07399914779864865,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 214.61501305206446,
-            "sigma": 0.27845111625886865
+            "ev_per_photon_in_beamlet": 225.70343429937208,
+            "sigma": 0.26785740697311017,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1782,15 +2083,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.686161300051026,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.465337011369557,
-            "sigma": 0.04055303379758886
+            "ev_per_photon_in_beamlet": 4.631237543947567,
+            "sigma": 0.038661411277547006,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 5.481215487755671,
-            "sigma": 0.046343338567313944
+            "ev_per_photon_in_beamlet": 5.731955994697114,
+            "sigma": 0.04469855475939486,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1804,15 +2109,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.751591600012034,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.5230939714815666,
-            "sigma": 0.041777844811430744
+            "ev_per_photon_in_beamlet": 4.831327016194014,
+            "sigma": 0.040310416826376004,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.4839647026771488,
-            "sigma": 0.02986695769161865
+            "ev_per_photon_in_beamlet": 2.6464593239622722,
+            "sigma": 0.02894713999084362,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1826,15 +2135,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.95131809997838,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.258728721732183,
-            "sigma": 0.078160340770389
+            "ev_per_photon_in_beamlet": 18.101842794407165,
+            "sigma": 0.07514332737777267,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 25.920490434266682,
-            "sigma": 0.0989590648382282
+            "ev_per_photon_in_beamlet": 27.221250317494714,
+            "sigma": 0.0948861251140401,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1848,15 +2161,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.117436599975917,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.67551979038835,
-            "sigma": 0.07707451689186398
+            "ev_per_photon_in_beamlet": 17.28128477813914,
+            "sigma": 0.07402369688499214,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 399.55275835688224,
-            "sigma": 0.38087659076411723
+            "ev_per_photon_in_beamlet": 418.1078551271944,
+            "sigma": 0.36599685700346535,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1870,15 +2187,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.809136600000784,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.482595433127498,
-            "sigma": 0.040725696753762926
+            "ev_per_photon_in_beamlet": 4.7860623516488054,
+            "sigma": 0.03929346936130356,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 11.777885618386716,
-            "sigma": 0.06669515760683893
+            "ev_per_photon_in_beamlet": 12.476488998701933,
+            "sigma": 0.06414256000710473,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1892,15 +2213,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.94029329996556,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.086061537192512,
-            "sigma": 0.03851973216399656
+            "ev_per_photon_in_beamlet": 4.328918336503262,
+            "sigma": 0.037324285688969186,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3928355182146333,
-            "sigma": 0.021478763796853033
+            "ev_per_photon_in_beamlet": 1.4739831284178608,
+            "sigma": 0.02075685215959056,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1914,15 +2239,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.944615999993403,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.187713906489662,
-            "sigma": 0.07916907948067776
+            "ev_per_photon_in_beamlet": 18.023919665396335,
+            "sigma": 0.07610478114431482,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 11.909114651260605,
-            "sigma": 0.06625595397324148
+            "ev_per_photon_in_beamlet": 12.460552806473178,
+            "sigma": 0.06376374960225943,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1936,15 +2265,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.15095380001003,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.25837767312885,
-            "sigma": 0.07594328630866569
+            "ev_per_photon_in_beamlet": 17.19491711564118,
+            "sigma": 0.07292636742551797,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 368.43944377368314,
-            "sigma": 0.36368986696199423
+            "ev_per_photon_in_beamlet": 385.60957349088415,
+            "sigma": 0.34934599287572776,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1958,15 +2291,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 12.070957800024189,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 3.8580091505228844,
-            "sigma": 0.03760172782346251
+            "ev_per_photon_in_beamlet": 3.9998803764129764,
+            "sigma": 0.0357110637873947,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 39.78992766508017,
-            "sigma": 0.1223480617064029
+            "ev_per_photon_in_beamlet": 41.43325539736225,
+            "sigma": 0.11742554807203139,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -1980,15 +2317,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.761594799987506,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.1704806759173145,
-            "sigma": 0.03942356760182224
+            "ev_per_photon_in_beamlet": 4.381671768492339,
+            "sigma": 0.037839480542764425,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.8939946539481388,
-            "sigma": 0.018559204104087137
+            "ev_per_photon_in_beamlet": 0.9350562822025448,
+            "sigma": 0.017585887666432612,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2002,15 +2343,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.224905100010801,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.772411525138487,
-            "sigma": 0.07748888801784726
+            "ev_per_photon_in_beamlet": 17.560989096311896,
+            "sigma": 0.07462782916264196,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 6.072113192665956,
-            "sigma": 0.049341451780207456
+            "ev_per_photon_in_beamlet": 6.353504919945404,
+            "sigma": 0.047458211559448356,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2024,15 +2369,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.098913399968296,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.98814496358973,
-            "sigma": 0.07794953571875092
+            "ev_per_photon_in_beamlet": 17.753031757900523,
+            "sigma": 0.07482898014246656,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 48.837262242224526,
-            "sigma": 0.13310759371340017
+            "ev_per_photon_in_beamlet": 51.3592022976095,
+            "sigma": 0.12811491855498885,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2046,15 +2395,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.950199899962172,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.926875867158078,
-            "sigma": 0.04383683280786517
+            "ev_per_photon_in_beamlet": 5.089593407595983,
+            "sigma": 0.04202015224546737,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 337.97148302194427,
-            "sigma": 0.347501175509409
+            "ev_per_photon_in_beamlet": 354.31072408743637,
+            "sigma": 0.3339019085549199,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2068,15 +2421,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.757937400019728,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.352975448232046,
-            "sigma": 0.04066919103242718
+            "ev_per_photon_in_beamlet": 4.544838356882345,
+            "sigma": 0.03889831489188807,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6558238194232036,
-            "sigma": 0.016400564914496506
+            "ev_per_photon_in_beamlet": 0.6691138229089162,
+            "sigma": 0.015378147648763385,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2090,15 +2447,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.156236199953128,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.36645130049552,
-            "sigma": 0.08054215550683515
+            "ev_per_photon_in_beamlet": 18.096638589510363,
+            "sigma": 0.07729955054305368,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.5067005194621106,
-            "sigma": 0.03747211900187072
+            "ev_per_photon_in_beamlet": 3.6660675163119567,
+            "sigma": 0.03578356767619131,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2112,15 +2473,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.158158400037792,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.146061541896632,
-            "sigma": 0.07908880356419841
+            "ev_per_photon_in_beamlet": 18.130997589808782,
+            "sigma": 0.07617606974249642,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 22.25702123380048,
-            "sigma": 0.0908726357611758
+            "ev_per_photon_in_beamlet": 23.531555766547804,
+            "sigma": 0.08741539900905729,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2134,15 +2499,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.737596500024665,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.804985168877574,
-            "sigma": 0.041699162235202925
+            "ev_per_photon_in_beamlet": 4.980867740509851,
+            "sigma": 0.040090842010196096,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 328.10230230683,
-            "sigma": 0.34585120128348296
+            "ev_per_photon_in_beamlet": 343.71322087717476,
+            "sigma": 0.33207499845818517,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2156,15 +2525,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.924279999977443,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.772073889522362,
-            "sigma": 0.04356273731784189
+            "ev_per_photon_in_beamlet": 4.992214960831115,
+            "sigma": 0.042039610931892867,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.41538723132634914,
-            "sigma": 0.014095103224959714
+            "ev_per_photon_in_beamlet": 0.4418359553488237,
+            "sigma": 0.01373501924373087,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2178,15 +2551,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.070874400029425,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.302157865806223,
-            "sigma": 0.07679188935543593
+            "ev_per_photon_in_beamlet": 17.070159284712297,
+            "sigma": 0.0734068334941152,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.9096444759851692,
-            "sigma": 0.026472533972723
+            "ev_per_photon_in_beamlet": 1.9740927220284257,
+            "sigma": 0.025401395871043925,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2200,15 +2577,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.97389620001195,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.980648644683534,
-            "sigma": 0.0796779291556694
+            "ev_per_photon_in_beamlet": 17.861632899169024,
+            "sigma": 0.07666685596374592,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 12.645585660581855,
-            "sigma": 0.06932404652283626
+            "ev_per_photon_in_beamlet": 13.218451601183169,
+            "sigma": 0.06646765602401633,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2222,15 +2603,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.168586699990556,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.637314585343556,
-            "sigma": 0.041542228683818044
+            "ev_per_photon_in_beamlet": 4.833481550724844,
+            "sigma": 0.04000456566011245,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 288.1087852897402,
-            "sigma": 0.3223832721793558
+            "ev_per_photon_in_beamlet": 302.12134044139407,
+            "sigma": 0.30980453338427943,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2244,15 +2629,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.712536600010935,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.324842405829441,
-            "sigma": 0.03957281467173297
+            "ev_per_photon_in_beamlet": 4.594385456229074,
+            "sigma": 0.03842731003150336,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.40759895907427557,
-            "sigma": 0.012555302730887306
+            "ev_per_photon_in_beamlet": 0.4206180470487766,
+            "sigma": 0.011989856146567526,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2266,15 +2655,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.926566499983892,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.3607324910072,
-            "sigma": 0.07518903913609376
+            "ev_per_photon_in_beamlet": 17.11618110796227,
+            "sigma": 0.07236819813424922,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.5802058484430017,
-            "sigma": 0.024305189481411662
+            "ev_per_photon_in_beamlet": 1.5964603787013802,
+            "sigma": 0.022964490668327352,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2288,15 +2681,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.971098300011363,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.383769047302703,
-            "sigma": 0.07874079768088964
+            "ev_per_photon_in_beamlet": 18.21957993064818,
+            "sigma": 0.07586951810927706,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 6.932975467258365,
-            "sigma": 0.05021119468575933
+            "ev_per_photon_in_beamlet": 7.226099932196274,
+            "sigma": 0.04816517777112229,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2310,15 +2707,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.761269900016487,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.551749952645968,
-            "sigma": 0.041362871168382706
+            "ev_per_photon_in_beamlet": 4.716198690988513,
+            "sigma": 0.03968136382283727,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 235.4290048052231,
-            "sigma": 0.2925962910544337
+            "ev_per_photon_in_beamlet": 246.46877576804144,
+            "sigma": 0.2812037803542876,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2332,15 +2733,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.847296599997208,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.346026727963617,
-            "sigma": 0.040528737346356015
+            "ev_per_photon_in_beamlet": 4.513694438616224,
+            "sigma": 0.03871701407098634,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.25096455779997084,
-            "sigma": 0.008684123234857552
+            "ev_per_photon_in_beamlet": 0.23768665573110082,
+            "sigma": 0.008123404000507867,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2354,15 +2759,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.069240500044543,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.88113760545268,
-            "sigma": 0.0818635092223777
+            "ev_per_photon_in_beamlet": 18.676671680401626,
+            "sigma": 0.07862732345754668,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.1207478560428625,
-            "sigma": 0.020400160468920726
+            "ev_per_photon_in_beamlet": 1.1646758521128868,
+            "sigma": 0.019383904773269116,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2376,15 +2785,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.059457900002599,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.295022744140294,
-            "sigma": 0.0804582947237969
+            "ev_per_photon_in_beamlet": 18.024923537606576,
+            "sigma": 0.07726908443356768,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 4.509242765967874,
-            "sigma": 0.03961034657839072
+            "ev_per_photon_in_beamlet": 4.6552868075428755,
+            "sigma": 0.0379344114641965,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2398,15 +2811,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.762286800018046,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.611828267365745,
-            "sigma": 0.042189333137587166
+            "ev_per_photon_in_beamlet": 4.881923134317276,
+            "sigma": 0.04093467464344905,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 153.8548271322134,
-            "sigma": 0.23586208850338677
+            "ev_per_photon_in_beamlet": 160.54083963687577,
+            "sigma": 0.22618090963464726,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2420,15 +2837,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.652491000015289,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.020135733700117,
-            "sigma": 0.03730973547596333
+            "ev_per_photon_in_beamlet": 4.250538558047795,
+            "sigma": 0.035877259207327594,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.13956396031746407,
-            "sigma": 0.007162503475359549
+            "ev_per_photon_in_beamlet": 0.13169755287451657,
+            "sigma": 0.006557540826089778,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2442,15 +2863,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.822080800018739,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.77464261334557,
-            "sigma": 0.07756358222378293
+            "ev_per_photon_in_beamlet": 17.58973483188006,
+            "sigma": 0.0741692107927228,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.6584432887214917,
-            "sigma": 0.015773784609246007
+            "ev_per_photon_in_beamlet": 0.7150318504600057,
+            "sigma": 0.015271298468536724,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2464,15 +2889,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.037367800017819,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.34030287053487,
-            "sigma": 0.08087493460009741
+            "ev_per_photon_in_beamlet": 18.158167704291174,
+            "sigma": 0.07756183114043685,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.3718512154533293,
-            "sigma": 0.03507167853063419
+            "ev_per_photon_in_beamlet": 3.529893832846389,
+            "sigma": 0.033589943502225605,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2486,15 +2915,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.767252699995879,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.3077368018938795,
-            "sigma": 0.04013766895122504
+            "ev_per_photon_in_beamlet": 4.618411372829764,
+            "sigma": 0.038592096494517995,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 84.06144171281076,
-            "sigma": 0.1738189642929464
+            "ev_per_photon_in_beamlet": 87.42791960171184,
+            "sigma": 0.16639332399554782,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2508,15 +2941,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.262109999952372,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.155917686265893,
-            "sigma": 0.038185085511719
+            "ev_per_photon_in_beamlet": 4.311486289779463,
+            "sigma": 0.036542232230552404,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.1682456989082857,
-            "sigma": 0.008268380487105643
+            "ev_per_photon_in_beamlet": 0.19450973779312214,
+            "sigma": 0.008196086478564079,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2530,15 +2967,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.781902000016998,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.393786262076844,
-            "sigma": 0.07688204471860277
+            "ev_per_photon_in_beamlet": 17.303350471520183,
+            "sigma": 0.0738388296663139,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.5148825107510493,
-            "sigma": 0.013153934595600068
+            "ev_per_photon_in_beamlet": 0.5259211819330224,
+            "sigma": 0.01232265188866869,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2552,15 +2993,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.93882310000481,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.351595055036157,
-            "sigma": 0.08034073585074977
+            "ev_per_photon_in_beamlet": 18.23917641880911,
+            "sigma": 0.07709889437163021,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.1498899258346587,
-            "sigma": 0.027403077046853404
+            "ev_per_photon_in_beamlet": 2.359060996383116,
+            "sigma": 0.0268729594252477,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2574,15 +3019,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.622951700002886,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.294042516714217,
-            "sigma": 0.039367388534456864
+            "ev_per_photon_in_beamlet": 4.527970692331359,
+            "sigma": 0.037908654052118955,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 44.63372588717961,
-            "sigma": 0.12772395603907458
+            "ev_per_photon_in_beamlet": 46.77516835099088,
+            "sigma": 0.12275330570047797,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2596,15 +3045,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.817931600031443,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.286866127536159,
-            "sigma": 0.04043122760472731
+            "ev_per_photon_in_beamlet": 4.4989403962272005,
+            "sigma": 0.038781121072683604,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.16938925127644325,
-            "sigma": 0.0071171310844373266
+            "ev_per_photon_in_beamlet": 0.18043574399706847,
+            "sigma": 0.007009221862103899,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2618,15 +3071,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 12.344640400027856,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.805459972978277,
-            "sigma": 0.07525294102144477
+            "ev_per_photon_in_beamlet": 17.809064099195766,
+            "sigma": 0.0726387705155117,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.5330221298290416,
-            "sigma": 0.013264995835472655
+            "ev_per_photon_in_beamlet": 0.5402555947655817,
+            "sigma": 0.012579867979101668,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2640,15 +3097,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.924787199997809,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.69165198132803,
-            "sigma": 0.07835486990844939
+            "ev_per_photon_in_beamlet": 17.42402840405792,
+            "sigma": 0.07520967522703899,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.9108776837152253,
-            "sigma": 0.027289748229945236
+            "ev_per_photon_in_beamlet": 1.9594483682664539,
+            "sigma": 0.025978419685092114,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2662,15 +3123,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.139519800024573,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.710706693214215,
-            "sigma": 0.04339949360458629
+            "ev_per_photon_in_beamlet": 4.88789532158258,
+            "sigma": 0.04147992463810823,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 21.695218768735756,
-            "sigma": 0.08744508969971869
+            "ev_per_photon_in_beamlet": 22.740155532918006,
+            "sigma": 0.08420127759569936,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2684,15 +3149,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.627646400011145,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.784482038946571,
-            "sigma": 0.042959032645057085
+            "ev_per_photon_in_beamlet": 4.990158829242027,
+            "sigma": 0.041024884358480285,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.15561866732896304,
-            "sigma": 0.006645454343773446
+            "ev_per_photon_in_beamlet": 0.15944759901761582,
+            "sigma": 0.006341785649340141,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2706,15 +3175,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.871973800007254,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.736799444947064,
-            "sigma": 0.07873136640577784
+            "ev_per_photon_in_beamlet": 17.563937871271875,
+            "sigma": 0.0756994394368712,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.3878779275734269,
-            "sigma": 0.01082149192629891
+            "ev_per_photon_in_beamlet": 0.44390920099690034,
+            "sigma": 0.010719083747085308,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2728,15 +3201,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.164141300017945,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.192250132958286,
-            "sigma": 0.07605975309385829
+            "ev_per_photon_in_beamlet": 16.79052380065157,
+            "sigma": 0.07292564152204745,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.689450650637882,
-            "sigma": 0.025869386242463818
+            "ev_per_photon_in_beamlet": 1.7457264551821048,
+            "sigma": 0.024639499132023478,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2750,15 +3227,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.833291699993424,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.72484959230911,
-            "sigma": 0.041284706884528864
+            "ev_per_photon_in_beamlet": 5.020895312387744,
+            "sigma": 0.03985899484426283,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 10.819939332396078,
-            "sigma": 0.059330567477193924
+            "ev_per_photon_in_beamlet": 11.42934714801752,
+            "sigma": 0.05740257364754165,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2772,15 +3253,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.66413749998901,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.843791137686039,
-            "sigma": 0.04406240811330042
+            "ev_per_photon_in_beamlet": 4.985734489747256,
+            "sigma": 0.041973635381175975,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.06118800276482943,
-            "sigma": 0.00496367354401297
+            "ev_per_photon_in_beamlet": 0.06714872225330965,
+            "sigma": 0.004707701705298081,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2794,15 +3279,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.892391900008079,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.902990411151148,
-            "sigma": 0.07896392632709014
+            "ev_per_photon_in_beamlet": 17.71469147350252,
+            "sigma": 0.07562634854010124,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.35318074676477407,
-            "sigma": 0.01304004439581906
+            "ev_per_photon_in_beamlet": 0.35952922459956627,
+            "sigma": 0.012335474281102373,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2816,15 +3305,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.975789199990686,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.415019190115252,
-            "sigma": 0.07898422598294753
+            "ev_per_photon_in_beamlet": 18.38386070464111,
+            "sigma": 0.07622993428938687,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3563071028207832,
-            "sigma": 0.022730073415108628
+            "ev_per_photon_in_beamlet": 1.4424592605191027,
+            "sigma": 0.021766053639122613,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2838,15 +3331,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.99240029999055,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.521476448533977,
-            "sigma": 0.04182931160700515
+            "ev_per_photon_in_beamlet": 4.740281609251145,
+            "sigma": 0.040135482323947876,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 6.033201700237987,
-            "sigma": 0.04578491169026505
+            "ev_per_photon_in_beamlet": 6.36220416082454,
+            "sigma": 0.04412112827414684,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2860,15 +3357,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.716199800022878,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.43895899641282,
-            "sigma": 0.041529970799900326
+            "ev_per_photon_in_beamlet": 4.699269525348863,
+            "sigma": 0.03969505623171926,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.2426578917825827,
-            "sigma": 0.009982091887841769
+            "ev_per_photon_in_beamlet": 0.24792905419644912,
+            "sigma": 0.009649027336203006,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2882,15 +3383,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.278403299977072,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.969322607792563,
-            "sigma": 0.07903563489990482
+            "ev_per_photon_in_beamlet": 17.66956515245101,
+            "sigma": 0.07566216778201194,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.2327217029260646,
-            "sigma": 0.00884752917483475
+            "ev_per_photon_in_beamlet": 0.25765648230416127,
+            "sigma": 0.008343729102753366,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2904,15 +3409,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.179782300023362,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.026258191321155,
-            "sigma": 0.07971052658552216
+            "ev_per_photon_in_beamlet": 17.801907351615753,
+            "sigma": 0.0763837210980853,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.1258177399241869,
-            "sigma": 0.019586996732022948
+            "ev_per_photon_in_beamlet": 1.2201051234384268,
+            "sigma": 0.01905563816405179,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2926,15 +3435,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.81951050000498,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.762488846514007,
-            "sigma": 0.04368460416864011
+            "ev_per_photon_in_beamlet": 4.96764902417088,
+            "sigma": 0.041876757707493384,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 3.554378107884022,
-            "sigma": 0.03674932730207559
+            "ev_per_photon_in_beamlet": 3.656382120182011,
+            "sigma": 0.03467144170488993,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2948,15 +3461,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.775680500024464,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.0345204066411675,
-            "sigma": 0.038952952492085864
+            "ev_per_photon_in_beamlet": 4.255296128025725,
+            "sigma": 0.03744596399284122,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.1167256878853368,
-            "sigma": 0.006260097925797612
+            "ev_per_photon_in_beamlet": 0.15488817916495756,
+            "sigma": 0.0068025124387403515,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2970,15 +3487,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.201345000008587,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.977055271035496,
-            "sigma": 0.07834417790929787
+            "ev_per_photon_in_beamlet": 17.74814809297409,
+            "sigma": 0.07524702547560853,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.35056974655442896,
-            "sigma": 0.010917693534851648
+            "ev_per_photon_in_beamlet": 0.3875824985276342,
+            "sigma": 0.01085377157028497,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -2992,15 +3513,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.027956900012214,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.21924636804026,
-            "sigma": 0.07903554599400857
+            "ev_per_photon_in_beamlet": 17.78505514692784,
+            "sigma": 0.07562226071161136,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.4053888736415137,
-            "sigma": 0.023468202487337535
+            "ev_per_photon_in_beamlet": 1.513971181599269,
+            "sigma": 0.022413625306577416,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3014,15 +3539,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.843520599999465,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.59206075544782,
-            "sigma": 0.042565414980786136
+            "ev_per_photon_in_beamlet": 4.760426314884201,
+            "sigma": 0.04062510264780755,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 2.1868815401295247,
-            "sigma": 0.027888001269388875
+            "ev_per_photon_in_beamlet": 2.227659732463893,
+            "sigma": 0.026315244028587214,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3036,15 +3565,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.840063799987547,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.5822910789598605,
-            "sigma": 0.04113417651924253
+            "ev_per_photon_in_beamlet": 4.741039134226622,
+            "sigma": 0.039511820508861525,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.28048743924420705,
-            "sigma": 0.011314174912211367
+            "ev_per_photon_in_beamlet": 0.2846137689011377,
+            "sigma": 0.010675249708509178,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3058,15 +3591,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.11283130000811,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.35210702436192,
-            "sigma": 0.08045567694445371
+            "ev_per_photon_in_beamlet": 17.826262583841032,
+            "sigma": 0.07694236713786207,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.47731684657251205,
-            "sigma": 0.012706280383569133
+            "ev_per_photon_in_beamlet": 0.4946115771781239,
+            "sigma": 0.012210279296828276,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3080,15 +3617,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.951124200015329,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.546559774727502,
-            "sigma": 0.08130232356815466
+            "ev_per_photon_in_beamlet": 18.35061270803622,
+            "sigma": 0.07787606220210419,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.368503150928227,
-            "sigma": 0.0213020938511147
+            "ev_per_photon_in_beamlet": 1.4333400435081178,
+            "sigma": 0.020513422900058437,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3102,15 +3643,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.698989299999084,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 3.7775236514631065,
-            "sigma": 0.03670646252572731
+            "ev_per_photon_in_beamlet": 4.018694322589212,
+            "sigma": 0.0355095208074017,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.9695094505190355,
-            "sigma": 0.01898460034068903
+            "ev_per_photon_in_beamlet": 1.0424944855616838,
+            "sigma": 0.018349931003320653,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3124,15 +3669,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.811549499980174,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 3.992413351192408,
-            "sigma": 0.03749600092272526
+            "ev_per_photon_in_beamlet": 4.245538644836342,
+            "sigma": 0.03630589934685812,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.2405415928374714,
-            "sigma": 0.008593665400672537
+            "ev_per_photon_in_beamlet": 0.25836608820589446,
+            "sigma": 0.008525906835472425,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3146,15 +3695,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.073551499983296,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 16.458541111446102,
-            "sigma": 0.07636482007389332
+            "ev_per_photon_in_beamlet": 17.200003295506086,
+            "sigma": 0.07329336115885778,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.4625783875794877,
-            "sigma": 0.014271817323051095
+            "ev_per_photon_in_beamlet": 0.48309488128949873,
+            "sigma": 0.013411642836086859,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3168,15 +3721,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.917253700026777,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.094209107591595,
-            "sigma": 0.07935770880492889
+            "ev_per_photon_in_beamlet": 17.851411986897258,
+            "sigma": 0.07581698786173834,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 1.3070224274699103,
-            "sigma": 0.022356397334842796
+            "ev_per_photon_in_beamlet": 1.3337958971366448,
+            "sigma": 0.021201451223427755,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3190,15 +3747,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.22921270004008,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.64154700556146,
-            "sigma": 0.04113781479547253
+            "ev_per_photon_in_beamlet": 4.786152057475895,
+            "sigma": 0.0392117888738078,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.41477623622646204,
-            "sigma": 0.010033409082730265
+            "ev_per_photon_in_beamlet": 0.46665412058078604,
+            "sigma": 0.010010138802638065,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3212,15 +3773,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 11.368528000020888,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.654665572180146,
-            "sigma": 0.04230518879090977
+            "ev_per_photon_in_beamlet": 4.839502704307674,
+            "sigma": 0.04069856765165929,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.16905120766052278,
-            "sigma": 0.0077248292528052705
+            "ev_per_photon_in_beamlet": 0.17850403227181488,
+            "sigma": 0.007320842087565618,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3234,15 +3799,19 @@
         "solid_angle_sr": 0.0021670043340351747,
         "weight": 0.007003813143385958,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.899638600007165,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.121413196068897,
-            "sigma": 0.0801124614480742
+            "ev_per_photon_in_beamlet": 17.87651002462699,
+            "sigma": 0.07710191328275509,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.780430110293455,
-            "sigma": 0.0188832795656688
+            "ev_per_photon_in_beamlet": 0.7860464744337232,
+            "sigma": 0.01817752094562365,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3256,15 +3825,19 @@
         "solid_angle_sr": 0.0021670043340351755,
         "weight": 0.00700381314338596,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.9128055999754,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 17.310525158257732,
-            "sigma": 0.07962736593492559
+            "ev_per_photon_in_beamlet": 18.23621498439835,
+            "sigma": 0.07654237338668916,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.956180956102362,
-            "sigma": 0.018856000990052198
+            "ev_per_photon_in_beamlet": 1.0537446871417768,
+            "sigma": 0.018583119904255214,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       },
@@ -3278,15 +3851,19 @@
         "solid_angle_sr": 0.0021302665669707347,
         "weight": 0.006885075745502931,
         "histories": 1388888.888888889,
-        "wall_seconds": 10.690018300025258,
+        "wall_seconds": NaN,
         "voi": {
           "center": {
-            "ev_per_photon_in_beamlet": 4.580464693569592,
-            "sigma": 0.041554252776752044
+            "ev_per_photon_in_beamlet": 4.772410356329216,
+            "sigma": 0.03974750346997932,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           },
           "perimeter": {
-            "ev_per_photon_in_beamlet": 0.48102751658523624,
-            "sigma": 0.012785878339016215
+            "ev_per_photon_in_beamlet": 0.4811589251825918,
+            "sigma": 0.012350831884631654,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
           }
         }
       }
@@ -3294,9 +3871,9 @@
   },
   "results": {
     "center": {
-      "value": 10.788364893457954,
+      "value": 11.291240830694234,
       "unit": "eV per emitted photon",
-      "uncertainty": 0.005258626059716838,
+      "uncertainty": 0.00505024076495026,
       "uncertainty_kind": "1sigma_mc_statistical",
       "provenance": {
         "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
@@ -3315,9 +3892,9 @@
       }
     },
     "perimeter": {
-      "value": 37.9954923215837,
+      "value": 39.7748028240487,
       "unit": "eV per emitted photon",
-      "uncertainty": 0.00976448066548997,
+      "uncertainty": 0.009377745614786001,
       "uncertainty_kind": "1sigma_mc_statistical",
       "provenance": {
         "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
@@ -3338,30 +3915,30 @@
   },
   "comparison_with_tg195": {
     "center": {
-      "ours_ev_per_photon": 10.788364893457954,
-      "ours_sigma": 0.005258626059716838,
-      "ours_relative_sigma": 0.00048743494604132825,
-      "reference_mean": 11.144400000000001,
+      "ours_ev_per_photon": 11.291240830694234,
+      "ours_sigma": 0.00505024076495026,
+      "ours_relative_sigma": 0.00044727066233691783,
+      "reference_mean": 11.382118055555557,
       "reference_min": 11.11,
       "reference_max": 11.18,
       "inter_code_spread_fraction": 0.006281181579986386,
-      "ratio_to_reference_mean": 0.968052554956566,
-      "deviation_fraction": -0.03194744504343405,
-      "passes_tg195_tolerance": false,
+      "ratio_to_reference_mean": 0.9920157896432144,
+      "deviation_fraction": -0.007984210356785648,
+      "passes_tg195_tolerance": true,
       "within_inter_code_range": false
     },
     "perimeter": {
-      "ours_ev_per_photon": 37.9954923215837,
-      "ours_sigma": 0.00976448066548997,
-      "ours_relative_sigma": 0.00025699050252714226,
-      "reference_mean": 39.360825000000006,
+      "ours_ev_per_photon": 39.7748028240487,
+      "ours_sigma": 0.009377745614786001,
+      "ours_relative_sigma": 0.00023577101453576573,
+      "reference_mean": 39.761378541666666,
       "reference_min": 38.73,
       "reference_max": 39.99,
       "inter_code_spread_fraction": 0.032011524148693654,
-      "ratio_to_reference_mean": 0.9653123968205365,
-      "deviation_fraction": -0.03468760317946351,
-      "passes_tg195_tolerance": false,
-      "within_inter_code_range": false
+      "ratio_to_reference_mean": 1.0003376211508352,
+      "deviation_fraction": 0.00033762115083524336,
+      "passes_tg195_tolerance": true,
+      "within_inter_code_range": true
     }
   },
   "reference_note": "Reference values are read at run time from the AAPM electronic resources in data/tg195/, which are copyrighted and are not redistributed by this repository. Only the comparison is recorded here.",
@@ -3370,6 +3947,6 @@
     "Phantom modelled at 40 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
     "Voxelised cylinder: the curved surface is stair-stepped at the 0.25 cm voxel scale.",
     "The fan is approximated by 4 azimuthal sub-fans; the residual solid-angle error is +0.0674 %.",
-    "Only 30 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measured sensitivity: see results/phase1a_G1_air_margin_convergence.json."
+    "Only 30 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
   ]
 }

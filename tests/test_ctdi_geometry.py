@@ -17,6 +17,7 @@ from ct_dosemc_core.ctdi import (
     CtdiPhantomSpec,
     build_ctdi_phantom,
     chamber_masks,
+    chamber_weights,
 )
 from ct_dosemc_core.phantom import Material
 
@@ -75,16 +76,31 @@ def test_chambers_sit_at_the_standard_positions():
         assert np.all(ph.material[mask] == PMMA.index)
 
 
-def test_chambers_do_not_overlap_and_have_the_right_volume():
+def test_chambers_do_not_overlap():
     spec, ph = _phantom(diameter_cm=32.0, voxel_size_cm=0.2)
     masks = chamber_masks(ph, spec)
     stacked = np.stack(list(masks.values()))
     assert stacked.sum(axis=0).max() == 1, "chamber regions overlap"
 
-    analytic = math.pi * (0.5 * spec.chamber_diameter_cm) ** 2 * spec.chamber_length_cm
-    for name, mask in masks.items():
-        volume = mask.sum() * ph.voxel_volume_cm3
-        assert volume == pytest.approx(analytic, rel=0.15), name
+
+def test_chamber_occupancy_reproduces_the_analytic_volume():
+    """A voxel-centre test overstates a 13.1 mm chamber on a 2.5 mm grid by 11.3%.
+
+    CTDI100 uses a *mean* dose, so a volume error does not scale the result the
+    way it does for energy scoring, but it inflates the effective chamber radius
+    and moves the mean inside the steep radial gradient at the peripheral
+    positions. The occupancy weights are the volume; the boolean mask is only the
+    set of voxels the chamber touches.
+    """
+    analytic = math.pi * (0.5 * 1.31) ** 2 * 10.0
+    for voxel in (0.25, 0.125):
+        spec, ph = _phantom(diameter_cm=32.0, voxel_size_cm=voxel)
+        weights = chamber_weights(ph, spec)
+        for name, w in weights.items():
+            assert np.all((w >= 0.0) & (w <= 1.0)), name
+            volume = float(w.sum()) * ph.voxel_volume_cm3
+            assert volume == pytest.approx(analytic, rel=1e-3), (name, voxel)
+            assert float((w > 0).sum()) > float(w.sum()), name
 
 
 def test_chamber_masks_crop_to_the_tally_roi():

@@ -38,7 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .phantom import Material, VoxelPhantom
+from .phantom import Material, VoxelPhantom, cylinder_occupancy
 
 __all__ = [
     "CASE4",
@@ -46,9 +46,11 @@ __all__ = [
     "SubFan",
     "build_case4_phantom",
     "first_test_voi_masks",
+    "first_test_voi_weights",
     "read_case4_reference",
     "read_tg195_spectrum",
     "second_test_voi_masks",
+    "second_test_voi_weights",
     "sub_fans",
     "write_monoenergetic_spectrum",
 ]
@@ -170,6 +172,66 @@ def _crop(full: np.ndarray, origin_zyx, shape_zyx) -> np.ndarray:
     return full[z0 : z0 + dz, y0 : y0 + dy, x0 : x0 + dx]
 
 
+def first_test_voi_weights(
+    phantom: VoxelPhantom,
+    spec: Case4Spec,
+    *,
+    roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
+    roi_shape_zyx: tuple[int, int, int] | None = None,
+    subdivisions: int = 64,
+) -> dict[str, np.ndarray]:
+    """The four contiguous axial sections of the first test, as occupancy arrays.
+
+    "Each cylindrical segment is an axial tomographic section of the phantom with
+    thickness 10 mm, with centers located at z = 0 mm, z = 10 mm, z = 20 mm, and
+    z = 30 mm" (§3.4).  Each is the *whole* disc, so the scoring mass is large and
+    the statistics are cheap.
+
+    Values are the fraction of each voxel inside the segment, in ``[0, 1]``.
+
+    **The radial boundary is deliberately NOT partial-volume weighted here**, and
+    that is not an oversight.  This VOI's edge *is* the phantom's edge, and the
+    phantom was voxelised by the same voxel-centre test, so a voxel whose centre
+    is inside the cylinder is entirely PMMA in the simulated geometry and its full
+    mass genuinely absorbed dose.  Down-weighting it would discard real deposited
+    energy -- and precisely at the entrance surface, where the dose is highest, so
+    the error is much larger than the volume mismatch suggests (measured: -2.2% on
+    the segment holding the primary beam).
+
+    The residual +0.19% mismatch between the voxelised disc and the analytic one
+    is a *geometry* discretisation error that affects transport as well as
+    scoring.  It cannot be corrected by re-weighting the score; it converges with
+    voxel size, which is what the G3 scan measures.
+
+    The z boundaries sit inside bulk PMMA, so those *are* weighted exactly.  The
+    second test is the opposite case -- a small VOI wholly inside uniform PMMA,
+    with no material boundary to respect -- and is fully weighted there.
+    """
+    if roi_shape_zyx is None:
+        roi_shape_zyx = phantom.shape_zyx
+    thickness = spec.first_test_segment_thickness_cm
+    _cx, _cy, cz = phantom.centre_cm()
+    # The phantom's own PMMA voxels are the radial extent, by construction.
+    pmma_index = max(m.index for m in phantom.materials)
+    is_pmma = phantom.material == pmma_index
+
+    nz = phantom.shape_zyx[0]
+    vz = phantom.voxel_size_cm[2]
+    z = (np.arange(nz) + 0.5) * vz
+
+    out: dict[str, np.ndarray] = {}
+    for i in range(spec.first_test_n_segments):
+        centre = cz + i * thickness
+        lo = np.maximum(z - 0.5 * vz, centre - 0.5 * thickness)
+        hi = np.minimum(z + 0.5 * vz, centre + 0.5 * thickness)
+        f_z = np.clip(hi - lo, 0.0, None) / vz
+        w = _crop(f_z[:, None, None] * is_pmma, roi_origin_zyx, roi_shape_zyx)
+        if not w.any():
+            raise ValueError(f"first-test segment {i + 1} falls outside the dose tally ROI")
+        out[f"segment_{i + 1}"] = w
+    return out
+
+
 def first_test_voi_masks(
     phantom: VoxelPhantom,
     spec: Case4Spec,
@@ -177,34 +239,56 @@ def first_test_voi_masks(
     roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
     roi_shape_zyx: tuple[int, int, int] | None = None,
 ) -> dict[str, np.ndarray]:
-    """The four contiguous axial sections of the first test.
+    """Boolean form of :func:`first_test_voi_weights` -- every touched voxel."""
+    return {
+        k: w > 0.0
+        for k, w in first_test_voi_weights(
+            phantom, spec, roi_origin_zyx=roi_origin_zyx, roi_shape_zyx=roi_shape_zyx
+        ).items()
+    }
 
-    "Each cylindrical segment is an axial tomographic section of the phantom with
-    thickness 10 mm, with centers located at z = 0 mm, z = 10 mm, z = 20 mm, and
-    z = 30 mm" (§3.4).  Each is the *whole* disc, not a small VOI, so the scoring
-    mass is large and the statistics are cheap.
+
+def second_test_voi_weights(
+    phantom: VoxelPhantom,
+    spec: Case4Spec,
+    *,
+    roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
+    roi_shape_zyx: tuple[int, int, int] | None = None,
+    subdivisions: int = 64,
+) -> dict[str, np.ndarray]:
+    """The two 10 mm diameter, 100 mm long PMMA cylinders, as occupancy arrays.
+
+    One on the axis, one with its centre 150 mm from the axis (§3.4).
+
+    **This is where the partial volume matters.** A 10 mm diameter circle on a
+    2.5 mm grid resolves, under a voxel-centre test, as exactly 12 voxels =
+    0.750 cm^2 against a true 0.785 cm^2 -- 4.51% short.  Both VOI centres sit on
+    voxel corners, so both lose the same 4.51%, and because the score is energy
+    deposited (proportional to selected volume) it comes straight off the result.
     """
-    v = phantom.voxel_size_cm[0]
-    nz, ny, nx = phantom.shape_zyx
-    x = (np.arange(nx) + 0.5) * v
-    y = (np.arange(ny) + 0.5) * v
-    z = (np.arange(nz) + 0.5) * v
-    cx, cy, cz = phantom.centre_cm()
-
-    in_disc = ((x[None, :] - cx) ** 2 + (y[:, None] - cy) ** 2) <= spec.phantom_radius_cm**2
-    thickness = spec.first_test_segment_thickness_cm
     if roi_shape_zyx is None:
         roi_shape_zyx = phantom.shape_zyx
+    cx, cy, cz = phantom.centre_cm()
+    half_length = 0.5 * spec.second_test_voi_length_cm
+    radius = 0.5 * spec.second_test_voi_diameter_cm
 
-    masks: dict[str, np.ndarray] = {}
-    for i in range(spec.first_test_n_segments):
-        centre = cz + i * thickness
-        in_slab = np.abs(z - centre) <= 0.5 * thickness
-        mask = _crop(in_slab[:, None, None] & in_disc[None, :, :], roi_origin_zyx, roi_shape_zyx)
-        if not mask.any():
-            raise ValueError(f"first-test segment {i + 1} falls outside the dose tally ROI")
-        masks[f"segment_{i + 1}"] = mask
-    return masks
+    offsets = {"center": (0.0, 0.0), "perimeter": (0.0, spec.second_test_perimeter_radius_cm)}
+    out: dict[str, np.ndarray] = {}
+    for name, (ox, oy) in offsets.items():
+        full = cylinder_occupancy(
+            phantom.n_voxels,
+            phantom.voxel_size_cm,
+            centre_xy_cm=(cx + ox, cy + oy),
+            radius_cm=radius,
+            z_min_cm=cz - half_length,
+            z_max_cm=cz + half_length,
+            subdivisions=subdivisions,
+        )
+        w = _crop(full, roi_origin_zyx, roi_shape_zyx)
+        if not w.any():
+            raise ValueError(f"second-test VOI {name!r} falls outside the dose tally ROI")
+        out[name] = w
+    return out
 
 
 def second_test_voi_masks(
@@ -214,31 +298,13 @@ def second_test_voi_masks(
     roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
     roi_shape_zyx: tuple[int, int, int] | None = None,
 ) -> dict[str, np.ndarray]:
-    """The two 10 mm diameter, 100 mm long PMMA cylinders of the second test.
-
-    One on the axis, one with its centre 150 mm from the axis (§3.4).
-    """
-    v = phantom.voxel_size_cm[0]
-    nz, ny, nx = phantom.shape_zyx
-    x = (np.arange(nx) + 0.5) * v
-    y = (np.arange(ny) + 0.5) * v
-    z = (np.arange(nz) + 0.5) * v
-    cx, cy, cz = phantom.centre_cm()
-
-    in_length = np.abs(z - cz) <= 0.5 * spec.second_test_voi_length_cm
-    r2 = (0.5 * spec.second_test_voi_diameter_cm) ** 2
-    if roi_shape_zyx is None:
-        roi_shape_zyx = phantom.shape_zyx
-
-    offsets = {"center": (0.0, 0.0), "perimeter": (0.0, spec.second_test_perimeter_radius_cm)}
-    masks: dict[str, np.ndarray] = {}
-    for name, (ox, oy) in offsets.items():
-        disc = ((x[None, :] - (cx + ox)) ** 2 + (y[:, None] - (cy + oy)) ** 2) <= r2
-        mask = _crop(in_length[:, None, None] & disc[None, :, :], roi_origin_zyx, roi_shape_zyx)
-        if not mask.any():
-            raise ValueError(f"second-test VOI {name!r} falls outside the dose tally ROI")
-        masks[name] = mask
-    return masks
+    """Boolean form of :func:`second_test_voi_weights` -- every touched voxel."""
+    return {
+        k: w > 0.0
+        for k, w in second_test_voi_weights(
+            phantom, spec, roi_origin_zyx=roi_origin_zyx, roi_shape_zyx=roi_shape_zyx
+        ).items()
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -487,8 +553,60 @@ def _parse_range(text: str) -> tuple[float, float]:
     return float(lo.replace(",", "").strip()), float(hi.replace(",", "").strip())
 
 
+def read_case4_discrete_angles(
+    workbook: str | Path, *, beam: str = "120 kVp", thickness_cm: float = 1.0
+) -> dict[str, np.ndarray]:
+    """The second test's per-projection-angle reference values, 36 per VOI.
+
+    TG-195 runs the second test two ways (§3.4): (a) 36 discrete projections at
+    10 degree increments, and (b) a source angle sampled randomly per photon from
+    the continuous 360 degree distribution.  The published tables give both, and
+    **they are not the same experiment**, so a 36-projection simulation must be
+    compared against the discrete column.
+
+    The two differ by 1.0-1.6% at the perimeter VOI in both beams, which is what a
+    36-point quadrature of a sharply peaked angular function does -- the perimeter
+    dose swings by a factor of 225 across the rotation.
+    """
+    import openpyxl
+
+    key = (beam, float(thickness_cm))
+    if key not in _CASE4_COLUMNS:
+        raise KeyError(f"no Case 4 column for {key}; have {sorted(_CASE4_COLUMNS)}")
+    col = _CASE4_COLUMNS[key]
+    ws = openpyxl.load_workbook(Path(workbook), data_only=True)["Mean"]
+
+    out: dict[str, np.ndarray] = {}
+    # The discrete block repeats the 'Center'/'Perimeter' labels after the
+    # continuous one; the angle column identifies the rows that follow.
+    seen: dict[str, int] = {}
+    for r in range(1, ws.max_row + 1):
+        label = ws.cell(row=r, column=2).value
+        if not isinstance(label, str) or label.strip() not in ("Center", "Perimeter"):
+            continue
+        name = label.strip().lower()
+        seen[name] = seen.get(name, 0) + 1
+        if seen[name] < 2:  # first occurrence is the continuous case
+            continue
+        values = []
+        for rr in range(r + 1, min(r + 45, ws.max_row + 1)):
+            angle = ws.cell(row=rr, column=2).value
+            value = ws.cell(row=rr, column=col).value
+            if isinstance(angle, (int, float)) and isinstance(value, (int, float)):
+                values.append(float(value))
+            elif values:
+                break
+        if len(values) == len(CASE4_DISCRETE_PROJECTION_ANGLES_DEG):
+            out[name] = np.asarray(values)
+    return out
+
+
 def read_case4_reference(
-    workbook: str | Path, *, beam: str = "56.4 keV", thickness_cm: float = 1.0
+    workbook: str | Path,
+    *,
+    beam: str = "56.4 keV",
+    thickness_cm: float = 1.0,
+    angular: str = "continuous",
 ) -> dict[str, dict[str, float]]:
     """Reference values from ``09-Case 4 Results.xlsx``, in eV per photon.
 
@@ -515,6 +633,14 @@ def read_case4_reference(
         code: _read_case4_sheet(wb[code], col) for code in _CODES if code in wb.sheetnames
     }
 
+    if angular not in ("continuous", "discrete"):
+        raise ValueError("angular must be 'continuous' or 'discrete'")
+    discrete = (
+        read_case4_discrete_angles(workbook, beam=beam, thickness_cm=thickness_cm)
+        if angular == "discrete"
+        else {}
+    )
+
     out: dict[str, dict[str, float]] = {}
     for voi, mean in means.items():
         lo, hi = _parse_range(ranges[voi]) if voi in ranges else (mean, mean)
@@ -523,7 +649,21 @@ def read_case4_reference(
             "min": lo,
             "max": hi,
             "inter_code_spread_fraction": (hi - lo) / mean if mean else float("nan"),
+            "angular_case": "continuous",
         }
+        if voi in discrete:
+            # Swap in the 36-angle average, and carry the continuous value
+            # alongside so the difference between the two published sub-cases
+            # stays visible rather than being quietly chosen between.
+            rec["mean_continuous"] = float(mean)
+            rec["mean"] = float(np.mean(discrete[voi]))
+            rec["angular_case"] = "discrete (36-angle average)"
+            rec["discrete_over_continuous"] = rec["mean"] / mean - 1.0
+            rec["discrete_min"] = float(np.min(discrete[voi]))
+            rec["discrete_max"] = float(np.max(discrete[voi]))
+            # No published inter-code range for the per-angle values; the
+            # continuous range is kept only as an order-of-magnitude guide.
+            rec["inter_code_range_is_for_continuous_case"] = True
         for code, d in per_code.items():
             if voi in d:
                 rec[f"code_{code}"] = d[voi]

@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-__all__ = ["Material", "VoxelPhantom", "hu_to_density"]
+__all__ = ["Material", "VoxelPhantom", "cylinder_occupancy", "hu_to_density"]
 
 # MC-GPU v1.3 compiles with MAX_MATERIALS=15 (vendor/MCGPU/MC-GPU_v1.3.h:62).
 MCGPU_MAX_MATERIALS = 15
@@ -116,6 +116,80 @@ class VoxelPhantom:
         """Mass of the whole phantom, or of ``mask`` if given."""
         d = self.density if mask is None else self.density[mask]
         return float(d.sum() * self.voxel_volume_cm3)
+
+
+# -- partial-volume occupancy for analytically-defined regions --------------
+
+
+def cylinder_occupancy(
+    n_voxels_xyz: tuple[int, int, int],
+    voxel_size_cm: tuple[float, float, float],
+    *,
+    centre_xy_cm: tuple[float, float],
+    radius_cm: float,
+    z_min_cm: float,
+    z_max_cm: float,
+    subdivisions: int = 64,
+) -> np.ndarray:
+    """Fraction of each voxel lying inside a z-aligned cylinder, in ``[0, 1]``.
+
+    A voxel-centre-inside test is a *boolean* approximation whose error scales
+    with the surface-to-volume ratio of the region.  For a region the size of the
+    phantom that is negligible (+0.19% for a 320 mm disc at 2.5 mm voxels); for a
+    10 mm diameter scoring cylinder it is **-4.51%**, because a 2.5 mm grid
+    resolves such a circle as exactly 12 voxels against a true area of 12.57.
+    Any quantity proportional to the selected volume -- energy deposited, mass --
+    inherits that error directly.
+
+    The occupancy is separable for a z-aligned cylinder: the xy-fraction of a
+    voxel inside the disc times the z-fraction inside ``[z_min, z_max]``.  The
+    z factor is computed exactly, and only voxels the disc boundary actually
+    crosses are subdivided, so this costs almost nothing.
+
+    Returns an array indexed ``[z, y, x]``, matching :class:`VoxelPhantom`.
+    """
+    if radius_cm <= 0.0:
+        raise ValueError("radius must be positive")
+    if z_max_cm <= z_min_cm:
+        raise ValueError("z_max must exceed z_min")
+    if subdivisions < 2:
+        raise ValueError("need at least 2 subdivisions per axis")
+
+    nx, ny, nz = n_voxels_xyz
+    vx, vy, vz = voxel_size_cm
+    cx, cy = centre_xy_cm
+
+    x = (np.arange(nx) + 0.5) * vx
+    y = (np.arange(ny) + 0.5) * vy
+    z = (np.arange(nz) + 0.5) * vz
+
+    # -- xy: exact for interior and exterior voxels, subdivided on the boundary
+    dx = np.abs(x[None, :] - cx)
+    dy = np.abs(y[:, None] - cy)
+    near = np.hypot(np.maximum(dx - 0.5 * vx, 0.0), np.maximum(dy - 0.5 * vy, 0.0))
+    far = np.hypot(dx + 0.5 * vx, dy + 0.5 * vy)
+
+    f_xy = np.zeros((ny, nx), dtype=float)
+    f_xy[far <= radius_cm] = 1.0
+    straddling = (near < radius_cm) & (far > radius_cm)
+
+    if straddling.any():
+        offsets = (np.arange(subdivisions) + 0.5) / subdivisions - 0.5
+        sub_x = offsets * vx
+        sub_y = offsets * vy
+        js, is_ = np.nonzero(straddling)
+        # Sub-cell centres for every straddling voxel at once: (n, sub, sub)
+        px = (x[is_][:, None, None] + sub_x[None, None, :]) - cx
+        py = (y[js][:, None, None] + sub_y[None, :, None]) - cy
+        inside = (px * px + py * py) <= radius_cm * radius_cm
+        f_xy[js, is_] = inside.mean(axis=(1, 2))
+
+    # -- z: exact overlap of the voxel extent with [z_min, z_max]
+    lo = np.maximum(z - 0.5 * vz, z_min_cm)
+    hi = np.minimum(z + 0.5 * vz, z_max_cm)
+    f_z = np.clip(hi - lo, 0.0, None) / vz
+
+    return f_z[:, None, None] * f_xy[None, :, :]
 
 
 # -- Schneider stoichiometric HU -> density ---------------------------------
