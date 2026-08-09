@@ -8,11 +8,18 @@ They are patched on a *copy* of the source, so `vendor/MCGPU` stays byte-identic
 to upstream and every substitution is recorded in `vendor/build/build_info.json`.
 See `docs/MC_SOURCE_MODEL.md` §2.1.
 
-> **Status: drafted, not filed.** Opening issues on someone else's repository is
-> an outward-facing action; these are ready for Shuji to review and post. Once
-> filed, record the issue URLs in `docs/MC_SOURCE_MODEL.md` §2.1 — a paper that
-> argues for openness and returns defects to the open code it depends on is
-> making its own case.
+> **Status: filed 2026-08-08.**
+>
+> | # | Defect | Upstream issue |
+> |---|---|---|
+> | 1 | `abs()` on a `double` collapses sub-1° apertures | [DIDSR/MCGPU#22](https://github.com/DIDSR/MCGPU/issues/22) |
+> | 2 | CPU branch reuses one PRNG sequence per projection | [DIDSR/MCGPU#23](https://github.com/DIDSR/MCGPU/issues/23) |
+> | 3 | Binary outputs opened in text mode | [DIDSR/MCGPU#24](https://github.com/DIDSR/MCGPU/issues/24) |
+> | 4 | Aperture line documented in the wrong order | [DIDSR/MCGPU#25](https://github.com/DIDSR/MCGPU/issues/25) |
+>
+> A paper that argues for openness and returns defects to the open code it
+> depends on is making its own case; these belong in the Data Availability
+> statement.
 
 All line numbers refer to `MC-GPU_v1.3.cu` at commit as cloned from
 `https://github.com/DIDSR/MCGPU` (see `vendor/build/build_info.json` for the

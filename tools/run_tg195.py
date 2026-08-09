@@ -101,11 +101,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--air-margin",
         type=float,
-        default=1.0,
-        help="cm of air modelled around the cylinder. TG-195 fills the rest of the "
-        "geometry with air, but MC-GPU's voxel box cannot reach the source: photons "
-        "cross the gap unattenuated, so this controls how much of the 44 cm "
-        "source-to-phantom air path is actually simulated.",
+        default=44.0,
+        help="cm of air modelled around the cylinder. MC-GPU carries photons from "
+        "the focal spot to the voxel box WITHOUT interaction, so air outside the box "
+        "does not exist. The default covers the whole 44 cm from the cylinder surface "
+        "to the source, because anything less silently deletes part of the geometry "
+        "TG-195 specifies (measured: +0.8% at 1 cm). Design principle, not a tuning "
+        "knob: the box should reach the focal spot.",
     )
     p.add_argument(
         "--air-margin-z",
@@ -117,6 +119,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--histories", type=float, default=2.0e7, help="total, across all sub-fans")
     p.add_argument("--projections", type=int, default=1)
+    p.add_argument(
+        "--replicas",
+        type=int,
+        default=0,
+        help="G4: repeat the gate K times with independent seeds and report the "
+        "sample standard deviation alongside the two in-run estimators. The "
+        "replica SD makes no independence assumption at all, so it is the one to "
+        "trust where they disagree.",
+    )
     p.add_argument("--seed", type=int, default=1234567890)
     p.add_argument("--executable", type=Path, default=DEFAULT_EXE)
     p.add_argument("--tag", type=str, default=None)
@@ -813,8 +824,97 @@ def convergence_scan(args) -> int:
     return 0
 
 
+def replica_study(args) -> int:
+    """G4 -- the Monte-Carlo uncertainty, estimated three ways.
+
+    Three estimators of the same quantity, in increasing order of trustworthiness:
+
+    1. **per-voxel quadrature within one run.** Treats voxel tallies as
+       independent; they are not, since one photon deposits in many voxels, so it
+       understates sigma.
+    2. **sub-fan quadrature.** The sub-fans are separate engine invocations with
+       disjoint stretches of the random sequence, so combining *those* in
+       quadrature is legitimate. Still blind to any correlation inside a sub-fan.
+    3. **replica sample SD.** K runs differing only in seed. Assumes nothing.
+
+    Reporting all three, rather than the most convenient one, is the point: where
+    they disagree the disagreement is the finding.
+    """
+    k = int(args.replicas)
+    if k < 3:
+        raise SystemExit("--replicas needs at least 3 runs to form a sample SD")
+    base_seed = int(args.seed)
+    per_run: list[dict[str, float]] = []
+    quoted: list[dict[str, float]] = []
+
+    for i in range(k):
+        args.seed = base_seed + 7919 * (i + 1)  # disjoint PRNG starts
+        args.tag = f"replica_{i:02d}"
+        print(f"\n[G4] replica {i + 1}/{k}, seed {args.seed}")
+        rundir = REPO / "results" / "phase1a" / args.tag
+        rundir.mkdir(parents=True, exist_ok=True)
+        spec = Case4Spec(fan_thickness_at_isocentre_cm=args.fan_thickness)
+        write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+        values, _meta = run_sub_fan_set(
+            spec=spec,
+            args=args,
+            rundir=rundir,
+            spectrum_file="mono.spc",
+            voi_builder=first_test_voi_weights,
+            phantom_length_cm=args.phantom_length,
+            n_projections=1,
+            label="g4",
+        )
+        per_run.append({name: v.value for name, v in values.items()})
+        quoted.append({name: float(v.uncertainty or 0.0) for name, v in values.items()})
+        for name, v in values.items():
+            print(f"    {name}: {v.value:.4f} +/- {v.uncertainty:.4f}")
+
+    names = sorted(per_run[0])
+    comparison = {}
+    for name in names:
+        samples = np.array([r[name] for r in per_run])
+        replica_sd = float(samples.std(ddof=1))
+        subfan_sd = float(np.mean([q[name] for q in quoted]))
+        comparison[name] = {
+            "mean_ev_per_photon": float(samples.mean()),
+            "replica_sample_sd": replica_sd,
+            "replica_relative_sd": replica_sd / float(samples.mean()),
+            "sub_fan_quadrature_sd": subfan_sd,
+            "replica_over_sub_fan": replica_sd / subfan_sd if subfan_sd else float("nan"),
+            "n_replicas": k,
+            "sd_of_the_sd_relative": float(1.0 / math.sqrt(2.0 * (k - 1))),
+        }
+        c = comparison[name]
+        print(
+            f"  {name:<12} replica SD {replica_sd:.4f} ({100 * c['replica_relative_sd']:.4f} %)"
+            f"   sub-fan quadrature {subfan_sd:.4f}"
+            f"   ratio {c['replica_over_sub_fan']:.2f}x"
+        )
+
+    out = write_results(
+        REPO / "results" / "phase1a_G4_replica_uncertainty.json",
+        {
+            "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
+            "n_replicas": k,
+            "base_seed": base_seed,
+            "comparison": comparison,
+            "note": "The sub-fan quadrature combines genuinely independent engine "
+            "invocations, so unlike the per-voxel quadrature inside a single run it "
+            "is not obviously biased. The replica SD assumes nothing at all. "
+            "'sd_of_the_sd_relative' is 1/sqrt(2(K-1)): with K replicas the SD "
+            "itself is only known to that precision, so ratios should be quoted as "
+            "intervals rather than point estimates.",
+        },
+    )
+    print(f"\n[G4] wrote {out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.replicas:
+        return replica_study(args)
     if args.scan:
         return convergence_scan(args)
     if args.gate == "G0":

@@ -1,0 +1,66 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T01:08:26+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "6cbaa1a36995033cf9e665558eed8720930c60f7",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "TG-195 Case 4 first test: convergence in sub_fans",
+  "parameter": "sub_fans",
+  "parameter_meaning": "azimuthal fan subdivisions",
+  "values": [
+    4,
+    8,
+    16
+  ],
+  "fixed": {
+    "phantom_length": 60.0,
+    "air_margin": 44.0,
+    "voxel_size": 0.5,
+    "histories": 12000000.0
+  },
+  "results_ev_per_photon": {
+    "4": {
+      "segment_1": 11586.004802296164,
+      "segment_2": 2577.4773734650184,
+      "segment_3": 1767.8865509835352,
+      "segment_4": 1331.017820012172
+    },
+    "8": {
+      "segment_1": 11575.964534605713,
+      "segment_2": 2581.1149404217376,
+      "segment_3": 1767.2713716658234,
+      "segment_4": 1324.9814326699152
+    },
+    "16": {
+      "segment_1": 11582.966466152488,
+      "segment_2": 2577.6419756219966,
+      "segment_3": 1767.358412796623,
+      "segment_4": 1329.5073758340066
+    }
+  },
+  "deviation_from_tg195_mean": {
+    "4": {
+      "segment_1": -0.0005406768706855969,
+      "segment_2": 0.00029522043756280425,
+      "segment_3": 0.000583963999756909,
+      "segment_4": 0.0003634960125262765
+    },
+    "8": {
+      "segment_1": -0.0014067941666102701,
+      "segment_2": 0.0017069266578724207,
+      "segment_3": 0.00023578636361598626,
+      "segment_4": -0.004173318937802817
+    },
+    "16": {
+      "segment_1": -0.00080277700247533,
+      "segment_2": 0.00035910101808478423,
+      "segment_3": 0.0002850496829382987,
+      "segment_4": -0.0007717203578957443
+    }
+  },
+  "note": "Each entry is a full G1 run; the deviation column is against the same four-code TG-195 mean the gate is judged on, so the size of the approximation is read directly rather than argued."
+}

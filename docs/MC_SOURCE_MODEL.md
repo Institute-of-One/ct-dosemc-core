@@ -79,9 +79,13 @@ powershell -File tools/build_mcgpu.ps1 -Target gpu -CudaSamples <clone of NVIDIA
 
 ### 2.1 Patches applied, and why
 
-Four defects, of which **three produce wrong results silently**. Full write-ups,
-ready to file upstream, are in [`UPSTREAM_ISSUES.md`](UPSTREAM_ISSUES.md); record
-the issue URLs there once they are posted.
+Four defects, of which **three produce wrong results silently**. All four were
+reported upstream on 2026-08-08 -- [DIDSR/MCGPU#22](https://github.com/DIDSR/MCGPU/issues/22)
+(`abs()` on a `double`), [#23](https://github.com/DIDSR/MCGPU/issues/23) (CPU PRNG
+not advanced between projections), [#24](https://github.com/DIDSR/MCGPU/issues/24)
+(binary files opened in text mode) and [#25](https://github.com/DIDSR/MCGPU/issues/25)
+(aperture line documented in the wrong order). Full write-ups are in
+[`UPSTREAM_ISSUES.md`](UPSTREAM_ISSUES.md).
 
 0. **`abs()` on a `double` collapses any aperture below 1° to a pencil beam**
    (`MC-GPU_v1.3.cu:1386`, `:1393`). In C, `abs` is `int abs(int)`, so the
@@ -114,7 +118,7 @@ the issue URLs there once they are posted.
    *This was found by the four-fold symmetry check on the CTDI peripheral
    positions — the four cardinal chambers returned identical values to every
    decimal place. It is exactly the class of defect the symmetry and
-   anti-fabrication tests exist to catch, and it should be reported upstream.*
+   anti-fabrication tests exist to catch.*
 
 3. **512 MB stack** (`/F 536870912`). MC-GPU declares the per-projection source
    and detector arrays and the material tables as automatic storage; MSVC's 1 MB
