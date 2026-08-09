@@ -79,13 +79,21 @@ powershell -File tools/build_mcgpu.ps1 -Target gpu -CudaSamples <clone of NVIDIA
 
 ### 2.1 Patches applied, and why
 
-Four defects, of which **three produce wrong results silently**. All four were
-reported upstream on 2026-08-08 -- [DIDSR/MCGPU#22](https://github.com/DIDSR/MCGPU/issues/22)
+Five defects, of which **three produce wrong results silently**. All were
+reported upstream -- [DIDSR/MCGPU#22](https://github.com/DIDSR/MCGPU/issues/22)
 (`abs()` on a `double`), [#23](https://github.com/DIDSR/MCGPU/issues/23) (CPU PRNG
 not advanced between projections), [#24](https://github.com/DIDSR/MCGPU/issues/24)
 (binary files opened in text mode) and [#25](https://github.com/DIDSR/MCGPU/issues/25)
-(aperture line documented in the wrong order). Full write-ups are in
+(aperture line documented in the wrong order) and
+[#26](https://github.com/DIDSR/MCGPU/issues/26) (sub-cutoff Compton residual
+energy discarded rather than deposited -- negligible at CT energies, but MC-GPU's
+principal use is mammography, where the argument weakens). Full write-ups are in
 [`UPSTREAM_ISSUES.md`](UPSTREAM_ISSUES.md).
+
+**Four of the five are patched below; #26 is not.** Its effect at CT energies was
+measured at ≤0.012% (§4.0a), so patching it here would be changing the engine for
+no measurable benefit. It is reported because the mechanism is real and matters
+elsewhere, not because it affects these results.
 
 0. **`abs()` on a `double` collapses any aperture below 1° to a pencil beam**
    (`MC-GPU_v1.3.cu:1386`, `:1393`). In C, `abs` is `int abs(int)`, so the
@@ -224,6 +232,12 @@ dominates that almost no photon Compton-degrades *past* the cutoff — it is
 absorbed first, with its full energy deposited. The 5 keV tables are kept as the
 default; `--material-emin-kev` selects others, and the measurement above is the
 justification for not bothering.
+
+The mechanism is still energy non-conservation, and the argument that it is
+harmless is specific to CT energies. MC-GPU's principal use is mammography and
+tomosynthesis at 20-40 kVp, where a far larger fraction of the spectrum sits near
+the table's lower bound; that is why it was reported upstream as
+[#26](https://github.com/DIDSR/MCGPU/issues/26) despite being negligible here.
 
 ### 4.1 Electrons are not transported
 
@@ -460,6 +474,46 @@ Two things worth stating plainly:
   what should happen; had it not, the implementation would be the thing to
   suspect.
 
+### 5.1.2a The centre residual factorises, and three quarters of it is not ours
+
+The −0.80% at the centre is the product of two separate things:
+
+```
+ours / four-code mean  =  (PENELOPE / four-code mean) x (ours / PENELOPE)
+       0.99202         =        0.99421              x      0.99777
+      -0.798%          =       -0.579%               x     -0.221%
+```
+
+**Only −0.22% of it is this implementation's residual.** The other −0.58% is a
+property of the reference: PENELOPE sits below the four-code mean at that VOI. Our
+engine uses PENELOPE's cross-sections, so tracking PENELOPE rather than an average
+over four different cross-section libraries is the expected behaviour, not a
+defect.
+
+Three independent signs that this is a **cross-section signature** rather than an
+error in geometry, solid angle, normalisation or spectrum:
+
+1. **The sign reverses between the two VOIs, and we follow it.** PENELOPE is
+   −0.58% at the centre but **+0.10%** at the perimeter; we are −0.80% and
+   **+0.03%**. A geometry, solid-angle, normalisation or spectrum error moves both
+   VOIs the *same* way — it cannot lower one and raise the other. Only an
+   energy-dependent quantity can, and that means cross-sections.
+2. **The inter-code spread is 5.4× larger at the centre** (1.01% against 0.19%).
+   The perimeter is primary-dominated, 1 cm below the surface on the source side,
+   so cross-section differences barely act on it; the centre is fed by scatter
+   that has crossed ~16 cm of PMMA, where a small difference in μ is amplified
+   exponentially. The four codes use four different photon cross-section
+   libraries, and the centre is the quantity that amplifies that.
+3. **Our residual against PENELOPE shows the same ratio**: −0.221% at the centre
+   against −0.071% at the perimeter, a factor of 3.1 — the same order as the 5.4×
+   inter-code amplification. Since the cross-sections are shared, that residual
+   belongs to transport *implementation* (Woodcock tracking, binding treatment,
+   interpolation, energy grid) rather than to the data.
+
+For the manuscript, this converts "a −0.80% residual" into "a −0.22% residual",
+using nothing but arithmetic on the published numbers and without criticising the
+reference.
+
 ### 5.1.3 Both sub-cases, run here
 
 Rather than only choosing between the published columns, both sub-cases were run
@@ -477,12 +531,45 @@ For comparison, the two packages that submitted both sub-cases to TG-195 disagre
 with *themselves* by +2.23% / −0.61% (Geant4) and +2.51% / +2.58% (MCNP) at
 centre / perimeter.
 
-This is worth stating in the manuscript, because it makes the point without
-criticising the reference: **the two angular sub-cases of this pipeline agree with
-each other to 0.33% and 0.11%, where the two reference codes that reported both
-differ from themselves by up to 2.6%.** The sign is also physically right — a
-36-point quadrature of an angular function that swings by a factor of 225 should
-sit slightly above its own continuum limit.
+**Is our own 0.33% significant?** An earlier version of this section explained it
+as a quadrature effect — a 36-point rule sitting slightly above the continuum
+limit of a function that swings by a factor of 225 across the rotation. **That
+explanation was wrong and is withdrawn**, for two reasons:
+
+* It contradicts the argument used in §5.1.1 and in the G2 diagnosis. The centre
+  VOI lies on the rotation axis of a cylindrically symmetric phantom, so its dose
+  is *constant* in gantry angle; the trapezoidal rule is exact for a constant
+  sampled at equal intervals over a period, and the discrete−continuous
+  expectation is identically zero. Using the opposite argument here would have
+  contradicted the same document a few sections earlier.
+* The data contradict it too. The VOI that actually swings by ×209 is the
+  **perimeter**, and its difference is the *smaller* of the two (+0.107% against
+  +0.331%). A quadrature explanation predicts the opposite ordering.
+
+The correct statement is that neither difference is significant once the
+uncertainty is calibrated. Against the quoted in-run σ they are 5.2σ and 3.2σ —
+but G4 measured that this estimator understates the replica SD by 1.9–4.0×, and
+applying that:
+
+| inflation | centre (+0.331%) | perimeter (+0.107%) |
+|---|---|---|
+| ×1.89 | 2.8σ | 1.7σ |
+| ×2.39 | 2.2σ | 1.3σ |
+| ×4.00 | 1.3σ | 0.8σ |
+
+so both are consistent with statistical fluctuation. The manuscript sentence is
+stronger this way than with an explanation attached:
+
+> The two reference codes that reported both angular sub-cases differ from
+> themselves by +2.23% and +2.51% at the central VOI. The two sub-cases of this
+> pipeline agreed **within statistical uncertainty** (+0.33% and +0.11%; ≤2.8σ
+> using replica-calibrated uncertainties).
+
+"Not significant" is a stronger claim than "explained".
+
+**These two numbers are for demonstrating self-consistency only.** They were run
+at K = 1 so that the sub-fan solid-angle bias is common to the pair and cancels;
+they are *not* anchor values, and §5.3.3 says why.
 
 G1 is run **first** on purpose. It removes the spectrum, the rebinning, the
 255-bin limit and the source rotation from the problem: if the monoenergetic
@@ -555,6 +642,32 @@ the TG-195 reference. Measured so far, on the Case 4 first test:
   use 40–60 cm and record the fact. Re-measured on the *centre* VOI at 120 kVp
   (§5.3.2), which is where a long-range-scatter deficit would show, with the same
   answer.
+
+### 5.3.3 Never tune the sub-fan count towards better agreement
+
+At the identical configuration (2×10⁸ histories, 36 projections, 40 cm phantom,
+30 cm air, 2.5 mm voxels), changing only the number of azimuthal sub-fans:
+
+| K | centre | vs four-code mean | inside the inter-code range |
+|---|---|---|---|
+| **1** | 11.3251 | −0.50% | **yes** |
+| **4** | 11.2912 | −0.80% | no |
+
+**K = 1 agrees with the reference better, and that is worthless.** K = 1 samples a
+solid angle 1.14% larger than the specified field (§5.3), and that excess is what
+pushes the centre up by ~0.30%. The residual is +0.067% at K = 4 and +0.014% at
+K = 8, so **K ≥ 4 is the physically correct configuration** and K = 4 is the anchor.
+
+This is written down because the failure mode is seductive: a knob exists, moving
+it improves agreement with the reference, and the improvement has a plausible-
+sounding story available. Selecting a configuration because it agrees better —
+rather than because it is more faithful to the specification — converts a
+validation into a fit. **The sub-fan count is fixed by the solid-angle
+convergence in §5.3, and by nothing else.**
+
+The two K = 1 numbers in §5.1.3 exist solely to demonstrate discrete/continuous
+self-consistency, where the bias is common to the pair and cancels. They are
+labelled as such in the results files and must never be quoted as anchor values.
 
 ### 5.3.2 The residual −0.8% at the centre VOI: both candidates eliminated
 

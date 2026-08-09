@@ -1,6 +1,6 @@
 # Defects found in MC-GPU v1.3, for reporting to DIDSR/MCGPU
 
-Four defects were found in the vendored engine while building the Phase-1
+Five defects were found in the vendored engine while building the Phase-1
 validation. **Three of them produce wrong results silently** — the simulation
 runs to completion and reports plausible-looking numbers.
 
@@ -16,6 +16,7 @@ See `docs/MC_SOURCE_MODEL.md` §2.1.
 > | 2 | CPU branch reuses one PRNG sequence per projection | [DIDSR/MCGPU#23](https://github.com/DIDSR/MCGPU/issues/23) |
 > | 3 | Binary outputs opened in text mode | [DIDSR/MCGPU#24](https://github.com/DIDSR/MCGPU/issues/24) |
 > | 4 | Aperture line documented in the wrong order | [DIDSR/MCGPU#25](https://github.com/DIDSR/MCGPU/issues/25) |
+> | 5 | Sub-cutoff Compton residual energy discarded, not deposited | [DIDSR/MCGPU#26](https://github.com/DIDSR/MCGPU/issues/26) |
 >
 > A paper that argues for openness and returns defects to the open code it
 > depends on is making its own case; these belong in the Data Availability
@@ -172,3 +173,28 @@ These were found while building an openly-licensed CT organ-dosimetry pipeline o
 MC-GPU, and verifying it against AAPM TG-195 Case 4. Issues 1–3 are one-line
 fixes; issue 4 is a documentation correction. Happy to send pull requests if
 that is useful.
+
+
+---
+
+## Issue 5 — sub-cutoff Compton residual energy is discarded rather than deposited
+
+**Severity: negligible at CT energies (measured); potentially material at mammography energies.**
+
+MC-GPU has no separate absorption energy: the cutoff is the first tabulated entry
+of the material file. After a Compton interaction only the energy transferred to
+the electron is tallied (`MC-GPU_kernel_v1.3.cu:301`, `:359`); if the scattered
+photon's new energy falls below the table's lower bound, the index goes negative
+and the track breaks (`:311`, `:372`) **without depositing the remainder**. Energy
+is not conserved. The photoelectric path is fine — `:351` deposits the whole
+photon energy.
+
+Measured at 120 kVp in PMMA: regenerating the tables at 1 keV instead of 5 keV
+moved every scored region by ≤0.012%, because at 5 keV photoelectric absorption
+dominates so strongly that almost nothing degrades past the cutoff.
+
+That argument weakens as the beam softens, and MC-GPU's principal use is
+mammography and tomosynthesis at 20–40 kVp, scoring mean glandular *dose*. We have
+not measured it there and claim no number, but the mechanism is energy
+non-conservation, it grows as the beam softens, and it is invisible in the output.
+Reported for that reason.

@@ -739,6 +739,22 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
         "tag": tag,
         "passed": passed,
         "angular_reference_case": angular,
+        "anchor_quality": {
+            "usable_as_anchor": int(args.sub_fans) >= 4,
+            "n_sub_fans": int(args.sub_fans),
+            "solid_angle_excess_fraction": meta["omega_excess_fraction"],
+            "note": (
+                "K < 4 oversamples the specified solid angle (1.14% at K=1) and "
+                "happens to agree better with the reference. That is not a reason "
+                "to use it. These values demonstrate self-consistency between the "
+                "angular sub-cases, where the bias is common to the pair and "
+                "cancels; they are not anchor values. See "
+                "docs/MC_SOURCE_MODEL.md section 5.3.3."
+                if int(args.sub_fans) < 4
+                else "Sub-fan count is fixed by solid-angle convergence, not by "
+                "agreement with the reference."
+            ),
+        },
         "tolerance": {
             "criterion": "relative difference from the four-code mean within 1%",
             "source": "AAPM Report 195: users are asked to report the relative "
@@ -916,25 +932,39 @@ def replica_study(args) -> int:
     if k < 3:
         raise SystemExit("--replicas needs at least 3 runs to form a sample SD")
     base_seed = int(args.seed)
+    # The inflation factor is a property of the estimator and the VOI, not of the
+    # beam, so it has to be measured on the VOIs it will be applied to. Measuring
+    # it on the first test's axial sections and then using it to judge the second
+    # test's small cylinders would be assuming the very thing in question.
+    beam_choice = args.beam or "mono"
+    test_choice = args.test or "first"
+    voi_builder = first_test_voi_weights if test_choice == "first" else second_test_voi_weights
+    n_projections = 1 if test_choice == "first" else int(args.projections)
     per_run: list[dict[str, float]] = []
     quoted: list[dict[str, float]] = []
 
     for i in range(k):
         args.seed = base_seed + 7919 * (i + 1)  # disjoint PRNG starts
-        args.tag = f"replica_{i:02d}"
+        args.tag = f"replica_{beam_choice}_{test_choice}_{i:02d}"
         print(f"\n[G4] replica {i + 1}/{k}, seed {args.seed}")
         rundir = REPO / "results" / "phase1a" / args.tag
         rundir.mkdir(parents=True, exist_ok=True)
         spec = Case4Spec(fan_thickness_at_isocentre_cm=args.fan_thickness)
-        write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+        if beam_choice == "mono":
+            write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+            spectrum_file = "mono.spc"
+        else:
+            energy, fluence, _hdr = read_tg195_spectrum(SPECTRA_XLSX, column="120 kVp")
+            write_tg195_spectrum_file(rundir / "tg195_120kvp.spc", energy, fluence)
+            spectrum_file = "tg195_120kvp.spc"
         values, _meta = run_sub_fan_set(
             spec=spec,
             args=args,
             rundir=rundir,
-            spectrum_file="mono.spc",
-            voi_builder=first_test_voi_weights,
+            spectrum_file=spectrum_file,
+            voi_builder=voi_builder,
             phantom_length_cm=args.phantom_length,
-            n_projections=1,
+            n_projections=n_projections,
             label="g4",
         )
         per_run.append({name: v.value for name, v in values.items()})
@@ -965,9 +995,18 @@ def replica_study(args) -> int:
         )
 
     out = write_results(
-        REPO / "results" / "phase1a_G4_replica_uncertainty.json",
+        REPO / "results" / f"phase1a_G4_replica_uncertainty_{beam_choice}_{test_choice}.json",
         {
             "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
+            "beam": beam_choice,
+            "test": test_choice,
+            "n_projections": n_projections,
+            "n_sub_fans": int(args.sub_fans),
+            "estimator_inflated": (
+                "sub-fan quadrature over independent engine invocations"
+                if int(args.sub_fans) > 1
+                else "per-voxel quadrature within one invocation"
+            ),
             "n_replicas": k,
             "base_seed": base_seed,
             "comparison": comparison,
