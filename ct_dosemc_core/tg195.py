@@ -554,7 +554,11 @@ def _parse_range(text: str) -> tuple[float, float]:
 
 
 def read_case4_discrete_angles(
-    workbook: str | Path, *, beam: str = "120 kVp", thickness_cm: float = 1.0
+    workbook: str | Path,
+    *,
+    beam: str = "120 kVp",
+    thickness_cm: float = 1.0,
+    sheet: str = "Mean",
 ) -> dict[str, np.ndarray]:
     """The second test's per-projection-angle reference values, 36 per VOI.
 
@@ -574,7 +578,7 @@ def read_case4_discrete_angles(
     if key not in _CASE4_COLUMNS:
         raise KeyError(f"no Case 4 column for {key}; have {sorted(_CASE4_COLUMNS)}")
     col = _CASE4_COLUMNS[key]
-    ws = openpyxl.load_workbook(Path(workbook), data_only=True)["Mean"]
+    ws = openpyxl.load_workbook(Path(workbook), data_only=True)[sheet]
 
     out: dict[str, np.ndarray] = {}
     # The discrete block repeats the 'Center'/'Perimeter' labels after the
@@ -635,11 +639,32 @@ def read_case4_reference(
 
     if angular not in ("continuous", "discrete"):
         raise ValueError("angular must be 'continuous' or 'discrete'")
+
+    # Per-code discrete means, one sheet per package. These matter more than the
+    # four-code average: the packages disagree with each other by 1.0% at the
+    # centre VOI, so a single "deviation from the mean" hides the fact that the
+    # reference is a spread rather than a value.
+    per_code_discrete: dict[str, dict[str, float]] = {}
+    if angular == "discrete":
+        for code in _CODES:
+            if code not in wb.sheetnames:
+                continue
+            angles = read_case4_discrete_angles(
+                workbook, beam=beam, thickness_cm=thickness_cm, sheet=code
+            )
+            if angles:
+                per_code_discrete[code] = {k: float(np.mean(v)) for k, v in angles.items()}
     discrete = (
         read_case4_discrete_angles(workbook, beam=beam, thickness_cm=thickness_cm)
         if angular == "discrete"
         else {}
     )
+
+    # Which packages actually submitted the continuous sub-case. In the
+    # distributed data only Geant4 and MCNP did, so the 'Mean' sheet's continuous
+    # row is a TWO-code average while its discrete rows are four-code averages --
+    # they are not two calculations of the same population.
+    continuous_submitters = sorted(c for c, d in per_code.items() if d)
 
     out: dict[str, dict[str, float]] = {}
     for voi, mean in means.items():
@@ -650,23 +675,30 @@ def read_case4_reference(
             "max": hi,
             "inter_code_spread_fraction": (hi - lo) / mean if mean else float("nan"),
             "angular_case": "continuous",
+            "continuous_submitted_by": continuous_submitters,
+            "n_codes_continuous": len(continuous_submitters),
         }
         if voi in discrete:
-            # Swap in the 36-angle average, and carry the continuous value
-            # alongside so the difference between the two published sub-cases
-            # stays visible rather than being quietly chosen between.
+            values = {c: d[voi] for c, d in per_code_discrete.items() if voi in d}
             rec["mean_continuous"] = float(mean)
             rec["mean"] = float(np.mean(discrete[voi]))
             rec["angular_case"] = "discrete (36-angle average)"
             rec["discrete_over_continuous"] = rec["mean"] / mean - 1.0
             rec["discrete_min"] = float(np.min(discrete[voi]))
             rec["discrete_max"] = float(np.max(discrete[voi]))
-            # No published inter-code range for the per-angle values; the
-            # continuous range is kept only as an order-of-magnitude guide.
-            rec["inter_code_range_is_for_continuous_case"] = True
+            if values:
+                v = np.array(list(values.values()))
+                rec["per_code"] = values
+                rec["n_codes_discrete"] = len(values)
+                rec["min"] = float(v.min())
+                rec["max"] = float(v.max())
+                rec["inter_code_spread_fraction"] = float((v.max() - v.min()) / v.mean())
+                rec["inter_code_range_is_for_continuous_case"] = False
+            else:  # pragma: no cover - only if the per-code sheets are missing
+                rec["inter_code_range_is_for_continuous_case"] = True
         for code, d in per_code.items():
             if voi in d:
-                rec[f"code_{code}"] = d[voi]
+                rec[f"continuous_code_{code}"] = d[voi]
         out[voi] = rec
     return out
 

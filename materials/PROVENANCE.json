@@ -1,10 +1,10 @@
 {
   "environment": {
-    "generated_utc": "2026-08-07T05:09:46+00:00",
+    "generated_utc": "2026-08-09T04:15:40+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": null,
+    "git_commit": "dc1f547f3be53d715c49cae5346ea9e072d26638",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
@@ -18,28 +18,28 @@
   "materials": [
     {
       "material": "PMMA",
-      "file": "PMMA_5-120keV.mcgpu.gz",
-      "sha256": "01cae13a8988729061a0418170dfc5a90d40aca1a9066d6d7497dd1ebe39f208",
+      "file": "PMMA_1-120keV.mcgpu.gz",
+      "sha256": "e99433fc7b966c074b33c1e12beb2ed856d228cd80be0bbe6a2b36720990fe9e",
       "pendbase_id": 224,
       "pendbase_label": "POLYMETHYL METHACRALATE (LUCITE, PERSPEX, PLEXIGLASS)",
       "nominal_density_g_cm3": 1.19,
       "insulator": true,
       "energy_range_ev": [
-        5000,
+        1000,
         120000
       ],
       "energy_step_ev": 5
     },
     {
       "material": "air",
-      "file": "air_5-120keV.mcgpu.gz",
-      "sha256": "08981c72535af30af6dd1b00b58612664898461d94beecdb17e151bfe8fd4b5d",
+      "file": "air_1-120keV.mcgpu.gz",
+      "sha256": "d5229366f9f6fdd6c01052e9740c341059b9216a244844dd81f3212ebfa091d2",
       "pendbase_id": 104,
       "pendbase_label": "AIR, DRY (NEAR SEA LEVEL)",
       "nominal_density_g_cm3": 0.00120479,
       "insulator": true,
       "energy_range_ev": [
-        5000,
+        1000,
         120000
       ],
       "energy_step_ev": 5

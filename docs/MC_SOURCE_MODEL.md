@@ -132,12 +132,46 @@ file is plain C in the non-CUDA path) and `/Dinline=static` (C99 `inline` with n
 external definition leaves the kernel helpers unresolved under MSVC; upstream
 relies on `gcc -O3` always inlining them).
 
-### 2.2 CPU vs GPU
+### 2.2 CPU vs GPU, and what "agreement" means for gate G5
 
 Both targets compile the same physics from the same source. The CPU target needs
 no CUDA toolkit and is the reference build; the GPU target is 20–40× faster and is
 what Phase 2 requires for a cohort. **Any number that appears in the paper must be
 shown to agree between the two builds** — that check is not yet done.
+
+G5 is not a formality. Defect #22 (`abs()` on a `double`) manifests *only* in the
+CPU build, because `nvcc` compiles `.cu` as C++ where `abs` has a `double`
+overload. A defect that makes the two builds disagree for identical input is
+exactly what this gate exists to catch, and it has already produced one.
+
+**How tight should the agreement be?** Read from the source, so the acceptance
+criterion is set before the numbers exist rather than after:
+
+* The dose tally accumulates **scaled integers**, not floats:
+  `atomicAdd(&voxels_Edep[v].x, __float2ull_rn(Edep * SCALE_eV))`
+  (`MC-GPU_kernel_v1.3.cu:435`, `SCALE_eV = 100.0f`). Integer addition is exactly
+  associative, so *accumulation order contributes nothing* — unlike a
+  floating-point atomic, where thread scheduling alone would produce run-to-run
+  drift. There is no "it's just atomics" excuse available for a discrepancy.
+* Both builds seed from the same rule, `init_PRNG(batch, histories_per_thread,
+  seed_input)` leaping `(batch+1) * histories_per_thread * LEAP_DISTANCE`, with the
+  batch index being the global thread id on the GPU (`:198`) and the loop counter
+  on the CPU (`:200`). With `histories_per_thread` and the thread/batch count
+  matched, the two builds simulate **the same set of histories**.
+
+So the differences that legitimately remain are the float→integer rounding mode
+(`__float2ull_rn`, round-half-to-even, against the CPU's `(ull)(x + 0.5f)`) and
+fast-math divergence between `nvcc` and MSVC in the transcendentals. Both are
+far below the statistical noise.
+
+**Criterion: agreement much tighter than the Monte-Carlo statistical uncertainty.
+A discrepancy merely "within statistics" is a finding to investigate, not a
+pass.** Anything larger is a defect, and is to be reported rather than rounded
+away.
+
+Overflow, worth knowing before a long cohort run: the tally is
+`unsigned long long` scaled by `SCALE_eV`, so it saturates above
+`1.8e19 / SCALE_eV` eV in a single voxel (upstream's own warning at `:462`).
 
 ---
 
@@ -155,6 +189,41 @@ shown to agree between the two builds** — that check is not yet done.
 
 These are the things a reviewer will ask about. Each is either handled by a
 documented approximation or declared as a limitation.
+
+### 4.0a The low-energy cutoff, and what it costs (measured: nothing)
+
+MC-GPU has no independent absorption energy. The cutoff **is** the lower bound of
+the material tables: when a photon's energy falls below the first tabulated
+entry, the interpolation index goes negative and the track is discontinued
+(`MC-GPU_kernel_v1.3.cu:311`, `:372`). The two absorption paths differ, and the
+difference is worth knowing:
+
+* **Photoelectric** — `randno = -energy` (`:351`): the *entire* photon energy is
+  deposited locally. Nothing is lost.
+* **Compton below the cutoff** — only the energy transferred to the electron is
+  tallied (`:301`); the photon's **residual energy is discarded, not deposited**.
+
+That second path is a genuine energy leak, and it should fall preferentially on
+scatter-fed regions, since those are reached by the multiply-scattered photons
+that have degraded furthest. It was therefore a candidate for the residual −0.8%
+at the TG-195 centre VOI.
+
+**It is not the explanation.** Regenerating the material tables down to 1 keV
+(`tools/make_materials.py --e-min-ev 1000`) and re-running the 120 kVp first test
+moved every scored segment by ≤0.012% — inside the Monte-Carlo noise:
+
+| | 5 keV tables | 1 keV tables |
+|---|---|---|
+| segment 1 | −0.198% | −0.198% |
+| segment 2 | −0.052% | −0.052% |
+| segment 3 | −0.338% | −0.334% |
+| segment 4 (scatter-fed) | +0.222% | +0.210% |
+
+The reason is physical: at 5 keV in PMMA the photoelectric cross-section so
+dominates that almost no photon Compton-degrades *past* the cutoff — it is
+absorbed first, with its full energy deposited. The 5 keV tables are kept as the
+default; `--material-emin-kev` selects others, and the measurement above is the
+justification for not bothering.
 
 ### 4.1 Electrons are not transported
 
@@ -337,20 +406,59 @@ a CUDA toolkit installation (administrator; the pip distribution ships only
 ### 5.1.1 Which TG-195 sub-case a run is compared against
 
 The second test is published **twice** — 36 discrete projections at 10° steps, and
-a source angle sampled per photon from the continuous 360° distribution — and the
-two are not the same experiment. They differ by 2.13% at the centre VOI and 1.02%
-at the perimeter for the 120 kVp beam. `read_case4_reference(..., angular=...)`
-selects the column and the runner picks it from the projection count; comparing a
-discrete run against the continuous column was worth −2.1% on its own.
+a source angle sampled per photon from the continuous 360° distribution.
+`read_case4_reference(..., angular=...)` selects the column and the runner picks it
+from the projection count; comparing our 36-projection run against the continuous
+column was worth −2.1% on its own.
 
-The perimeter difference is expected: a 36-point quadrature of an angular function
-that swings by a factor of 225 across the rotation is not the same as its
-integral. The **centre** difference is not obviously explicable — that VOI is on
-the rotation axis of a cylindrically symmetric phantom, so its dose should be
-invariant with gantry angle, and TG-195's own per-angle values confirm that
-(spread 0.48%). Yet their two sub-cases for it differ by 2.13% at 120 kVp against
-0.23% at 56.4 keV. That is an inconsistency *within the published reference*, not
-in this code, and it is recorded here rather than chased.
+**The two columns do not have the same population of contributing codes**, and
+that, rather than any physical inconsistency, is why they differ. In the
+distributed workbook only **Geant4 and MCNP** submitted the continuous sub-case;
+the cells for EGSnrc and PENELOPE are empty. The `Mean` sheet's continuous row is
+therefore a **two-code** average, while its discrete rows are four-code averages.
+The arithmetic is checkable by anyone holding the file:
+
+```
+Geant4 continuous centre 11.1821
+MCNP   continuous centre 11.1067
+              average    11.1444   = the Mean sheet's continuous centre, exactly
+```
+
+The two submitting codes also disagree with their *own* discrete results, by
++2.23% / −0.61% (Geant4) and +2.51% / +2.58% (MCNP) at centre / perimeter. So the
+continuous column carries an effective uncertainty far larger than the report's
+nominal 1%, and the earlier note here — that the centre VOI showed an
+"unexplained anomaly" — was comparing a two-code number with a four-code number.
+It is withdrawn.
+
+**This project uses the discrete sub-case as its reference**, and reproduces its
+conditions with 36 discrete projections. The discrete column has all four codes,
+with an inter-code spread of 1.01% at the centre VOI and 0.19% at the perimeter.
+
+### 5.1.2 Against each code, not only their average
+
+The four packages disagree with each other by 1.01% at the centre, so quoting a
+single deviation from their mean presents a spread as if it were a value. Both are
+now recorded, per VOI, in every results file (120 kVp, t = 10 mm, discrete):
+
+| Code | centre | ours vs it | perimeter | ours vs it |
+|---|---|---|---|---|
+| EGSnrc | 11.3956 | −0.92% | 39.7663 | **+0.02%** |
+| Geant4 | 11.4314 | −1.23% | 39.7477 | **+0.07%** |
+| MCNP | 11.3853 | −0.83% | 39.7286 | **+0.12%** |
+| **PENELOPE** | 11.3162 | **−0.22%** | 39.8029 | **−0.07%** |
+| four-code mean | 11.3821 | −0.80% | 39.7614 | +0.03% |
+| inter-code spread | | 1.01% | | 0.19% |
+
+Two things worth stating plainly:
+
+* **The perimeter VOI agrees with every one of the four codes to within ±0.12%,
+  which is tighter than the codes agree with each other (0.19%).**
+* The closest code at both VOIs is essentially **PENELOPE**, and that is not a
+  coincidence: MC-GPU's cross-sections *are* the PENELOPE 2006 PENDBASE photon
+  subset. Agreeing best with the package that shares our cross-section library is
+  what should happen; had it not, the implementation would be the thing to
+  suspect.
 
 G1 is run **first** on purpose. It removes the spectrum, the rebinning, the
 255-bin limit and the source rotation from the problem: if the monoenergetic

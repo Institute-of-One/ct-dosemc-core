@@ -27,7 +27,8 @@ param(
     [ValidateSet('cpu', 'gpu')]
     [string]$Target = 'cpu',
     [string]$CudaSamples = '',
-    [string]$Arch = 'sm_86'   # RTX 3080 = GA102 = compute capability 8.6
+    [string]$Arch = 'sm_86',  # RTX 3080 = GA102 = compute capability 8.6
+    [string]$CcBin = ''       # host compiler for nvcc, e.g. a VS 2022 v143 cl.exe
 )
 
 $ErrorActionPreference = 'Stop'
@@ -139,17 +140,34 @@ if ($Target -eq 'cpu') {
     $compiler = 'MSVC cl.exe (/TC /O2 /std:c17)'
 }
 else {
-    if (-not $CudaSamples) { throw '-CudaSamples <path to a clone of github.com/NVIDIA/cuda-samples> is required for the gpu target' }
+    # CUDA 12.4 or 12.6 is recommended over 13.x: this is 2012 code, and the older
+    # toolkits are far more tolerant of it.  A driver that reports CUDA 13.2
+    # support runs 12.x binaries without trouble.
+    #
+    # cuda-samples must be cloned at the SAME tag as the toolkit -- the Common
+    # headers track the runtime API and a mismatched pair fails in confusing ways:
+    #   git clone --branch v12.4 --depth 1 https://github.com/NVIDIA/cuda-samples
+    #
+    # If nvcc rejects the MSVC version (Visual Studio 18 BuildTools is newer than
+    # any 12.x toolkit knows about), try -allow-unsupported-compiler first; if the
+    # build then fails inside the CRT headers, install the VS 2022 v143 toolset
+    # side by side and point nvcc at it with -ccbin.
+    if (-not $CudaSamples) { throw '-CudaSamples <path to a clone of github.com/NVIDIA/cuda-samples, same tag as the toolkit> is required for the gpu target' }
     $common = Join-Path $CudaSamples 'Common'
     if (-not (Test-Path (Join-Path $common 'helper_cuda.h'))) { throw "helper_cuda.h not found under $common" }
+    if (-not (Get-Command nvcc -ErrorAction SilentlyContinue)) {
+        throw 'nvcc is not on PATH. Install the CUDA Toolkit (12.4 or 12.6 recommended) with the official installer; the pip distribution ships only ptxas on Windows.'
+    }
     $exe = Join-Path $build 'MC-GPU_v1.3_GPU.exe'
     $cc = ($Arch -replace 'sm_', '')
     $flags = @(
         '-O3', '-use_fast_math', '-m64', '-DUSING_CUDA',
         '-D_CRT_SECURE_NO_WARNINGS', '-D_USE_MATH_DEFINES',
+        '-allow-unsupported-compiler',
         "-I`"$mcgpu`"", "-I`"$zlib`"", "-I`"$common`"",
         "-gencode=arch=compute_$cc,code=$Arch"
     )
+    if ($CcBin) { $flags += "-ccbin `"$CcBin`"" }
     $line = 'nvcc ' + ($flags -join ' ') + " `"$src`" " + ($zsrc -join ' ') + " -o `"$exe`""
     $compiler = "nvcc -> $Arch (host: MSVC)"
 }

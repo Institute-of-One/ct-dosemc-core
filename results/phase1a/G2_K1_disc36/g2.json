@@ -1,0 +1,276 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T04:23:29+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "dc1f547f3be53d715c49cae5346ea9e072d26638",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G2 -- TG-195 Case 4 (120 kVp, second test, 36 projection(s))",
+  "tag": "G2_K1_disc36",
+  "passed": true,
+  "angular_reference_case": "discrete",
+  "tolerance": {
+    "criterion": "relative difference from the four-code mean within 1%",
+    "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
+    "also_within_inter_code_range": true,
+    "note": "The inter-code range is reported separately and is a stricter bar than the report asks for -- for some VOIs the four packages agree to 0.1%, tighter than their own stated statistics."
+  },
+  "engine": {
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+    "executable_sha256": "00e4ba139f89388ee924ee7a8c21251d7a2c8fff36c4ac1df9c86130de1b74cb",
+    "build_info": {
+      "engine": "MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain",
+      "engine_source": "https://github.com/DIDSR/MCGPU",
+      "target": "cpu",
+      "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+      "executable_sha256": "00E4BA139F89388EE924EE7A8C21251D7A2C8FFF36C4AC1DF9C86130DE1B74CB",
+      "source_sha256": "18110A6DEB965FBAD64E332ED2A4DC591840E24EFB82F37EE4457C15101BBACA",
+      "patched_source": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_win_cpu.cu",
+      "patched_sha256": "4DDD5589C14F55A316757AD1E558D470D3CC0AC01BBEC067D23EBDBC1DBACC42",
+      "patches": [
+        {
+          "from": "fopen(file_binary, \"w\")",
+          "to": "fopen(file_binary, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary image file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_mean, \"w\")",
+          "to": "fopen(file_binary_mean, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_sigma, \"w\")",
+          "to": "fopen(file_binary_sigma, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "if (abs(theta_aperture) < 1.0e-7)",
+          "to": "if (fabs(theta_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "if (abs(phi_aperture) < 1.0e-7)",
+          "to": "if (fabs(phi_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "track_particles(CPU_batch, histories_per_thread, num_p, seed_input, image,",
+          "to": "track_particles(CPU_batch + num_p*total_threads, histories_per_thread, num_p, seed_input, image,",
+          "occurrences": 1,
+          "reason": "CPU branch reused one random sequence for every projection; offset the PRNG batch index per projection"
+        }
+      ],
+      "compiler": "MSVC cl.exe (/TC /O2 /std:c17)",
+      "vs_installation": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools",
+      "zlib": "zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in"
+    },
+    "random_seed": 1234567890
+  },
+  "spectrum": {
+    "path": "D:\\DevGit\\ct_dosemc_core\\results\\phase1a\\G2_K1_disc36\\tg195_120kvp.spc",
+    "n_bins": 207,
+    "bin_width_kev": 0.5,
+    "e_min_kev": 16.5,
+    "e_max_kev": 120.0,
+    "mean_energy_kev": 56.14313216828212,
+    "tg195_header": {
+      "target": "W/Al",
+      "kvp": "120 kVp",
+      "anode_angle": "11 deg anode angle",
+      "ripple": "0% Ripple",
+      "filtration": "Al filter thickness: 2.861 mm",
+      "mean_energy": "Mean Energy: 56.4 keV",
+      "hvl": "HVL: 5.010 mm Al"
+    }
+  },
+  "geometry": {
+    "spec": {
+      "phantom_radius_cm": 16.0,
+      "phantom_length_specified_cm": 300.0,
+      "sad_cm": 60.0,
+      "fan_width_at_isocentre_cm": 32.0,
+      "fan_thickness_at_isocentre_cm": 1.0,
+      "half_fan_deg": 14.931417178137552,
+      "standard": "AAPM Report 195 (TG-195) Case 4, section 3.4"
+    },
+    "phantom_length_cm": 40.0,
+    "voxel_size_cm": 0.25,
+    "n_voxels_xyz": [
+      368,
+      368,
+      208
+    ],
+    "dose_roi_z_index": [
+      81,
+      129
+    ],
+    "n_sub_fans": 1,
+    "omega_total_sr": 0.008686444784148066,
+    "omega_specified_sr": 0.008588755018677743,
+    "omega_excess_fraction": 0.011374147388984568,
+    "histories_total": 200000000.0,
+    "n_projections": 36,
+    "projections_driven_externally": false,
+    "engine_invocations": 1,
+    "air_margin_cm": 30.0,
+    "air_margin_z_cm": 6.0,
+    "beamlets": [
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": 0.0,
+        "azimuthal_aperture_deg": 29.862834356275105,
+        "polar_aperture_deg": 0.9549075546191548,
+        "solid_angle_sr": 0.008686444784148066,
+        "weight": 1.0,
+        "histories": 200000000.0,
+        "wall_seconds": 511.66619010001887,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 11.325133936045088,
+            "sigma": 0.005056505339624332,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 39.79872294220567,
+            "sigma": 0.00939004741794599,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          }
+        }
+      }
+    ]
+  },
+  "results": {
+    "center": {
+      "value": 11.325133936045088,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.005056505339624332,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "center",
+          "n_sub_fans": 1,
+          "histories_total": 200000000.0,
+          "omega_total_sr": 0.008686444784148066
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "perimeter": {
+      "value": 39.79872294220567,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.00939004741794599,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "perimeter",
+          "n_sub_fans": 1,
+          "histories_total": 200000000.0,
+          "omega_total_sr": 0.008686444784148066
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    }
+  },
+  "comparison_with_tg195": {
+    "center": {
+      "ours_ev_per_photon": 11.325133936045088,
+      "ours_sigma": 0.005056505339624332,
+      "ours_relative_sigma": 0.0004464852573205101,
+      "per_code": {
+        "EGSnrc": {
+          "reference": 11.395583333333333,
+          "deviation_fraction": -0.006182166829685087
+        },
+        "Geant4": {
+          "reference": 11.431352777777777,
+          "deviation_fraction": -0.00929188730306485
+        },
+        "MCNP": {
+          "reference": 11.385319444444445,
+          "deviation_fraction": -0.005286238009661215
+        },
+        "Penelope": {
+          "reference": 11.316216666666667,
+          "deviation_fraction": 0.0007880080101936304
+        }
+      },
+      "closest_code": "Penelope",
+      "reference_mean": 11.382118055555557,
+      "reference_min": 11.316216666666667,
+      "reference_max": 11.431352777777777,
+      "inter_code_spread_fraction": 0.010115525998688087,
+      "ratio_to_reference_mean": 0.9949935399341026,
+      "deviation_fraction": -0.0050064600658974445,
+      "passes_tg195_tolerance": true,
+      "within_inter_code_range": true,
+      "angular_case": "discrete (36-angle average)",
+      "n_codes_in_reference": 4
+    },
+    "perimeter": {
+      "ours_ev_per_photon": 39.79872294220567,
+      "ours_sigma": 0.00939004741794599,
+      "ours_relative_sigma": 0.00023593841017416294,
+      "per_code": {
+        "EGSnrc": {
+          "reference": 39.76631638888889,
+          "deviation_fraction": 0.0008149246965665213
+        },
+        "Geant4": {
+          "reference": 39.74766286111111,
+          "deviation_fraction": 0.0012846058716200481
+        },
+        "MCNP": {
+          "reference": 39.72858919444444,
+          "deviation_fraction": 0.0017653218798678871
+        },
+        "Penelope": {
+          "reference": 39.802945722222226,
+          "deviation_fraction": -0.00010609214820489488
+        }
+      },
+      "closest_code": "Penelope",
+      "reference_mean": 39.761378541666666,
+      "reference_min": 39.72858919444444,
+      "reference_max": 39.802945722222226,
+      "inter_code_spread_fraction": 0.0018700691601994637,
+      "ratio_to_reference_mean": 1.000939212922406,
+      "deviation_fraction": 0.000939212922405952,
+      "passes_tg195_tolerance": true,
+      "within_inter_code_range": true,
+      "angular_case": "discrete (36-angle average)",
+      "n_codes_in_reference": 4
+    }
+  },
+  "reference_note": "Reference values are read at run time from the AAPM electronic resources in data/tg195/, which are copyrighted and are not redistributed by this repository. Only the comparison is recorded here.",
+  "known_gaps": [
+    "MC-GPU tallies collision kerma; electrons are not transported.",
+    "Phantom modelled at 40 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
+    "Voxelised cylinder: the curved surface is stair-stepped at the 0.25 cm voxel scale.",
+    "The fan is approximated by 1 azimuthal sub-fans; the residual solid-angle error is +1.1374 %.",
+    "Only 30 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
+  ]
+}

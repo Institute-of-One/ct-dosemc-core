@@ -62,8 +62,24 @@ TG195_DIR = REPO / "data" / "tg195"
 CASE4_RESULTS = TG195_DIR / "09-Case 4 Results.xlsx"
 SPECTRA_XLSX = TG195_DIR / "03-X-Ray Spectra Definition.xlsx"
 
-AIR = Material(1, "air, dry (PENELOPE #104)", "air_5-120keV.mcgpu.gz", 1.20479e-3)
-PMMA = Material(2, "PMMA (PENELOPE #224)", "PMMA_5-120keV.mcgpu.gz", 1.19)
+def _materials(e_min_kev: int) -> tuple[Material, Material]:
+    """Material tables for a given lower energy bound.
+
+    The bound is not cosmetic. MC-GPU discards a photon whose energy falls below
+    the table's first entry, and -- unlike a photoelectric absorption, where the
+    whole energy is deposited (MC-GPU_kernel_v1.3.cu:351) -- the residual energy
+    of a Compton-degraded photon is **dropped, not deposited**
+    (MC-GPU_kernel_v1.3.cu:311, :372). Lowering the bound shrinks that leak.
+    It biases scatter-fed regions preferentially, because those are reached by
+    the multiply-scattered photons that degrade furthest in energy.
+    """
+    return (
+        Material(1, "air, dry (PENELOPE #104)", f"air_{e_min_kev}-120keV.mcgpu.gz", 1.20479e-3),
+        Material(2, "PMMA (PENELOPE #224)", f"PMMA_{e_min_kev}-120keV.mcgpu.gz", 1.19),
+    )
+
+
+AIR, PMMA = _materials(5)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -127,6 +143,15 @@ def build_parser() -> argparse.ArgumentParser:
         "sample standard deviation alongside the two in-run estimators. The "
         "replica SD makes no independence assumption at all, so it is the one to "
         "trust where they disagree.",
+    )
+    p.add_argument(
+        "--material-emin-kev",
+        type=int,
+        default=5,
+        help="lower energy bound of the material tables. MC-GPU drops the residual "
+        "energy of a photon that degrades below it, so this sets the size of a "
+        "systematic leak that falls on scatter-fed regions. Generate the tables "
+        "first: tools/make_materials.py --e-min-ev 1000",
     )
     p.add_argument("--seed", type=int, default=1234567890)
     p.add_argument("--executable", type=Path, default=DEFAULT_EXE)
@@ -489,10 +514,23 @@ def compare(values: dict[str, Value], reference: dict[str, dict[str, float]]) ->
             continue
         ref = reference[name]
         ratio = v.value / ref["mean"]
+        per_code = ref.get("per_code") or {}
         rows[name] = {
             "ours_ev_per_photon": v.value,
             "ours_sigma": v.uncertainty,
             "ours_relative_sigma": (v.uncertainty / v.value) if v.uncertainty else None,
+            # Against each package individually, not only their average. The
+            # packages disagree with each other by up to 1% here, so a single
+            # deviation-from-the-mean presents a spread as if it were a value.
+            "per_code": {
+                code: {"reference": val, "deviation_fraction": v.value / val - 1.0}
+                for code, val in per_code.items()
+            },
+            "closest_code": (
+                min(per_code, key=lambda c: abs(v.value / per_code[c] - 1.0))
+                if per_code
+                else None
+            ),
             "reference_mean": ref["mean"],
             "reference_min": ref["min"],
             "reference_max": ref["max"],
@@ -501,6 +539,8 @@ def compare(values: dict[str, Value], reference: dict[str, dict[str, float]]) ->
             "deviation_fraction": ratio - 1.0,
             "passes_tg195_tolerance": bool(abs(ratio - 1.0) <= TG195_TOLERANCE),
             "within_inter_code_range": bool(ref["min"] <= v.value <= ref["max"]),
+            "angular_case": ref.get("angular_case"),
+            "n_codes_in_reference": ref.get("n_codes_discrete") or ref.get("n_codes_continuous"),
         }
     return rows
 
@@ -511,6 +551,7 @@ def _print_comparison(rows: dict) -> None:
         f"  {'VOI':<12} {'ours':>13} {'ref mean':>13} {'dev':>9} "
         f"{'MC sigma':>9} {'code spread':>12}  {'vs 1%':>6}  in-range"
     )
+    _pending_per_code = []
     for name, r in rows.items():
         sig = r["ours_relative_sigma"]
         print(
@@ -521,6 +562,14 @@ def _print_comparison(rows: dict) -> None:
             f"{'PASS' if r['passes_tg195_tolerance'] else 'FAIL':>6}  "
             f"{'yes' if r['within_inter_code_range'] else 'no'}"
         )
+        if r.get("per_code"):
+            _pending_per_code.append((name, r))
+    for name, r in _pending_per_code:
+        parts = " ".join(
+            f"{code} {100 * d['deviation_fraction']:+.2f}%"
+            for code, d in sorted(r["per_code"].items())
+        )
+        print(f"    {name:<10} vs each code: {parts}   closest: {r['closest_code']}")
     print()
 
 
@@ -773,8 +822,21 @@ def convergence_scan(args) -> int:
         raise SystemExit("--scan needs at least two values to compare")
 
     spec = Case4Spec(fan_thickness_at_isocentre_cm=args.fan_thickness)
-    reference = read_case4_reference(CASE4_RESULTS, beam="56.4 keV", thickness_cm=args.fan_thickness)
-    rundir = REPO / "results" / "phase1a" / f"scan_{param}"
+    # The scan must be able to follow the gate it is diagnosing. A residual seen
+    # on the second test's centre VOI at 120 kVp cannot be chased with a
+    # monoenergetic first-test scan: the VOIs differ, and so does how far the
+    # scatter that feeds them travels.
+    beam_choice = args.beam or "mono"
+    test_choice = args.test or "first"
+    beam = "56.4 keV" if beam_choice == "mono" else "120 kVp"
+    n_projections = 1 if test_choice == "first" else int(args.projections)
+    voi_builder = first_test_voi_weights if test_choice == "first" else second_test_voi_weights
+    angular = "discrete" if (test_choice == "second" and n_projections == 36) else "continuous"
+    reference = read_case4_reference(
+        CASE4_RESULTS, beam=beam, thickness_cm=args.fan_thickness, angular=angular
+    )
+    print(f"[scan] {beam}, {test_choice} test, {n_projections} projection(s), {angular} reference")
+    rundir = REPO / "results" / "phase1a" / f"scan_{param}_{beam_choice}_{test_choice}"
     rundir.mkdir(parents=True, exist_ok=True)
 
     scan: dict[str, dict[str, float]] = {}
@@ -782,15 +844,21 @@ def convergence_scan(args) -> int:
     for value in values_to_try:
         print(f"\n[scan] {param} = {value:g}")
         setattr(args, param, value)
-        write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+        if beam_choice == "mono":
+            write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+            spectrum_file = "mono.spc"
+        else:
+            energy, fluence, _hdr = read_tg195_spectrum(SPECTRA_XLSX, column="120 kVp")
+            write_tg195_spectrum_file(rundir / "tg195_120kvp.spc", energy, fluence)
+            spectrum_file = "tg195_120kvp.spc"
         got, _meta = run_sub_fan_set(
             spec=spec,
             args=args,
             rundir=rundir,
-            spectrum_file="mono.spc",
-            voi_builder=first_test_voi_weights,
+            spectrum_file=spectrum_file,
+            voi_builder=voi_builder,
             phantom_length_cm=args.phantom_length,
-            n_projections=1,
+            n_projections=n_projections,
             label=f"{param}{value:g}",
         )
         key = f"{value:g}"
@@ -807,6 +875,10 @@ def convergence_scan(args) -> int:
             "gate": f"TG-195 Case 4 first test: convergence in {param}",
             "parameter": param,
             "parameter_meaning": SCANNABLE[param],
+            "beam": beam,
+            "test": test_choice,
+            "n_projections": n_projections,
+            "angular_reference_case": angular,
             "values": values_to_try,
             "fixed": {
                 k: getattr(args, k)
@@ -913,6 +985,8 @@ def replica_study(args) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    global AIR, PMMA
+    AIR, PMMA = _materials(args.material_emin_kev)
     if args.replicas:
         return replica_study(args)
     if args.scan:
