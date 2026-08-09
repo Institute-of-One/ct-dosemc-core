@@ -529,8 +529,23 @@ precision than four points can carry.
 
 An independent-replica estimate (K ≥ 10 runs, different seeds, sample standard
 deviation of the reported quantity) brings that down to ≤23% and is the intended
-final method — gate G4. The TG-195 sub-fan runs already combine *genuinely*
-independent runs in quadrature, which is the correct use of the same arithmetic.
+final method — gate G4.
+
+**G4 has now been run on TG-195 Case 4, K = 10.** Even the sub-fan quadrature —
+which combines *genuinely* independent engine invocations and so is not obviously
+biased — understates the replica SD:
+
+| VOI | replica SD | relative | sub-fan quadrature | ratio |
+|---|---|---|---|---|
+| segment 1 | 3.76 | 0.033% | 1.99 | 1.9× |
+| segment 2 | 1.91 | 0.074% | 0.96 | 2.0× |
+| segment 3 | 1.90 | 0.108% | 0.80 | 2.4× |
+| segment 4 | 2.76 | 0.208% | 0.69 | 4.0× |
+
+With K = 10 the SD is itself known only to 1/√(2(K−1)) = 24%, so these ratios are
+roughly 1.5–5× rather than the printed figures. The conclusion is unchanged and
+applies to every uncertainty this project reports: **quote the replica SD, and
+where only an in-run estimator is available, say that it is a lower bound.**
 
 ---
 

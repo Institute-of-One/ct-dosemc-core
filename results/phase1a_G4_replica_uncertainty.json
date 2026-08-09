@@ -1,0 +1,53 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T01:20:14+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "3862d6eef11d35dc1147f88ede699077c72d051c",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
+  "n_replicas": 10,
+  "base_seed": 1234567890,
+  "comparison": {
+    "segment_1": {
+      "mean_ev_per_photon": 11576.262133127464,
+      "replica_sample_sd": 3.760012718958307,
+      "replica_relative_sd": 0.00032480369533084295,
+      "sub_fan_quadrature_sd": 1.9912090079888594,
+      "replica_over_sub_fan": 1.8883064027296443,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    },
+    "segment_2": {
+      "mean_ev_per_photon": 2578.8294286937808,
+      "replica_sample_sd": 1.911139685081077,
+      "replica_relative_sd": 0.0007410880548424253,
+      "sub_fan_quadrature_sd": 0.9610600260135799,
+      "replica_over_sub_fan": 1.9885747334725503,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    },
+    "segment_3": {
+      "mean_ev_per_photon": 1767.5077409621742,
+      "replica_sample_sd": 1.9026275698662738,
+      "replica_relative_sd": 0.0010764465273744967,
+      "sub_fan_quadrature_sd": 0.7963914325242784,
+      "replica_over_sub_fan": 2.3890608213044424,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    },
+    "segment_4": {
+      "mean_ev_per_photon": 1329.4447108654158,
+      "replica_sample_sd": 2.759135770415387,
+      "replica_relative_sd": 0.002075404676753574,
+      "sub_fan_quadrature_sd": 0.6906212243322695,
+      "replica_over_sub_fan": 3.9951505589522984,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    }
+  },
+  "note": "The sub-fan quadrature combines genuinely independent engine invocations, so unlike the per-voxel quadrature inside a single run it is not obviously biased. The replica SD assumes nothing at all. 'sd_of_the_sd_relative' is 1/sqrt(2(K-1)): with K replicas the SD itself is only known to that precision, so ratios should be quoted as intervals rather than point estimates."
+}

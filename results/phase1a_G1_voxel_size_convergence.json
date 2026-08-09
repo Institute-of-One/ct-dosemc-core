@@ -1,0 +1,53 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-09T01:13:36+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "3862d6eef11d35dc1147f88ede699077c72d051c",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "TG-195 Case 4 first test: convergence in voxel_size",
+  "parameter": "voxel_size",
+  "parameter_meaning": "cm",
+  "values": [
+    0.5,
+    0.25
+  ],
+  "fixed": {
+    "phantom_length": 60.0,
+    "air_margin": 44.0,
+    "sub_fans": 8,
+    "histories": 12000000.0
+  },
+  "results_ev_per_photon": {
+    "0.5": {
+      "segment_1": 11575.964534605713,
+      "segment_2": 2581.1149404217376,
+      "segment_3": 1767.2713716658234,
+      "segment_4": 1324.9814326699152
+    },
+    "0.25": {
+      "segment_1": 11578.130378395592,
+      "segment_2": 2579.498794348203,
+      "segment_3": 1768.2964189153151,
+      "segment_4": 1329.1586542783714
+    }
+  },
+  "deviation_from_tg195_mean": {
+    "0.5": {
+      "segment_1": -0.0014067941666102701,
+      "segment_2": 0.0017069266578724207,
+      "segment_3": 0.00023578636361598626,
+      "segment_4": -0.004173318937802817
+    },
+    "0.25": {
+      "segment_1": -0.001219959031878881,
+      "segment_2": 0.0010797152574819613,
+      "segment_3": 0.0008159400163563202,
+      "segment_4": -0.0010338117508772449
+    }
+  },
+  "note": "Each entry is a full G1 run; the deviation column is against the same four-code TG-195 mean the gate is judged on, so the size of the approximation is read directly rather than argued."
+}
