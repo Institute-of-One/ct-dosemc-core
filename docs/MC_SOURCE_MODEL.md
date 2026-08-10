@@ -1191,3 +1191,30 @@ sensitivity analysis is required before the manuscript regardless.
 * AAPM Report 96, *The Measurement, Reporting, and Management of Radiation Dose in CT*.
 * J. H. Hubbell and S. M. Seltzer, *Tables of X-Ray Mass Attenuation Coefficients
   and Mass Energy-Absorption Coefficients*, NISTIR 5632 (public domain).
+
+---
+
+## 8. The next measurement, and the exact command
+
+Phase 1a is open on **one** unmeasured quantity: the centre VOI's replica standard
+deviation at the production configuration. Every open question about G2 —
+whether the −0.7…−0.9% against PENELOPE is significant, whether the air-margin
+dependence is real, whether K = 4 matters — is currently being judged against an
+uncertainty that has only ever been measured at a quarter of the production
+history count and then extrapolated. Two successive significance figures have
+already been withdrawn for exactly that reason (§5.1.4).
+
+```
+python tools/run_tg195.py --gate G2 --beam 120kvp --test second \
+    --replicas 10 --projections 36 --sub-fans 1 --histories 2e8 \
+    --voxel-size 0.25 --phantom-length 40 --air-margin 50 --air-margin-z 6 \
+    --executable vendor/build/MC-GPU_v1.3_GPU.exe
+```
+
+`--sub-fans 1` is deliberate: the variance of the combined estimate depends on
+the number of photons, not on how many invocations they are split across, so one
+invocation per replica measures the same standard deviation at 1/144 of the cost.
+The resulting value is **not** an anchor (§5.3.3) — only its scatter is used.
+
+Expect several hours. When it lands, fill the `(a)` row of §5.1.4 and only then
+evaluate `(b)`.
