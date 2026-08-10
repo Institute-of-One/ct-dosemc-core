@@ -542,19 +542,32 @@ indefensible on its own; it is defensible only because the choice is made on a
 stated physical ground — shared cross-sections — *before* looking at which code
 agrees best, and because every other comparison is reported next to it.
 
-Against this criterion, the current air = 44 cm anchor already satisfies (b):
+Against this criterion the anchor stands as follows. **Requirement (a) is met;
+requirement (b) is not.**
 
-| compared with | deviation | σ | significance |
+| | measured | requirement | |
 |---|---|---|---|
-| four-code mean | −1.294% | — | not a meaningful test (see above) |
-| **PENELOPE** | **−0.719%** | 0.512% | **1.40σ** |
+| (a) centre replica SD at 2×10⁸ | **not measured** — see §5.3.0d | ≤ 0.25% | **unknown** |
+| (a) perimeter, 94-position replicated | **0.0156%** | ≤ 0.25% | met, 16× over |
+| (b) \|ours − PENELOPE\|, centre | **0.719%** (CPU), 0.810% (GPU) | < 2σ | **cannot be evaluated** |
 
-where σ combines our replica SD (0.484%) with PENELOPE's own 36-angle statistics
-(≈0.167%, from the distributed per-angle uncertainty divided by √36).
+The centre row was briefly recorded as 0.242% and "met". That figure was the
+5×10⁷ replica SD scaled by 1/√N, and an air-margin scan then showed run-to-run
+scatter of ±0.75% at the anchor's history count — three times the extrapolation
+(§5.3.0d). The scaled value is withdrawn; only a direct measurement at the
+production configuration can fill that row, and until it exists **(b) has no
+denominator and the significance of the centre deviation is unknown.**
 
-So what remains is **(a), a statistics requirement**, needing about 3.7× the
-histories used — not the 23× that chasing a 0.1% SD would have cost. The gate is
-open on statistics, not on physics.
+with σ combining our centre replica SD at the anchor's history count (0.242%)
+with PENELOPE's own 36-angle statistics (≈0.167%).
+
+**Twice now, an uncertainty from one run has been applied to a value from
+another.** The 1.40σ originally proposed used the 5×10⁷ replica SD against a
+2×10⁸ value; correcting the history count gave 2.4σ; and that correction was
+itself an extrapolation, which §5.3.0d then contradicted by measurement. The
+lesson is recorded because the same shape of error keeps recurring: **σ must be
+measured at the configuration whose numbers it is being used to judge**, and no
+scaling law substitutes for that.
 
 ### 5.1.2a The centre residual factorises, and three quarters of it is not ours
 
@@ -814,6 +827,60 @@ Three things belong beside it:
   from PENELOPE** — the code sharing our cross-sections. The decomposition of
   §5.1.2a still applies: most of the deviation from the four-code mean is the
   cross-section library, not this implementation.
+
+### 5.3.0d The 44 cm default puts the source exactly on the voxel-box face
+
+Setting the transverse air margin so that "the box reaches the focal spot" turned
+out to be a worse-specified instruction than it sounded. The box half-width is
+`phantom_radius + air_margin`, and the source sits at the SAD:
+
+| air margin | box half-width | source position |
+|---|---|---|
+| 30 cm | 46.0 cm | 14.0 cm outside the box |
+| 40 cm | 56.0 cm | 4.0 cm outside |
+| **44 cm** | **60.0 cm** | **exactly on the box face** |
+| 50 cm | 66.0 cm | 6.0 cm inside |
+
+**44 cm is the degenerate case**, and it is the one made the default. MC-GPU
+starts each history by moving the photon to the bounding box
+(`move_to_bbox`), which branches on whether the photon is already inside; a
+source exactly on the face is precisely where that branch is ambiguous, and where
+floating-point rounding decides which way it goes.
+
+That looked like a strong candidate for the step in the residual — 0.22% against
+PENELOPE at 30 cm, 0.72% at 44 cm. **The scan does not support it.** Centre VOI,
+120 kVp, 2×10⁸ histories, 5 mm voxels, deviation from PENELOPE:
+
+| air margin | 30 | 40 | **44** | 50 | 56 |
+|---|---|---|---|---|---|
+| centre vs PENELOPE | −0.05% | −0.73% | **−0.90%** | **+0.60%** | −0.04% |
+
+44 cm is the most negative, but 50 cm swings the *other* way by 1.5% and 56 cm
+returns to zero. There is no monotonic dependence on the modelled air path and no
+isolated anomaly at the degenerate margin. Neither hypothesis survives.
+
+What the scan does establish is worse news, and it invalidates a claim made two
+sections above: **the scatter across these five runs is ±0.75%, against a
+predicted σ of 0.24%.** Those configurations should differ by well under 0.3%, so
+the spread is run-to-run noise roughly three times larger than expected.
+
+The prediction came from scaling the measured replica SD (0.484% at 5×10⁷) by
+1/√N to the anchor's 2×10⁸. That scaling is not holding here, so **the claim that
+requirement (a) is met at 2×10⁸ is withdrawn** — it rested on an extrapolation,
+not a measurement, which is the same error as the 1.40σ figure corrected in
+§5.1.4.
+
+The consequence for the geometry is only that the degeneracy is unproven, not
+that it is safe. The box rule should still be "the box contains the whole air
+path *and the source strictly inside it*" — a margin comfortably greater than
+`SAD − phantom_radius`, never equal to it — because a source on the face is a
+branch ambiguity in `move_to_bbox` whether or not it is currently costing
+anything measurable.
+
+**The next measurement is not another parameter scan.** It is the replica SD at
+the production configuration itself — 2×10⁸ histories, 2.5 mm voxels, K = 4 —
+because every conclusion about a 0.5–1% effect is currently being drawn against
+an uncertainty that has never been measured there.
 
 ### 5.3.0c Why the projection loop cannot move inside MC-GPU
 

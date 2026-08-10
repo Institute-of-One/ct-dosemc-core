@@ -1,0 +1,76 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-10T09:29:27+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "1146b67255a54fef45395c628854b5e8649b4904",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "TG-195 Case 4 first test: convergence in air_margin",
+  "parameter": "air_margin",
+  "parameter_meaning": "cm of air modelled transversely, out of the 44 cm to the source",
+  "beam": "120 kVp",
+  "test": "second",
+  "n_projections": 36,
+  "angular_reference_case": "discrete",
+  "values": [
+    30.0,
+    40.0,
+    44.0,
+    50.0,
+    56.0
+  ],
+  "fixed": {
+    "phantom_length": 40.0,
+    "voxel_size": 0.5,
+    "sub_fans": 1,
+    "histories": 200000000.0
+  },
+  "results_ev_per_photon": {
+    "30": {
+      "center": 11.31086037452158,
+      "perimeter": 39.67650028978235
+    },
+    "40": {
+      "center": 11.233658363724008,
+      "perimeter": 39.55139872927123
+    },
+    "44": {
+      "center": 11.214414595645502,
+      "perimeter": 39.53910012713162
+    },
+    "50": {
+      "center": 11.383600224565853,
+      "perimeter": 39.632361853529005
+    },
+    "56": {
+      "center": 11.31115144794563,
+      "perimeter": 39.54825718459111
+    }
+  },
+  "deviation_from_tg195_mean": {
+    "30": {
+      "center": -0.0062604939332180365,
+      "perimeter": -0.0021346908733399506
+    },
+    "40": {
+      "center": -0.013043239501376203,
+      "perimeter": -0.005280999303769018
+    },
+    "44": {
+      "center": -0.01473394135357775,
+      "perimeter": -0.005590309558862971
+    },
+    "50": {
+      "center": 0.00013021908603150223,
+      "perimeter": -0.0032447740211638543
+    },
+    "56": {
+      "center": -0.006234921063333121,
+      "perimeter": -0.005360009257531773
+    }
+  },
+  "note": "Each entry is a full G1 run; the deviation column is against the same four-code TG-195 mean the gate is judged on, so the size of the approximation is read directly rather than argued."
+}

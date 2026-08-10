@@ -118,13 +118,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--air-margin",
         type=float,
-        default=44.0,
+        default=50.0,
         help="cm of air modelled around the cylinder. MC-GPU carries photons from "
         "the focal spot to the voxel box WITHOUT interaction, so air outside the box "
         "does not exist. The default covers the whole 44 cm from the cylinder surface "
         "to the source, because anything less silently deletes part of the geometry "
-        "TG-195 specifies (measured: +0.8% at 1 cm). Design principle, not a tuning "
-        "knob: the box should reach the focal spot.",
+        "TG-195 specifies (measured: +0.8% at 1 cm). NOT 44 cm, which places the "
+        "source exactly on the box face -- a branch ambiguity in MC-GPU's "
+        "move_to_bbox. The rule is: contain the whole air path AND keep the source "
+        "strictly inside, so margin > SAD - phantom_radius, never equal to it.",
     )
     p.add_argument(
         "--air-margin-z",
