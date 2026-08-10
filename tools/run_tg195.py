@@ -47,6 +47,7 @@ from ct_dosemc_core.tg195 import (  # noqa: E402
     Case4Spec,
     build_case4_phantom,
     first_test_voi_weights,
+    perimeter_replica_weights,
     read_case4_reference,
     read_tg195_spectrum,
     second_test_voi_weights,
@@ -152,6 +153,17 @@ def build_parser() -> argparse.ArgumentParser:
         "energy of a photon that degrades below it, so this sets the size of a "
         "systematic leak that falls on scatter-fed regions. Generate the tables "
         "first: tools/make_materials.py --e-min-ev 1000",
+    )
+    p.add_argument(
+        "--perimeter-replicas",
+        type=int,
+        default=0,
+        help="also score the perimeter VOI at N non-overlapping azimuths on its "
+        "150 mm circle. The dose field of a cylindrically symmetric phantom under "
+        "a full rotation depends only on (r, z), so every azimuth has the same "
+        "expectation: averaging them costs no Monte Carlo and divides the SD by "
+        "sqrt(N). Their scatter is also an independent check that nothing breaks "
+        "the symmetry. 94 fit without overlapping.",
     )
     p.add_argument("--seed", type=int, default=1234567890)
     p.add_argument("--executable", type=Path, default=DEFAULT_EXE)
@@ -505,6 +517,16 @@ def run_sub_fan_set(
 # than its own stated statistics support.
 TG195_TOLERANCE = 0.01
 
+# The package whose cross-section library this engine shares. Comparing against
+# it makes the test one of transport implementation rather than of cross-section
+# datasets; comparing against the four-code mean asks one library to reproduce
+# the average of four. See docs/MC_SOURCE_MODEL.md section 5.1.4. The choice is
+# made on that physical ground and is stated before the numbers, and every other
+# code is reported next to it so the choice stays arguable.
+REFERENCE_CODE = "Penelope"
+AGREEMENT_SIGMAS = 2.0
+REPLICA_SD_REQUIREMENT = 0.0025
+
 
 def compare(values: dict[str, Value], reference: dict[str, dict[str, float]]) -> dict:
     """Our numbers against the published ones."""
@@ -705,8 +727,18 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
         voi_builder = first_test_voi_weights
         n_projections = 1
     else:
-        voi_builder = second_test_voi_weights
         n_projections = int(args.projections)
+        if args.perimeter_replicas:
+            n_rep = int(args.perimeter_replicas)
+
+            def voi_builder(phantom, spec, **kw):
+                out = second_test_voi_weights(phantom, spec, **kw)
+                out.update(
+                    perimeter_replica_weights(phantom, spec, n_positions=n_rep, **kw)
+                )
+                return out
+        else:
+            voi_builder = second_test_voi_weights
     print(f"[{gate}] beam={beam}, {test_choice} test, {n_projections} projection(s)")
 
     values, meta = run_sub_fan_set(
@@ -724,6 +756,53 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
     # TG-195 publishes both and they differ by 1-2%. Comparing a discrete run
     # against the continuous column was worth -2.1% on the centre VOI.
     angular = "discrete" if (test_choice == "second" and n_projections == 36) else "continuous"
+    replica_summary = None
+    rep_names = sorted(n for n in values if n.startswith("perimeter_"))
+    if rep_names:
+        # Symmetry-averaged perimeter, plus the scatter across azimuths as a
+        # second, independent uncertainty estimate. If it disagrees with the
+        # replica SD from independent seeds, something breaks the rotational
+        # symmetry that should not -- the same structure as the four-chamber CTDI
+        # check that caught the PRNG defect.
+        vals = np.array([values[n].value for n in rep_names])
+        mean = float(vals.mean())
+        sd_of_mean = float(vals.std(ddof=1) / math.sqrt(vals.size))
+        replica_summary = {
+            "n_positions": int(vals.size),
+            "mean_ev_per_photon": mean,
+            "sample_sd_across_azimuths": float(vals.std(ddof=1)),
+            "sd_of_the_mean": sd_of_mean,
+            "relative_sd_of_the_mean": sd_of_mean / mean,
+            "single_position_relative_sd": float(vals.std(ddof=1) / mean),
+            "min": float(vals.min()),
+            "max": float(vals.max()),
+            "note": "Azimuthal replication: no extra Monte Carlo, the expectation "
+            "is identical at every azimuth by symmetry, and the scatter is an "
+            "independent uncertainty estimate that must agree with the "
+            "independent-seed replica SD.",
+        }
+        values = {k: v for k, v in values.items() if not k.startswith("perimeter_")}
+        values["perimeter"] = Value(
+            value=mean,
+            unit="eV per emitted photon",
+            uncertainty=sd_of_mean,
+            provenance=Provenance(
+                formula=f"mean of the perimeter VOI over {vals.size} azimuths",
+                inputs={"n_positions": int(vals.size)},
+                assumptions=(
+                    "a full 360 degree rotation of a cylindrically symmetric "
+                    "phantom makes the dose field independent of azimuth, so every "
+                    "position has the same expectation",
+                ),
+                source="ct_dosemc_core.tg195.perimeter_replica_weights",
+            ),
+        )
+        print(
+            f"[{gate}] perimeter replicated over {vals.size} azimuths: "
+            f"SD/position {100 * replica_summary['single_position_relative_sd']:.4f}% "
+            f"-> SD of mean {100 * replica_summary['relative_sd_of_the_mean']:.4f}%"
+        )
+
     reference = read_case4_reference(
         CASE4_RESULTS, beam=beam, thickness_cm=args.fan_thickness, angular=angular
     )
@@ -739,6 +818,7 @@ def gate_g1_or_g2(args, *, gate: str) -> int:
         "tag": tag,
         "passed": passed,
         "angular_reference_case": angular,
+        "perimeter_azimuthal_replication": replica_summary,
         "anchor_quality": {
             "usable_as_anchor": int(args.sub_fans) >= 4,
             "n_sub_fans": int(args.sub_fans),

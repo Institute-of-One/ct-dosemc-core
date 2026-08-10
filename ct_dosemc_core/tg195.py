@@ -47,6 +47,7 @@ __all__ = [
     "build_case4_phantom",
     "first_test_voi_masks",
     "first_test_voi_weights",
+    "perimeter_replica_weights",
     "read_case4_reference",
     "read_tg195_spectrum",
     "second_test_voi_masks",
@@ -288,6 +289,74 @@ def second_test_voi_weights(
         if not w.any():
             raise ValueError(f"second-test VOI {name!r} falls outside the dose tally ROI")
         out[name] = w
+    return out
+
+
+def perimeter_replica_weights(
+    phantom: VoxelPhantom,
+    spec: Case4Spec,
+    *,
+    n_positions: int | None = None,
+    roi_origin_zyx: tuple[int, int, int] = (0, 0, 0),
+    roi_shape_zyx: tuple[int, int, int] | None = None,
+    subdivisions: int = 64,
+) -> dict[str, np.ndarray]:
+    """The perimeter VOI replicated around its circle of symmetry.
+
+    After a full 360 degree rotation the dose field in a cylindrically symmetric
+    phantom depends only on ``(r, z)``, never on azimuth.  The perimeter VOI can
+    therefore be evaluated at **any** azimuth on its 150 mm circle and the
+    expectation is identical -- so evaluating it at many non-overlapping azimuths
+    and averaging costs no extra Monte Carlo and reduces the variance by the
+    number of positions.
+
+    The circle is 2*pi*150 = 942 mm around and the VOI is 10 mm across, so 94
+    positions fit without overlapping.  That is a factor of ~9.7 on the standard
+    deviation, from an existing tally.
+
+    It is also a *second, independent* uncertainty estimate: the sample SD across
+    the positions must agree with the replica SD from independent seeds. If it
+    does not, something breaks the symmetry that should not -- which is exactly
+    the structure of the four-chamber CTDI check that caught the PRNG defect.
+
+    The centre VOI has no such freedom: it sits on the rotation axis, so there is
+    no azimuth to replicate over. Only the perimeter gets this for free.
+    """
+    circumference = 2.0 * math.pi * spec.second_test_perimeter_radius_cm
+    max_positions = int(circumference // spec.second_test_voi_diameter_cm)
+    if n_positions is None:
+        n_positions = max_positions
+    if n_positions > max_positions:
+        raise ValueError(
+            f"{n_positions} positions of {spec.second_test_voi_diameter_cm:g} cm "
+            f"would overlap on a {circumference:.1f} cm circle; at most {max_positions}"
+        )
+
+    if roi_shape_zyx is None:
+        roi_shape_zyx = phantom.shape_zyx
+    cx, cy, cz = phantom.centre_cm()
+    half_length = 0.5 * spec.second_test_voi_length_cm
+    r = spec.second_test_perimeter_radius_cm
+
+    out: dict[str, np.ndarray] = {}
+    for m in range(n_positions):
+        theta = 2.0 * math.pi * m / n_positions
+        full = cylinder_occupancy(
+            phantom.n_voxels,
+            phantom.voxel_size_cm,
+            centre_xy_cm=(cx + r * math.sin(theta), cy + r * math.cos(theta)),
+            radius_cm=0.5 * spec.second_test_voi_diameter_cm,
+            z_min_cm=cz - half_length,
+            z_max_cm=cz + half_length,
+            subdivisions=subdivisions,
+        )
+        w = _crop(full, roi_origin_zyx, roi_shape_zyx)
+        if not w.any():
+            raise ValueError(
+                f"perimeter replica {m} (azimuth {math.degrees(theta):.1f} deg) "
+                "falls outside the dose tally ROI"
+            )
+        out[f"perimeter_{m:03d}"] = w
     return out
 
 
