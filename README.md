@@ -8,12 +8,11 @@ dose coefficients are *computed* rather than looked up, and there is no licensin
 exposure anywhere in the chain.
 
 > **Status: Phase 1a — code verification, NOT closed.**
-> G1 (56.4 keV, single projection) passes at 0.147% and G1′ (120 kVp) at 0.338%.
-> **G2 does not pass at the documented default configuration**: re-taken with the
-> voxel box reaching the focal spot, the central VOI is −1.29% against a ±1%
-> tolerance, while the perimeter is −0.02%. The earlier −0.80% pass was computed
-> at an air margin the project has since deprecated. See
-> [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.3.0.
+> G1 (56.4 keV, single projection) passes at 0.147%, G1′ (120 kVp) at 0.338%, and
+> G5 (CPU vs GPU) on both gates. **G2 is open on statistics, not on physics**: the
+> centre VOI's uncertainty at the production configuration has never been
+> measured, so the significance of its −0.7…−0.9% deviation from PENELOPE is
+> unknown. One run settles it — [RESUME](docs/IORN007_RESUME.md) §2.
 
 **Picking this up after a break?** Start at
 [docs/IORN007_RESUME.md](docs/IORN007_RESUME.md) — current state, the one
@@ -126,8 +125,11 @@ python tools/run_tg195.py --scan air_margin=1,10,20,30,40   # convergence
 python -m pytest
 ```
 
-The CPU build needs no CUDA toolkit and is the reference; the CUDA build is
-20–40× faster and is what a cohort run requires.
+The CPU build needs no CUDA toolkit and is the reference. The CUDA build is
+built by `tools/build_mcgpu.ps1 -Target gpu -CudaPath ... -CudaSamples ...` and is
+what a Phase-2 cohort requires — but measured here it gave **no speedup on G2**,
+because with 144 engine invocations the ASCII geometry parse dominates and the
+GPU does not touch it. It is ~7× on single-invocation runs.
 
 ---
 
@@ -136,7 +138,7 @@ The CPU build needs no CUDA toolkit and is the reference; the CUDA build is
 | Phase | What | State |
 |---|---|---|
 | 0 | scaffold, engine build, spectra, source model | done |
-| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | G0/G1/G1′ pass; **G2 open** (§5.3.0); G3/G4 done; G5 awaiting CUDA |
+| **1a** | **code verification against AAPM TG-195 Case 4** — the gate | G0/G1/G1′/G3/G5 pass; **G2 open on statistics** — see [RESUME](docs/IORN007_RESUME.md) §2 |
 | 1b | physical anchor: bowtie, filtration, μ_en/ρ, measured CTDIvol | not started; may run in parallel with Phase 2 |
 | 2 | multi-vendor cohort → per-organ mGy + MC uncertainty | released by Phase 1a |
 | 3 | cross-check against published ranges (comparison only) | — |
