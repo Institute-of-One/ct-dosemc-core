@@ -118,8 +118,9 @@ python tools/make_materials.py
 python tools/fetch_tg195.py                 # copyrighted; fetched, never committed
 python tools/run_tg195.py --gate G0         # spectrum beam quality
 python tools/run_tg195.py --gate G1 --histories 6e7 --sub-fans 8 \
-    --voxel-size 0.5 --phantom-length 60 --air-margin 44 --air-margin-z 4
-python tools/run_tg195.py --scan air_margin=1,10,20,30,40   # convergence
+    --voxel-size 0.5 --phantom-length 60 --air-margin 50 --air-margin-z 4
+#   NB: never air-margin == SAD - phantom_radius (44 cm here) -- that puts the
+#   source exactly on the voxel-box face. See MC_SOURCE_MODEL.md 5.3.0d.
 
 # 5. checks
 python -m pytest
