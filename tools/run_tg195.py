@@ -300,11 +300,34 @@ def run_sub_fan_set(
     cx, cy, cz = phantom.centre_cm()
     v = args.voxel_size
 
-    # Tally only the scored slab. The geometry is 3 m long; the VOIs span at most
-    # z = -50..+35 mm, and a full-length tally would cost 350 MB for nothing.
+    # Tally only what is scored. MC-GPU writes the mean and the uncertainty map
+    # for the whole ROI on every invocation, so with 144 invocations per replica a
+    # full-phantom ROI costs tens of GB of write-then-read for tallies that are
+    # discarded. The VOIs occupy a thin slab, and transversely no more than the
+    # perimeter annulus.
     half_slab_cm = 6.0
     z_lo = max(1, int((cz - half_slab_cm) / v) + 1)
     z_hi = min(nz, int((cz + half_slab_cm) / v) + 1)
+
+    if voi_builder is second_test_voi_weights or args.perimeter_replicas:
+        # Must still contain the FULL perimeter annulus, not just one azimuth,
+        # or the azimuthal replication of section 5.1.3b has nothing to score.
+        reach = (
+            spec.second_test_perimeter_radius_cm
+            + 0.5 * spec.second_test_voi_diameter_cm
+            + 2.0 * v
+        )
+        xy_lo = max(1, int((cx - reach) / v) + 1)
+        xy_hi = min(nx, int((cx + reach) / v) + 1)
+    else:
+        # The first test scores whole discs of the phantom; nothing to crop.
+        xy_lo, xy_hi = 1, nx
+    roi_voxels = (xy_hi - xy_lo + 1) * (xy_hi - xy_lo + 1) * (z_hi - z_lo + 1)
+    print(
+        f"[roi  ] {xy_hi - xy_lo + 1} x {xy_hi - xy_lo + 1} x {z_hi - z_lo + 1} "
+        f"= {roi_voxels / 1e6:.2f}M voxels tallied of {nx * ny * nz / 1e6:.1f}M "
+        f"({nx * ny * nz / max(roi_voxels, 1):.0f}x less dose I/O per invocation)"
+    )
 
     fans = sub_fans(spec, args.sub_fans, thickness_cm=args.fan_thickness)
     omega_total = sum(f.solid_angle_sr for f in fans)
@@ -420,7 +443,7 @@ def run_sub_fan_set(
                 dose_file=f"dose_{stem}.dat",
                 voxel_file=vox.name,
                 materials=materials,
-                dose_roi=((1, nx), (1, ny), (z_lo, z_hi)),
+                dose_roi=((xy_lo, xy_hi), (xy_lo, xy_hi), (z_lo, z_hi)),
             )
             run = run_mcgpu(
                 args.executable,
@@ -492,6 +515,7 @@ def run_sub_fan_set(
         "voxel_size_cm": v,
         "n_voxels_xyz": [nx, ny, nz],
         "dose_roi_z_index": [z_lo, z_hi],
+        "dose_roi_xy_index": [xy_lo, xy_hi],
         "n_sub_fans": len(fans),
         "omega_total_sr": omega_total,
         "omega_specified_sr": omega_spec,

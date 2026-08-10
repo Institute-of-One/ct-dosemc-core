@@ -1,0 +1,825 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-10T06:25:57+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "fcfbf39ce787a518b095ab9377747a41cc12c8ca",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G2 -- TG-195 Case 4 (120 kVp, second test, 4 projection(s))",
+  "tag": "roicheck",
+  "passed": false,
+  "angular_reference_case": "continuous",
+  "perimeter_azimuthal_replication": {
+    "n_positions": 94,
+    "mean_ev_per_photon": 39.8667660840955,
+    "sample_sd_across_azimuths": 3.202344904688826,
+    "sd_of_the_mean": 0.3302966572544646,
+    "relative_sd_of_the_mean": 0.008285012547988777,
+    "single_position_relative_sd": 0.08032617689465346,
+    "min": 34.79441957202155,
+    "max": 45.00292629433901,
+    "note": "Azimuthal replication: no extra Monte Carlo, the expectation is identical at every azimuth by symmetry, and the scatter is an independent uncertainty estimate that must agree with the independent-seed replica SD."
+  },
+  "anchor_quality": {
+    "usable_as_anchor": false,
+    "n_sub_fans": 1,
+    "solid_angle_excess_fraction": 0.011374147388984568,
+    "note": "K < 4 oversamples the specified solid angle (1.14% at K=1) and happens to agree better with the reference. That is not a reason to use it. These values demonstrate self-consistency between the angular sub-cases, where the bias is common to the pair and cancels; they are not anchor values. See docs/MC_SOURCE_MODEL.md section 5.3.3."
+  },
+  "tolerance": {
+    "criterion": "relative difference from the four-code mean within 1%",
+    "source": "AAPM Report 195: users are asked to report the relative percentage difference against the mean (p.56), and the reference values themselves carry up to 1% statistical uncertainty per VOI (section 3.4).",
+    "also_within_inter_code_range": false,
+    "note": "The inter-code range is reported separately and is a stricter bar than the report asks for -- for some VOIs the four packages agree to 0.1%, tighter than their own stated statistics."
+  },
+  "engine": {
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+    "executable_sha256": "00e4ba139f89388ee924ee7a8c21251d7a2c8fff36c4ac1df9c86130de1b74cb",
+    "build_info": {
+      "engine": "MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain",
+      "engine_source": "https://github.com/DIDSR/MCGPU",
+      "target": "gpu",
+      "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe",
+      "executable_sha256": "93F403465086CD94BBA3BC71236238456047F3421B02223A4710C3B233A15631",
+      "source_sha256": "18110A6DEB965FBAD64E332ED2A4DC591840E24EFB82F37EE4457C15101BBACA",
+      "patched_source": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_win_gpu.cu",
+      "patched_sha256": "79C06DAF916CDCA3E7A033281FD86C18D8E48C52E92A9CC7CC61509C57F5EC81",
+      "patches": [
+        {
+          "from": "fopen(file_binary, \"w\")",
+          "to": "fopen(file_binary, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary image file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_mean, \"w\")",
+          "to": "fopen(file_binary_mean, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "fopen(file_binary_sigma, \"w\")",
+          "to": "fopen(file_binary_sigma, \"wb\")",
+          "occurrences": 1,
+          "reason": "binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows"
+        },
+        {
+          "from": "if (abs(theta_aperture) < 1.0e-7)",
+          "to": "if (fabs(theta_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "if (abs(phi_aperture) < 1.0e-7)",
+          "to": "if (fabs(phi_aperture) < 1.0e-7)",
+          "occurrences": 1,
+          "reason": "abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams"
+        },
+        {
+          "from": "cudaThreadSynchronize",
+          "to": "cudaDeviceSynchronize",
+          "occurrences": 6,
+          "reason": "removed from the CUDA runtime in CUDA 12"
+        }
+      ],
+      "compiler": "nvcc -> sm_86 (host: MSVC)",
+      "cuda_version": "Cuda compilation tools, release 12.9, V12.9.86",
+      "cuda_path": "d:\\DevGit\\ct_dosemc_core\\vendor\\cuda-12.9",
+      "cuda_samples": "d:\\DevGit\\ct_dosemc_core\\vendor\\cuda-samples",
+      "vs_installation": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools",
+      "zlib": "zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in"
+    },
+    "random_seed": 1234567890
+  },
+  "spectrum": {
+    "path": "D:\\DevGit\\ct_dosemc_core\\results\\phase1a\\roicheck\\tg195_120kvp.spc",
+    "n_bins": 207,
+    "bin_width_kev": 0.5,
+    "e_min_kev": 16.5,
+    "e_max_kev": 120.0,
+    "mean_energy_kev": 56.14313216828212,
+    "tg195_header": {
+      "target": "W/Al",
+      "kvp": "120 kVp",
+      "anode_angle": "11 deg anode angle",
+      "ripple": "0% Ripple",
+      "filtration": "Al filter thickness: 2.861 mm",
+      "mean_energy": "Mean Energy: 56.4 keV",
+      "hvl": "HVL: 5.010 mm Al"
+    }
+  },
+  "geometry": {
+    "spec": {
+      "phantom_radius_cm": 16.0,
+      "phantom_length_specified_cm": 300.0,
+      "sad_cm": 60.0,
+      "fan_width_at_isocentre_cm": 32.0,
+      "fan_thickness_at_isocentre_cm": 1.0,
+      "half_fan_deg": 14.931417178137552,
+      "standard": "AAPM Report 195 (TG-195) Case 4, section 3.4"
+    },
+    "phantom_length_cm": 40.0,
+    "voxel_size_cm": 0.25,
+    "n_voxels_xyz": [
+      368,
+      368,
+      208
+    ],
+    "dose_roi_z_index": [
+      81,
+      129
+    ],
+    "dose_roi_xy_index": [
+      121,
+      249
+    ],
+    "n_sub_fans": 1,
+    "omega_total_sr": 0.008686444784148066,
+    "omega_specified_sr": 0.008588755018677743,
+    "omega_excess_fraction": 0.011374147388984568,
+    "histories_total": 4000000.0,
+    "n_projections": 4,
+    "projections_driven_externally": false,
+    "engine_invocations": 1,
+    "air_margin_cm": 30.0,
+    "air_margin_z_cm": 6.0,
+    "beamlets": [
+      {
+        "projection_index": 0,
+        "gantry_angle_deg": 0.0,
+        "sub_fan_index": 0,
+        "centre_psi_deg": 0.0,
+        "azimuthal_aperture_deg": 29.862834356275105,
+        "polar_aperture_deg": 0.9549075546191548,
+        "solid_angle_sr": 0.008686444784148066,
+        "weight": 1.0,
+        "histories": 4000000.0,
+        "wall_seconds": 16.315492399968207,
+        "voi": {
+          "center": {
+            "ev_per_photon_in_beamlet": 11.726434535832595,
+            "sigma": 0.03666650453127771,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter": {
+            "ev_per_photon_in_beamlet": 35.974908187564424,
+            "sigma": 0.06307957557748177,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter_000": {
+            "ev_per_photon_in_beamlet": 35.974908187564424,
+            "sigma": 0.06307957557748177,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter_001": {
+            "ev_per_photon_in_beamlet": 36.12054746070734,
+            "sigma": 0.06335877797968978,
+            "voi_volume_cm3": 7.8515625,
+            "n_voxels_touched": 720
+          },
+          "perimeter_002": {
+            "ev_per_photon_in_beamlet": 36.14173221875501,
+            "sigma": 0.06138371368010414,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_003": {
+            "ev_per_photon_in_beamlet": 36.92398242297753,
+            "sigma": 0.06329701006409874,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_004": {
+            "ev_per_photon_in_beamlet": 37.65794905742394,
+            "sigma": 0.0639477383793468,
+            "voi_volume_cm3": 7.85064697265625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_005": {
+            "ev_per_photon_in_beamlet": 39.127636637451396,
+            "sigma": 0.06375441290510828,
+            "voi_volume_cm3": 7.851715087890625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_006": {
+            "ev_per_photon_in_beamlet": 39.75481479714813,
+            "sigma": 0.06417391455580773,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_007": {
+            "ev_per_photon_in_beamlet": 42.47081680489332,
+            "sigma": 0.06758033186633144,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_008": {
+            "ev_per_photon_in_beamlet": 42.63630928309647,
+            "sigma": 0.06570353038164449,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_009": {
+            "ev_per_photon_in_beamlet": 43.6214217165934,
+            "sigma": 0.0685630079992454,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 840
+          },
+          "perimeter_010": {
+            "ev_per_photon_in_beamlet": 43.47533570261206,
+            "sigma": 0.06836799539296651,
+            "voi_volume_cm3": 7.8546142578125,
+            "n_voxels_touched": 800
+          },
+          "perimeter_011": {
+            "ev_per_photon_in_beamlet": 44.25689423643858,
+            "sigma": 0.06783673746220095,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 920
+          },
+          "perimeter_012": {
+            "ev_per_photon_in_beamlet": 43.92160861907375,
+            "sigma": 0.06779833866959839,
+            "voi_volume_cm3": 7.85308837890625,
+            "n_voxels_touched": 840
+          },
+          "perimeter_013": {
+            "ev_per_photon_in_beamlet": 44.42761808780935,
+            "sigma": 0.06867567942320196,
+            "voi_volume_cm3": 7.85369873046875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_014": {
+            "ev_per_photon_in_beamlet": 42.7375639275044,
+            "sigma": 0.06581048365512494,
+            "voi_volume_cm3": 7.85247802734375,
+            "n_voxels_touched": 880
+          },
+          "perimeter_015": {
+            "ev_per_photon_in_beamlet": 43.191601006549476,
+            "sigma": 0.06618666942490317,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_016": {
+            "ev_per_photon_in_beamlet": 42.518567273127886,
+            "sigma": 0.06651918164057279,
+            "voi_volume_cm3": 7.85125732421875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_017": {
+            "ev_per_photon_in_beamlet": 41.11199571837945,
+            "sigma": 0.06515411293434302,
+            "voi_volume_cm3": 7.854156494140625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_018": {
+            "ev_per_photon_in_beamlet": 38.86488121794927,
+            "sigma": 0.06361306577519822,
+            "voi_volume_cm3": 7.853851318359375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_019": {
+            "ev_per_photon_in_beamlet": 38.46796583043861,
+            "sigma": 0.06344095434424031,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_020": {
+            "ev_per_photon_in_beamlet": 36.963326435889016,
+            "sigma": 0.06211960046653883,
+            "voi_volume_cm3": 7.85430908203125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_021": {
+            "ev_per_photon_in_beamlet": 36.26350224319806,
+            "sigma": 0.06250239360329864,
+            "voi_volume_cm3": 7.852020263671875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_022": {
+            "ev_per_photon_in_beamlet": 36.110624412366874,
+            "sigma": 0.06265192229790155,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_023": {
+            "ev_per_photon_in_beamlet": 35.04043231286967,
+            "sigma": 0.06194810299359673,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 720
+          },
+          "perimeter_024": {
+            "ev_per_photon_in_beamlet": 35.37817600510196,
+            "sigma": 0.06236320832558461,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 720
+          },
+          "perimeter_025": {
+            "ev_per_photon_in_beamlet": 35.32646285288024,
+            "sigma": 0.06117805281903008,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_026": {
+            "ev_per_photon_in_beamlet": 37.38010348949517,
+            "sigma": 0.06401796957518438,
+            "voi_volume_cm3": 7.852020263671875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_027": {
+            "ev_per_photon_in_beamlet": 37.06871483336982,
+            "sigma": 0.062359757452675316,
+            "voi_volume_cm3": 7.85430908203125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_028": {
+            "ev_per_photon_in_beamlet": 37.825015838535116,
+            "sigma": 0.06277145937388366,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_029": {
+            "ev_per_photon_in_beamlet": 38.87354400285507,
+            "sigma": 0.0634120179745157,
+            "voi_volume_cm3": 7.853851318359375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_030": {
+            "ev_per_photon_in_beamlet": 40.43205259348501,
+            "sigma": 0.06441374551295669,
+            "voi_volume_cm3": 7.854156494140625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_031": {
+            "ev_per_photon_in_beamlet": 42.792909973779786,
+            "sigma": 0.06726136875230915,
+            "voi_volume_cm3": 7.85125732421875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_032": {
+            "ev_per_photon_in_beamlet": 42.88974547148546,
+            "sigma": 0.06643024122936665,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_033": {
+            "ev_per_photon_in_beamlet": 43.645939062612236,
+            "sigma": 0.06677551906232759,
+            "voi_volume_cm3": 7.85247802734375,
+            "n_voxels_touched": 880
+          },
+          "perimeter_034": {
+            "ev_per_photon_in_beamlet": 44.00375769195185,
+            "sigma": 0.0678112479862411,
+            "voi_volume_cm3": 7.85369873046875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_035": {
+            "ev_per_photon_in_beamlet": 44.03930437891947,
+            "sigma": 0.06795154603434052,
+            "voi_volume_cm3": 7.85308837890625,
+            "n_voxels_touched": 840
+          },
+          "perimeter_036": {
+            "ev_per_photon_in_beamlet": 43.10366289932997,
+            "sigma": 0.06629680046228725,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 920
+          },
+          "perimeter_037": {
+            "ev_per_photon_in_beamlet": 44.005387415404634,
+            "sigma": 0.06900303206269863,
+            "voi_volume_cm3": 7.8546142578125,
+            "n_voxels_touched": 800
+          },
+          "perimeter_038": {
+            "ev_per_photon_in_beamlet": 43.86939071517625,
+            "sigma": 0.06795224375090324,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 840
+          },
+          "perimeter_039": {
+            "ev_per_photon_in_beamlet": 43.34158532455445,
+            "sigma": 0.06736540941875775,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_040": {
+            "ev_per_photon_in_beamlet": 41.2780130944832,
+            "sigma": 0.06589705946810083,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_041": {
+            "ev_per_photon_in_beamlet": 39.76264861495554,
+            "sigma": 0.06364591904709128,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_042": {
+            "ev_per_photon_in_beamlet": 39.11638039103129,
+            "sigma": 0.06358518344507849,
+            "voi_volume_cm3": 7.851715087890625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_043": {
+            "ev_per_photon_in_beamlet": 37.87203802935933,
+            "sigma": 0.06335212142375528,
+            "voi_volume_cm3": 7.85064697265625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_044": {
+            "ev_per_photon_in_beamlet": 36.052696690374205,
+            "sigma": 0.06200819284895064,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_045": {
+            "ev_per_photon_in_beamlet": 36.283866564475574,
+            "sigma": 0.061662969097544665,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_046": {
+            "ev_per_photon_in_beamlet": 35.98536113231549,
+            "sigma": 0.06257984134092562,
+            "voi_volume_cm3": 7.8515625,
+            "n_voxels_touched": 720
+          },
+          "perimeter_047": {
+            "ev_per_photon_in_beamlet": 34.79441957202155,
+            "sigma": 0.06120211255746622,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 640
+          },
+          "perimeter_048": {
+            "ev_per_photon_in_beamlet": 36.46404518697423,
+            "sigma": 0.06461441801366362,
+            "voi_volume_cm3": 7.8515625,
+            "n_voxels_touched": 720
+          },
+          "perimeter_049": {
+            "ev_per_photon_in_beamlet": 35.95299564957671,
+            "sigma": 0.06097594053007077,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_050": {
+            "ev_per_photon_in_beamlet": 35.340041384960564,
+            "sigma": 0.061398040224372424,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_051": {
+            "ev_per_photon_in_beamlet": 36.824502468628836,
+            "sigma": 0.06293195665830381,
+            "voi_volume_cm3": 7.85064697265625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_052": {
+            "ev_per_photon_in_beamlet": 38.396639809963574,
+            "sigma": 0.0630299140979262,
+            "voi_volume_cm3": 7.851715087890625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_053": {
+            "ev_per_photon_in_beamlet": 40.08562856795944,
+            "sigma": 0.06499924359166596,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_054": {
+            "ev_per_photon_in_beamlet": 40.534966638948916,
+            "sigma": 0.06482156586254573,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_055": {
+            "ev_per_photon_in_beamlet": 42.1500757379778,
+            "sigma": 0.06518391408422398,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_056": {
+            "ev_per_photon_in_beamlet": 42.59549568698106,
+            "sigma": 0.06644863151251473,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 840
+          },
+          "perimeter_057": {
+            "ev_per_photon_in_beamlet": 43.37665535228722,
+            "sigma": 0.06850576337135181,
+            "voi_volume_cm3": 7.8546142578125,
+            "n_voxels_touched": 800
+          },
+          "perimeter_058": {
+            "ev_per_photon_in_beamlet": 45.00292629433901,
+            "sigma": 0.06860886285982953,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 920
+          },
+          "perimeter_059": {
+            "ev_per_photon_in_beamlet": 44.08035436961026,
+            "sigma": 0.06732748059943208,
+            "voi_volume_cm3": 7.85308837890625,
+            "n_voxels_touched": 840
+          },
+          "perimeter_060": {
+            "ev_per_photon_in_beamlet": 43.85692509339793,
+            "sigma": 0.06751988359613459,
+            "voi_volume_cm3": 7.85369873046875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_061": {
+            "ev_per_photon_in_beamlet": 44.322334749620445,
+            "sigma": 0.06805450541586312,
+            "voi_volume_cm3": 7.85247802734375,
+            "n_voxels_touched": 880
+          },
+          "perimeter_062": {
+            "ev_per_photon_in_beamlet": 42.88816564295673,
+            "sigma": 0.0664761545644325,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_063": {
+            "ev_per_photon_in_beamlet": 41.64766955320127,
+            "sigma": 0.06615528841586817,
+            "voi_volume_cm3": 7.85125732421875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_064": {
+            "ev_per_photon_in_beamlet": 40.84680422151433,
+            "sigma": 0.06520875843001414,
+            "voi_volume_cm3": 7.854156494140625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_065": {
+            "ev_per_photon_in_beamlet": 39.01667079797416,
+            "sigma": 0.06447636226247323,
+            "voi_volume_cm3": 7.853851318359375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_066": {
+            "ev_per_photon_in_beamlet": 37.68416051748042,
+            "sigma": 0.06245164528662769,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_067": {
+            "ev_per_photon_in_beamlet": 37.186970972553816,
+            "sigma": 0.0621458124206182,
+            "voi_volume_cm3": 7.85430908203125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_068": {
+            "ev_per_photon_in_beamlet": 36.34483166470607,
+            "sigma": 0.06221452224177628,
+            "voi_volume_cm3": 7.852020263671875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_069": {
+            "ev_per_photon_in_beamlet": 36.184875791162334,
+            "sigma": 0.06247449287568915,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_070": {
+            "ev_per_photon_in_beamlet": 35.51824434922718,
+            "sigma": 0.06279914453112895,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 720
+          },
+          "perimeter_071": {
+            "ev_per_photon_in_beamlet": 36.17497695972766,
+            "sigma": 0.06290406621218717,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 720
+          },
+          "perimeter_072": {
+            "ev_per_photon_in_beamlet": 35.87101646124808,
+            "sigma": 0.06225925842937205,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_073": {
+            "ev_per_photon_in_beamlet": 35.33419670441053,
+            "sigma": 0.06151627840085114,
+            "voi_volume_cm3": 7.852020263671875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_074": {
+            "ev_per_photon_in_beamlet": 36.872313996982534,
+            "sigma": 0.06214211096947325,
+            "voi_volume_cm3": 7.85430908203125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_075": {
+            "ev_per_photon_in_beamlet": 38.05739913300956,
+            "sigma": 0.06303672837285888,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_076": {
+            "ev_per_photon_in_beamlet": 40.15659915886749,
+            "sigma": 0.06575171662322143,
+            "voi_volume_cm3": 7.853851318359375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_077": {
+            "ev_per_photon_in_beamlet": 40.851392031460804,
+            "sigma": 0.06566631054888245,
+            "voi_volume_cm3": 7.854156494140625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_078": {
+            "ev_per_photon_in_beamlet": 41.55638661779454,
+            "sigma": 0.0650264255551744,
+            "voi_volume_cm3": 7.85125732421875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_079": {
+            "ev_per_photon_in_beamlet": 42.8374226748963,
+            "sigma": 0.06584835374130751,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_080": {
+            "ev_per_photon_in_beamlet": 43.187651442692726,
+            "sigma": 0.06691571107149295,
+            "voi_volume_cm3": 7.85247802734375,
+            "n_voxels_touched": 880
+          },
+          "perimeter_081": {
+            "ev_per_photon_in_beamlet": 43.791931737284486,
+            "sigma": 0.06785028755609518,
+            "voi_volume_cm3": 7.85369873046875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_082": {
+            "ev_per_photon_in_beamlet": 44.0055086935834,
+            "sigma": 0.06807779557473931,
+            "voi_volume_cm3": 7.85308837890625,
+            "n_voxels_touched": 840
+          },
+          "perimeter_083": {
+            "ev_per_photon_in_beamlet": 43.183199544138,
+            "sigma": 0.06626125325875061,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 920
+          },
+          "perimeter_084": {
+            "ev_per_photon_in_beamlet": 43.05348530646602,
+            "sigma": 0.06737405507869254,
+            "voi_volume_cm3": 7.8546142578125,
+            "n_voxels_touched": 800
+          },
+          "perimeter_085": {
+            "ev_per_photon_in_beamlet": 43.364666159119444,
+            "sigma": 0.06747468638913014,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 840
+          },
+          "perimeter_086": {
+            "ev_per_photon_in_beamlet": 42.04705241769229,
+            "sigma": 0.06575562446476958,
+            "voi_volume_cm3": 7.8533935546875,
+            "n_voxels_touched": 880
+          },
+          "perimeter_087": {
+            "ev_per_photon_in_beamlet": 42.25384154140596,
+            "sigma": 0.06633689302131829,
+            "voi_volume_cm3": 7.855072021484375,
+            "n_voxels_touched": 840
+          },
+          "perimeter_088": {
+            "ev_per_photon_in_beamlet": 41.07516630010316,
+            "sigma": 0.06533646229909257,
+            "voi_volume_cm3": 7.854766845703125,
+            "n_voxels_touched": 880
+          },
+          "perimeter_089": {
+            "ev_per_photon_in_beamlet": 38.962525398097625,
+            "sigma": 0.06372824063454119,
+            "voi_volume_cm3": 7.851715087890625,
+            "n_voxels_touched": 880
+          },
+          "perimeter_090": {
+            "ev_per_photon_in_beamlet": 37.934930357621056,
+            "sigma": 0.06459399666314718,
+            "voi_volume_cm3": 7.85064697265625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_091": {
+            "ev_per_photon_in_beamlet": 36.65876129435219,
+            "sigma": 0.06264098206398576,
+            "voi_volume_cm3": 7.854461669921875,
+            "n_voxels_touched": 800
+          },
+          "perimeter_092": {
+            "ev_per_photon_in_beamlet": 35.67962702139836,
+            "sigma": 0.06078165502599872,
+            "voi_volume_cm3": 7.85400390625,
+            "n_voxels_touched": 800
+          },
+          "perimeter_093": {
+            "ev_per_photon_in_beamlet": 35.36076820185241,
+            "sigma": 0.06233427880465427,
+            "voi_volume_cm3": 7.8515625,
+            "n_voxels_touched": 720
+          }
+        }
+      }
+    ]
+  },
+  "results": {
+    "center": {
+      "value": 11.726434535832595,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.03666650453127771,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "E = sum_k (Omega_k/Omega_total) * sum_voxels(d_i * m_i); sigma = sqrt(sum_k (Omega_k/Omega_total)^2 * sigma_k^2)",
+        "inputs": {
+          "voi": "center",
+          "n_sub_fans": 1,
+          "histories_total": 4000000.0,
+          "omega_total_sr": 0.008686444784148066
+        },
+        "assumptions": [
+          "MC-GPU tallies collision kerma; electrons are not transported",
+          "sub-fan runs are statistically independent, so their uncertainties combine in quadrature -- unlike per-voxel uncertainties within one run",
+          "the source emits uniformly in solid angle over the specified rectangular field"
+        ],
+        "source": "AAPM TG-195 Case 4, scoring in eV per emitted photon"
+      }
+    },
+    "perimeter": {
+      "value": 39.8667660840955,
+      "unit": "eV per emitted photon",
+      "uncertainty": 0.3302966572544646,
+      "uncertainty_kind": "1sigma_mc_statistical",
+      "provenance": {
+        "formula": "mean of the perimeter VOI over 94 azimuths",
+        "inputs": {
+          "n_positions": 94
+        },
+        "assumptions": [
+          "a full 360 degree rotation of a cylindrically symmetric phantom makes the dose field independent of azimuth, so every position has the same expectation"
+        ],
+        "source": "ct_dosemc_core.tg195.perimeter_replica_weights"
+      }
+    }
+  },
+  "comparison_with_tg195": {
+    "center": {
+      "ours_ev_per_photon": 11.726434535832595,
+      "ours_sigma": 0.03666650453127771,
+      "ours_relative_sigma": 0.0031268246472732587,
+      "per_code": {},
+      "closest_code": null,
+      "reference_mean": 11.144400000000001,
+      "reference_min": 11.11,
+      "reference_max": 11.18,
+      "inter_code_spread_fraction": 0.006281181579986386,
+      "ratio_to_reference_mean": 1.052226637219823,
+      "deviation_fraction": 0.05222663721982301,
+      "passes_tg195_tolerance": false,
+      "within_inter_code_range": false,
+      "angular_case": "continuous",
+      "n_codes_in_reference": 4
+    },
+    "perimeter": {
+      "ours_ev_per_photon": 39.8667660840955,
+      "ours_sigma": 0.3302966572544646,
+      "ours_relative_sigma": 0.008285012547988777,
+      "per_code": {},
+      "closest_code": null,
+      "reference_mean": 39.360825000000006,
+      "reference_min": 38.73,
+      "reference_max": 39.99,
+      "inter_code_spread_fraction": 0.032011524148693654,
+      "ratio_to_reference_mean": 1.0128539247867772,
+      "deviation_fraction": 0.01285392478677716,
+      "passes_tg195_tolerance": false,
+      "within_inter_code_range": true,
+      "angular_case": "continuous",
+      "n_codes_in_reference": 4
+    }
+  },
+  "reference_note": "Reference values are read at run time from the AAPM electronic resources in data/tg195/, which are copyrighted and are not redistributed by this repository. Only the comparison is recorded here.",
+  "known_gaps": [
+    "MC-GPU tallies collision kerma; electrons are not transported.",
+    "Phantom modelled at 40 cm rather than the specified 300 cm; run --length-scan to show this is converged.",
+    "Voxelised cylinder: the curved surface is stair-stepped at the 0.25 cm voxel scale.",
+    "The fan is approximated by 1 azimuthal sub-fans; the residual solid-angle error is +1.1374 %.",
+    "Only 30 cm of the 44 cm source-to-phantom air path is inside the voxel box; MC-GPU crosses the remainder without interaction. Measure the sensitivity with --scan air_margin=1,10,20,30,40."
+  ]
+}

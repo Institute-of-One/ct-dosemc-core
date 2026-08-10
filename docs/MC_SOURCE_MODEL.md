@@ -815,6 +815,37 @@ Three things belong beside it:
   §5.1.2a still applies: most of the deviation from the four-code mean is the
   cross-section library, not this implementation.
 
+### 5.3.0c Why the projection loop cannot move inside MC-GPU
+
+The obvious speedup — let MC-GPU run its own 36-projection trajectory so the
+geometry is parsed 4 times instead of 144 — **does not work with sub-fans**, and
+the source says why plainly:
+
+```c
+3288:  source_data[i].position.x  = center_rotation.x + SRotAxisD*cos(current_angle);
+3289:  source_data[i].position.y  = center_rotation.y + SRotAxisD*sin(current_angle);
+3292:  source_data[i].direction.x = center_rotation.x - source_data[i].position.x;
+3293:  source_data[i].direction.y = center_rotation.y - source_data[i].position.y;
+```
+
+For every projection after the first, the direction is **recomputed to point at
+the rotation centre**. Whatever aim the input file specified is discarded, so an
+off-axis sub-fan survives exactly one projection.
+
+Aiming the *initial* direction off-axis does not rescue it either: `center_rotation`
+is derived from the initial position and direction, so tilting the aim moves the
+rotation centre off the phantom axis, and the source then orbits the wrong point.
+
+A symmetric φ window would be expressible, but the whole content of the sub-fan
+decomposition is that the *polar* aperture varies with azimuth (§5.3), and the
+aperture is constant within any one invocation. So the P×K invocation count is
+structural, not an implementation choice.
+
+What remains available on that axis: the tally I/O (§4.2 of the review — done,
+35× less per invocation), and the geometry parse, which scales with voxel count
+and could be cut ~8× by moving to 5 mm voxels, whose measured effect on the answer
+is ≤0.12% (§5.3). Neither requires touching the engine.
+
 ### 5.3.0b The sub-fan count is settled analytically, not by simulation
 
 **No Monte-Carlo scan over K will be run again.** The sub-fan decomposition is a
