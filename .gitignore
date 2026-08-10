@@ -73,3 +73,7 @@ htmlcov/
 .idea/
 Thumbs.db
 desktop.ini
+
+# Assembled CUDA tree and cuda-samples clone: fetched, not redistributed.
+vendor/cuda-12.9/
+vendor/cuda-samples/

@@ -181,6 +181,36 @@ Overflow, worth knowing before a long cohort run: the tally is
 `unsigned long long` scaled by `SCALE_eV`, so it saturates above
 `1.8e19 / SCALE_eV` eV in a single voxel (upstream's own warning at `:462`).
 
+### 2.3 G5, first result: the two builds agree to a fraction of a sigma
+
+The GPU target now builds and runs (CUDA 12.9.86, `sm_86`). On G1 — the
+monoenergetic single-projection gate, 6×10⁷ histories, identical input:
+
+| VOI | CPU | GPU | GPU/CPU − 1 | MC σ | in units of σ |
+|---|---|---|---|---|---|
+| segment 1 | 11575.2739 | 11575.0619 | −0.0018% | 0.0077% | **0.24** |
+| segment 2 | 2579.4670 | 2579.3967 | −0.0027% | 0.0167% | **0.16** |
+| segment 3 | 1767.3963 | 1767.3439 | −0.0030% | 0.0202% | **0.15** |
+| segment 4 | 1329.4329 | 1329.6324 | +0.0150% | 0.0232% | **0.65** |
+
+This is the criterion above being met, not merely "within statistics": the two
+builds differ by 0.15–0.65 σ, i.e. by *less* than the noise, which is what an
+exact integer tally over the same history set should give. The residual is the
+float→integer rounding mode and fast-math divergence, as predicted.
+
+It also confirms the sign of the argument in §2.1 item 0: defect #22 is absent
+here because `nvcc` compiles `.cu` as C++ where `abs` has a `double` overload —
+had the CPU build not been patched, this comparison would have shown the two
+builds disagreeing by orders of magnitude rather than by a fraction of a σ.
+
+**Throughput: about 7× faster** (2.5–3.2 s against 18.4 s per sub-fan), not the
+20–40× upstream quotes, because at this problem size the per-invocation geometry
+parse dominates rather than the transport. §5.3.0a is the reason that matters, and
+§4 of the review is the fix.
+
+G5 is not complete: G2 must be compared as well, on the configuration that
+finally closes the gate.
+
 ---
 
 ## 3. What MC-GPU models

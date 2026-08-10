@@ -28,7 +28,8 @@ param(
     [string]$Target = 'cpu',
     [string]$CudaSamples = '',
     [string]$Arch = 'sm_86',  # RTX 3080 = GA102 = compute capability 8.6
-    [string]$CcBin = ''       # host compiler for nvcc, e.g. a VS 2022 v143 cl.exe
+    [string]$CcBin = '',      # host compiler for nvcc, e.g. a VS 2022 v143 cl.exe
+    [string]$CudaPath = ''    # a CUDA tree (bin/include/lib); no admin install needed
 )
 
 $ErrorActionPreference = 'Stop'
@@ -155,18 +156,39 @@ else {
     if (-not $CudaSamples) { throw '-CudaSamples <path to a clone of github.com/NVIDIA/cuda-samples, same tag as the toolkit> is required for the gpu target' }
     $common = Join-Path $CudaSamples 'Common'
     if (-not (Test-Path (Join-Path $common 'helper_cuda.h'))) { throw "helper_cuda.h not found under $common" }
-    if (-not (Get-Command nvcc -ErrorAction SilentlyContinue)) {
-        throw 'nvcc is not on PATH. Install the CUDA Toolkit (12.4 or 12.6 recommended) with the official installer; the pip distribution ships only ptxas on Windows.'
+    # A full administrator install is not the only way to get nvcc. A merged
+    # redistributable tree (bin/include/lib) works, and can come from the NVIDIA
+    # redist archives, from conda's nvidia channel, or from an existing tree
+    # already on the machine. -CudaPath points at one.
+    if ($CudaPath) {
+        if (-not (Test-Path (Join-Path $CudaPath 'bin/nvcc.exe'))) { throw "no bin/nvcc.exe under $CudaPath" }
+        $env:PATH = (Join-Path $CudaPath 'bin') + ';' + $env:PATH
+        $env:CUDA_PATH = $CudaPath
     }
+    if (-not (Get-Command nvcc -ErrorAction SilentlyContinue)) {
+        throw 'nvcc is not on PATH and -CudaPath was not given. Note the pip distribution ships only ptxas on Windows; use the NVIDIA redist archives or conda -c nvidia cuda-nvcc.'
+    }
+    $nvccVersion = ((& nvcc --version) | Select-String 'release' | Out-String).Trim()
     $exe = Join-Path $build 'MC-GPU_v1.3_GPU.exe'
     $cc = ($Arch -replace 'sm_', '')
     $flags = @(
         '-O3', '-use_fast_math', '-m64', '-DUSING_CUDA',
         '-D_CRT_SECURE_NO_WARNINGS', '-D_USE_MATH_DEFINES',
         '-allow-unsupported-compiler',
+        # Same 512 MB stack the CPU target needs, and for the same reason: the
+        # per-projection source/detector arrays and the material tables are
+        # automatic storage on the host side.  MSVC's 1 MB default overflows
+        # before the first history (0xC00000FD).  nvcc has to pass it through to
+        # the host linker rather than handling it itself.
+        '-Xlinker', '/STACK:536870912',
         "-I`"$mcgpu`"", "-I`"$zlib`"", "-I`"$common`"",
         "-gencode=arch=compute_$cc,code=$Arch"
     )
+    if ($CudaPath) {
+        $flags += "-I`"$(Join-Path $CudaPath 'include')`""
+        $flags += "-L`"$(Join-Path $CudaPath 'lib/x64')`""
+    }
+    $flags += '-lcudart'
     if ($CcBin) { $flags += "-ccbin `"$CcBin`"" }
     $line = 'nvcc ' + ($flags -join ' ') + " `"$src`" " + ($zsrc -join ' ') + " -o `"$exe`""
     $compiler = "nvcc -> $Arch (host: MSVC)"
@@ -199,6 +221,9 @@ $meta = [ordered]@{
     patched_sha256    = (Get-FileHash $src -Algorithm SHA256).Hash
     patches           = $applied
     compiler          = $compiler
+    cuda_version      = $nvccVersion
+    cuda_path         = $CudaPath
+    cuda_samples      = $CudaSamples
     vs_installation   = $vsPath
     zlib              = 'zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in'
 }
