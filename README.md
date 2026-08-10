@@ -15,6 +15,10 @@ exposure anywhere in the chain.
 > at an air margin the project has since deprecated. See
 > [docs/MC_SOURCE_MODEL.md](docs/MC_SOURCE_MODEL.md) §5.3.0.
 
+**Picking this up after a break?** Start at
+[docs/IORN007_RESUME.md](docs/IORN007_RESUME.md) — current state, the one
+measurement that is blocking, and the rules already learned the hard way.
+
 Institute of One, LISIT Co., Ltd., Tokyo, Japan · MIT licence.
 
 ---
