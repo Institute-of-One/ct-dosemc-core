@@ -14,16 +14,70 @@ Biology* (code-verification + application).
 
 ## Abstract
 - [GATED on final organ-dose numbers] One paragraph: verified engine, re-derivable
-  cohort, patient organ doses normalised to recorded CTDIvol.
+  cohort, patient organ doses scaled to a recorded CTDIvol where one exists (23/32).
 
 ## 1. Introduction
-- **Differentiation (not competing on scale).** The contribution is fidelity and
-  reproducibility per patient, not cohort size; N is set by the multi-vendor claim,
-  not statistics (kickoff §Differentiation). → so N = 32 after eligibility is ample.
-- Gap addressed: open, re-derivable pipeline from DICOM to organ dose with a
-  transport engine verified against a recognised benchmark.
-- Scope: Phase 1a = code verification (TG-195 Case 4); Phase 2 = patient organ dose.
-  Phase 1b (bowtie) is a Methods component, not a second gate.
+
+Three papers, three endpoints, one pipeline. They are not slices of the same
+result.
+
+- **IORN-004** (`ctdose-core`, [Zenodo 10.5281/zenodo.21636719](https://doi.org/10.5281/zenodo.21636719) v0.1.1)
+  reports the whole-scan **CTDIvol** — a scanner-output index. One number per
+  acquisition; no organ, no transport.
+- **IORN-006** (`ctsegdose-core`, [Zenodo 10.5281/zenodo.21817307](https://doi.org/10.5281/zenodo.21817307) v0.1.1)
+  reports an **organ-specific weighted CTDIvol index**, CTDIvol × *w*<sub>o</sub>,
+  where *w*<sub>o</sub> is the tube-current mean over the segmented organ relative
+  to the scan mean. Still an index. It captures longitudinal TCM; it does not
+  transport photons.
+- **IORN-007** (this work) reports **absorbed organ dose in milligray**, by Monte
+  Carlo through the patient's own segmented, density-mapped anatomy. The
+  coefficients are computed, not looked up, which is why 004 and 006 stopped
+  where they did: every published organ-dose coefficient table is copyrighted.
+
+Different endpoint, different method. N is set by the multi-vendor claim (four
+manufacturers, a pre-declared metal-implant gate, N = 32), not by a power
+calculation. The contribution is fidelity and reproducibility per patient, not
+cohort size.
+
+The same 40 TCIA series underlie 006 and 007. Eight are excluded from absorbed-dose
+analysis by a pre-declared Schneider-calibration rule (largest in-body
+out-of-calibration component ≥ 1 cm³). On the surviving 32, the 006 index is
+already in hand (`results/phase2_cohort/iorn006_organ_index.json`, pinned to
+ctsegdose-core v0.1.1 / 10.5281/zenodo.21817307). When 007 mGy
+lands, one scatter — 006 index vs 007 absorbed dose, same patient, same organ —
+shows the split as data, not as a disclaimer. That plot is also the strongest
+available evidence that this is not salami: three quantities, three papers, one
+cohort.
+
+Scope. Phase 1a is code verification against AAPM TG-195 Case 4. Phase 2 is
+patient organ dose. The absolute scale is a recorded CTDIvol on **23/32** series;
+on 7/32 it is a ctdose-core (IORN-004) reconstruction (4 already in the 006
+v0.1.1 release, 3 filled here); 2/32 cannot be scaled this way. Phase 1b
+(bowtie) is a Methods component, not a second verification gate.
+
+## Figures and tables
+
+| | Content | Status | Evidence |
+|---|---|---|---|
+| **Fig. 1** | Selection funnel: 47,181 → 40 (probe 62 → 40, 22 rejected). | DONE | `cohort_overlap.json` |
+| **Fig. 2** | Density-calibration gate: largest out-of-calibration component (cm³), 1 cm³ threshold, N = 32. | DONE | `metal_distribution.json`, `density_eligibility.json` |
+| **Fig. 3** | TG-195 Case 4: G1/G1′/G2 vs PENELOPE, with measured replica σ. | IN PROGRESS | `results/phase1a_G*.json`; Route B for G2 (a) |
+| **Fig. 4** | Same-patient scatter: IORN-006 organ-weighted CTDIvol (x) vs IORN-007 absorbed mGy (y), one point per organ. 30/32 series have a defined index: 23 recorded (filled circles), 6 reconstructed with an exact or high-confidence table match (filled squares), 1 reconstructed under IORN-004's own low-confidence warning (open squares: Revolution CT → Revolution CT ES, score 0.50). LightSpeed Ultra and Revolution EVO are omitted: not in the open table, and 004's resolver refuses a near miss. | x READY; y GATED | `iorn006_organ_index.json`; 007 organ doses |
+| **Fig. 5** | Per-organ absorbed dose by vendor (with N). | GATED | Phase-2 production |
+| **Fig. 6** | Robustness: one metal-excluded series re-included under a density clamp; max organ-dose change. | GATED | queued after unlock |
+| **Table 1** | Gate outcomes G0–G5 (criterion, status, evidence). | IN PROGRESS | `IORN007_scope_to_acceptance.md` |
+| **Table 2** | Cohort by vendor, with N: selected 10/10/10/10 → eligible 8/9/6/9. | DONE | `density_eligibility.json` |
+| **Table 3** | Declared limitations (voxel, air, K, spectrum as upper bounds; phantom length measured). | IN PROGRESS | `MC_SOURCE_MODEL.md` §5.3.0e; 40 vs 160 cm pending |
+| **Table 4** | Patient organ doses (mGy), per organ, per vendor, with N. | GATED | Phase-2 production |
+
+Fig. 4 is the contribution-split figure. It is not a validation of 007 against 006:
+006 is an index, 007 is a dose, and they are not required to agree. The plot's job
+is to show, on the same anatomy, that the three papers measure three different
+things. Open squares on that figure are the one series whose CTDIvol was
+reconstructed under IORN-004's own low-confidence warning (Revolution CT matched
+to Revolution CT ES, score 0.50); they are not a second reconstruction policy.
+
+---
 
 ## 2. Methods
 
@@ -109,9 +163,16 @@ Biology* (code-verification + application).
   worst 16.5 % on the smallest glands. `results/phase2_cohort/resample_cost.json`.
 
 ### 2.8 CTDIvol normalisation — **GATED (design fixed)**
-- Patient dose normalised to the CTDIvol recorded in DICOM/RDSR
-  (`MC_SOURCE_MODEL.md` §4.5), removing dependence on absolute SpekPy output and on
-  the bowtie's absolute transmission.
+- The recorded-CTDIvol normalisation of `MC_SOURCE_MODEL.md` §4.5 applies to
+  **23/32** eligible series (the DICOM/RDSR tag). A further 7/32 are scaled to a
+  reconstructed CTDIvol: 4 already reconstructed in IORN-006 v0.1.1 against the
+  open table, 3 filled here by ctdose-core v0.1.1
+  ([10.5281/zenodo.21636719](https://doi.org/10.5281/zenodo.21636719)). Of those
+  3, one (Revolution CT → Revolution CT ES, score 0.50) carries 004's own
+  low-confidence warning and is an **open square** on Fig. 4. Two GE models
+  (LightSpeed Ultra, Revolution EVO) are unrecoverable under 004's published
+  resolver; they are reported, not aliased, and cannot be scaled this way.
+  Per-series origin is in `iorn006_organ_index.json`.
 
 ### 2.9 Organ dose computation — **partly built; runs GATED**
 - Voxel phantom → MC-GPU patient input → `region_dose` over organ masks → mGy/organ.
@@ -128,6 +189,8 @@ Biology* (code-verification + application).
 - **3.2 Cohort** — funnel, eligibility, device-independence, ICRP-89 context table
   (descriptive only). [DONE]
 - **3.3 Patient organ doses** — per-organ dose, per vendor (with N). [GATED]
+  Fig. 4 (006 index vs 007 mGy) is drawn in the same step; the x-axis is already
+  in `iorn006_organ_index.json`.
 - **3.4 Robustness** — one metal-excluded series re-included via density clamp; report
   max organ-dose change ("exclusion does not change conclusions"). [GATED — queued
   for when dose computation unlocks]
@@ -144,7 +207,7 @@ Biology* (code-verification + application).
 
 ## 5. Conclusion
 - [GATED] Verified, device-independent engine; fully re-derivable cohort; patient
-  organ doses normalised to recorded CTDIvol.
+  organ doses scaled to a recorded CTDIvol on 23/32 series.
 
 ---
 

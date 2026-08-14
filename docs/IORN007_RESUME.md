@@ -227,8 +227,10 @@ should run now — see the split below. (Authoritative scope:
    exists), filtration to a measured HVL, and PMMA→air-kerma are needed for the
    *physical fidelity of the patient geometry*, not to pass verification. Because no
    in-house measured CTDIvol exists, the old "reproduce a measured CTDIvol" goal is
-   dropped: patient dose is **normalised to the CTDIvol recorded in the DICOM/RDSR**
-   (`MC_SOURCE_MODEL.md` §4.5), which also removes the dependence on SpekPy's
+   dropped: patient dose is **scaled to a CTDIvol the series actually carries** —
+   recorded in the DICOM/RDSR on 23/32 eligible series, reconstructed via
+   ctdose-core (IORN-004) on 7/32, unrecoverable on 2/32
+   (`MC_SOURCE_MODEL.md` §4.5). That also removes the dependence on SpekPy's
    absolute output. It may run in parallel with Phase 2, not before it.
 
 ---

@@ -366,10 +366,21 @@ and 1.4% lower in mean energy — a difference between tube models, not a defect
 either, but not something to absorb silently.
 
 For patient dose the intended anchor is different and stronger:
-normalise so that the simulated free-in-air air kerma at the isocentre reproduces
-the scanner's stated output, or so that the simulated CTDIvol reproduces the
-CTDIvol recorded in the DICOM/RDSR. Which normalisation was used will be stated
-per result. Until the bowtie exists, neither is trustworthy.
+normalise so that the simulated CTDIvol reproduces a CTDIvol the series actually
+carries. That is the value **recorded in the DICOM/RDSR on 23 of the 32 eligible
+series**. It is not the cohort rule. A further 7 series are scaled to a CTDIvol
+reconstructed by ctdose-core (IORN-004) from the acquisition and the open MIRDct
+table — 4 of those reconstructions already sit in the IORN-006 v0.1.1 release
+(exact table match); 3 were filled here, where 004's published resolver accepts
+the scanner. Of those 3, one (Revolution CT → Revolution CT ES, score 0.50)
+carries 004's own low-confidence warning and is drawn as an **open square** on
+Fig. 4; that is a marker, not a second reconstruction policy. Two series
+(LightSpeed Ultra, Revolution EVO) have no recorded tag and lie outside the
+open table; 004 forbids substituting a neighbour, so they cannot be scaled this
+way. Per-series origin (`recorded` / `reconstructed` / `unavailable`) is in
+`results/phase2_cohort/iorn006_organ_index.json`. Until the bowtie exists,
+neither recorded nor reconstructed normalisation is trustworthy as an absolute
+calibration of the bowtie.
 
 ### 4.6 Geometry
 
@@ -890,8 +901,8 @@ at 120 kVp the band is ≤ 27 mm Al, dominated by Canon's steeper edge). Each ve
 entry records its `provenance` (`measured` vs `cross-vendor average`) so the patient
 driver reports where every profile came from.
 
-**Why the Siemens gap is a band, not a blocker.** Patient dose is normalised to the
-**recorded CTDIvol** (§4.5), which removes the dependence on the bowtie's *absolute*
+**Why the Siemens gap is a band, not a blocker.** Patient dose is scaled to a
+CTDIvol (§4.5) — recorded on 23 series, reconstructed on 7 — which removes the dependence on the bowtie's *absolute*
 transmission; what survives is only the **radial fluence shape**, and its effect is
 bounded from above by the inter-vendor spread. G6 is therefore a Methods component,
 not a verification gate.
@@ -1482,8 +1493,8 @@ physical anchor. Remaining, in order:
 5. Fixed-seed reproducibility and anti-fabrication tests green (`tests/`).
 
 Phase 1b (G6–G9: bowtie, filtration, μ_en/ρ, measured CTDIvol) may run in
-parallel with Phase 2. Normalising patient dose to the CTDIvol recorded in the
-DICOM/RDSR (§4.5) removes most of the dependence on the bowtie's absolute
+parallel with Phase 2. Scaling patient dose to a recorded CTDIvol (23/32) or an
+IORN-004 reconstruction (7/32) (§4.5) removes most of the dependence on the bowtie's absolute
 transmission — but not its effect on the *radial* fluence distribution, so the G6
 sensitivity analysis is required before the manuscript regardless.
 

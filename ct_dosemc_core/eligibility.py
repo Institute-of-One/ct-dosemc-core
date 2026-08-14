@@ -83,9 +83,9 @@ REQUIRED_FOR_TRANSPORT: dict[str, str] = {
     "spiral_pitch_factor": "the helical trajectory and the CTDIvol relation",
     "exposure_time_ms": "converts tube current to mAs per rotation",
     "recorded_ctdivol_mgy": (
-        "the normalisation anchor: patient dose is scaled so the simulated CTDIvol "
-        "reproduces the recorded one, which removes most of the dependence on the "
-        "bowtie's absolute transmission (docs/MC_SOURCE_MODEL.md section 4.5)"
+        "the normalisation anchor when the DICOM/RDSR tag is present (23/32 "
+        "eligible series). Otherwise the ctdose-core (IORN-004) reconstruction, "
+        "or unrecoverable; see docs/MC_SOURCE_MODEL.md section 4.5"
     ),
 }
 

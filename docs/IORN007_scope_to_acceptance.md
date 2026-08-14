@@ -31,9 +31,12 @@ tonight (§7).
 verification anchor; the bowtie is a *Methods component* for the physical fidelity
 of the patient geometry, not a gate the engine must pass. Because no in-house
 measured CTDIvol exists, "reproduce a measured CTDIvol" is not trackable and is
-dropped — patient dose is instead **normalised to the CTDIvol recorded in the
-DICOM/RDSR** (`MC_SOURCE_MODEL.md` §4.5), which also removes the dependence on
-SpekPy's absolute output.
+dropped — patient dose is instead **scaled to a CTDIvol the series actually
+carries**: the DICOM/RDSR tag on 23/32 eligible series, an IORN-004
+reconstruction on 7/32 (4 already in the 006 v0.1.1 release, 3 filled here),
+and unrecoverable on 2/32 (`MC_SOURCE_MODEL.md` §4.5). That also removes most
+of the dependence on SpekPy's absolute output. Per-series origin is in
+`results/phase2_cohort/iorn006_organ_index.json`.
 
 **Cohort principle — rules, not cases.** If admitting one series would require a new
 rule written for that series, the series is excluded instead: a rule is defensible in

@@ -1,0 +1,4327 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-14T04:47:40+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "56dfd4f9aa06bcb78a24ca48c554a6cba29c8de4",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "what": "IORN-006 organ-specific weighted CTDIvol index for the IORN-007 absorbed-dose eligible cohort (N=32), taken from the published v0.1.1 object (10.5281/zenodo.21817307). Series that 006 left without CTDIvol are filled by ctdose-core v0.1.1 reconstruction where that resolver accepts the scanner.",
+  "not": "Not absorbed dose. Not a third-party coefficient table. Not a re-segmentation. w_o is copied from the 006 release; CTDIvol is either that release's recorded/reconstructed value or an IORN-004 reconstruction recorded beside it.",
+  "eligibility": {
+    "file": "results/phase2_cohort/density_eligibility.json",
+    "n_assessed": 40,
+    "n_eligible": 32,
+    "n_excluded": 8,
+    "criterion": "largest out-of-calibration component volume"
+  },
+  "iorn006": {
+    "project": "ctsegdose-core (IORN-006)",
+    "endpoint": "organ-specific weighted CTDIvol index (not absorbed dose)",
+    "formula": "CTDIvol_o = CTDIvol * w_o;  w_o = mean_{z in organ} I(z) / mean_z I(z)",
+    "release": "v0.1.1",
+    "git_commit": "46edee6423ddc19b47efae180d8edf527299d066",
+    "git_commit_short": "46edee6",
+    "working_tree_dirty": false,
+    "zenodo_version_doi": "10.5281/zenodo.21817307",
+    "zenodo_concept_doi": "10.5281/zenodo.21817234",
+    "derived_from_iorn004_zenodo_doi": "10.5281/zenodo.21636082",
+    "repository": "https://github.com/Institute-of-One/ctsegdose-core.git",
+    "source_file": "results/organ_dose_1.5mm.json",
+    "source_read": "git show 46edee6423ddc19b47efae180d8edf527299d066:results/organ_dose_1.5mm.json",
+    "source_sha256": "b6de753933ee15c7ef4e3e572fd8a2aed5f048de30b9145a75b62b795aff2fcf",
+    "release_tag_commit": "46edee6423ddc19b47efae180d8edf527299d066",
+    "note": "Read from the published v0.1.1 object, not from the sister working tree. A reviewer who fetches Zenodo 10.5281/zenodo.21817307 and runs this tool against that checkout gets the same 006 bytes. Imaging is not copied. Values needed for the 007 scatter (w_o and, where 006 defined it, CTDIvol_o) are copied; the rest of the sister results file is not."
+  },
+  "iorn004": {
+    "project": "ctdose-core (IORN-004)",
+    "release": "v0.1.1",
+    "cited_commit": "5753a109dd245b1f6bbc207b5248ae35faecbe5a",
+    "zenodo_version_doi": "10.5281/zenodo.21636719",
+    "zenodo_concept_doi": "10.5281/zenodo.21636082",
+    "repository": "https://github.com/Institute-of-One/ctdose-core.git",
+    "local_head": "298bdd1a1ee764c64ef6ab2cadae2cbfd340d3d2",
+    "local_tag_commit": "e1b3848114483f02f124817bef3057b544bdcb1e",
+    "reconstruction_modules_diff_vs_release": "",
+    "note": "Reconstruction uses 004's published APIs (load_series, collect_recorded_dose, scanners.resolve_model, estimate_ctdivol_open). The cited version is v0.1.1 / 10.5281/zenodo.21636719. metrics / scanners / ctdi_table / pipeline are unchanged since that tag; io.py on HEAD only tightens pixel-padding and is not used for pixels here."
+  },
+  "recipe": {
+    "006_blob": "git -C <ctsegdose-core> show 46edee6423ddc19b47efae180d8edf527299d066:results/organ_dose_1.5mm.json",
+    "004_reconstruct": "ctdose_core.io.load_series + collect_recorded_dose; if no recorded CTDIvol, ctdi_table.resolve_model then scanners.resolve_model (min score 0.45); estimate_ctdivol_open(..., phantom_cm=32); CTDIvol_o = CTDIvol * w_o with 006's w_o",
+    "command": "python tools/extract_iorn006_index.py"
+  },
+  "summary": {
+    "n_eligible": 32,
+    "n_matched": 32,
+    "n_missing_from_iorn006": 0,
+    "missing_uids": [],
+    "n_organ_records": 365,
+    "n_organ_records_with_weighted_ctdivol": 342,
+    "n_series_with_weighted_ctdivol": 30,
+    "n_series_weight_only_ctdivol_unavailable": 2,
+    "n_series_by_ctdivol_origin": {
+      "recorded": 23,
+      "reconstructed": 7,
+      "unavailable": 2
+    },
+    "n_series_by_figure4_marker": {
+      "unavailable": 2,
+      "reconstructed": 6,
+      "reconstructed_low_confidence": 1,
+      "recorded": 23
+    },
+    "n_reconstructed_already_in_iorn006": 4,
+    "n_reconstructed_here_via_iorn004": 3,
+    "reconstructed_here_uids": [
+      "1.3.6.1.4.1.14519.5.2.1.124206625223954387033910217866425393091",
+      "1.3.6.1.4.1.14519.5.2.1.6919.4624.102552799280450622384605073116",
+      "1.3.6.1.4.1.14519.5.2.1.110412737079958828416643878868827236377"
+    ],
+    "n_unrecoverable_after_iorn004": 2,
+    "unrecoverable": [
+      {
+        "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2403.104753627722770752924713208933",
+        "vendor": "GE",
+        "model_name": "LightSpeed Ultra",
+        "error": "no coefficient-table entry resembles model 'LightSpeed Ultra' (manufacturer 'GE MEDICAL SYSTEMS'); known models: Aquiliion ONE, Aquilion ONE Genesis, Aquilion ONE Prism, Prime, VISION, Discovery CT750 HD, Discovery RT, LightSpeed 16, LightSpeed VCT, Optima 660, Revolution CT ES, Brilliance iCT, iCT 256 Slice, AS20, Definition Flash, Defintion Edge, Somatom Force",
+        "dicom_model": "LightSpeed Ultra"
+      },
+      {
+        "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077",
+        "vendor": "GE",
+        "model_name": "Revolution EVO",
+        "error": "no coefficient-table entry resembles model 'Revolution EVO' (manufacturer 'GE MEDICAL SYSTEMS'); known models: Aquiliion ONE, Aquilion ONE Genesis, Aquilion ONE Prism, Prime, VISION, Discovery CT750 HD, Discovery RT, LightSpeed 16, LightSpeed VCT, Optima 660, Revolution CT ES, Brilliance iCT, iCT 256 Slice, AS20, Definition Flash, Defintion Edge, Somatom Force",
+        "dicom_model": "Revolution EVO"
+      }
+    ],
+    "arithmetic": "23 recorded + 4 already reconstructed in IORN-006 v0.1.1 = 27 with a defined index before this fill; + 3 reconstructed here via IORN-004 = 30; 2 remain unrecoverable. Normalisation to a recorded CTDIvol applies to the recorded series only.",
+    "by_vendor": {
+      "GE": {
+        "eligible": 8,
+        "matched": 8,
+        "with_weighted_ctdivol": 6
+      },
+      "Siemens": {
+        "eligible": 9,
+        "matched": 9,
+        "with_weighted_ctdivol": 9
+      },
+      "Canon/Toshiba": {
+        "eligible": 6,
+        "matched": 6,
+        "with_weighted_ctdivol": 6
+      },
+      "Philips": {
+        "eligible": 9,
+        "matched": 9,
+        "with_weighted_ctdivol": 9
+      }
+    }
+  },
+  "scatter": {
+    "x": "organ_weighted_ctdivol_mgy (IORN-006 index, mGy)",
+    "y": "absorbed organ dose (IORN-007, mGy) \u2014 GATED, not in this file",
+    "markers": {
+      "recorded": {
+        "marker": "o",
+        "facecolor": "filled",
+        "label": "recorded CTDIvol (DICOM/RDSR)"
+      },
+      "reconstructed": {
+        "marker": "s",
+        "facecolor": "filled",
+        "label": "reconstructed CTDIvol (exact or high-confidence table match)"
+      },
+      "reconstructed_low_confidence": {
+        "marker": "s",
+        "facecolor": "none",
+        "label": "reconstructed CTDIvol, low-confidence scanner match (IORN-004 warning; Revolution CT \u2192 Revolution CT ES, score 0.50)"
+      },
+      "unavailable": {
+        "omit": true,
+        "label": "not plotted (LightSpeed Ultra, Revolution EVO)"
+      }
+    },
+    "caption_line": "Open squares: CTDIvol reconstructed under IORN-004's own low-confidence warning (Revolution CT matched to Revolution CT ES, score 0.50). Filled squares: reconstructed with an exact or high-confidence table match. Filled circles: recorded in DICOM/RDSR. Two series omitted (LightSpeed Ultra, Revolution EVO).",
+    "fallback_when_ctdivol_unavailable": "relative_weight w_o is present on every organ; the mGy-vs-mGy scatter uses only series with a defined CTDIvol_o. A scanner 004's resolver refuses is unrecoverable, not aliased."
+  },
+  "series": [
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2403.104753627722770752924713208933",
+      "vendor": "GE",
+      "model_name": "LightSpeed Ultra",
+      "ctdivol_mgy": null,
+      "ctdivol_source": "unavailable",
+      "ctdivol_origin": "unavailable",
+      "figure4_marker": "unavailable",
+      "scan_mean_tube_current_ma": 302.1848739495798,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.1251,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 109.94,
+          "mass_g": 111.7
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0837,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 799.5,
+          "mass_g": 826.4
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0701,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 859.06,
+          "mass_g": 556.2
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 1506.35,
+          "mass_g": 1511.2
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 4.39,
+          "mass_g": 4.6
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 2.23,
+          "mass_g": 2.3
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 66.8,
+          "mass_g": 67.8
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 196.25,
+          "mass_g": 215.4
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 187.41,
+          "mass_g": 205.3
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 2307.58,
+          "mass_g": 2457.9
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 81.02,
+          "mass_g": 86.4
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9266,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 309.43,
+          "mass_g": 339.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.124206625223954387033910217866425393091",
+      "vendor": "GE",
+      "model_name": "LightSpeed Pro 16",
+      "ctdivol_mgy": 22.779,
+      "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 391.36036036036035,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1064,
+          "organ_weighted_ctdivol_mgy": 25.203,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 58.63,
+          "mass_g": 60.5
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1057,
+          "organ_weighted_ctdivol_mgy": 25.187,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 168.42,
+          "mass_g": 174.4
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1029,
+          "organ_weighted_ctdivol_mgy": 25.123,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 4.5,
+          "mass_g": 4.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0981,
+          "organ_weighted_ctdivol_mgy": 25.014,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 465.39,
+          "mass_g": 501.7
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.0936,
+          "organ_weighted_ctdivol_mgy": 24.911,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 0.06,
+          "mass_g": 0.1
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0922,
+          "organ_weighted_ctdivol_mgy": 24.879,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 2092.49,
+          "mass_g": 2248.6
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0676,
+          "organ_weighted_ctdivol_mgy": 24.319,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 120.01,
+          "mass_g": 125.6
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0427,
+          "organ_weighted_ctdivol_mgy": 23.752,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": true,
+          "volume_cm3": 643.78,
+          "mass_g": 576.0
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0149,
+          "organ_weighted_ctdivol_mgy": 23.118,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 217.35,
+          "mass_g": 237.2
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0111,
+          "organ_weighted_ctdivol_mgy": 23.032,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 221.01,
+          "mass_g": 241.1
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9687,
+          "organ_weighted_ctdivol_mgy": 22.066,
+          "ctdivol_mgy": 22.779,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": true,
+          "volume_cm3": 855.31,
+          "mass_g": 859.8
+        }
+      ],
+      "ctdivol_reconstruction": {
+        "via": "ctdose-core (IORN-004)",
+        "release": "v0.1.1",
+        "git_commit": "5753a109dd245b1f6bbc207b5248ae35faecbe5a",
+        "zenodo_version_doi": "10.5281/zenodo.21636719",
+        "zenodo_concept_doi": "10.5281/zenodo.21636082",
+        "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+        "dicom_model": "LightSpeed Pro 16",
+        "manufacturer": "GE MEDICAL SYSTEMS",
+        "table_model": "GE LightSpeed 16",
+        "match": "fuzzy",
+        "match_score": 0.6666666666666666,
+        "resolver_warnings": [],
+        "quantity": {
+          "value": 22.77858187027027,
+          "unit": "mGy",
+          "source": "physics_fallback",
+          "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+          "inputs": {
+            "CTDIw_mGy_per_100mAs": 10.66,
+            "mAs_rot": 213.68275675675676,
+            "pitch": 1.0,
+            "table_model": "GE LightSpeed 16",
+            "table_kvp": 120.0,
+            "table_collimation_mm": 10.0,
+            "table_phantom_cm": 32,
+            "table_bowtie": "large"
+          },
+          "reference": "Dinwiddie LE, Baggett JM, Kofler JM, et al. Survey of normalized CTDIvol values across four major computed tomography vendors for use in the MIRDct software. J Appl Clin Med Phys. 2026;27(2):e70473. doi:10.1002/acm2.70473",
+          "notes": [
+            "reconstructed because CTDIvol (0018,9345) was not available",
+            "bowtie not recorded in DICOM; the 'medium' filter usual for the 32 cm phantom is not tabulated for this model, so 'large' was used (available: large)",
+            "collimation 2.5 mm is not tabulated; used the nearest measured value, 10.0 mm (tabulated: 10, 20)"
+          ]
+        }
+      }
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.102552799280450622384605073116",
+      "vendor": "GE",
+      "model_name": "LightSpeed Pro 16",
+      "ctdivol_mgy": 15.259,
+      "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 393.63316582914575,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1025,
+          "organ_weighted_ctdivol_mgy": 16.823,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 3.06,
+          "mass_g": 3.2
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1025,
+          "organ_weighted_ctdivol_mgy": 16.823,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 3.06,
+          "mass_g": 3.2
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1025,
+          "organ_weighted_ctdivol_mgy": 16.823,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 101.42,
+          "mass_g": 108.9
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1016,
+          "organ_weighted_ctdivol_mgy": 16.809,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 10.55,
+          "mass_g": 10.8
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1007,
+          "organ_weighted_ctdivol_mgy": 16.796,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 313.1,
+          "mass_g": 302.2
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0972,
+          "organ_weighted_ctdivol_mgy": 16.742,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 236.71,
+          "mass_g": 255.2
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0968,
+          "organ_weighted_ctdivol_mgy": 16.736,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 2176.82,
+          "mass_g": 2307.6
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0956,
+          "organ_weighted_ctdivol_mgy": 16.718,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 241.07,
+          "mass_g": 259.7
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0948,
+          "organ_weighted_ctdivol_mgy": 16.706,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 417.13,
+          "mass_g": 448.1
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0413,
+          "organ_weighted_ctdivol_mgy": 15.889,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 191.33,
+          "mass_g": 193.6
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0014,
+          "organ_weighted_ctdivol_mgy": 15.28,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 1136.32,
+          "mass_g": 1031.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9465,
+          "organ_weighted_ctdivol_mgy": 14.443,
+          "ctdivol_mgy": 15.259,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 1471.93,
+          "mass_g": 1631.0
+        }
+      ],
+      "ctdivol_reconstruction": {
+        "via": "ctdose-core (IORN-004)",
+        "release": "v0.1.1",
+        "git_commit": "5753a109dd245b1f6bbc207b5248ae35faecbe5a",
+        "zenodo_version_doi": "10.5281/zenodo.21636719",
+        "zenodo_concept_doi": "10.5281/zenodo.21636082",
+        "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+        "dicom_model": "LightSpeed Pro 16",
+        "manufacturer": "GE MEDICAL SYSTEMS",
+        "table_model": "GE LightSpeed 16",
+        "match": "fuzzy",
+        "match_score": 0.6666666666666666,
+        "resolver_warnings": [],
+        "quantity": {
+          "value": 15.258652900867975,
+          "unit": "mGy",
+          "source": "physics_fallback",
+          "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+          "inputs": {
+            "CTDIw_mGy_per_100mAs": 10.66,
+            "mAs_rot": 196.81658291457288,
+            "pitch": 1.375,
+            "table_model": "GE LightSpeed 16",
+            "table_kvp": 120.0,
+            "table_collimation_mm": 10.0,
+            "table_phantom_cm": 32,
+            "table_bowtie": "large"
+          },
+          "reference": "Dinwiddie LE, Baggett JM, Kofler JM, et al. Survey of normalized CTDIvol values across four major computed tomography vendors for use in the MIRDct software. J Appl Clin Med Phys. 2026;27(2):e70473. doi:10.1002/acm2.70473",
+          "notes": [
+            "reconstructed because CTDIvol (0018,9345) was not available",
+            "bowtie not recorded in DICOM; the 'medium' filter usual for the 32 cm phantom is not tabulated for this model, so 'large' was used (available: large)"
+          ]
+        }
+      }
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077",
+      "vendor": "GE",
+      "model_name": "Revolution EVO",
+      "ctdivol_mgy": null,
+      "ctdivol_source": "unavailable",
+      "ctdivol_origin": "unavailable",
+      "figure4_marker": "unavailable",
+      "scan_mean_tube_current_ma": 386.53115727002967,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0407,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": true,
+          "volume_cm3": 124.48,
+          "mass_g": 126.2
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.04,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": true,
+          "volume_cm3": 301.02,
+          "mass_g": 262.9
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0318,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": true,
+          "volume_cm3": 140.6,
+          "mass_g": 144.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0275,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": true,
+          "volume_cm3": 173.19,
+          "mass_g": 177.6
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0206,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 42.47,
+          "mass_g": 42.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0155,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 70.45,
+          "mass_g": 71.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0133,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 2118.3,
+          "mass_g": 2221.1
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.0131,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 202.15,
+          "mass_g": 181.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0119,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 360.19,
+          "mass_g": 374.5
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.0111,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 4.29,
+          "mass_g": 4.3
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.0102,
+          "organ_weighted_ctdivol_mgy": null,
+          "ctdivol_mgy": null,
+          "ctdivol_source": "unavailable",
+          "truncated": false,
+          "volume_cm3": 4.61,
+          "mass_g": 4.6
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.14850002370218603822287426909654457044",
+      "vendor": "GE",
+      "model_name": "Optima CT660",
+      "ctdivol_mgy": 16.85960220714609,
+      "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 380.78109452736317,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 5.28,
+          "mass_g": 5.5
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 4.18,
+          "mass_g": 4.3
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 8.86,
+          "mass_g": 9.1
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 142.57,
+          "mass_g": 157.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 130.73,
+          "mass_g": 144.3
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1503,
+          "organ_weighted_ctdivol_mgy": 19.393,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 85.87,
+          "mass_g": 88.4
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.15,
+          "organ_weighted_ctdivol_mgy": 19.388,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 84.47,
+          "mass_g": 90.2
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1489,
+          "organ_weighted_ctdivol_mgy": 19.369,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 1404.44,
+          "mass_g": 1482.6
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1273,
+          "organ_weighted_ctdivol_mgy": 19.006,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 367.56,
+          "mass_g": 380.9
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.124,
+          "organ_weighted_ctdivol_mgy": 18.949,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 803.31,
+          "mass_g": 692.1
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0895,
+          "organ_weighted_ctdivol_mgy": 18.369,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 1550.0,
+          "mass_g": 1653.3
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.8724,
+          "organ_weighted_ctdivol_mgy": 14.709,
+          "ctdivol_mgy": 16.86,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE Optima 660)",
+          "truncated": false,
+          "volume_cm3": 121.89,
+          "mass_g": 160.1
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.110412737079958828416643878868827236377",
+      "vendor": "GE",
+      "model_name": "Revolution CT",
+      "ctdivol_mgy": 5.625,
+      "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed_low_confidence",
+      "scan_mean_tube_current_ma": 240.5109034267913,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.4024,
+          "organ_weighted_ctdivol_mgy": 7.889,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 16.81,
+          "mass_g": 17.5
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.044,
+          "organ_weighted_ctdivol_mgy": 5.873,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 427.82,
+          "mass_g": 473.1
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.9421,
+          "organ_weighted_ctdivol_mgy": 5.299,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 553.47,
+          "mass_g": 397.9
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.78,
+          "organ_weighted_ctdivol_mgy": 4.388,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 89.0,
+          "mass_g": 103.2
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.7626,
+          "organ_weighted_ctdivol_mgy": 4.29,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 88.37,
+          "mass_g": 101.8
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.7498,
+          "organ_weighted_ctdivol_mgy": 4.218,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 55.12,
+          "mass_g": 59.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.7342,
+          "organ_weighted_ctdivol_mgy": 4.13,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 2.87,
+          "mass_g": 3.1
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.7312,
+          "organ_weighted_ctdivol_mgy": 4.113,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 906.52,
+          "mass_g": 989.9
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.7311,
+          "organ_weighted_ctdivol_mgy": 4.112,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 1.79,
+          "mass_g": 1.9
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.7261,
+          "organ_weighted_ctdivol_mgy": 4.084,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 102.54,
+          "mass_g": 101.3
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.7237,
+          "organ_weighted_ctdivol_mgy": 4.071,
+          "ctdivol_mgy": 5.625,
+          "ctdivol_source": "reconstructed (ctdose-core v0.1.1, GE Revolution CT ES)",
+          "truncated": false,
+          "volume_cm3": 65.09,
+          "mass_g": 71.2
+        }
+      ],
+      "ctdivol_reconstruction": {
+        "via": "ctdose-core (IORN-004)",
+        "release": "v0.1.1",
+        "git_commit": "5753a109dd245b1f6bbc207b5248ae35faecbe5a",
+        "zenodo_version_doi": "10.5281/zenodo.21636719",
+        "zenodo_concept_doi": "10.5281/zenodo.21636082",
+        "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+        "dicom_model": "Revolution CT",
+        "manufacturer": "GE MEDICAL SYSTEMS",
+        "table_model": "GE Revolution CT ES",
+        "match": "fuzzy",
+        "match_score": 0.5,
+        "resolver_warnings": [
+          "scanner model 'Revolution CT' matched 'Revolution CT ES' with low confidence (0.50); verify the coefficients apply"
+        ],
+        "quantity": {
+          "value": 5.624851773691086,
+          "unit": "mGy",
+          "source": "physics_fallback",
+          "formula": "CTDIvol = CTDIw_table * (mAs_rot / 100) / pitch",
+          "inputs": {
+            "CTDIw_mGy_per_100mAs": 4.64,
+            "mAs_rot": 120.25545171339564,
+            "pitch": 0.992,
+            "table_model": "GE Revolution CT ES",
+            "table_kvp": 100.0,
+            "table_collimation_mm": 40.0,
+            "table_phantom_cm": 32,
+            "table_bowtie": "medium"
+          },
+          "reference": "Dinwiddie LE, Baggett JM, Kofler JM, et al. Survey of normalized CTDIvol values across four major computed tomography vendors for use in the MIRDct software. J Appl Clin Med Phys. 2026;27(2):e70473. doi:10.1002/acm2.70473",
+          "notes": [
+            "reconstructed because CTDIvol (0018,9345) was not available",
+            "bowtie not recorded in DICOM; used the 'medium' filter, the usual choice for the 32 cm phantom",
+            "collimation 80.0 mm is not tabulated; used the nearest measured value, 40.0 mm (tabulated: 5, 20, 40)"
+          ]
+        }
+      }
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.190738758608436907826741043480210378147",
+      "vendor": "GE",
+      "model_name": "LightSpeed VCT",
+      "ctdivol_mgy": 6.891528436363637,
+      "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 192.13,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.1386,
+          "organ_weighted_ctdivol_mgy": 7.847,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 89.88,
+          "mass_g": 125.3
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.0166,
+          "organ_weighted_ctdivol_mgy": 7.006,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 7.26,
+          "mass_g": 7.4
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.0151,
+          "organ_weighted_ctdivol_mgy": 6.996,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 9.46,
+          "mass_g": 9.6
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.0123,
+          "organ_weighted_ctdivol_mgy": 6.977,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 345.75,
+          "mass_g": 328.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0075,
+          "organ_weighted_ctdivol_mgy": 6.943,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 152.02,
+          "mass_g": 159.5
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0064,
+          "organ_weighted_ctdivol_mgy": 6.935,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 2151.19,
+          "mass_g": 2249.0
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0047,
+          "organ_weighted_ctdivol_mgy": 6.924,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 87.87,
+          "mass_g": 90.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9953,
+          "organ_weighted_ctdivol_mgy": 6.859,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 202.5,
+          "mass_g": 210.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.9934,
+          "organ_weighted_ctdivol_mgy": 6.846,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 159.75,
+          "mass_g": 167.9
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.9709,
+          "organ_weighted_ctdivol_mgy": 6.691,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 948.31,
+          "mass_g": 557.4
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9294,
+          "organ_weighted_ctdivol_mgy": 6.405,
+          "ctdivol_mgy": 6.892,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed VCT)",
+          "truncated": false,
+          "volume_cm3": 1865.23,
+          "mass_g": 1622.0
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.126887613559064617057929801994",
+      "vendor": "GE",
+      "model_name": "LightSpeed16",
+      "ctdivol_mgy": 23.95669995885235,
+      "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 400.98830409356725,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 6.11,
+          "mass_g": 6.2
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 4.64,
+          "mass_g": 4.7
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 765.62,
+          "mass_g": 585.8
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 28.86,
+          "mass_g": 29.2
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 122.73,
+          "mass_g": 129.6
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 145.12,
+          "mass_g": 153.5
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 93.99,
+          "mass_g": 98.1
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 1046.49,
+          "mass_g": 939.0
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 369.95,
+          "mass_g": 392.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 220.75,
+          "mass_g": 212.2
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0374,
+          "organ_weighted_ctdivol_mgy": 24.854,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 164.29,
+          "mass_g": 165.0
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0368,
+          "organ_weighted_ctdivol_mgy": 24.84,
+          "ctdivol_mgy": 23.957,
+          "ctdivol_source": "reconstructed (open MIRDct table, GE LightSpeed 16)",
+          "truncated": false,
+          "volume_cm3": 1656.87,
+          "mass_g": 1738.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition AS+",
+      "ctdivol_mgy": 14.61650263973941,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 351.55,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1117,
+          "organ_weighted_ctdivol_mgy": 16.249,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 1055.58,
+          "mass_g": 1035.6
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0987,
+          "organ_weighted_ctdivol_mgy": 16.06,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 236.65,
+          "mass_g": 241.7
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0438,
+          "organ_weighted_ctdivol_mgy": 15.257,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 685.13,
+          "mass_g": 584.3
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.035,
+          "organ_weighted_ctdivol_mgy": 15.129,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 227.33,
+          "mass_g": 230.5
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.0333,
+          "organ_weighted_ctdivol_mgy": 15.104,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 0.74,
+          "mass_g": 0.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.9559,
+          "organ_weighted_ctdivol_mgy": 13.972,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 79.71,
+          "mass_g": 81.9
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9006,
+          "organ_weighted_ctdivol_mgy": 13.163,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3111.91,
+          "mass_g": 3233.0
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.8958,
+          "organ_weighted_ctdivol_mgy": 13.094,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 39.63,
+          "mass_g": 40.1
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.8765,
+          "organ_weighted_ctdivol_mgy": 12.812,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 364.76,
+          "mass_g": 295.6
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.8645,
+          "organ_weighted_ctdivol_mgy": 12.636,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.52,
+          "mass_g": 6.5
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.8603,
+          "organ_weighted_ctdivol_mgy": 12.575,
+          "ctdivol_mgy": 14.617,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 168.38,
+          "mass_g": 171.5
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.492444591845205280171152909620",
+      "vendor": "Siemens",
+      "model_name": "Sensation 64",
+      "ctdivol_mgy": 20.67714782608695,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 569.5777777777778,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.0183,
+          "organ_weighted_ctdivol_mgy": 21.056,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 7.84,
+          "mass_g": 8.1
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.017,
+          "organ_weighted_ctdivol_mgy": 21.029,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.25,
+          "mass_g": 5.4
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0169,
+          "organ_weighted_ctdivol_mgy": 21.027,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 81.68,
+          "mass_g": 85.8
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0161,
+          "organ_weighted_ctdivol_mgy": 21.009,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 26.04,
+          "mass_g": 26.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.016,
+          "organ_weighted_ctdivol_mgy": 21.007,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 280.6,
+          "mass_g": 297.7
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0154,
+          "organ_weighted_ctdivol_mgy": 20.996,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 707.82,
+          "mass_g": 639.6
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0152,
+          "organ_weighted_ctdivol_mgy": 20.992,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1276.4,
+          "mass_g": 1284.1
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0152,
+          "organ_weighted_ctdivol_mgy": 20.991,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 640.28,
+          "mass_g": 654.4
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0151,
+          "organ_weighted_ctdivol_mgy": 20.989,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 212.3,
+          "mass_g": 220.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0144,
+          "organ_weighted_ctdivol_mgy": 20.976,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 234.82,
+          "mass_g": 247.3
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.0135,
+          "organ_weighted_ctdivol_mgy": 20.956,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 390.69,
+          "mass_g": 322.5
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.001,
+          "organ_weighted_ctdivol_mgy": 20.698,
+          "ctdivol_mgy": 20.677,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2145.17,
+          "mass_g": 2268.6
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.130269400384835727617577152120460443053",
+      "vendor": "Siemens",
+      "model_name": "Biograph64",
+      "ctdivol_mgy": 15.060500000000001,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 344.8832335329341,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.2794,
+          "organ_weighted_ctdivol_mgy": 19.268,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 331.42,
+          "mass_g": 342.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0301,
+          "organ_weighted_ctdivol_mgy": 15.513,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1083.58,
+          "mass_g": 1170.3
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0044,
+          "organ_weighted_ctdivol_mgy": 15.127,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 840.84,
+          "mass_g": 521.5
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.7775,
+          "organ_weighted_ctdivol_mgy": 11.71,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 78.35,
+          "mass_g": 80.7
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.7747,
+          "organ_weighted_ctdivol_mgy": 11.667,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 161.21,
+          "mass_g": 165.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.7745,
+          "organ_weighted_ctdivol_mgy": 11.664,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 134.06,
+          "mass_g": 137.2
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.7702,
+          "organ_weighted_ctdivol_mgy": 11.6,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.0,
+          "mass_g": 5.0
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.7659,
+          "organ_weighted_ctdivol_mgy": 11.535,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.04,
+          "mass_g": 2.1
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.7189,
+          "organ_weighted_ctdivol_mgy": 10.828,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1782.87,
+          "mass_g": 1852.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.7084,
+          "organ_weighted_ctdivol_mgy": 10.668,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 244.66,
+          "mass_g": 217.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.6913,
+          "organ_weighted_ctdivol_mgy": 10.411,
+          "ctdivol_mgy": 15.061,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 167.8,
+          "mass_g": 173.5
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.117047503231020830753317635065264697398",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition AS",
+      "ctdivol_mgy": 5.2560933209302325,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 167.75438596491227,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.3371,
+          "organ_weighted_ctdivol_mgy": 7.028,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 240.01,
+          "mass_g": 242.4
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1836,
+          "organ_weighted_ctdivol_mgy": 6.221,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 805.28,
+          "mass_g": 908.4
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.1108,
+          "organ_weighted_ctdivol_mgy": 5.839,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 669.65,
+          "mass_g": 555.6
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.001,
+          "organ_weighted_ctdivol_mgy": 5.261,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 49.54,
+          "mass_g": 54.1
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.9815,
+          "organ_weighted_ctdivol_mgy": 5.159,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 111.0,
+          "mass_g": 126.9
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9785,
+          "organ_weighted_ctdivol_mgy": 5.143,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 109.72,
+          "mass_g": 124.8
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.9748,
+          "organ_weighted_ctdivol_mgy": 5.124,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 8.85,
+          "mass_g": 9.3
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9701,
+          "organ_weighted_ctdivol_mgy": 5.099,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1155.06,
+          "mass_g": 1274.0
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9649,
+          "organ_weighted_ctdivol_mgy": 5.072,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 344.75,
+          "mass_g": 288.6
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9498,
+          "organ_weighted_ctdivol_mgy": 4.992,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.86,
+          "mass_g": 3.1
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9368,
+          "organ_weighted_ctdivol_mgy": 4.924,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.12,
+          "mass_g": 2.3
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9146,
+          "organ_weighted_ctdivol_mgy": 4.807,
+          "ctdivol_mgy": 5.256,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 112.16,
+          "mass_g": 124.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.139028541272282999207461674394024845879",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition AS",
+      "ctdivol_mgy": 7.456120343558281,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 519.3148148148148,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.242,
+          "organ_weighted_ctdivol_mgy": 9.261,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.77,
+          "mass_g": 5.9
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.241,
+          "organ_weighted_ctdivol_mgy": 9.253,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 215.99,
+          "mass_g": 231.6
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.217,
+          "organ_weighted_ctdivol_mgy": 9.074,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 189.71,
+          "mass_g": 203.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.2076,
+          "organ_weighted_ctdivol_mgy": 9.004,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 46.6,
+          "mass_g": 48.2
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1753,
+          "organ_weighted_ctdivol_mgy": 8.763,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 927.69,
+          "mass_g": 474.6
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.1474,
+          "organ_weighted_ctdivol_mgy": 8.555,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1663.87,
+          "mass_g": 1074.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1457,
+          "organ_weighted_ctdivol_mgy": 8.543,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 10.29,
+          "mass_g": 10.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.1114,
+          "organ_weighted_ctdivol_mgy": 8.286,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2116.53,
+          "mass_g": 2236.7
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1104,
+          "organ_weighted_ctdivol_mgy": 8.279,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.3,
+          "mass_g": 6.5
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1034,
+          "organ_weighted_ctdivol_mgy": 8.227,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1303.36,
+          "mass_g": 1210.4
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0407,
+          "organ_weighted_ctdivol_mgy": 7.759,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 267.46,
+          "mass_g": 287.7
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.9713,
+          "organ_weighted_ctdivol_mgy": 7.242,
+          "ctdivol_mgy": 7.456,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 150.14,
+          "mass_g": 153.0
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.12144631656438139661502631773455627610",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition AS",
+      "ctdivol_mgy": 7.826356858388246,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 141.97560975609755,
+      "n_organs": 4,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0431,
+          "organ_weighted_ctdivol_mgy": 8.164,
+          "ctdivol_mgy": 7.826,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 73.71,
+          "mass_g": 74.4
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.9744,
+          "organ_weighted_ctdivol_mgy": 7.626,
+          "ctdivol_mgy": 7.826,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 529.07,
+          "mass_g": 387.4
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.8276,
+          "organ_weighted_ctdivol_mgy": 6.477,
+          "ctdivol_mgy": 7.826,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 354.18,
+          "mass_g": 334.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.8042,
+          "organ_weighted_ctdivol_mgy": 6.294,
+          "ctdivol_mgy": 7.826,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 0.38,
+          "mass_g": 0.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.124862978740839397384301699389733909446",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition Flash",
+      "ctdivol_mgy": 7.004302842996743,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 298.8536585365854,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.2227,
+          "organ_weighted_ctdivol_mgy": 8.564,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 281.56,
+          "mass_g": 282.4
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.8584,
+          "organ_weighted_ctdivol_mgy": 6.012,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 473.89,
+          "mass_g": 460.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.804,
+          "organ_weighted_ctdivol_mgy": 5.632,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 904.28,
+          "mass_g": 908.7
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.7739,
+          "organ_weighted_ctdivol_mgy": 5.421,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 173.9,
+          "mass_g": 177.3
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.7557,
+          "organ_weighted_ctdivol_mgy": 5.293,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 221.41,
+          "mass_g": 224.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.7363,
+          "organ_weighted_ctdivol_mgy": 5.157,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 92.89,
+          "mass_g": 95.6
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.7293,
+          "organ_weighted_ctdivol_mgy": 5.108,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 0.82,
+          "mass_g": 0.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.7176,
+          "organ_weighted_ctdivol_mgy": 5.026,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 4.89,
+          "mass_g": 4.9
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.6581,
+          "organ_weighted_ctdivol_mgy": 4.609,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.52,
+          "mass_g": 3.5
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.6163,
+          "organ_weighted_ctdivol_mgy": 4.317,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1503.63,
+          "mass_g": 1561.2
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.6055,
+          "organ_weighted_ctdivol_mgy": 4.241,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 302.79,
+          "mass_g": 262.0
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.5898,
+          "organ_weighted_ctdivol_mgy": 4.131,
+          "ctdivol_mgy": 7.004,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 190.65,
+          "mass_g": 196.2
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.120283006789263156233439135960658945231",
+      "vendor": "Siemens",
+      "model_name": "SOMATOM Definition AS",
+      "ctdivol_mgy": 8.939629395348838,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 402.0861423220974,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0642,
+          "organ_weighted_ctdivol_mgy": 9.514,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 47.57,
+          "mass_g": 48.2
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0581,
+          "organ_weighted_ctdivol_mgy": 9.459,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 233.85,
+          "mass_g": 239.9
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0578,
+          "organ_weighted_ctdivol_mgy": 9.457,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1790.57,
+          "mass_g": 1859.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0467,
+          "organ_weighted_ctdivol_mgy": 9.357,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 162.97,
+          "mass_g": 173.2
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.042,
+          "organ_weighted_ctdivol_mgy": 9.315,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 703.52,
+          "mass_g": 581.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0355,
+          "organ_weighted_ctdivol_mgy": 9.257,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 179.37,
+          "mass_g": 191.6
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.0171,
+          "organ_weighted_ctdivol_mgy": 9.092,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 63.21,
+          "mass_g": 65.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9271,
+          "organ_weighted_ctdivol_mgy": 8.288,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 224.87,
+          "mass_g": 224.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9198,
+          "organ_weighted_ctdivol_mgy": 8.223,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1863.87,
+          "mass_g": 1997.9
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9178,
+          "organ_weighted_ctdivol_mgy": 8.205,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.52,
+          "mass_g": 5.7
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.8924,
+          "organ_weighted_ctdivol_mgy": 7.978,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 266.68,
+          "mass_g": 282.2
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.8878,
+          "organ_weighted_ctdivol_mgy": 7.937,
+          "ctdivol_mgy": 8.94,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.91,
+          "mass_g": 4.0
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.99.1071.24503530203089772620259137946948",
+      "vendor": "Siemens",
+      "model_name": "Biograph 40",
+      "ctdivol_mgy": 5.274782608695652,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 117.4183908045977,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0721,
+          "organ_weighted_ctdivol_mgy": 5.655,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 77.69,
+          "mass_g": 79.1
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.9958,
+          "organ_weighted_ctdivol_mgy": 5.253,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 47.27,
+          "mass_g": 48.7
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.9927,
+          "organ_weighted_ctdivol_mgy": 5.236,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 29.73,
+          "mass_g": 30.1
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.9886,
+          "organ_weighted_ctdivol_mgy": 5.215,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 848.03,
+          "mass_g": 655.6
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9834,
+          "organ_weighted_ctdivol_mgy": 5.187,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.86,
+          "mass_g": 2.9
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9755,
+          "organ_weighted_ctdivol_mgy": 5.145,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1162.42,
+          "mass_g": 1213.9
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9694,
+          "organ_weighted_ctdivol_mgy": 5.113,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 157.74,
+          "mass_g": 161.7
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9657,
+          "organ_weighted_ctdivol_mgy": 5.094,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 252.58,
+          "mass_g": 262.4
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.9527,
+          "organ_weighted_ctdivol_mgy": 5.025,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 130.97,
+          "mass_g": 134.2
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.948,
+          "organ_weighted_ctdivol_mgy": 5.001,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 799.27,
+          "mass_g": 750.8
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9379,
+          "organ_weighted_ctdivol_mgy": 4.947,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 125.77,
+          "mass_g": 128.7
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9228,
+          "organ_weighted_ctdivol_mgy": 4.868,
+          "ctdivol_mgy": 5.275,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 4.52,
+          "mass_g": 4.6
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.12026969269299422966770921088977968852",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion Prime SP",
+      "ctdivol_mgy": 5.0,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 160.4659090909091,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0575,
+          "organ_weighted_ctdivol_mgy": 5.287,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 167.04,
+          "mass_g": 168.4
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0346,
+          "organ_weighted_ctdivol_mgy": 5.173,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 588.79,
+          "mass_g": 615.8
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0238,
+          "organ_weighted_ctdivol_mgy": 5.119,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 629.24,
+          "mass_g": 508.7
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9551,
+          "organ_weighted_ctdivol_mgy": 4.776,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 99.76,
+          "mass_g": 106.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.9434,
+          "organ_weighted_ctdivol_mgy": 4.717,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 110.57,
+          "mass_g": 118.3
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.9405,
+          "organ_weighted_ctdivol_mgy": 4.702,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.92,
+          "mass_g": 4.0
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.9363,
+          "organ_weighted_ctdivol_mgy": 4.682,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 24.35,
+          "mass_g": 25.3
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9361,
+          "organ_weighted_ctdivol_mgy": 4.681,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 630.49,
+          "mass_g": 634.9
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9354,
+          "organ_weighted_ctdivol_mgy": 4.677,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 199.41,
+          "mass_g": 212.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.935,
+          "organ_weighted_ctdivol_mgy": 4.675,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1044.72,
+          "mass_g": 1113.1
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9348,
+          "organ_weighted_ctdivol_mgy": 4.674,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.09,
+          "mass_g": 3.2
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9348,
+          "organ_weighted_ctdivol_mgy": 4.674,
+          "ctdivol_mgy": 5.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.63,
+          "mass_g": 2.7
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.29343766386826411185462290976788394151",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion",
+      "ctdivol_mgy": 10.2,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 149.77702702702703,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.549,
+          "organ_weighted_ctdivol_mgy": 15.799,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.92,
+          "mass_g": 3.9
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.549,
+          "organ_weighted_ctdivol_mgy": 15.799,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.17,
+          "mass_g": 3.2
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.4796,
+          "organ_weighted_ctdivol_mgy": 15.092,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 256.47,
+          "mass_g": 189.3
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.4637,
+          "organ_weighted_ctdivol_mgy": 14.929,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 338.9,
+          "mass_g": 349.3
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.4395,
+          "organ_weighted_ctdivol_mgy": 14.683,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 99.07,
+          "mass_g": 102.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.4184,
+          "organ_weighted_ctdivol_mgy": 14.468,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2143.45,
+          "mass_g": 2238.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.2828,
+          "organ_weighted_ctdivol_mgy": 13.084,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 97.73,
+          "mass_g": 100.2
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.2103,
+          "organ_weighted_ctdivol_mgy": 12.345,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 133.09,
+          "mass_g": 136.8
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1822,
+          "organ_weighted_ctdivol_mgy": 12.058,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 43.46,
+          "mass_g": 43.9
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0186,
+          "organ_weighted_ctdivol_mgy": 10.39,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 596.0,
+          "mass_g": 445.0
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9608,
+          "organ_weighted_ctdivol_mgy": 9.8,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 732.37,
+          "mass_g": 630.2
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.7678,
+          "organ_weighted_ctdivol_mgy": 7.832,
+          "ctdivol_mgy": 10.2,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 132.44,
+          "mass_g": 134.7
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion PRIME",
+      "ctdivol_mgy": 16.1,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 265.3320895522388,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.686,
+          "organ_weighted_ctdivol_mgy": 27.145,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1584.94,
+          "mass_g": 1644.2
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.639,
+          "organ_weighted_ctdivol_mgy": 26.388,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1044.06,
+          "mass_g": 1011.1
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.2763,
+          "organ_weighted_ctdivol_mgy": 20.549,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 221.13,
+          "mass_g": 225.5
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.2196,
+          "organ_weighted_ctdivol_mgy": 19.636,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 203.14,
+          "mass_g": 222.9
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.067,
+          "organ_weighted_ctdivol_mgy": 17.178,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 80.89,
+          "mass_g": 86.3
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.066,
+          "organ_weighted_ctdivol_mgy": 17.162,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 32.5,
+          "mass_g": 33.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.943,
+          "organ_weighted_ctdivol_mgy": 15.183,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 359.31,
+          "mass_g": 351.8
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9359,
+          "organ_weighted_ctdivol_mgy": 15.068,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 198.39,
+          "mass_g": 217.5
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.6971,
+          "organ_weighted_ctdivol_mgy": 11.224,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1830.07,
+          "mass_g": 1949.2
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.6802,
+          "organ_weighted_ctdivol_mgy": 10.951,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 4.07,
+          "mass_g": 4.3
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.6664,
+          "organ_weighted_ctdivol_mgy": 10.728,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 258.61,
+          "mass_g": 280.8
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.6422,
+          "organ_weighted_ctdivol_mgy": 10.339,
+          "ctdivol_mgy": 16.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.4,
+          "mass_g": 3.6
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.35060909971867492262237150543126705979",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion Prime SP",
+      "ctdivol_mgy": 9.3,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 299.451724137931,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1688,
+          "organ_weighted_ctdivol_mgy": 10.87,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.92,
+          "mass_g": 6.9
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1688,
+          "organ_weighted_ctdivol_mgy": 10.87,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 25.67,
+          "mass_g": 25.7
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.1688,
+          "organ_weighted_ctdivol_mgy": 10.87,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 216.73,
+          "mass_g": 221.1
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.1688,
+          "organ_weighted_ctdivol_mgy": 10.87,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 221.73,
+          "mass_g": 226.2
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1688,
+          "organ_weighted_ctdivol_mgy": 10.87,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 132.53,
+          "mass_g": 134.5
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1674,
+          "organ_weighted_ctdivol_mgy": 10.857,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1704.53,
+          "mass_g": 1678.8
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1658,
+          "organ_weighted_ctdivol_mgy": 10.842,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.54,
+          "mass_g": 6.5
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1515,
+          "organ_weighted_ctdivol_mgy": 10.709,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 354.68,
+          "mass_g": 326.8
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.1443,
+          "organ_weighted_ctdivol_mgy": 10.642,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 387.58,
+          "mass_g": 403.3
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.1381,
+          "organ_weighted_ctdivol_mgy": 10.585,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 919.59,
+          "mass_g": 793.9
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.136,
+          "organ_weighted_ctdivol_mgy": 10.565,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3897.87,
+          "mass_g": 3924.6
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.9056,
+          "organ_weighted_ctdivol_mgy": 8.423,
+          "ctdivol_mgy": 9.3,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 150.95,
+          "mass_g": 151.0
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1078.3273.178159594418154823809776931651",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion ONE",
+      "ctdivol_mgy": 9.0,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 175.66494845360825,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.1674,
+          "organ_weighted_ctdivol_mgy": 10.506,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 344.71,
+          "mass_g": 349.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.1163,
+          "organ_weighted_ctdivol_mgy": 10.047,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1255.31,
+          "mass_g": 1306.5
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0915,
+          "organ_weighted_ctdivol_mgy": 9.823,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 874.92,
+          "mass_g": 757.4
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0716,
+          "organ_weighted_ctdivol_mgy": 9.644,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 173.63,
+          "mass_g": 187.5
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0695,
+          "organ_weighted_ctdivol_mgy": 9.626,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 98.82,
+          "mass_g": 100.2
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0186,
+          "organ_weighted_ctdivol_mgy": 9.167,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 172.61,
+          "mass_g": 186.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.018,
+          "organ_weighted_ctdivol_mgy": 9.162,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 59.63,
+          "mass_g": 62.1
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9771,
+          "organ_weighted_ctdivol_mgy": 8.794,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.67,
+          "mass_g": 6.9
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9771,
+          "organ_weighted_ctdivol_mgy": 8.794,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 975.57,
+          "mass_g": 690.1
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9769,
+          "organ_weighted_ctdivol_mgy": 8.792,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2192.79,
+          "mass_g": 2343.4
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9733,
+          "organ_weighted_ctdivol_mgy": 8.76,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 8.28,
+          "mass_g": 8.5
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.8989,
+          "organ_weighted_ctdivol_mgy": 8.09,
+          "ctdivol_mgy": 9.0,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 326.42,
+          "mass_g": 348.9
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2099.3754.178917260616042842392917847989",
+      "vendor": "Canon/Toshiba",
+      "model_name": "Aquilion",
+      "ctdivol_mgy": 15.1,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 163.562874251497,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.2611,
+          "organ_weighted_ctdivol_mgy": 19.042,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.61,
+          "mass_g": 2.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.2554,
+          "organ_weighted_ctdivol_mgy": 18.957,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.44,
+          "mass_g": 3.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.2261,
+          "organ_weighted_ctdivol_mgy": 18.514,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 51.13,
+          "mass_g": 57.6
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.2106,
+          "organ_weighted_ctdivol_mgy": 18.28,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 227.69,
+          "mass_g": 230.3
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1851,
+          "organ_weighted_ctdivol_mgy": 17.895,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 57.36,
+          "mass_g": 62.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.1624,
+          "organ_weighted_ctdivol_mgy": 17.552,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1097.85,
+          "mass_g": 1173.3
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.1586,
+          "organ_weighted_ctdivol_mgy": 17.494,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 103.16,
+          "mass_g": 113.6
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.1296,
+          "organ_weighted_ctdivol_mgy": 17.057,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 128.2,
+          "mass_g": 141.9
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1119,
+          "organ_weighted_ctdivol_mgy": 16.79,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 23.67,
+          "mass_g": 24.1
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.1069,
+          "organ_weighted_ctdivol_mgy": 16.714,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 977.14,
+          "mass_g": 341.4
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0631,
+          "organ_weighted_ctdivol_mgy": 16.052,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 737.74,
+          "mass_g": 706.9
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.8528,
+          "organ_weighted_ctdivol_mgy": 12.877,
+          "ctdivol_mgy": 15.1,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 57.63,
+          "mass_g": 59.5
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.122681232740719558092171043097976012159",
+      "vendor": "Philips",
+      "model_name": "iCT 256",
+      "ctdivol_mgy": 21.610235454545457,
+      "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+      "ctdivol_origin": "reconstructed",
+      "figure4_marker": "reconstructed",
+      "scan_mean_tube_current_ma": 432.24793388429754,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.1371,
+          "organ_weighted_ctdivol_mgy": 24.573,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 26.91,
+          "mass_g": 27.3
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1323,
+          "organ_weighted_ctdivol_mgy": 24.469,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 3.39,
+          "mass_g": 3.5
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1268,
+          "organ_weighted_ctdivol_mgy": 24.351,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 114.75,
+          "mass_g": 120.5
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1213,
+          "organ_weighted_ctdivol_mgy": 24.233,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 6.85,
+          "mass_g": 6.9
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0828,
+          "organ_weighted_ctdivol_mgy": 23.399,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 208.09,
+          "mass_g": 219.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.0637,
+          "organ_weighted_ctdivol_mgy": 22.988,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 2276.16,
+          "mass_g": 2364.6
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0634,
+          "organ_weighted_ctdivol_mgy": 22.98,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 215.37,
+          "mass_g": 227.1
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0541,
+          "organ_weighted_ctdivol_mgy": 22.78,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": true,
+          "volume_cm3": 408.48,
+          "mass_g": 364.5
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.0539,
+          "organ_weighted_ctdivol_mgy": 22.774,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 336.54,
+          "mass_g": 354.6
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.0506,
+          "organ_weighted_ctdivol_mgy": 22.703,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": false,
+          "volume_cm3": 264.06,
+          "mass_g": 240.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9831,
+          "organ_weighted_ctdivol_mgy": 21.245,
+          "ctdivol_mgy": 21.61,
+          "ctdivol_source": "reconstructed (open MIRDct table, Philips iCT 256 Slice)",
+          "truncated": true,
+          "volume_cm3": 615.93,
+          "mass_g": 629.2
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.105596304219458852186973583847",
+      "vendor": "Philips",
+      "model_name": "iCT 256",
+      "ctdivol_mgy": 13.7,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 476.3225806451613,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0531,
+          "organ_weighted_ctdivol_mgy": 14.428,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1169.18,
+          "mass_g": 1161.8
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0361,
+          "organ_weighted_ctdivol_mgy": 14.194,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 948.39,
+          "mass_g": 753.9
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.0128,
+          "organ_weighted_ctdivol_mgy": 13.875,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 55.3,
+          "mass_g": 60.9
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0043,
+          "organ_weighted_ctdivol_mgy": 13.759,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 209.47,
+          "mass_g": 226.6
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.9924,
+          "organ_weighted_ctdivol_mgy": 13.596,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 206.57,
+          "mass_g": 223.7
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.9745,
+          "organ_weighted_ctdivol_mgy": 13.351,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 101.44,
+          "mass_g": 105.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.9604,
+          "organ_weighted_ctdivol_mgy": 13.158,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.2,
+          "mass_g": 5.3
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.9558,
+          "organ_weighted_ctdivol_mgy": 13.094,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 5.68,
+          "mass_g": 5.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.9442,
+          "organ_weighted_ctdivol_mgy": 12.936,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 2182.93,
+          "mass_g": 2314.0
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.9368,
+          "organ_weighted_ctdivol_mgy": 12.834,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 147.37,
+          "mass_g": 155.6
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.9351,
+          "organ_weighted_ctdivol_mgy": 12.811,
+          "ctdivol_mgy": 13.7,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 801.69,
+          "mass_g": 792.1
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.94531563816741245873445833243538669934",
+      "vendor": "Philips",
+      "model_name": "Incisive CT",
+      "ctdivol_mgy": 5.839200019836426,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 106.56103896103896,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.3722,
+          "organ_weighted_ctdivol_mgy": 8.013,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.14,
+          "mass_g": 3.3
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.3614,
+          "organ_weighted_ctdivol_mgy": 7.949,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 25.04,
+          "mass_g": 26.4
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.3452,
+          "organ_weighted_ctdivol_mgy": 7.855,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 98.39,
+          "mass_g": 70.8
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.3444,
+          "organ_weighted_ctdivol_mgy": 7.85,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 0.83,
+          "mass_g": 0.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.3441,
+          "organ_weighted_ctdivol_mgy": 7.849,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 1.99,
+          "mass_g": 2.1
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.3402,
+          "organ_weighted_ctdivol_mgy": 7.825,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 42.93,
+          "mass_g": 46.3
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.3387,
+          "organ_weighted_ctdivol_mgy": 7.817,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 25.35,
+          "mass_g": 27.4
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.3023,
+          "organ_weighted_ctdivol_mgy": 7.604,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 0.98,
+          "mass_g": 1.0
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.2866,
+          "organ_weighted_ctdivol_mgy": 7.513,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 118.05,
+          "mass_g": 125.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.286,
+          "organ_weighted_ctdivol_mgy": 7.509,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 968.02,
+          "mass_g": 1037.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.2669,
+          "organ_weighted_ctdivol_mgy": 7.398,
+          "ctdivol_mgy": 5.839,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 315.58,
+          "mass_g": 341.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.35849535652939153577452390867555563110",
+      "vendor": "Philips",
+      "model_name": "Incisive CT",
+      "ctdivol_mgy": 11.21883201599121,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 167.67462039045554,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.9212,
+          "organ_weighted_ctdivol_mgy": 10.335,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 37.09,
+          "mass_g": 33.9
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.8883,
+          "organ_weighted_ctdivol_mgy": 9.966,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 85.37,
+          "mass_g": 83.9
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.8426,
+          "organ_weighted_ctdivol_mgy": 9.453,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 8.87,
+          "mass_g": 9.1
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.8401,
+          "organ_weighted_ctdivol_mgy": 9.425,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 87.42,
+          "mass_g": 93.3
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.8392,
+          "organ_weighted_ctdivol_mgy": 9.414,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 140.82,
+          "mass_g": 154.0
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.8391,
+          "organ_weighted_ctdivol_mgy": 9.414,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 121.48,
+          "mass_g": 132.8
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.7536,
+          "organ_weighted_ctdivol_mgy": 8.454,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.76,
+          "mass_g": 2.9
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.7521,
+          "organ_weighted_ctdivol_mgy": 8.437,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 121.75,
+          "mass_g": 121.1
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.7487,
+          "organ_weighted_ctdivol_mgy": 8.399,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 426.39,
+          "mass_g": 459.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.7482,
+          "organ_weighted_ctdivol_mgy": 8.393,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 1464.51,
+          "mass_g": 1579.2
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.7288,
+          "organ_weighted_ctdivol_mgy": 8.176,
+          "ctdivol_mgy": 11.219,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 3.03,
+          "mass_g": 3.1
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.13789879393431026461197285453898279533",
+      "vendor": "Philips",
+      "model_name": "Incisive CT",
+      "ctdivol_mgy": 11.01608276367188,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 123.98159509202453,
+      "n_organs": 11,
+      "organs": [
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.4394,
+          "organ_weighted_ctdivol_mgy": 15.857,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 4.93,
+          "mass_g": 5.0
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.417,
+          "organ_weighted_ctdivol_mgy": 15.609,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.43,
+          "mass_g": 6.6
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.3831,
+          "organ_weighted_ctdivol_mgy": 15.236,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 79.6,
+          "mass_g": 83.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.3828,
+          "organ_weighted_ctdivol_mgy": 15.233,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 239.74,
+          "mass_g": 213.5
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.3549,
+          "organ_weighted_ctdivol_mgy": 14.926,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 239.48,
+          "mass_g": 254.9
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.3492,
+          "organ_weighted_ctdivol_mgy": 14.863,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 240.95,
+          "mass_g": 155.1
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.3317,
+          "organ_weighted_ctdivol_mgy": 14.67,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 82.41,
+          "mass_g": 89.0
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.3233,
+          "organ_weighted_ctdivol_mgy": 14.577,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 69.55,
+          "mass_g": 75.1
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.3213,
+          "organ_weighted_ctdivol_mgy": 14.555,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 83.81,
+          "mass_g": 87.3
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.3166,
+          "organ_weighted_ctdivol_mgy": 14.503,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 28.14,
+          "mass_g": 28.5
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.2863,
+          "organ_weighted_ctdivol_mgy": 14.17,
+          "ctdivol_mgy": 11.016,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": true,
+          "volume_cm3": 1490.84,
+          "mass_g": 1593.5
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2857.3159.203983181868287072753321424140",
+      "vendor": "Philips",
+      "model_name": "iCT 256",
+      "ctdivol_mgy": 12.79008620689655,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 337.2931034482759,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.4677,
+          "organ_weighted_ctdivol_mgy": 18.772,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 21.41,
+          "mass_g": 21.8
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.4504,
+          "organ_weighted_ctdivol_mgy": 18.551,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 7.61,
+          "mass_g": 7.9
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.4429,
+          "organ_weighted_ctdivol_mgy": 18.455,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 56.47,
+          "mass_g": 59.5
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.4412,
+          "organ_weighted_ctdivol_mgy": 18.433,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 317.25,
+          "mass_g": 342.1
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.4183,
+          "organ_weighted_ctdivol_mgy": 18.14,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 10.28,
+          "mass_g": 10.7
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.389,
+          "organ_weighted_ctdivol_mgy": 17.766,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 268.62,
+          "mass_g": 289.8
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.3665,
+          "organ_weighted_ctdivol_mgy": 17.477,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2785.9,
+          "mass_g": 2935.1
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.3149,
+          "organ_weighted_ctdivol_mgy": 16.817,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 814.31,
+          "mass_g": 324.1
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.231,
+          "organ_weighted_ctdivol_mgy": 15.744,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1810.33,
+          "mass_g": 1742.7
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.2125,
+          "organ_weighted_ctdivol_mgy": 15.508,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 345.03,
+          "mass_g": 367.5
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.1597,
+          "organ_weighted_ctdivol_mgy": 14.833,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1469.96,
+          "mass_g": 1175.6
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.8833,
+          "organ_weighted_ctdivol_mgy": 11.298,
+          "ctdivol_mgy": 12.79,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 134.2,
+          "mass_g": 136.4
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.119554862381870875314127355939",
+      "vendor": "Philips",
+      "model_name": "Brilliance 64",
+      "ctdivol_mgy": 8.68102564102564,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 144.7409090909091,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1691,
+          "organ_weighted_ctdivol_mgy": 10.149,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.97,
+          "mass_g": 3.1
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.169,
+          "organ_weighted_ctdivol_mgy": 10.148,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1.92,
+          "mass_g": 2.0
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.1595,
+          "organ_weighted_ctdivol_mgy": 10.065,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 326.29,
+          "mass_g": 328.9
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.1444,
+          "organ_weighted_ctdivol_mgy": 9.934,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 165.66,
+          "mass_g": 180.4
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.1197,
+          "organ_weighted_ctdivol_mgy": 9.72,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1214.65,
+          "mass_g": 1327.4
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1191,
+          "organ_weighted_ctdivol_mgy": 9.715,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1055.38,
+          "mass_g": 994.8
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.1107,
+          "organ_weighted_ctdivol_mgy": 9.642,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 144.24,
+          "mass_g": 161.3
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1094,
+          "organ_weighted_ctdivol_mgy": 9.631,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 55.68,
+          "mass_g": 59.9
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0909,
+          "organ_weighted_ctdivol_mgy": 9.47,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 160.33,
+          "mass_g": 179.2
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0893,
+          "organ_weighted_ctdivol_mgy": 9.457,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 10.43,
+          "mass_g": 10.8
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0858,
+          "organ_weighted_ctdivol_mgy": 9.426,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 828.02,
+          "mass_g": 858.7
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 1.0387,
+          "organ_weighted_ctdivol_mgy": 9.017,
+          "ctdivol_mgy": 8.681,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 824.81,
+          "mass_g": 665.7
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.3320.3273.114542284322103737687268266165",
+      "vendor": "Philips",
+      "model_name": "Brilliance 16",
+      "ctdivol_mgy": 17.94107142857143,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 206.210355987055,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "stomach",
+          "relative_weight": 1.1283,
+          "organ_weighted_ctdivol_mgy": 20.243,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 213.74,
+          "mass_g": 204.6
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 1.1268,
+          "organ_weighted_ctdivol_mgy": 20.215,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 114.14,
+          "mass_g": 117.3
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 1.1174,
+          "organ_weighted_ctdivol_mgy": 20.048,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1716.64,
+          "mass_g": 1782.7
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 1.1173,
+          "organ_weighted_ctdivol_mgy": 20.046,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 13.16,
+          "mass_g": 13.1
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 1.1168,
+          "organ_weighted_ctdivol_mgy": 20.036,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 6.02,
+          "mass_g": 6.0
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 1.1055,
+          "organ_weighted_ctdivol_mgy": 19.834,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 109.4,
+          "mass_g": 112.1
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 1.0907,
+          "organ_weighted_ctdivol_mgy": 19.569,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 54.48,
+          "mass_g": 55.6
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 1.0835,
+          "organ_weighted_ctdivol_mgy": 19.439,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 175.11,
+          "mass_g": 178.0
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 1.0718,
+          "organ_weighted_ctdivol_mgy": 19.23,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 157.27,
+          "mass_g": 160.1
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 1.0061,
+          "organ_weighted_ctdivol_mgy": 18.051,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1062.37,
+          "mass_g": 1127.0
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.9978,
+          "organ_weighted_ctdivol_mgy": 17.902,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 548.88,
+          "mass_g": 453.7
+        },
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 0.904,
+          "organ_weighted_ctdivol_mgy": 16.219,
+          "ctdivol_mgy": 17.941,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 47.82,
+          "mass_g": 47.8
+        }
+      ]
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.256749960592074016578641330855",
+      "vendor": "Philips",
+      "model_name": "Brilliance 64",
+      "ctdivol_mgy": 10.185185185185185,
+      "ctdivol_source": "recorded (0018,9345)",
+      "ctdivol_origin": "recorded",
+      "figure4_marker": "recorded",
+      "scan_mean_tube_current_ma": 121.35854341736695,
+      "n_organs": 12,
+      "organs": [
+        {
+          "organ": "urinary_bladder",
+          "relative_weight": 1.1236,
+          "organ_weighted_ctdivol_mgy": 11.444,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 259.88,
+          "mass_g": 264.3
+        },
+        {
+          "organ": "adrenal_gland_right",
+          "relative_weight": 0.8801,
+          "organ_weighted_ctdivol_mgy": 8.964,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 2.87,
+          "mass_g": 3.1
+        },
+        {
+          "organ": "adrenal_gland_left",
+          "relative_weight": 0.8782,
+          "organ_weighted_ctdivol_mgy": 8.944,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 4.02,
+          "mass_g": 4.3
+        },
+        {
+          "organ": "colon",
+          "relative_weight": 0.8773,
+          "organ_weighted_ctdivol_mgy": 8.936,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 677.25,
+          "mass_g": 691.4
+        },
+        {
+          "organ": "pancreas",
+          "relative_weight": 0.8599,
+          "organ_weighted_ctdivol_mgy": 8.758,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 77.78,
+          "mass_g": 84.9
+        },
+        {
+          "organ": "spleen",
+          "relative_weight": 0.8566,
+          "organ_weighted_ctdivol_mgy": 8.724,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 145.01,
+          "mass_g": 159.1
+        },
+        {
+          "organ": "stomach",
+          "relative_weight": 0.8442,
+          "organ_weighted_ctdivol_mgy": 8.598,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 790.33,
+          "mass_g": 734.6
+        },
+        {
+          "organ": "kidney_left",
+          "relative_weight": 0.8405,
+          "organ_weighted_ctdivol_mgy": 8.56,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 163.16,
+          "mass_g": 182.6
+        },
+        {
+          "organ": "liver",
+          "relative_weight": 0.8281,
+          "organ_weighted_ctdivol_mgy": 8.434,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 1689.83,
+          "mass_g": 1805.4
+        },
+        {
+          "organ": "kidney_right",
+          "relative_weight": 0.8145,
+          "organ_weighted_ctdivol_mgy": 8.296,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 145.18,
+          "mass_g": 162.5
+        },
+        {
+          "organ": "gallbladder",
+          "relative_weight": 0.8096,
+          "organ_weighted_ctdivol_mgy": 8.246,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 15.45,
+          "mass_g": 16.0
+        },
+        {
+          "organ": "small_bowel",
+          "relative_weight": 0.7779,
+          "organ_weighted_ctdivol_mgy": 7.923,
+          "ctdivol_mgy": 10.185,
+          "ctdivol_source": "recorded (0018,9345)",
+          "truncated": false,
+          "volume_cm3": 783.76,
+          "mass_g": 799.0
+        }
+      ]
+    }
+  ]
+}

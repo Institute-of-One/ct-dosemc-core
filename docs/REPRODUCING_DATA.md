@@ -204,6 +204,57 @@ range). Absorbed dose is computed on N = 32 (GE 8, Siemens 9, Canon/Toshiba 6,
 Philips 9); the index-correspondence comparison uses the common 32." Cohort identity
 is not lost — the archive and the 40-series origin are unchanged.
 
+## 2d′. IORN-006 organ index on the eligible 32 (no Monte Carlo)
+
+The 006 organ-weighted CTDIvol for the absorbed-dose cohort is taken from the
+**published ctsegdose-core v0.1.1 object**, not from a dirty working tree, and
+is not a third-party table. The release already ships `results/organ_dose_1.5mm.json`
+(commit `46edee6423ddc19b47efae180d8edf527299d066`, version DOI
+[10.5281/zenodo.21817307](https://doi.org/10.5281/zenodo.21817307)); this tool
+reads that git blob and does not regenerate 006.
+
+Series that 006 left without CTDIvol are then reconstructed with **ctdose-core
+v0.1.1** (IORN-004, version DOI
+[10.5281/zenodo.21636719](https://doi.org/10.5281/zenodo.21636719)): recorded
+tag/RDSR if present, otherwise the open MIRDct table via 004's published scanner
+resolver. `w_o` is never recomputed; CTDIvol<sub>o</sub> = CTDIvol × `w_o`.
+Each series records `ctdivol_origin` (`recorded` / `reconstructed` /
+`unavailable`) and `figure4_marker`. A scanner 004's resolver refuses is left
+unavailable, not aliased. The recorded-CTDIvol normalisation of §4.5 applies to
+the 23 series whose origin is `recorded`; it is not the cohort rule.
+
+```
+# Requires a clone of ctsegdose-core that contains v0.1.1, and of ctdose-core
+# that contains v0.1.1. DICOM for the reconstructed series sits at
+# --dicom-root (default: the IORN-006 sibling cache).
+python tools/extract_iorn006_index.py
+# -> results/phase2_cohort/iorn006_organ_index.json
+python tools/figure4_scatter.py --legend-only
+# -> results/phase2_cohort/figure4_legend.png  (y-axis gated until G0–G5)
+```
+
+A reviewer who fetches the 006 Zenodo snapshot and runs that command against it
+gets the same 006 bytes (SHA-256 of the git blob is in the provenance). Arithmetic
+on the eligible 32, from the 006 v0.1.1 blob:
+
+* 23 recorded + 4 already reconstructed in 006 (exact table match: Optima CT660,
+  LightSpeed VCT, LightSpeed16, Philips iCT 256) = **27** with a defined index
+  before this fill.
+* 006 left 5 without CTDIvol. 004's published resolver accepts 3 of them
+  (two LightSpeed Pro 16 → LightSpeed 16; one Revolution CT → Revolution CT ES)
+  and refuses 2 (LightSpeed Ultra, Revolution EVO; nearest-neighbour score 0.33
+  against the 0.45 threshold). **27 + 3 = 30**; 2 remain unrecoverable.
+* Revolution CT → Revolution CT ES is 004's own low-confidence warning (score
+  0.50). Figure 4 draws it as an **open square**; filled squares are the other
+  reconstructions; filled circles are recorded. That mapping lives in
+  `scatter.markers` / `figure4_marker` and in `tools/figure4_scatter.py`.
+
+32/32 eligible series match; **30** have a defined CTDIvol<sub>o</sub> (342
+organ records); 2 have *w*<sub>o</sub> only. The 007 y-axis of the scatter does
+not exist yet.
+organ records); 2 have *w*<sub>o</sub> only. The 007 y-axis of the scatter does
+not exist yet.
+
 ## 2e. Patient phantom geometry and the 2.5 mm resampling cost (Phase 2, (a))
 
 The dose grid is isotropic **2.5 mm**, not the native ~0.7 mm image: G3 needs the
