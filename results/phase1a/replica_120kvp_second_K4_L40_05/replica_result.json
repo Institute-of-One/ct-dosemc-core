@@ -1,0 +1,38 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-14T02:53:10+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "replica_index": 5,
+  "seed": 1234615404,
+  "config": {
+    "histories": 200000000.0,
+    "voxel_size_cm": 0.25,
+    "air_margin_cm": 50.0,
+    "air_margin_z_cm": 6.0,
+    "phantom_length_cm": 40.0,
+    "sub_fans": 4,
+    "n_projections": 36,
+    "beam": "120kvp",
+    "test": "second",
+    "fan_thickness_cm": 1.0,
+    "material_emin_kev": 5,
+    "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+  },
+  "values_ev_per_photon": {
+    "center": 11.285683250004894,
+    "perimeter": 39.80953604677537
+  },
+  "quoted_uncertainty": {
+    "center": 0.005026426409032205,
+    "perimeter": 0.009330364993837869
+  },
+  "engine_invocations": 144,
+  "projections_driven_externally": true,
+  "wall_seconds": 2115.511686800004
+}

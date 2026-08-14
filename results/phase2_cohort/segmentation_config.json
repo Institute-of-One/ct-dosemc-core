@@ -1,0 +1,37 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-12T00:08:34+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "segmentation_config": {
+    "task": "total",
+    "roi_subset": [
+      "liver",
+      "spleen",
+      "kidney_left",
+      "kidney_right",
+      "pancreas",
+      "stomach",
+      "gallbladder",
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "small_bowel",
+      "colon",
+      "urinary_bladder"
+    ],
+    "resolution": "1.5mm (full-resolution model)",
+    "fast": false,
+    "device": "cpu",
+    "inference_python": "D:\\DevGit\\ct_dosemc_core\\.venv\\Scripts\\python.exe",
+    "totalsegmentator_requirement": ">=2.0 (Apache-2.0, inference only; weights fetched on first use)",
+    "totalsegmentator_version": "recorded per series once inference has run",
+    "torch_version": "recorded per series once inference has run",
+    "alignment_with_iorn006": "Same TotalSegmentator 'total' task and the same abdominal roi_subset as IORN-006 (ctsegdose-core). IORN-006 defaults to the 3 mm fast model and offers 1.5 mm via --full-resolution; IORN-007 defaults to full 1.5 mm because absorbed organ dose is sensitive to partial-volume error at organ boundaries. This is an intentional difference, recorded here rather than left implicit. TotalSegmentator and torch versions are pinned only as >=2.0 in pyproject and captured exactly, per series, in each series' JSON.",
+    "ct_dosemc_core_version": "0.1.0.dev0"
+  }
+}

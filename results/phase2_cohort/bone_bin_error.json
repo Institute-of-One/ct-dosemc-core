@@ -1,0 +1,54 @@
+{
+  "energy_kev": 60.0,
+  "n_bins": 11,
+  "spacing": "uniform in f^(1/2)",
+  "power": 2.0,
+  "edges_hu": [
+    100.0,
+    124.0,
+    195.9,
+    315.7,
+    483.5,
+    699.2,
+    962.8,
+    1274.4,
+    1633.9,
+    2041.3,
+    2496.7,
+    3000.0
+  ],
+  "n_samples": 2901,
+  "hu_range": [
+    100.0,
+    3000.0
+  ],
+  "max_relative_error": 0.02637069988935197,
+  "max_relative_error_pct": 2.6371,
+  "at_hu": 700.0,
+  "soft_boundary_relative_error_pct": 0.4022,
+  "f_continuous": 0.20689655172413793,
+  "f_binned": 0.2520661157024793,
+  "w_bone_continuous": 0.3255131964809384,
+  "w_bone_binned": 0.38403947592308996,
+  "mu_over_rho_soft_cm2_g": 0.20301169060000007,
+  "mu_over_rho_cortical_cm2_g": 0.31020666820000004,
+  "mu_over_rho_continuous_cm2_g": 0.23790507040527864,
+  "mu_over_rho_binned_cm2_g": 0.2441787936190914,
+  "median_relative_error_pct": 1.0316,
+  "note": "\u03bc = \u03c1(HU) \u00d7 (\u03bc/\u03c1)_mix at one energy; \u03c1(HU) is common to both so the relative error is that of the composition. No Monte Carlo. Bins are uniform in \u221af (power=2) so the low-f edge \u2014 scored soft tissue against the bone table \u2014 is the finest. soft_boundary_relative_error_pct is |\u0394\u03bc/\u03bc| at HU = start (the scored-organ interface); max_relative_error_pct is the worst point on the whole [start, top] grid.",
+  "endpoints": {
+    "soft_tissue_pendbase_id": 262,
+    "cortical_bone_pendbase_id": 120,
+    "rho_soft_g_cm3": 1.0,
+    "rho_cortical_g_cm3": 1.85
+  },
+  "environment": {
+    "generated_utc": "2026-08-14T01:41:00+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  }
+}

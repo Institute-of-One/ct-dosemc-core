@@ -26,12 +26,31 @@ See vendor/MCGPU/MC-GPU_v1.3.cu:1378-1381 for the aperture convention.
 
 from __future__ import annotations
 
+import json
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
 
 from .provenance import Provenance, Value
 
-__all__ = ["BeamGeometry", "eV_per_g_to_mGy", "histories_for_mas", "mas_for_histories"]
+__all__ = [
+    "BOWTIE_PROFILES",
+    "BeamGeometry",
+    "BowtieProfile",
+    "FanSegment",
+    "TubeCurrentProfile",
+    "canonical_vendor",
+    "eV_per_g_to_mGy",
+    "fan_segments",
+    "focal_spot_cm",
+    "histories_for_mas",
+    "load_bowtie_profile",
+    "mas_for_histories",
+    "tube_current_profile",
+]
 
 # eV/g -> Gy:  1 eV = 1.602176634e-19 J, and 1/g = 1000/kg.
 EV_PER_G_TO_GY = 1.602176634e-19 * 1.0e3
@@ -158,18 +177,266 @@ def mas_for_histories(
     return float(n_histories) / denom
 
 
-def tube_current_profile(dataset) -> dict[str, object]:
-    """Longitudinal tube-current modulation I(z) from a DICOM series.
+BOWTIE_PROFILES = Path(__file__).resolve().parents[1] / "data" / "bowtie" / "bowtie_profiles.json"
 
-    Reads X-Ray Tube Current (0018,1151) against Table Position / slice location,
-    which is the same source IORN-004/006 used.  Phase 2 feeds this into the
-    per-rotation mAs so that the simulated output tracks the real TCM.
+_VENDOR_ALIASES = {
+    "ge": "GE",
+    "ge medical systems": "GE",
+    "ge healthcare": "GE",
+    "siemens": "Siemens",
+    "siemens healthineers": "Siemens",
+    "philips": "Philips",
+    "philips medical systems": "Philips",
+    "toshiba": "Canon/Toshiba",
+    "canon": "Canon/Toshiba",
+    "canon medical systems": "Canon/Toshiba",
+    "canon/toshiba": "Canon/Toshiba",
+}
 
-    Not exercised by the Phase-1 CTDI anchor: the CTDI phantom is scanned at
-    fixed mA by definition, so this is only reached once patient series are
-    processed.
+
+def canonical_vendor(manufacturer: str) -> str:
+    """Map a DICOM Manufacturer string onto the four cohort vendor labels."""
+    key = " ".join(str(manufacturer).strip().lower().split())
+    if key not in _VENDOR_ALIASES:
+        raise ValueError(
+            f"unrecognised manufacturer {manufacturer!r}; expected one of "
+            f"{sorted(set(_VENDOR_ALIASES.values()))}"
+        )
+    return _VENDOR_ALIASES[key]
+
+
+@dataclass(frozen=True)
+class BowtieProfile:
+    """One vendor's equivalent-Al thickness vs fan angle, with its provenance."""
+
+    vendor: str
+    provenance: str
+    kvp: float
+    filter_name: str
+    angle_deg: np.ndarray
+    al_mm: np.ndarray
+    spread_mm: np.ndarray | None = None
+
+    def thickness_mm(self, psi_deg: float) -> float:
+        """t(|ψ|) mm Al; the bowtie is symmetric (``bowtie_profiles.json``)."""
+        a = np.asarray(self.angle_deg, dtype=float)
+        t = np.asarray(self.al_mm, dtype=float)
+        x = abs(float(psi_deg))
+        if x > float(a.max()) + 1e-9:
+            raise ValueError(
+                f"fan angle {psi_deg} deg is outside the measured profile "
+                f"(0–{float(a.max()):.1f} deg) for {self.vendor}"
+            )
+        return float(np.interp(x, a, t))
+
+    def spread_at_mm(self, psi_deg: float) -> float | None:
+        if self.spread_mm is None:
+            return None
+        a = np.asarray(self.angle_deg, dtype=float)
+        s = np.asarray(self.spread_mm, dtype=float)
+        return float(np.interp(abs(float(psi_deg)), a, s))
+
+
+def load_bowtie_profile(
+    vendor: str,
+    *,
+    kvp: float = 120.0,
+    filter_name: str = "Large",
+    path: Path | str | None = None,
+) -> BowtieProfile:
+    """Load a provenanced t(ψ) curve. Siemens is the cross-vendor average."""
+    label = canonical_vendor(vendor) if vendor not in ("GE", "Siemens", "Philips", "Canon/Toshiba") else vendor
+    data = json.loads(Path(path or BOWTIE_PROFILES).read_text(encoding="utf-8"))
+    block = data["vendors"][label]
+    kv = str(int(kvp))
+    fam = block["filters"][filter_name]
+    entry = fam.get(kv) or (fam.get("135") if kv in {"135", "140"} else None)
+    if entry is None:
+        raise ValueError(f"no {label} {filter_name} bowtie at {kvp} kVp")
+    spread = entry.get("cross_vendor_spread_mm")
+    return BowtieProfile(
+        vendor=label,
+        provenance=str(block["provenance"]),
+        kvp=float(kvp),
+        filter_name=filter_name,
+        angle_deg=np.asarray(entry["angle_deg"], dtype=float),
+        al_mm=np.asarray(entry["al_mm"], dtype=float),
+        spread_mm=None if spread is None else np.asarray(spread, dtype=float),
+    )
+
+
+@dataclass(frozen=True)
+class FanSegment:
+    """One azimuthal sub-fan: aperture pair plus the central-ray angle."""
+
+    index: int
+    centre_psi_deg: float
+    azimuthal_aperture_deg: float
+    polar_aperture_deg: float
+
+    @property
+    def solid_angle_sr(self) -> float:
+        return (
+            2.0
+            * math.sin(0.5 * math.radians(self.polar_aperture_deg))
+            * math.radians(self.azimuthal_aperture_deg)
+        )
+
+    def direction(self) -> tuple[float, float, float]:
+        """Central direction for a source whose fan centre points along +y."""
+        psi = math.radians(self.centre_psi_deg)
+        return (-math.sin(psi), math.cos(psi), 0.0)
+
+
+def fan_segments(
+    n: int,
+    *,
+    half_fan_deg: float,
+    collimation_cm: float,
+    sad_cm: float,
+) -> list[FanSegment]:
+    """Split a rectangular fan into ``n`` azimuthal segments (the bowtie's K).
+
+    Polar aperture at each centre azimuth reproduces ``collimation_cm`` at the
+    isocentre plane, the same 1/cos(ψ) correction as TG-195 Case 4.
     """
-    raise NotImplementedError(
-        "TCM extraction lands with the Phase-2 cohort run; the Phase-1 CTDI "
-        "anchor is a fixed-mA acquisition by definition (IEC 60601-2-44)."
+    if n < 1:
+        raise ValueError("need at least one sub-fan")
+    edges = np.linspace(-float(half_fan_deg), float(half_fan_deg), n + 1)
+    out: list[FanSegment] = []
+    for k in range(n):
+        centre = 0.5 * float(edges[k] + edges[k + 1])
+        polar = 2.0 * math.degrees(
+            math.atan(0.5 * collimation_cm * math.cos(math.radians(centre)) / sad_cm)
+        )
+        out.append(
+            FanSegment(
+                index=k,
+                centre_psi_deg=centre,
+                azimuthal_aperture_deg=float(edges[k + 1] - edges[k]),
+                polar_aperture_deg=polar,
+            )
+        )
+    return out
+
+
+def focal_spot_cm(
+    bbox_cm: tuple[float, float, float],
+    sad_cm: float,
+    *,
+    gantry_deg: float = 0.0,
+    isocentre_cm: tuple[float, float, float] | None = None,
+) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
+    """Focal-spot position and beam direction in MC-GPU corner-origin coordinates.
+
+    Gantry 0 matches TG-195: source at (cx, cy − SAD, cz), beam toward +y. Raises
+    if the spot would sit outside the voxel box -- that is G3 failing, not a
+    warning.
+    """
+    bx, by, bz = bbox_cm
+    if isocentre_cm is None:
+        isocentre_cm = (0.5 * bx, 0.5 * by, 0.5 * bz)
+    cx, cy, cz = isocentre_cm
+    beta = math.radians(gantry_deg)
+    pos = (
+        cx + sad_cm * math.sin(beta),
+        cy - sad_cm * math.cos(beta),
+        cz,
+    )
+    if not (0.0 < pos[0] < bx and 0.0 < pos[1] < by and 0.0 < pos[2] < bz):
+        raise ValueError(
+            f"focal spot {pos} is outside the voxel box {(bx, by, bz)} cm; "
+            "the in-plane box must reach the focus (G3, typically 130 cm at SAD 60 cm)"
+        )
+    dx, dy, dz = cx - pos[0], cy - pos[1], cz - pos[2]
+    n = math.sqrt(dx * dx + dy * dy + dz * dz)
+    return pos, (dx / n, dy / n, dz / n)
+
+
+@dataclass(frozen=True)
+class TubeCurrentProfile:
+    """Longitudinal tube-current modulation I(z)."""
+
+    z_mm: np.ndarray
+    current_ma: np.ndarray
+    exposure_time_ms: np.ndarray | None = None
+
+    @property
+    def modulated(self) -> bool:
+        mean = float(self.current_ma.mean())
+        if mean <= 0.0:
+            return False
+        return float((np.max(self.current_ma) - np.min(self.current_ma)) / mean) >= 0.05
+
+    def current_at_mm(self, z_mm: float | np.ndarray) -> np.ndarray:
+        """Linear interpolation in z; clamped to the recorded range (no invented TCM)."""
+        z = np.asarray(self.z_mm, dtype=float)
+        i = np.asarray(self.current_ma, dtype=float)
+        order = np.argsort(z)
+        z, i = z[order], i[order]
+        x = np.clip(np.asarray(z_mm, dtype=float), z[0], z[-1])
+        return np.interp(x, z, i)
+
+    def relative_weight(self, z_mm: float | np.ndarray) -> np.ndarray:
+        """I(z) / mean(I). A flat TCM is identically 1."""
+        mean = float(self.current_ma.mean())
+        if mean <= 0.0:
+            raise ValueError("non-positive mean tube current")
+        return self.current_at_mm(z_mm) / mean
+
+
+def tube_current_profile(series) -> TubeCurrentProfile:
+    """Build I(z) from a loaded DICOM series, or from ``(z_mm, mA)`` pairs.
+
+    Missing per-slice (0018,1151) is an error, not a silent flat current: a CTDI
+    acquisition is fixed-mA by definition, but a patient scan without I(z) cannot
+    support a modulation weighting. A *recorded* constant current is returned
+    with ``modulated is False``.
+    """
+    if isinstance(series, TubeCurrentProfile):
+        return series
+    if isinstance(series, (list, tuple)) and series and isinstance(series[0], (tuple, list)):
+        z = np.asarray([float(p[0]) for p in series], dtype=float)
+        ma = np.asarray([float(p[1]) for p in series], dtype=float)
+        if (ma <= 0.0).any():
+            raise ValueError("tube current must be positive on every sample")
+        return TubeCurrentProfile(z_mm=z, current_ma=ma)
+
+    # LoadedSeries: one (0018,1151) per file, z from ImagePositionPatient.
+    import pydicom
+
+    files = getattr(series, "files", None)
+    if not files:
+        raise ValueError(
+            "tube_current_profile needs a LoadedSeries or a list of (z_mm, mA) pairs; "
+            "a missing I(z) is not replaced by a flat current"
+        )
+    z_vals: list[float] = []
+    ma_vals: list[float] = []
+    t_vals: list[float] = []
+    for path in files:
+        ds = pydicom.dcmread(str(path), stop_before_pixels=True, force=True)
+        ipp = getattr(ds, "ImagePositionPatient", None)
+        ma = getattr(ds, "XRayTubeCurrent", None)
+        if ipp is None or ma is None:
+            continue
+        z_vals.append(float(ipp[2]))
+        ma_vals.append(float(ma))
+        t = getattr(ds, "ExposureTime", None)
+        t_vals.append(float(t) if t not in (None, "") else float("nan"))
+    if not ma_vals:
+        raise ValueError(
+            "no per-slice X-Ray Tube Current (0018,1151) on the series; "
+            "I(z) cannot be invented"
+        )
+    if len(ma_vals) != len(files):
+        raise ValueError(
+            f"tube current recorded on {len(ma_vals)}/{len(files)} slices; "
+            "a partial I(z) is not a TCM profile"
+        )
+    exp = None if not np.isfinite(t_vals).all() else np.asarray(t_vals, dtype=float)
+    return TubeCurrentProfile(
+        z_mm=np.asarray(z_vals, dtype=float),
+        current_ma=np.asarray(ma_vals, dtype=float),
+        exposure_time_ms=exp,
     )

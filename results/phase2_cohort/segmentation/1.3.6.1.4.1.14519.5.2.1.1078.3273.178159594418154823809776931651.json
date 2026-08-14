@@ -1,0 +1,242 @@
+{
+  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1078.3273.178159594418154823809776931651",
+  "vendor": "Canon/Toshiba",
+  "collection": "CPTAC-PDA",
+  "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Canon_Toshiba\\CPTAC-PDA__C3L-03356\\1.3.6.1.4.1.14519.5.2.1.1078.3273.178159594418154823809776931651",
+  "status": "ok",
+  "stage_reached": "segmented",
+  "error": "",
+  "warnings": [],
+  "resolution": "1.5mm",
+  "n_slices": 194,
+  "grid": {
+    "n_input_slices": 194,
+    "n_slices_used": 194,
+    "n_duplicate_positions_dropped": 0,
+    "slice_spacing_mm": 2.5,
+    "max_step_deviation": 0.0,
+    "uniformity_tolerance": 0.02,
+    "warnings": []
+  },
+  "volume_shape_zyx": [
+    194,
+    512,
+    512
+  ],
+  "voxel_spacing_mm_zyx": [
+    2.5,
+    0.772,
+    0.772
+  ],
+  "segmentation": {
+    "mask_dir": "D:\\DevGit\\ct_dosemc_core\\segmentations\\1.3.6.1.4.1.14519.5.2.1.1078.3273.178159594418154823809776931651\\1.5mm\\masks",
+    "structures": [
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "colon",
+      "gallbladder",
+      "kidney_left",
+      "kidney_right",
+      "liver",
+      "pancreas",
+      "small_bowel",
+      "spleen",
+      "stomach",
+      "urinary_bladder"
+    ],
+    "task": "total",
+    "fast": false,
+    "roi_subset": [
+      "liver",
+      "spleen",
+      "kidney_left",
+      "kidney_right",
+      "pancreas",
+      "stomach",
+      "gallbladder",
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "small_bowel",
+      "colon",
+      "urinary_bladder"
+    ],
+    "device": "cpu",
+    "python_executable": "D:\\DevGit\\ct_dosemc_core\\.venv\\Scripts\\python.exe",
+    "totalsegmentator_version": "2.17.0",
+    "torch_version": "2.13.0+cpu (cuda=False)",
+    "elapsed_s": 97.2,
+    "volume_shape_zyx": [
+      194,
+      512,
+      512
+    ],
+    "voxel_spacing_mm_zyx": [
+      2.5,
+      0.772,
+      0.772
+    ],
+    "input_fingerprint": "e1532bad6f1d47287963e2d013fb2046",
+    "cached": false,
+    "licence": "TotalSegmentator, Apache-2.0, inference only; no weights redistributed",
+    "process": "separate child process (python -m ct_dosemc_core._ts_worker)"
+  },
+  "masks": {
+    "n_structures_returned": 12,
+    "structures": [
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "colon",
+      "gallbladder",
+      "kidney_left",
+      "kidney_right",
+      "liver",
+      "pancreas",
+      "small_bowel",
+      "spleen",
+      "stomach",
+      "urinary_bladder"
+    ],
+    "organs_with_voxels": [
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "colon",
+      "gallbladder",
+      "kidney_left",
+      "kidney_right",
+      "liver",
+      "pancreas",
+      "small_bowel",
+      "spleen",
+      "stomach",
+      "urinary_bladder"
+    ],
+    "organs": {
+      "adrenal_gland_left": {
+        "voxels": 5557,
+        "present": true,
+        "z_extent": [
+          145,
+          166
+        ],
+        "truncated": false
+      },
+      "adrenal_gland_right": {
+        "voxels": 4475,
+        "present": true,
+        "z_extent": [
+          143,
+          162
+        ],
+        "truncated": false
+      },
+      "colon": {
+        "voxels": 587272,
+        "present": true,
+        "z_extent": [
+          22,
+          143
+        ],
+        "truncated": false
+      },
+      "gallbladder": {
+        "voxels": 66295,
+        "present": true,
+        "z_extent": [
+          119,
+          143
+        ],
+        "truncated": false
+      },
+      "kidney_left": {
+        "voxels": 115876,
+        "present": true,
+        "z_extent": [
+          119,
+          164
+        ],
+        "truncated": false
+      },
+      "kidney_right": {
+        "voxels": 116530,
+        "present": true,
+        "z_extent": [
+          102,
+          145
+        ],
+        "truncated": false
+      },
+      "liver": {
+        "voxels": 1471725,
+        "present": true,
+        "z_extent": [
+          105,
+          179
+        ],
+        "truncated": false
+      },
+      "pancreas": {
+        "voxels": 40014,
+        "present": true,
+        "z_extent": [
+          114,
+          150
+        ],
+        "truncated": false
+      },
+      "small_bowel": {
+        "voxels": 842405,
+        "present": true,
+        "z_extent": [
+          41,
+          142
+        ],
+        "truncated": false
+      },
+      "spleen": {
+        "voxels": 219079,
+        "present": true,
+        "z_extent": [
+          141,
+          183
+        ],
+        "truncated": false
+      },
+      "stomach": {
+        "voxels": 654709,
+        "present": true,
+        "z_extent": [
+          117,
+          179
+        ],
+        "truncated": false
+      },
+      "urinary_bladder": {
+        "voxels": 231337,
+        "present": true,
+        "z_extent": [
+          26,
+          55
+        ],
+        "truncated": false
+      }
+    }
+  },
+  "totalsegmentator_version": "2.17.0",
+  "torch_version": "2.13.0+cpu (cuda=False)",
+  "cached": false,
+  "elapsed_s": 108.2,
+  "organs": [
+    "liver",
+    "spleen",
+    "kidney_left",
+    "kidney_right",
+    "pancreas",
+    "stomach",
+    "gallbladder",
+    "adrenal_gland_left",
+    "adrenal_gland_right",
+    "small_bowel",
+    "colon",
+    "urinary_bladder"
+  ]
+}

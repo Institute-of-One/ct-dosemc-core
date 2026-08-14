@@ -30,34 +30,80 @@ been computed and none may be until the gate closes.
 
 ## 2. The one thing blocking, and its exact command
 
-The centre VOI's **replica standard deviation at the production configuration**
-has never been measured. It has only been measured at 5×10⁷ histories (0.484%)
-and then extrapolated by 1/√N, and an air-margin scan showed run-to-run scatter
-about **three times** what that extrapolation predicted.
+The **K = 1 replica SD at the production configuration is now measured** — centre
+0.406%, perimeter 0.145% at 2×10⁸ histories, air 50 cm
+(`results/phase1a_G4_replica_uncertainty_120kvp_second_K1.json`, §5.1.4). That
+retired the old 5×10⁷→2×10⁸ extrapolation and confirmed the air-margin scatter was
+ordinary run-to-run noise, not a geometry artefact (§5.3.0d).
 
-Consequently the significance of G2's centre deviation (−0.7…−0.9% against
-PENELOPE) is **unknown** — not large, not small. Criterion (b) has no denominator.
+What blocks now is the **anchor**: criterion (a) is no longer a single-run SD
+bound (the 0.25% target is withdrawn) but *anchor uncertainty = replica SD/√N ≤
+0.15%*, and the anchor value must stay at K ≥ 4 for the solid-angle correctness of
+§5.1.2a. So the outstanding measurement is a **K = 4 ten-replica anchor** whose
+mean has centre uncertainty 0.406%/√10 = 0.128%. This is **Route B** — the K = 4
+sub-fan decomposition forces 144 engine invocations per replica (the projection
+loop cannot move inside MC-GPU for off-axis sub-fans, §5.3.0c / §5.3.0e), so at
+~15 s parse per invocation a replica is ~36 min and the ten-replica anchor is ~6 h.
 
 ```powershell
 cd d:\DevGit\ct_dosemc_core
-.venv\Scripts\python.exe tools\run_tg195.py --gate G2 --beam 120kvp --test second `
-    --replicas 10 --projections 36 --sub-fans 1 --histories 2e8 `
+powercfg /change standby-timeout-ac 0   # do not sleep mid-run
+$env:PYTHONUNBUFFERED = "1"
+.venv\Scripts\python.exe -u tools\run_tg195.py --gate G2 --beam 120kvp --test second `
+    --replicas 10 --projections 36 --sub-fans 4 --histories 2e8 `
     --voxel-size 0.25 --phantom-length 40 --air-margin 50 --air-margin-z 6 `
-    --executable vendor\build\MC-GPU_v1.3_GPU.exe
+    --executable vendor\build\MC-GPU_v1.3_GPU.exe >> results\phase1a\routeB_K4.log 2>&1
 ```
 
-Several hours. Run it in a shell that survives — a previous attempt to detach it
-did not, and the harness's background tasks do not outlive a session.
+`-u` / `PYTHONUNBUFFERED=1` is required when stdout is redirected: a fully-buffered
+log stays empty until the process dies, which is how a stall at replica 4/10 went
+unnoticed for hours. With line buffering a dead replica is visible immediately.
 
-* `--sub-fans 1` is deliberate: the variance depends on the photon count, not on
-  how many invocations they are split across, so one invocation per replica
-  measures the same SD at 1/144 of the cost.
-* The **value** it produces is not an anchor (§5.3.3 of `MC_SOURCE_MODEL.md`).
-  Only its scatter is used.
-* Output: `results/phase1a_G4_replica_uncertainty_120kvp_second.json`.
+Run it in a shell that survives — the harness's background tasks do not outlive a
+session. Each replica is written to
+`results/phase1a/replica_120kvp_second_K4_L{length}_XX/replica_result.json` as it
+completes and reused on a re-run, so an interrupted job resumes without
+recomputing finished replicas. The length is in the tag because the 40 cm K=4
+anchor and the 160 cm length arm must not clobber each other.
 
-**When it lands:** fill the `(a)` row of `MC_SOURCE_MODEL.md` §5.1.4, then and
-only then evaluate `(b)` = `|ours − PENELOPE| < 2σ`.
+* Output: `results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json` (the
+  filename carries `K{sub_fans}_L{length}` so the K = 1 SD run, the K = 4 40 cm
+  anchor, and the K = 4 160 cm length arm do not clobber each other).
+* **Route A** is an engine change: loop over the K sub-fan aperture sets *inside
+  one MC-GPU process* so the geometry is parsed once. Its acceptance is
+  byte-equality (single == `@manifest` batch, already shown on CPU); the GPU
+  rebuild waits for Route B to release the `.exe`. Its remaining payoff is now the
+  20-run phantom-length study (§5.3.0e), not the withdrawn ~90-run Δ campaign, so
+  it is **off the critical path** to closing the gate.
+* The single-run 2×10⁹ shortcut (Route C) is **not** used: a single run cannot
+  measure σ, so its number is not citable; only run it for a same-day feel.
+
+**When Route B lands:** the anchor uncertainty row of §5.1.4 becomes measured, and
+criterion (a) is met. Criterion (b) (|ours − PENELOPE|) is **reported, not gated**
+(`IORN007_scope_to_acceptance.md` §3/§7): it cannot be sharpened below PENELOPE's
+own 0.167% floor, so the only model term still re-measured is **phantom length**
+(40 vs 160 cm); voxel, air, K and spectrum are carried as **declared** upper-bound
+limitations (§5.3.0e). The earlier "(b) depends on a re-measured Δ budget" is
+withdrawn.
+
+The 40 cm arm of the length study **is** Route B once tags include `L40`. After
+B finishes, only the 160 cm arm is new (same production config, `--phantom-length 160`,
+10 replicas). Then Phase 1a closes. Then **one** patient path-through, not the 40:
+
+```powershell
+$env:PYTHONUNBUFFERED = "1"
+.venv\Scripts\python.exe -u tools\run_tg195.py --gate G2 --beam 120kvp --test second `
+    --replicas 10 --projections 36 --sub-fans 4 --histories 2e8 `
+    --voxel-size 0.25 --phantom-length 160 --air-margin 50 --air-margin-z 6 `
+    --executable vendor\build\MC-GPU_v1.3_GPU.exe >> results\phase1a\routeB_K4_L160.log 2>&1
+
+# after that, one series (GPU). Plan-only (no GPU) already passed:
+#   python -u tools/run_patient.py --plan-only
+.venv\Scripts\python.exe -u tools\run_patient.py --run --histories 3.2e6 --projections 8
+```
+
+Do not start `--run` while Route B still owns the GPU. Forty-series production
+is after this one-series smoke.
 
 ---
 
@@ -118,26 +164,72 @@ powershell -File tools\build_mcgpu.ps1 -Target gpu `
 .venv\Scripts\python.exe -m pytest -q
 ```
 
-**Known performance wall:** with 144 invocations per G2, the 48M-line ASCII
-geometry parse dominates and the GPU does not help it (G2 took 67 min on GPU
-against ~26 on CPU at a smaller geometry). The remaining lever is 5 mm voxels,
-~8× fewer lines, measured effect ≤0.12% on the first test — **but not yet measured
-on the second test's small VOIs**, so do not adopt it silently.
+**Known performance wall — and why it no longer bites the §2 command.** The wall
+was the 48M-line ASCII geometry parse, paid *once per engine invocation*. It
+dominated only because G2 at K = 4 sub-fans × 36 projections drove the rotation
+externally and paid the parse 144 times (67 min on GPU vs ~26 on CPU at a smaller
+geometry). At **`--sub-fans 1` the projection loop stays inside MC-GPU** — one
+centred fan aims at the axis, so `drive_projections_here` is false
+(`tools/run_tg195.py`) and the engine's native CT trajectory carries all 36
+projections in a *single* invocation. A replica is therefore one parse, not 144,
+and the cost is now the transport of its full history count, not the parse.
+
+The earlier "remaining lever is 5 mm voxels" is **withdrawn**: it only ever
+mattered against the per-invocation parse, which `--sub-fans 1` already removes,
+and shrinking the voxels would change the physics comparison on the second test's
+small VOIs (an effect measured only on the first test, ≤0.12%). Do not touch voxel
+size to buy speed.
+
+The "several hours" this file quoted for the §2 command is **also suspect** and
+should be re-measured, not repeated. One invocation at the production geometry
+(voxel 0.25, air-margin 50, ~5.8×10⁷ voxels) initialises in ~15 s (MC-GPU log,
+`-- INITIALIZATION finished`) and the engine self-reports ~7×10⁷ histories/s on
+the RTX 3080. At those rates 10 replicas × 2×10⁸ histories is minutes, not hours;
+the old figure came from the 144-invocation regime that `--sub-fans 1` retires.
+The `--replicas 2` smoke run records its own wall time in each
+`replica_result.json`, so believe that, not this paragraph.
+
+**A trap the smoke run found:** MC-GPU reads the histories-per-projection field as
+a *time in seconds* when it is below 95000 (`MC-GPU_v1.3.cu:654`). At
+`--sub-fans 1 --projections 36`, `--histories` below 3.6×10⁶ crosses that line and
+the engine silently runs by time instead of by count. `run_sub_fan_set` now
+refuses it. The production `--histories 2×10⁸` (5.6×10⁶ per projection) is well
+clear.
 
 ---
 
-## 5. After the gate closes
+## 5. What is gated, and what is not
 
-In order. None of it may start before §2 lands.
+**The gate locks *dose calculation*, not preparation for it.** Only the Phase-2
+cohort **dose** waits on G0–G5. Everything that does not compute dose can and
+should run now — see the split below. (Authoritative scope:
+[`IORN007_scope_to_acceptance.md`](IORN007_scope_to_acceptance.md) §0/§7.)
 
-1. **Phase 1b** — bowtie via per-sub-fan spectra (§5.2, the machinery already
-   exists), filtration to a measured HVL, PMMA→air-kerma from NIST, then the
-   measured-CTDIvol comparison.
-2. **Task D** — Phase-2 data. `ct_dosemc_core/eligibility.py` and its 13 tests are
-   written (criterion re-derived for absorbed dose, not inherited from IORN-006).
-   Untouched: D2 TCIA selection/download, D3 TotalSegmentator masks, D4 HU→density
-   write-out verification.
-3. **Phase 2** cohort dose — released only by G0–G5.
+**Not gated — start in parallel now:**
+
+1. **Task D data preparation.** `ct_dosemc_core/eligibility.py` and its 13 tests
+   are written (criterion re-derived for absorbed dose, not inherited from
+   IORN-006). The remaining work is data-only, uses **no GPU**, and is the longest
+   wall-clock task in the project, so it does not conflict with Route B on the GPU
+   and must not wait behind it:
+   * **D2** — TCIA selection/download (network + CPU),
+   * **D3** — TotalSegmentator masks (CPU),
+   * **D4** — HU→density write-out verification.
+
+**Gated — after G0–G5 close:**
+
+2. **Phase 2 cohort dose** — the actual dose computation, released only by G0–G5.
+
+**Downgraded — no longer a verification gate:**
+
+3. **Phase 1b is a Methods component, not a second gate.** TG-195 already serves as
+   the verification anchor; the bowtie (per-sub-fan spectra, §5.2 — the machinery
+   exists), filtration to a measured HVL, and PMMA→air-kerma are needed for the
+   *physical fidelity of the patient geometry*, not to pass verification. Because no
+   in-house measured CTDIvol exists, the old "reproduce a measured CTDIvol" goal is
+   dropped: patient dose is **normalised to the CTDIvol recorded in the DICOM/RDSR**
+   (`MC_SOURCE_MODEL.md` §4.5), which also removes the dependence on SpekPy's
+   absolute output. It may run in parallel with Phase 2, not before it.
 
 ---
 

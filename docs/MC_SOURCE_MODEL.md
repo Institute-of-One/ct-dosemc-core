@@ -542,24 +542,79 @@ indefensible on its own; it is defensible only because the choice is made on a
 stated physical ground — shared cross-sections — *before* looking at which code
 agrees best, and because every other comparison is reported next to it.
 
-Against this criterion the anchor stands as follows. **Requirement (a) is met;
-requirement (b) is not.**
+Against this criterion the anchor now stands as follows, with the centre and
+perimeter replica SD **measured directly** at the production configuration
+(K = 10 independent seeds). Criterion (a) is no longer a bound on a single run's
+SD (that 0.25% target was arbitrary and is **withdrawn**); it is a bound on the
+uncertainty of the *anchor* — the number that enters (b) — which for an anchor
+that is the mean of N independent replicas is the replica SD divided by √N. The
+requirement is **anchor uncertainty ≤ 0.15%**.
 
 | | measured | requirement | |
 |---|---|---|---|
-| (a) centre replica SD at 2×10⁸ | **not measured** — see §5.3.0d | ≤ 0.25% | **unknown** |
-| (a) perimeter, 94-position replicated | **0.0156%** | ≤ 0.25% | met, 16× over |
-| (b) \|ours − PENELOPE\|, centre | **0.719%** (CPU), 0.810% (GPU) | < 2σ | **cannot be evaluated** |
+| (a) centre replica SD at 2×10⁸ | **0.406%** (±24%, K=10 seeds, 50 cm) | — | measured |
+| (a) perimeter replica SD at 2×10⁸ | **0.145%** (±24%, K=10 seeds, 50 cm) | — | measured |
+| (a) centre anchor uncertainty, N=10 mean | **0.128%** (= 0.406%/√10) | ≤ 0.15% | met once the K=4 ×10 anchor is run (**pending**) |
+| (a) perimeter anchor uncertainty, N=10 mean | **0.046%** (= 0.145%/√10) | ≤ 0.15% | met |
+| (a) perimeter, 94-position replicated | **0.0156%** | ≤ 0.15% | met |
+| (b) \|ours − PENELOPE\|, centre | **0.349%** (50 cm, K=4) | *reported*, not a gate | 0.80σ at the current anchor — see caveat |
+| (b) \|ours − PENELOPE\|, perimeter | **0.280%** (50 cm, K=4) | *reported*, not a gate | 1.27σ |
 
-The centre row was briefly recorded as 0.242% and "met". That figure was the
-5×10⁷ replica SD scaled by 1/√N, and an air-margin scan then showed run-to-run
-scatter of ±0.75% at the anchor's history count — three times the extrapolation
-(§5.3.0d). The scaled value is withdrawn; only a direct measurement at the
-production configuration can fill that row, and until it exists **(b) has no
-denominator and the significance of the centre deviation is unknown.**
+The centre replica SD is a direct measurement, not an extrapolation. A K = 10
+replica study at the production configuration (air margin 50 cm, 2×10⁸ histories,
+one MC-GPU invocation per replica via the native CT trajectory,
+`results/phase1a_G4_replica_uncertainty_120kvp_second_K1.json`) measures the centre
+replica SD at **0.406%** and the perimeter at 0.145%. The ten centre values span
+11.19–11.33 eV with no outlier (all within ±1.7σ); the 94-position azimuthal SD
+(0.0156% × √94 = 0.151% per position) independently reproduces the perimeter
+replica SD (0.145%).
 
-with σ combining our centre replica SD at the anchor's history count (0.242%)
-with PENELOPE's own 36-angle statistics (≈0.167%).
+**Retraction — the "1/√N does not hold" reading is withdrawn.** An earlier
+version of this section compared this 0.406% (at 2×10⁸) with an 0.484% recorded at
+5×10⁷ and concluded the centre SD was not falling as 1/√N. That comparison is
+invalid: the two SDs were measured at *different configurations* — 5×10⁷ came from
+K = 4 sub-fans / air 30–44 cm / 144 external invocations / CPU, while 2×10⁸ came
+from K = 1 / air 50 cm / one GPU invocation — so it is exactly the §3 error this
+record keeps warning against, committed here between two σ's. The decisive tell is
+that the *perimeter* moved the opposite way over the same history change
+(0.442%→0.145%, a factor 3.05, **faster** than the √4 = 2.0 the law predicts)
+while the centre moved slower (1.19×); no single scaling law makes two quantities
+deviate from it in opposite directions, so the deviation is an artefact of the
+differing configurations, not of the law. The design inference that "more
+histories are inefficient" therefore loses its basis and is **held**. A real
+scaling check, if wanted, must re-measure 5×10⁷ at the identical configuration
+(2×10⁸, K = 1, air 50, GPU) and compare like with like.
+
+Because the 0.25% single-run target is withdrawn, **(a) is met** at the anchor
+level: an N = 10 mean has centre uncertainty 0.406%/√10 = 0.128% ≤ 0.15% and
+perimeter 0.046%. The one outstanding action is to actually build that anchor as
+the K = 4 ten-replica mean (the value must stay at K ≥ 4 for the solid-angle
+correctness of §5.1.2a); that run is pending and its cost is discussed in
+§5.3.0e — it is not the trivial job the withdrawn "1/√N is broken" reading implied,
+but neither does it need variance reduction.
+
+(b) is evaluated with σ combining our replica SD with PENELOPE's own 36-angle
+statistics (≈0.167% = the report's ≤1% per VOI over √36): at the *current*
+single-anchor σ, centre σ = √(0.406² + 0.167²)% = 0.439%, so −0.349% is 0.80σ;
+perimeter σ = 0.221%, so −0.280% is 1.27σ. The "ours" is the 50 cm, K = 4 anchor
+(`results/phase1a_G2_G2_anchor_air50.json`), **not** the degenerate 44 cm value
+that produced the old 0.719/0.810% figures. **A caveat that must not be lost:
+sharpening the anchor tightens (b) toward its 2σ boundary, it does not loosen
+it.** With the centre anchor σ falling from 0.406% (0.79σ) to 0.128% (1.66σ) and,
+in the limit of a perfect anchor, to PENELOPE's 0.167% alone (0.349/0.167 =
+**2.09σ, NOT met**), the 0.349% is a *real systematic difference* that statistics
+cannot remove — which is why **(b) is reported, not gated** (it is an internal
+agreement check, not a publication requirement; scope record
+`IORN007_scope_to_acceptance.md` §3/§7). Chasing it with more histories would only
+push it across an internal 2σ line that carries no publication weight, and there
+is a floor below which sharpening the *systematics* also buys nothing: PENELOPE's
+own 0.167% statistical uncertainty is the yardstick's own noise, so measuring a
+model term below it cannot make the comparison finer. The honest σ_comb is
+therefore `σ_MC ⊕ σ_PENELOPE (0.167%)` widened by the model terms carried as
+**declared upper bounds** — with the single exception of **phantom length**,
+re-measured because the 400 mm implementation against a 3000 mm spec is a gap a
+reviewer will see (§5.3.0e). The earlier plan to re-measure voxel, air and length
+together as (b)'s acceptance budget is **withdrawn**.
 
 **Twice now, an uncertainty from one run has been applied to a value from
 another.** The 1.40σ originally proposed used the 5×10⁷ replica SD against a
@@ -730,6 +785,32 @@ single-projection case disagrees, nothing downstream of it means anything.
 
 **Phase 2 (patient cohort) is released by G0–G5, not by G6–G9.**
 
+#### Resolved — metal (out-of-calibration) voxels are a pre-declared exclusion
+
+The Schneider stoichiometric calibration used for HU→density does **not** extend
+into the metal range: a max-density clamp gets the *density* roughly right but
+leaves the *atomic number* wrong, so the photoelectric cross-section — which scales
+steeply with Z — is misassigned exactly where attenuation is highest. Rather than
+handle metal per-series, this is a **pre-declared eligibility criterion** (the
+pixel-based sibling of `ct_dosemc_core.eligibility`; see that module and
+`tools/cohort_density_eligibility.py`):
+
+> An out-of-calibration voxel is inside the body contour with **HU ≥ 3071** (the
+> 12-bit saturation ceiling, so clip and exceed are treated identically and the
+> metric is vendor-neutral, not a 16-bit-export detector). A series is **excluded**
+> if its **largest connected out-of-calibration component ≥ 1 cm³** — a compact
+> metal implant. The threshold sits in the cohort's natural gap (0.91–2.06 cm³).
+
+Applied to the 40-series cohort this excludes **8 series → N = 32** (GE 8, Siemens
+9, Canon/Toshiba 6, Philips 9 eligible); the full distribution and the reported
+per-organ distances are in `results/phase2_cohort/metal_distribution.json` and the
+verdict in `results/phase2_cohort/density_eligibility.json`. The exclusions fire on
+**all four vendors**, which is the signature of a material rule rather than a vendor
+detector; Canon's higher count is corroborated by in-body HU ≫ 3071 (true 16-bit
+metal) and is reported as a cohort finding, not corrected. A robustness check —
+one excluded series re-included via the density clamp — quantifies whether the
+exclusion changes any organ dose.
+
 ### 5.2 Phase 1b — physical anchor (after the gate, not before)
 
 | # | Test | Criterion |
@@ -764,6 +845,153 @@ angle-versus-equivalent-thickness profile that ships in `results/` as data.
 That machinery is already built and in use — TG-195's field is a rectangle on the
 isocentre plane, which is not the same shape as MC-GPU's `(cos θ, φ)` rectangle,
 and sub-fans are what reconciles them (§5.3).
+
+#### The bowtie fit target and its open data sources (G6 investigation)
+
+What is fit, and to what. The bowtie is reduced to **one profile: equivalent
+aluminium thickness `t(ψ)` versus fan angle ψ**. The fit follows the **Turner et
+al. (2009) "equivalent source" method** (Med. Phys. 36:2154–2164), which is the
+field standard and needs no proprietary vendor data:
+
+1. **Central axis, anchored by HVL.** Iteratively add aluminium (0.01 mm steps) to
+   the unfiltered spectrum until the computed **HVL₁ (and HVL₂)** match the
+   published beam quality — giving `t(0)`. Our spectra come from SpekPy/IPEM-78,
+   already in the engine (`ct_dosemc_core.spectra`, `half_value_layer_mm_al`), so
+   this reuses existing code.
+2. **Off axis, anchored by the profile.** Fit `t(ψ)` so the attenuated fluence
+   reproduces the **measured relative transmission (bowtie) profile** across the
+   fan. This gives both fluence shaping and off-axis beam hardening at once.
+
+**Fit-target data — decided, and in the repository (CC BY).**
+
+* **Yang et al. (2019), *Data in Brief* 25:104261 — "Data of CT bow tie filter
+  profiles from three modern CT scanners."** Licence **CC BY 4.0**, verified
+  first-hand from the article's PMC JATS (`<license license-type="CC BY"
+  href="creativecommons.org/licenses/by/4.0/">`, © 2019 The Author(s), PMC6706760).
+  Directly measured **equivalent aluminium thickness t(ψ) vs fan angle**, absolute
+  mm Al, at **80/100/120/135–140 kVp**, for **GE Revolution (Small/Medium/Large),
+  Philips iQon (one filter), Toshiba/Canon Aquilion ONE Vision (Small/Medium/Large)**
+  — three of this cohort's four vendors. The supplementary spreadsheet is committed
+  at `data/bowtie/yang2019_dib_mmc1.xlsx` (SHA-256 pinned in
+  `data/bowtie/PROVENANCE.json`) and extracted to a machine-readable
+  `data/bowtie/bowtie_profiles.json` by `tools/build_bowtie_profiles.py`.
+* Cross-checks in the literature (not committed): Yang et al. (2017) Med. Phys.
+  44:57–70 (method + nine scanners); Whiting et al. (2014) COBRA (five scanners);
+  `EGSnrc egs_al_eq_ct_source` (same fan-angle → Al-thickness file format).
+
+**Siemens — decided: cross-vendor average with a declared band, not a borrow.** A
+one-day search found Siemens bowtie *measurements* only in conference abstracts
+(AAPM: Sensation/Edge/Flash/Force), none as an openly-licensed numerical dataset, so
+none is usable. Rather than borrow one vendor's shape, the Siemens profile is the
+**cross-vendor average** of the GE/Philips/Canon body (Large) profiles, and the
+**inter-vendor spread is carried as a declared uncertainty band** — a measured band,
+not an assumption (`bowtie_profiles.json`: `Siemens.filters.Large.<kvp>.cross_vendor_spread_mm`;
+at 120 kVp the band is ≤ 27 mm Al, dominated by Canon's steeper edge). Each vendor
+entry records its `provenance` (`measured` vs `cross-vendor average`) so the patient
+driver reports where every profile came from.
+
+**Why the Siemens gap is a band, not a blocker.** Patient dose is normalised to the
+**recorded CTDIvol** (§4.5), which removes the dependence on the bowtie's *absolute*
+transmission; what survives is only the **radial fluence shape**, and its effect is
+bounded from above by the inter-vendor spread. G6 is therefore a Methods component,
+not a verification gate.
+
+**Declared validation (run during the patient-driver build, §4.x).** The design is:
+(1) fit a **one-parameter bowtie family** (Turner-2009 equivalent-source thinking:
+one degree of freedom for the profile "strength") to the three measured profiles;
+(2) assign Siemens the average with the spread as uncertainty; (3) for **all four
+vendors**, use the existing Phase-1 CTDI machinery (`ct_dosemc_core.ctdi`,
+`tools/run_validation.py`) to check that the profile reproduces published
+**CTDI₁₀₀ central/peripheral ratios** — the quantity a bowtie directly sets. Showing
+"measured profile → correct CTDI ratio" on GE/Philips/Canon warrants applying the
+same procedure to Siemens. This converts a borrow into "a one-parameter fit to public
+CTDI ratios, validated on three measured vendors".
+
+Status: fit-target data **committed and provenanced**; the one-parameter fit, the
+per-sub-fan spectrum attenuation and the CTDI-ratio validation are **implemented with
+the patient driver** (they need the bowtie wired into the source model). Sub-fan
+decomposition and weighted recombination already exist
+(`tools/run_tg195.py: run_sub_fan_set, sub_fans`); the bowtie reuses them.
+
+### 5.2a The patient phantom: Schneider tissue groups and a 2.5 mm grid
+
+The patient driver (`ct_dosemc_core.patient`) settles two things the dose depends
+on; neither is assumed silently.
+
+**Materials — composition groups, not density bins.** The photoelectric cross
+section scales as ≈Z³⁻⁴, so a voxel's *composition* (its Z), not just its density,
+sets its dose; merging bone into soft tissue makes bone dose wrong by an order of
+magnitude and, through the scattered field, biases neighbouring organs. Each voxel
+is therefore assigned a composition **group** by HU while its density stays the
+continuous Schneider HU→ρ value (MC-GPU scales the material's mean free paths by
+voxel-ρ / file-nominal-ρ, so the split composition/continuous-density model is
+exact). Soft tissues are merged (Z barely moves across them); bone groups are kept
+separate (Z is exactly what moves). MC-GPU v1.3 is built with **MAX_MATERIALS = 15**
+(`vendor/MCGPU/MC-GPU_v1.3.h:62`; echoed in every run log), so the group count is
+capped there. Metal is out of the Schneider calibration and is removed by the
+eligibility criterion upstream, so the set only spans **air → cortical bone**.
+
+The default table is 15 materials — 4 merged soft (`air`, `lung`, `adipose`,
+`soft_tissue`) + **11 graded bone bins** — filling MAX_MATERIALS. The three spare
+slots over an 8-bin table go to the low-*f* edge, not to cortical bone: scored
+organs are soft tissue, so the photoelectric residual a reviewer probes is at the
+soft/bone boundary, and equal-HU bins maximise the relative error exactly there
+(half-bin width 1/(2n) in *f*). Bin edges are uniform in √*f* (`BONE_BIN_POWER = 2`);
+the first bin is HU 100–124 rather than 100–462. The four soft tissues and the
+cortical-bone endpoint are named ICRP compositions read straight from
+`pdcompos.p06` (PENDBASE ids 104, 191, 103, 262, 120). PENELOPE has no spongiosa /
+marrow gradation, so the bone series is built the way Schneider (2000) does: HU is
+linear in the **volume** fraction *f* of the cortical endpoint, because μ_mix =
+(1−f)μ_soft + f μ_bone and HU ∝ μ. Elemental *weight* fractions follow by density
+weighting, ρ_mix = (1−f)ρ_soft + f ρ_bone, w_bone = f·ρ_bone/ρ_mix (at f = 0.5,
+ρ_soft = 1.03, ρ_bone = 1.92 this is w = 0.651, not 0.500 — mixing weight fractions
+linearly with HU would understate the photoelectric cross-section by 20–30% at
+mid-bin). *f* is the bin-midpoint volume fraction; the file's nominal density is
+the Schneider HU→ρ value there. The two endpoints are published ICRP compositions;
+only *f* and the edge placement are ours, and both are recorded per bin in
+`materials/PROVENANCE.json` with the elemental weight fractions, w_bone, and a
+SHA-256 of every generated file. `--bones N` shares the same edges as
+`patient.default_tissue_groups(n_bone_bins=N)`.
+
+The 11-bin √*f* discretisation is measured, not assumed
+(`tools/bone_bin_error.py`, `results/phase2_cohort/bone_bin_error.json`): on a 1 HU
+grid from 100 to 3000, |μ_binned − μ_continuous|/μ_continuous at 60 keV (NIST via
+SpekPy, no Monte Carlo) has **max 2.64% at HU 700** (an interior mid-range edge)
+and **median 1.03%**. At the scored-soft-tissue boundary (HU 100) the error is
+**0.40%**, down from 5.80% under 8 equal-HU bins (that 5.80% was the general
+equal-bin half-width 0.0625 in *f*, not a boundary special case). Runtime cost of
+the placement is zero. All are generated by
+`tools/make_materials.py --only lung adipose soft_tissue bone_cortical air` and
+`tools/make_materials.py --only-bones --bones 11` from PENDBASE (photon-only PENELOPE
+2006 database), so the openness claim holds end to end.
+
+**Geometry — an isotropic 2.5 mm dose grid.** G3 requires the air box to reach the
+focal spot (§4.4a, §5.3), i.e. a ~130 cm box; at the native ~0.7 mm image that is
+~2.4×10⁹ voxels, which is not runnable. At **2.5 mm** the same box is
+~520×520×200 = 5.4×10⁷ voxels — about twice the G2 phantom, and the *same 0.25 cm*
+at which G2/G3 convergence was measured, so the voxel-size systematic term
+(§5.3, "voxel size 2.5 → 1.25 mm moved segment 1 by 0.02%") carries over unchanged.
+The dose ROI is the organ's bounding box, not the whole volume: G2 buried its signal
+under 226 MB of full-volume dose I/O (§5.3.0e), and the patient grid is larger still.
+
+**The resampling cost is measured, not assumed** (`tools/resample_cost.py`, over the
+32 eligible series, `results/phase2_cohort/resample_cost.json`). Organ mass on the
+native grid vs on the 2.5 mm grid (volume-conserving order-1 zoom of density and
+mask): the **median mass change is 0.8–1.1 % for every scored abdominal organ**
+(liver 0.81 %, spleen 0.81 %, kidneys 0.9–1.1 %, colon 0.69 %, stomach 0.79 %,
+pancreas 0.71 %), a slight loss from partial-volume smoothing, **consistent across
+all four vendors** (per-vendor median 0.990–0.993 — device-independent, as with G5).
+Only the smallest structures rise higher (adrenal glands: median 1.5–2.7 %, worst
+16.5 % on a few-voxel gland). This is a declared limitation of the same kind and
+size as the Phase-1a voxel-size term.
+
+Code and unit tests are in place (`ct_dosemc_core/patient.py`,
+`ct_dosemc_core/driver.py`, `ct_dosemc_core/source_model.py`,
+`tests/test_patient.py`, `tests/test_driver.py`, `tests/test_source_model.py`);
+actual patient dose runs remain gated by G0–G5. The execution wiring (bowtie
+per-sub-fan spectra with profile provenance, focal spot inside the 130 cm box,
+TCM I(z) as a history weight, organ-dose reduction over the bbox ROI) does not
+run the engine.
 
 ### 5.3 What the approximations are actually worth
 
@@ -828,6 +1056,84 @@ Three things belong beside it:
   §5.1.2a still applies: most of the deviation from the four-code mean is the
   cross-section library, not this implementation.
 
+### 5.3.0e Cost of the precise K = 4 anchor, and the measured-budget plan
+
+The K = 4 ten-replica anchor that criterion (a) now asks for (§5.1.4) is not free,
+and the proposed way to make it free does not work. The proposal was to let
+MC-GPU run its own 36-projection trajectory even for off-axis sub-fans by
+pre-rotating the *initial* direction by ψ_k, on the belief that the engine rotates
+the source position and direction rigidly together. It does not. Evaluating the
+engine's own trajectory formulae (`set_CT_trajectory`, MC-GPU_v1.3.cu:3245–3294)
+for the outer K = 4 sub-fan (ψ = 11.20°, SAD = 60 cm):
+
+```
+center_rotation = source₀ + SAD·direction₀ = (−11.65, −1.14) cm   → 11.7 cm off isocentre
+native trajectory:  central-ray miss of isocentre = 11.65 → 11.28 → 10.56 cm  (drifts)
+rigid sub-fan   :   central-ray miss of isocentre = 11.65 → 11.65 → 11.65 cm  (constant)
+```
+
+Because the direction is re-derived each projection as *(center_rotation −
+position)* (line 3292), an off-axis initial aim only displaces `center_rotation`
+11.7 cm off the phantom axis; the source then orbits that wrong point and the beam
+geometry drifts projection to projection. This is the same conclusion as §5.3.0c,
+now confirmed numerically from the engine formulae. The P × K invocation count is
+therefore structural: **K = 4 is 144 invocations per replica.**
+
+At the production geometry each invocation is dominated by the ~15 s parse of the
+5.8×10⁷-voxel geometry, transport being sub-second, so one K = 4 replica is
+≈ 36 min and a ten-replica anchor is ≈ 6 h. Three honest routes exist, none of
+them the withdrawn "it's a 5-minute job" reading:
+
+1. **Rigorous, slow.** Run 10 independent K = 4 replicas (≈ 6 h, in a persistent
+   window with sleep disabled). This measures the K = 4 replica SD directly *and*
+   delivers the N = 10 mean at 0.128%. No scaling assumption.
+2. **Fast, provisional.** A single K = 4 run at 2×10⁹ histories costs the *same*
+   ≈ 36 min (init-dominated; transport still sub-second at 10× the histories) and
+   reaches 0.128% *if* within-configuration 1/√N holds. That assumption is
+   standard MC and is no longer contested (the retracted claim was a cross-config
+   comparison, §5.1.4), but it is an assumption, not the replica measurement (a)
+   asks for. Good as a same-day check ahead of route 1.
+3. **Engine change — implemented (Route A).** MC-GPU now accepts `@manifest` as
+   its input argument: every input file listed is simulated sequentially in one
+   process, and `load_voxels` memoises the parsed geometry by filename so the
+   ~58M-voxel ASCII parse is paid **once** for all P×K beams instead of 144 times.
+   Only the parse is hoisted; each beam still writes its own dose tally exactly as
+   a standalone invocation would (the sub-fan weights, which are unequal —
+   0.24786/0.25214/0.25214/0.24786 — are applied afterwards in the Python
+   combination, unchanged), so the estimator is identical to Route B, not an
+   equal-weight single-tally sum. The patch is applied to **both** `win_cpu.cu` and
+   `win_gpu.cu` from one definition (so G5 keeps comparing the same source) and is
+   recorded as the 7th entry in `build_info.json`. **Validation is byte-equality,
+   not "within statistics":** on the CPU build the dose `.raw` from a single-file
+   run and from an `@manifest` batch are SHA256-identical for two off-axis
+   sub-fans, with the geometry parsed exactly once
+   (`results/phase1a/routeA_smoke`). The GPU executable rebuild is deferred until
+   Route B releases it (a running `.exe` is locked on Windows); G5's established
+   CPU==GPU byte-agreement then carries the guarantee to the GPU binary. Route A's
+   remaining payoff is the 20-run phantom-length study below and general per-beam
+   batching, not this one anchor; the larger Δ-budget campaign it was scoped for is
+   **withdrawn**.
+
+**The Δ-budget campaign is withdrawn; only phantom length stays a measurement.**
+An earlier version of this section argued that, once the anchor reached 0.128%,
+(b) would be decided by systematics and so the length, voxel and air scans had to
+be re-run with replica averaging (≈ 0.13% per point) and entered as measured Δ.
+That is dropped on two grounds. First, **(b) is reported, not gated** (§5.1.4): it
+is an internal agreement check, not a publication requirement, so nothing about
+the project waits on tightening it. Second, **PENELOPE's own 0.167% statistical
+floor** sets the precision of every comparison; measuring a model systematic below
+that floor cannot make the |ours − PENELOPE| comparison sharper, so the ~90-run
+campaign buys nothing. Voxel, air, sub-fan K and spectrum therefore stay as
+**declared upper-bound limitations**, stated plainly in the paper — reviewers
+reject *hidden* limitations, not *declared* ones.
+
+The **one exception is phantom length**: the spec is 3000 mm and the
+implementation is 400 mm, a gap a reviewer will see, so it is the single term
+worth converting from a bound into a measurement. Run **length 40 cm vs 160 cm,
+ten replicas each — 20 runs total** — and report the measured Δ with its
+uncertainty. That study, not the withdrawn 90-run campaign, is Route A's remaining
+payoff on the budget side.
+
 ### 5.3.0d The 44 cm default puts the source exactly on the voxel-box face
 
 Setting the transverse air margin so that "the box reaches the focal spot" turned
@@ -859,16 +1165,20 @@ PENELOPE at 30 cm, 0.72% at 44 cm. **The scan does not support it.** Centre VOI,
 returns to zero. There is no monotonic dependence on the modelled air path and no
 isolated anomaly at the degenerate margin. Neither hypothesis survives.
 
-What the scan does establish is worse news, and it invalidates a claim made two
-sections above: **the scatter across these five runs is ±0.75%, against a
-predicted σ of 0.24%.** Those configurations should differ by well under 0.3%, so
-the spread is run-to-run noise roughly three times larger than expected.
-
-The prediction came from scaling the measured replica SD (0.484% at 5×10⁷) by
-1/√N to the anchor's 2×10⁸. That scaling is not holding here, so **the claim that
-requirement (a) is met at 2×10⁸ is withdrawn** — it rested on an extrapolation,
-not a measurement, which is the same error as the 1.40σ figure corrected in
-§5.1.4.
+The scatter across these five runs is ±0.75%. An earlier version compared that
+against a "predicted σ of 0.24%" and called the spread three times too large —
+but that 0.24% was a 5×10⁷ replica SD (measured at K = 4 / air 30–44 / CPU) scaled
+by 1/√N to 2×10⁸, a *different configuration* from these 5 mm-voxel air-margin
+runs. Comparing a σ from one configuration with a spread from another is the §3
+error, so "three times the expected σ" is **withdrawn** (see the retraction in
+§5.1.4). Measured directly at the production configuration the centre replica SD
+is 0.406% (§5.1.4); a ±0.75% half-range across five single runs is ≈1.8σ, which is
+consistent with ordinary run-to-run noise rather than an anomaly. What this scan
+therefore cannot do is separate that noise from a genuine dependence on the
+modelled air path. Because (b) is reported rather than gated and PENELOPE's 0.167%
+floor limits any comparison (§5.3.0e), the air term is **not** re-measured; it is
+carried as a **declared upper-bound limitation**, with this scan as its evidence,
+rather than converted into a systematic allowance.
 
 The consequence for the geometry is only that the degeneracy is unproven, not
 that it is safe. The box rule should still be "the box contains the whole air
@@ -899,19 +1209,31 @@ For every projection after the first, the direction is **recomputed to point at
 the rotation centre**. Whatever aim the input file specified is discarded, so an
 off-axis sub-fan survives exactly one projection.
 
-Aiming the *initial* direction off-axis does not rescue it either: `center_rotation`
-is derived from the initial position and direction, so tilting the aim moves the
-rotation centre off the phantom axis, and the source then orbits the wrong point.
+Aiming the *initial* direction off-axis does not rescue it either. **MC-GPU
+defines its rotation centre as `source_position + SAD · source_direction`
+(line 3245), so tilting the fan off the isocentre direction moves the rotation
+centre sideways by `SAD · sin ψ` — 11.7 cm for ψ = 11.2°, SAD = 60 cm (§5.3.0e).
+An equiangular fan offset and a correct CT trajectory are therefore mutually
+exclusive: the source would orbit that displaced point, not the phantom axis, and
+the beam geometry drifts projection to projection. Sub-fan decomposition is thus
+forced into a separate process launch per projection.** This is the engine
+constraint at the root of the 144-invocation performance wall, and it is the
+design ground for Route A (§5.3.0e): the only way to parse the geometry once for
+all sub-fans is to loop the aperture sets *inside* one MC-GPU process, because the
+engine will not carry an off-axis aim through its own trajectory. (Whether the
+same constraint is worth an upstream issue is a judgement to make after Route A is
+implemented and its behaviour against the external-driving result is understood.)
 
 A symmetric φ window would be expressible, but the whole content of the sub-fan
 decomposition is that the *polar* aperture varies with azimuth (§5.3), and the
 aperture is constant within any one invocation. So the P×K invocation count is
 structural, not an implementation choice.
 
-What remains available on that axis: the tally I/O (§4.2 of the review — done,
-35× less per invocation), and the geometry parse, which scales with voxel count
-and could be cut ~8× by moving to 5 mm voxels, whose measured effect on the answer
-is ≤0.12% (§5.3). Neither requires touching the engine.
+What remains available on that axis is either the geometry parse — cut once per
+process by Route A rather than once per invocation — or a coarser voxelisation,
+whose measured effect on the answer is ≤0.12% (§5.3) but which the project has
+ruled out as a way to buy speed. The tally I/O was already cut 35× per invocation
+(§4.2 of the review). None of these touch the transport physics.
 
 ### 5.3.0b The sub-fan count is settled analytically, not by simulation
 

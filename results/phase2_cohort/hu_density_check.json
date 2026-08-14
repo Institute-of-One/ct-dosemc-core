@@ -1,0 +1,172 @@
+{
+  "calibration": "Schneider et al. (1996) generic piecewise-linear (ct_dosemc_core.phantom)",
+  "n_checked": 4,
+  "n_passed": 4,
+  "n_failed": 0,
+  "series": [
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2403.104753627722770752924713208933",
+      "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\GE\\ACRIN-NSCLC-FDG-PET__ACRIN-NSCLC-FDG-PET-048\\1.3.6.1.4.1.14519.5.2.1.7009.2403.104753627722770752924713208933",
+      "passed": true,
+      "warnings": [],
+      "volume_shape_zyx": [
+        119,
+        512,
+        512
+      ],
+      "voxel_spacing_mm_zyx": [
+        5.0,
+        0.75,
+        0.75
+      ],
+      "grid_matches_ct": true,
+      "density_positive": true,
+      "density_in_schneider_range": true,
+      "hu_range": [
+        -1024.0,
+        3071.0
+      ],
+      "body_fraction": 0.5474,
+      "n_above_calibration_in_body": 544,
+      "max_hu_in_body": 3071.0,
+      "in_body_calibration": {
+        "in_body_p1_hu": -765.0,
+        "in_body_median_hu": -44.0,
+        "in_body_air_lung_mode_hu": -677.1,
+        "in_body_soft_tissue_mode_hu": -99.0
+      },
+      "density_g_cm3": {
+        "min": 0.00121,
+        "median": 0.89087,
+        "max": 2.8
+      },
+      "fraction_soft_tissue_or_denser_in_body": 0.9296,
+      "not_an_air_block": true,
+      "affine_slice_spacing_mm": 5.0,
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+      "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Siemens\\Adrenal-ACC-Ki67-Seg__Adrenal_Ki67_Seg_039\\1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+      "passed": true,
+      "warnings": [],
+      "volume_shape_zyx": [
+        140,
+        512,
+        512
+      ],
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.8281,
+        0.8281
+      ],
+      "grid_matches_ct": true,
+      "density_positive": true,
+      "density_in_schneider_range": true,
+      "hu_range": [
+        -1024.0,
+        3039.0
+      ],
+      "body_fraction": 0.6394,
+      "n_above_calibration_in_body": 2,
+      "max_hu_in_body": 3039.0,
+      "in_body_calibration": {
+        "in_body_p1_hu": -822.0,
+        "in_body_median_hu": -83.0,
+        "in_body_air_lung_mode_hu": -803.0,
+        "in_body_soft_tissue_mode_hu": -99.0
+      },
+      "density_g_cm3": {
+        "min": 0.00121,
+        "median": 0.9125,
+        "max": 2.8
+      },
+      "fraction_soft_tissue_or_denser_in_body": 0.9463,
+      "not_an_air_block": true,
+      "affine_slice_spacing_mm": 2.0,
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.3098.5025.146217110450191920006308432033",
+      "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Canon_Toshiba\\Anti-PD-1_Lung__PD-1-Lung-00024\\1.3.6.1.4.1.14519.5.2.1.3098.5025.146217110450191920006308432033",
+      "passed": true,
+      "warnings": [],
+      "volume_shape_zyx": [
+        159,
+        512,
+        512
+      ],
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.744,
+        0.744
+      ],
+      "grid_matches_ct": true,
+      "density_positive": true,
+      "density_in_schneider_range": true,
+      "hu_range": [
+        -3574.0,
+        15445.0
+      ],
+      "body_fraction": 0.4262,
+      "n_above_calibration_in_body": 7344,
+      "max_hu_in_body": 15445.0,
+      "in_body_calibration": {
+        "in_body_p1_hu": -1016.0,
+        "in_body_median_hu": -59.0,
+        "in_body_air_lung_mode_hu": -879.9,
+        "in_body_soft_tissue_mode_hu": -84.1
+      },
+      "density_g_cm3": {
+        "min": 0.00121,
+        "median": 0.00121,
+        "max": 2.8
+      },
+      "fraction_soft_tissue_or_denser_in_body": 0.7212,
+      "not_an_air_block": true,
+      "affine_slice_spacing_mm": 2.0,
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.122681232740719558092171043097976012159",
+      "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Philips\\Adrenal-ACC-Ki67-Seg__Adrenal_Ki67_Seg_051\\1.3.6.1.4.1.14519.5.2.1.122681232740719558092171043097976012159",
+      "passed": true,
+      "warnings": [],
+      "volume_shape_zyx": [
+        121,
+        512,
+        512
+      ],
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.7793,
+        0.7793
+      ],
+      "grid_matches_ct": true,
+      "density_positive": true,
+      "density_in_schneider_range": true,
+      "hu_range": [
+        -1024.0,
+        1468.0
+      ],
+      "body_fraction": 0.6006,
+      "n_above_calibration_in_body": 0,
+      "max_hu_in_body": 1468.0,
+      "in_body_calibration": {
+        "in_body_p1_hu": -907.0,
+        "in_body_median_hu": -82.0,
+        "in_body_air_lung_mode_hu": -880.2,
+        "in_body_soft_tissue_mode_hu": -99.0
+      },
+      "density_g_cm3": {
+        "min": 0.00121,
+        "median": 0.90323,
+        "max": 1.88586
+      },
+      "fraction_soft_tissue_or_denser_in_body": 0.9251,
+      "not_an_air_block": true,
+      "affine_slice_spacing_mm": 2.5,
+      "vendor": "Philips"
+    }
+  ]
+}

@@ -348,6 +348,21 @@ def run_sub_fan_set(
     )
     n_runs = len(fans) * len(gantry_angles)
     per_fan_histories = float(args.histories) / (n_runs * engine_projections)
+    # MC-GPU reads the "TOTAL NUMBER OF HISTORIES (PER PROJECTION)" field as a
+    # simulation TIME in seconds when it is below 95000 (MC-GPU_v1.3.cu:654),
+    # not as a count -- a silent switch of the whole experiment from "N
+    # histories" to "run for N seconds". A smoke test at 2e6/36 = 55556 tried to
+    # run ~15 h per projection this way. Refuse it loudly rather than run the
+    # wrong thing; the documented contract is "> 1e5 histories" (line 141).
+    mcgpu_time_threshold = 100000.0
+    if per_fan_histories < mcgpu_time_threshold:
+        raise SystemExit(
+            f"histories per projection = {per_fan_histories:.0f} is below MC-GPU's "
+            f"{mcgpu_time_threshold:.0f} line: it would be read as a simulation TIME "
+            f"in seconds, not a count (MC-GPU_v1.3.cu:654). With {n_runs} sub-fan(s) "
+            f"x {engine_projections} engine projection(s), --histories must be at "
+            f"least {mcgpu_time_threshold * n_runs * engine_projections:.3g} total."
+        )
     if drive_projections_here:
         print(
             f"[traj ] {n_projections} projections x {len(fans)} sub-fans = {n_runs} "
@@ -1035,8 +1050,8 @@ def replica_study(args) -> int:
     they disagree the disagreement is the finding.
     """
     k = int(args.replicas)
-    if k < 3:
-        raise SystemExit("--replicas needs at least 3 runs to form a sample SD")
+    if k < 2:
+        raise SystemExit("--replicas needs at least 2 runs to form a sample SD")
     base_seed = int(args.seed)
     # The inflation factor is a property of the estimator and the VOI, not of the
     # beam, so it has to be measured on the VOIs it will be applied to. Measuring
@@ -1046,62 +1061,181 @@ def replica_study(args) -> int:
     test_choice = args.test or "first"
     voi_builder = first_test_voi_weights if test_choice == "first" else second_test_voi_weights
     n_projections = 1 if test_choice == "first" else int(args.projections)
+
+    # What a saved replica must match to be reused. A multi-hour run that dies at
+    # replica 7 must not lose replicas 0-6, and must never silently reuse a
+    # replica computed at a different history count, geometry or beam.
+    config = {
+        "histories": float(args.histories),
+        "voxel_size_cm": float(args.voxel_size),
+        "air_margin_cm": float(args.air_margin),
+        "air_margin_z_cm": float(args.air_margin_z),
+        "phantom_length_cm": float(args.phantom_length),
+        "sub_fans": int(args.sub_fans),
+        "n_projections": int(n_projections),
+        "beam": beam_choice,
+        "test": test_choice,
+        "fan_thickness_cm": float(args.fan_thickness),
+        "material_emin_kev": int(args.material_emin_kev),
+        "executable": str(Path(args.executable).resolve()),
+    }
+
+    def _config_matches(stored: dict) -> bool:
+        for key, want in config.items():
+            got = stored.get(key)
+            if isinstance(want, float):
+                if got is None or not math.isclose(float(got), want, rel_tol=1e-9):
+                    return False
+            elif got != want:
+                return False
+        return True
+
+    def _comparison(per_run, quoted):
+        out = {}
+        n = len(per_run)
+        for name in sorted(per_run[0]):
+            samples = np.array([r[name] for r in per_run])
+            mean = float(samples.mean())
+            replica_sd = float(samples.std(ddof=1)) if n >= 2 else float("nan")
+            subfan_sd = float(np.mean([q[name] for q in quoted]))
+            out[name] = {
+                "mean_ev_per_photon": mean,
+                "replica_sample_sd": replica_sd,
+                "replica_relative_sd": replica_sd / mean if mean else float("nan"),
+                "sub_fan_quadrature_sd": subfan_sd,
+                "replica_over_sub_fan": replica_sd / subfan_sd if subfan_sd else float("nan"),
+                "n_replicas": n,
+                "sd_of_the_sd_relative": (
+                    float(1.0 / math.sqrt(2.0 * (n - 1))) if n >= 2 else float("nan")
+                ),
+            }
+        return out
+
+    # Sub-fan count and phantom length are both part of the configuration, so they
+    # must be part of the filename too: a K=1 SD run, a K=4 40 cm anchor, and a
+    # K=4 160 cm length arm are different measurements and must not clobber each
+    # other on disk.
+    k_sub_fans = int(args.sub_fans)
+    length_cm = int(round(float(args.phantom_length)))
+    final_path = (
+        REPO
+        / "results"
+        / f"phase1a_G4_replica_uncertainty_{beam_choice}_{test_choice}_K{k_sub_fans}_L{length_cm}.json"
+    )
+    progress_path = final_path.with_suffix(".progress.json")
     per_run: list[dict[str, float]] = []
     quoted: list[dict[str, float]] = []
+    replica_records: list[dict] = []
+    engine_invocations_each: list[int] = []
+    driven_externally_each: list[bool] = []
 
     for i in range(k):
-        args.seed = base_seed + 7919 * (i + 1)  # disjoint PRNG starts
-        args.tag = f"replica_{beam_choice}_{test_choice}_{i:02d}"
-        print(f"\n[G4] replica {i + 1}/{k}, seed {args.seed}")
-        rundir = REPO / "results" / "phase1a" / args.tag
+        seed_i = base_seed + 7919 * (i + 1)  # disjoint PRNG starts
+        tag = f"replica_{beam_choice}_{test_choice}_K{k_sub_fans}_L{length_cm}_{i:02d}"
+        args.seed = seed_i
+        args.tag = tag
+        rundir = REPO / "results" / "phase1a" / tag
         rundir.mkdir(parents=True, exist_ok=True)
-        spec = Case4Spec(fan_thickness_at_isocentre_cm=args.fan_thickness)
-        if beam_choice == "mono":
-            write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
-            spectrum_file = "mono.spc"
-        else:
-            energy, fluence, _hdr = read_tg195_spectrum(SPECTRA_XLSX, column="120 kVp")
-            write_tg195_spectrum_file(rundir / "tg195_120kvp.spc", energy, fluence)
-            spectrum_file = "tg195_120kvp.spc"
-        values, _meta = run_sub_fan_set(
-            spec=spec,
-            args=args,
-            rundir=rundir,
-            spectrum_file=spectrum_file,
-            voi_builder=voi_builder,
-            phantom_length_cm=args.phantom_length,
-            n_projections=n_projections,
-            label="g4",
-        )
-        per_run.append({name: v.value for name, v in values.items()})
-        quoted.append({name: float(v.uncertainty or 0.0) for name, v in values.items()})
-        for name, v in values.items():
-            print(f"    {name}: {v.value:.4f} +/- {v.uncertainty:.4f}")
+        result_path = rundir / "replica_result.json"
 
-    names = sorted(per_run[0])
-    comparison = {}
-    for name in names:
-        samples = np.array([r[name] for r in per_run])
-        replica_sd = float(samples.std(ddof=1))
-        subfan_sd = float(np.mean([q[name] for q in quoted]))
-        comparison[name] = {
-            "mean_ev_per_photon": float(samples.mean()),
-            "replica_sample_sd": replica_sd,
-            "replica_relative_sd": replica_sd / float(samples.mean()),
-            "sub_fan_quadrature_sd": subfan_sd,
-            "replica_over_sub_fan": replica_sd / subfan_sd if subfan_sd else float("nan"),
-            "n_replicas": k,
-            "sd_of_the_sd_relative": float(1.0 / math.sqrt(2.0 * (k - 1))),
-        }
-        c = comparison[name]
+        reused = False
+        if result_path.is_file():
+            try:
+                stored = json.loads(result_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                stored = None
+            if stored and stored.get("seed") == seed_i and _config_matches(stored.get("config", {})):
+                per_run.append({n: float(v) for n, v in stored["values_ev_per_photon"].items()})
+                quoted.append({n: float(v) for n, v in stored["quoted_uncertainty"].items()})
+                engine_invocations_each.append(int(stored.get("engine_invocations", 0)))
+                driven_externally_each.append(bool(stored.get("projections_driven_externally", False)))
+                replica_records.append(stored)
+                reused = True
+                print(f"\n[G4] replica {i + 1}/{k}: reusing {result_path.name} (seed {seed_i})", flush=True)
+                for n, v in per_run[-1].items():
+                    print(f"    {n}: {v:.4f} (from disk)", flush=True)
+
+        if not reused:
+            print(f"\n[G4] replica {i + 1}/{k}, seed {seed_i}", flush=True)
+            spec = Case4Spec(fan_thickness_at_isocentre_cm=args.fan_thickness)
+            if beam_choice == "mono":
+                write_monoenergetic_spectrum(rundir / "mono.spc", spec.monoenergetic_kev)
+                spectrum_file = "mono.spc"
+            else:
+                energy, fluence, _hdr = read_tg195_spectrum(SPECTRA_XLSX, column="120 kVp")
+                write_tg195_spectrum_file(rundir / "tg195_120kvp.spc", energy, fluence)
+                spectrum_file = "tg195_120kvp.spc"
+            values, meta = run_sub_fan_set(
+                spec=spec,
+                args=args,
+                rundir=rundir,
+                spectrum_file=spectrum_file,
+                voi_builder=voi_builder,
+                phantom_length_cm=args.phantom_length,
+                n_projections=n_projections,
+                label="g4",
+            )
+            per_run.append({name: v.value for name, v in values.items()})
+            quoted.append({name: float(v.uncertainty or 0.0) for name, v in values.items()})
+            engine_invocations_each.append(int(meta.get("engine_invocations", 0)))
+            driven_externally_each.append(bool(meta.get("projections_driven_externally", False)))
+            record = {
+                "replica_index": i,
+                "seed": seed_i,
+                "config": config,
+                "values_ev_per_photon": per_run[-1],
+                "quoted_uncertainty": quoted[-1],
+                "engine_invocations": int(meta.get("engine_invocations", 0)),
+                "projections_driven_externally": bool(
+                    meta.get("projections_driven_externally", False)
+                ),
+                "wall_seconds": float(
+                    sum(b.get("wall_seconds", 0.0) or 0.0 for b in meta.get("beamlets", []))
+                ),
+            }
+            replica_records.append(record)
+            # Persist this replica before starting the next one, so a crash in a
+            # multi-hour run keeps every replica already paid for.
+            write_results(result_path, record)
+            for name, v in values.items():
+                print(f"    {name}: {v.value:.4f} +/- {v.uncertainty:.4f}")
+
+        # Rewrite the running summary after every replica. A job interrupted at
+        # replica i still leaves a valid file describing replicas 0..i.
+        write_results(
+            progress_path,
+            {
+                "gate": "G4 -- MC uncertainty by independent-seed replicas (in progress)",
+                "beam": beam_choice,
+                "test": test_choice,
+                "n_projections": n_projections,
+                "n_sub_fans": int(args.sub_fans),
+                "n_replicas_target": k,
+                "n_replicas_done": len(per_run),
+                "base_seed": base_seed,
+                "engine_invocations_per_replica": engine_invocations_each,
+                "projections_driven_externally": driven_externally_each,
+                "comparison": _comparison(per_run, quoted) if len(per_run) >= 2 else None,
+                "per_replica": replica_records,
+            },
+        )
+
+    comparison = _comparison(per_run, quoted)
+    for name, c in comparison.items():
         print(
-            f"  {name:<12} replica SD {replica_sd:.4f} ({100 * c['replica_relative_sd']:.4f} %)"
-            f"   sub-fan quadrature {subfan_sd:.4f}"
+            f"  {name:<12} replica SD {c['replica_sample_sd']:.4f} "
+            f"({100 * c['replica_relative_sd']:.4f} %)"
+            f"   sub-fan quadrature {c['sub_fan_quadrature_sd']:.4f}"
             f"   ratio {c['replica_over_sub_fan']:.2f}x"
         )
 
+    # One engine invocation per replica is the evidence that the projection loop
+    # stayed inside MC-GPU (native CT trajectory): with --sub-fans 1 there is a
+    # single centred fan aimed at the axis, so run_sub_fan_set does not drive the
+    # rotation externally. Recorded, not asserted, so a regression that
+    # reintroduces P-per-replica invocations is visible in the results file.
     out = write_results(
-        REPO / "results" / f"phase1a_G4_replica_uncertainty_{beam_choice}_{test_choice}.json",
+        final_path,
         {
             "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
             "beam": beam_choice,
@@ -1115,15 +1249,24 @@ def replica_study(args) -> int:
             ),
             "n_replicas": k,
             "base_seed": base_seed,
+            "engine_invocations_per_replica": engine_invocations_each,
+            "projections_driven_externally": driven_externally_each,
             "comparison": comparison,
+            "per_replica": replica_records,
             "note": "The sub-fan quadrature combines genuinely independent engine "
             "invocations, so unlike the per-voxel quadrature inside a single run it "
             "is not obviously biased. The replica SD assumes nothing at all. "
             "'sd_of_the_sd_relative' is 1/sqrt(2(K-1)): with K replicas the SD "
             "itself is only known to that precision, so ratios should be quoted as "
-            "intervals rather than point estimates.",
+            "intervals rather than point estimates. Each replica is written to its "
+            "own results/phase1a/replica_*/replica_result.json as it completes and "
+            "reused on a re-run, so an interrupted multi-hour job resumes without "
+            "recomputing finished replicas.",
         },
     )
+    # The in-progress file is now superseded by the final one.
+    if progress_path.is_file():
+        progress_path.unlink()
     print(f"\n[G4] wrote {out}")
     return 0
 

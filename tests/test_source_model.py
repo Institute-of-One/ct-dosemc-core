@@ -9,13 +9,17 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from ct_dosemc_core.source_model import (
     EV_PER_G_TO_GY,
     BeamGeometry,
     eV_per_g_to_mGy,
+    fan_segments,
+    focal_spot_cm,
     histories_for_mas,
+    load_bowtie_profile,
     mas_for_histories,
     tube_current_profile,
 )
@@ -95,6 +99,56 @@ def test_ev_per_g_to_mgy_against_a_hand_calculation():
     assert got == pytest.approx(1.602176634e-9, rel=1e-9)
 
 
-def test_tcm_is_declared_missing_rather_than_silently_returning_flat_current():
-    with pytest.raises(NotImplementedError, match="Phase-1"):
+def test_tcm_from_pairs_interpolates_and_does_not_invent_beyond_the_range():
+    profile = tube_current_profile([(0.0, 100.0), (10.0, 200.0)])
+    assert float(profile.current_at_mm(5.0)) == pytest.approx(150.0)
+    # clamp, don't extrapolate
+    assert float(profile.current_at_mm(-5.0)) == pytest.approx(100.0)
+    assert float(profile.current_at_mm(99.0)) == pytest.approx(200.0)
+    assert profile.modulated
+    w = profile.relative_weight([0.0, 10.0])
+    assert float(w[0]) == pytest.approx(100.0 / 150.0)
+    assert float(w[1]) == pytest.approx(200.0 / 150.0)
+
+
+def test_flat_tcm_is_recorded_as_unmodulated_not_missing():
+    profile = tube_current_profile([(0.0, 250.0), (10.0, 250.0), (20.0, 250.0)])
+    assert not profile.modulated
+    assert float(profile.relative_weight(10.0)) == pytest.approx(1.0)
+
+
+def test_missing_tube_current_is_an_error_not_a_flat_profile():
+    with pytest.raises(ValueError, match="I\\(z\\)|tube current"):
         tube_current_profile(object())
+
+
+def test_focal_spot_sits_inside_a_130cm_box_and_points_at_isocentre():
+    pos, direction = focal_spot_cm((130.0, 130.0, 50.0), sad_cm=60.0, gantry_deg=0.0)
+    assert pos[0] == pytest.approx(65.0)
+    assert pos[1] == pytest.approx(5.0)  # 65 - 60
+    assert pos[2] == pytest.approx(25.0)
+    # direction toward +y (isocentre)
+    assert direction[1] == pytest.approx(1.0, abs=1e-12)
+    with pytest.raises(ValueError, match="outside the voxel box"):
+        focal_spot_cm((40.0, 40.0, 40.0), sad_cm=60.0)
+
+
+def test_bowtie_thickness_rises_with_fan_angle_and_siemens_carries_spread():
+    ge = load_bowtie_profile("GE", kvp=120)
+    assert ge.provenance.startswith("measured")
+    assert ge.thickness_mm(0.0) < ge.thickness_mm(10.0)
+    assert ge.thickness_mm(-10.0) == pytest.approx(ge.thickness_mm(10.0))  # symmetry
+    assert ge.spread_at_mm(0.0) is None
+    siemens = load_bowtie_profile("Siemens", kvp=120)
+    assert "cross-vendor average" in siemens.provenance
+    assert siemens.spread_mm is not None
+    assert siemens.spread_at_mm(0.0) is not None
+
+
+def test_fan_segments_cover_the_fan_and_narrow_polar_aperture_off_axis():
+    segs = fan_segments(4, half_fan_deg=25.0, collimation_cm=2.0, sad_cm=60.0)
+    assert len(segs) == 4
+    assert sum(s.azimuthal_aperture_deg for s in segs) == pytest.approx(50.0)
+    centre = [s for s in segs if abs(s.centre_psi_deg) < 10]
+    edge = [s for s in segs if abs(s.centre_psi_deg) > 15]
+    assert centre[0].polar_aperture_deg > edge[0].polar_aperture_deg

@@ -19,7 +19,16 @@ from dataclasses import dataclass
 
 import numpy as np
 
-__all__ = ["Material", "VoxelPhantom", "cylinder_occupancy", "hu_to_density"]
+__all__ = [
+    "BODY_THRESHOLD_HU",
+    "CALIBRATION_MAX_HU",
+    "Material",
+    "VoxelPhantom",
+    "body_contour",
+    "cylinder_occupancy",
+    "hu_to_density",
+    "patient_density_map",
+]
 
 # MC-GPU v1.3 compiles with MAX_MATERIALS=15 (vendor/MCGPU/MC-GPU_v1.3.h:62).
 MCGPU_MAX_MATERIALS = 15
@@ -225,3 +234,97 @@ def hu_to_density(
         raise ValueError("breakpoints must be strictly increasing")
     rho = np.interp(np.asarray(hu, dtype=float), bp, dn)
     return np.maximum(rho, floor_g_cm3)
+
+
+# -- patient body contour and density map -----------------------------------
+# The reconstruction fills everything outside the field of view with a padding
+# value -- -2048 HU on the Canon/Toshiba series in this cohort, with no DICOM Pixel
+# Padding attribute to declare it.  That region is not a material the photons travel
+# through; it is nothing.  A density clamp maps an undeclared -2048 to air roughly by
+# luck; masking to the body contour makes "outside the patient is air" explicit.
+
+#: Above this HU is patient, below is air.  AAPM TG-220 uses -300 HU for the
+#: water-equivalent-diameter contour, and the same threshold separates tissue from a
+#: reconstruction's out-of-field fill (which vendors set anywhere from -1000 to
+#: -3000 HU).
+BODY_THRESHOLD_HU = -300.0
+
+#: HU above the top Schneider breakpoint is outside the tissue calibration -- a metal
+#: implant, dense contrast, or a beam-hardening artefact.  Reported rather than
+#: silently clamped: clamping an in-body high value to cortical-bone density can
+#: shield an organ and bias its dose downward, which no error message would reveal.
+CALIBRATION_MAX_HU = 3000.0
+
+
+def body_contour(volume_hu: np.ndarray, *, threshold_hu: float = BODY_THRESHOLD_HU) -> np.ndarray:
+    """Patient outline for a ``(z, y, x)`` HU volume: threshold, largest component, fill.
+
+    Threshold at ``threshold_hu``, keep the largest 3-D connected component (which
+    drops the couch and any detached out-of-field speckle), then fill holes slice by
+    slice so gas pockets and low-density lung *inside* the patient stay inside the
+    contour. Slice-wise rather than 3-D because a 3-D fill bridges the trachea to the
+    outside air through the top and bottom faces of the stack.
+    """
+    from scipy import ndimage
+
+    vol = np.asarray(volume_hu)
+    solid = vol > threshold_hu
+    if not solid.any():
+        return np.zeros(vol.shape, dtype=bool)
+    labels, n = ndimage.label(solid)
+    if n > 1:
+        counts = np.bincount(labels.ravel())
+        counts[0] = 0  # background label is not a component
+        solid = labels == int(counts.argmax())
+    filled = np.empty_like(solid)
+    for i in range(solid.shape[0]):
+        filled[i] = ndimage.binary_fill_holes(solid[i])
+    return filled
+
+
+def patient_density_map(
+    volume_hu: np.ndarray,
+    *,
+    threshold_hu: float = BODY_THRESHOLD_HU,
+    breakpoints_hu: Sequence[float] = _SCHNEIDER_BREAKPOINTS_HU,
+    density_g_cm3: Sequence[float] = _SCHNEIDER_DENSITY_G_CM3,
+    body: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, dict]:
+    """HU volume -> mass density, air outside the body contour, with a defect report.
+
+    Returns ``(density, body, report)``. Everything outside the body contour is set
+    to the calibration's air density; inside, the Schneider mapping applies. This is
+    the density universe the Monte Carlo tracks through, so the out-of-field fill can
+    no longer masquerade as material and cannot be silently clamped into it.
+
+    ``report`` counts what the calibration cannot describe -- voxels above
+    :data:`CALIBRATION_MAX_HU` *inside* the body (metal, dense contrast, artefact) --
+    so those are visible for review rather than absorbed into cortical-bone density.
+    """
+    vol = np.asarray(volume_hu, dtype=float)
+    if body is None:
+        body = body_contour(vol, threshold_hu=threshold_hu)
+    air = float(min(density_g_cm3))
+    density = hu_to_density(vol, breakpoints_hu, density_g_cm3)
+    density = np.where(body, density, air)
+
+    top_hu = float(max(breakpoints_hu))
+    over = (vol > CALIBRATION_MAX_HU) & body
+    report = {
+        "threshold_hu": threshold_hu,
+        "air_density_g_cm3": air,
+        "n_voxels": int(vol.size),
+        "n_body_voxels": int(body.sum()),
+        "body_fraction": round(float(body.mean()), 4),
+        "hu_range": [round(float(vol.min()), 1), round(float(vol.max()), 1)],
+        "calibration_max_hu": CALIBRATION_MAX_HU,
+        "schneider_top_hu": top_hu,
+        "n_above_calibration_in_body": int(over.sum()),
+        "max_hu_in_body": round(float(vol[body].max()), 1) if body.any() else None,
+        "note_above_calibration": (
+            "voxels above the Schneider top breakpoint are held at its density "
+            f"({max(density_g_cm3):g} g/cm^3); they are metal/contrast/artefact, not "
+            "tissue, and are reported here rather than clamped silently"
+        ),
+    }
+    return density, body, report

@@ -32,6 +32,33 @@ Two consequences follow, and both must be reported rather than absorbed:
 Nothing in this module reads pixels or computes a dose.  It decides what is
 admissible, so that the decision is made once, in the open, before any number
 exists to be influenced by it.
+
+**The governing principle.** If admitting one series would require writing a new
+rule for that series, the series is excluded instead.  A rule can be defended in
+review; a per-case exception cannot, and a codebase of per-series special cases is
+the thing a reviewer distrusts most.  So every criterion here is a threshold on a
+measured quantity applied uniformly, and bespoke per-series handling is never
+written.
+
+**The pixel-based sibling.** This module is header-only by design; the one
+criterion that must read pixels lives beside it in ``ct_dosemc_core.phantom``
+(``patient_density_map``, ``CALIBRATION_MAX_HU``) and is applied over the cohort by
+``tools/cohort_density_eligibility.py``:
+
+    An *out-of-calibration voxel* is one inside the body contour with HU >= 3071 --
+    the 12-bit reconstruction saturation ceiling, so clipping (12-bit exports) and
+    exceeding (16-bit exports) are treated identically and the metric is
+    vendor-neutral rather than a 16-bit-export detector.  A series is **excluded**
+    if its largest connected out-of-calibration component is >= 1 cm^3: a compact
+    metal implant, whose atomic number the Schneider stoichiometric calibration
+    cannot represent, so the photoelectric cross section -- which scales steeply
+    with Z -- would be misassigned exactly where attenuation is highest.  The
+    threshold sits in the cohort distribution's natural gap (0.91-2.06 cm^3), so it
+    is not fitted to any one series; scattered clips, calcification, contrast and
+    beam-hardening speckle fall below it and are kept (Schneider's cortical-bone
+    range covers them).  Distances to each scored organ are **reported, not gated**
+    -- measure everything, gate on one thing.  This criterion is needed for an
+    absorbed dose and unnecessary for an index, which is why it is re-derived here.
 """
 
 from __future__ import annotations

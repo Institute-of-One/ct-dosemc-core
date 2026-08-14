@@ -1,3 +1,6 @@
+# Local TCIA download/work cache (zips, logs). Not the paper record.
+.tcia_work/
+
 # --- imaging data: NEVER committed, NEVER redistributed -------------------
 # TCIA collections are CC BY, but this project does not redistribute DICOM.
 # data/PROVENANCE.json records collection, Series Instance UID, licence and
@@ -54,6 +57,8 @@ results/**/dose*.dat
 results/phase1a/**/case4_*.in
 results/phase1a/**/mcgpu_*.log
 results/phase1a/**/*.spc
+results/phase1a/*.log
+results/*.progress.json
 
 # --- python ---------------------------------------------------------------
 __pycache__/
