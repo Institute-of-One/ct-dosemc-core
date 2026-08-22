@@ -23,7 +23,9 @@ abstract: >-
   TotalSegmentator run at inference. Because every dose coefficient is computed
   rather than looked up, the pipeline carries none of the licensing exposure of
   published organ-dose coefficient tables, and no such table is redistributed.
-  Validation is anchored to the CTDI dosimetry phantom of IEC 60601-2-44, a
+  Transport is verified against Case 4 of AAPM TG-195 with a replica-measured
+  uncertainty and a reference code chosen before any comparison was run, and
+  the dose scale is anchored to the CTDI dosimetry phantom of IEC 60601-2-44, a
   physical standard, before any patient dose is computed. Every reported value
   carries its formula, inputs, assumptions and Monte-Carlo statistical
   uncertainty, and the test suite re-derives the quoted figures from the recorded
@@ -40,8 +42,14 @@ keywords:
   - TotalSegmentator
   - DICOM
   - reproducibility
+  - dose index
+  - TG-195
+  - cross-validation
 license: MIT
-version: 0.1.0.dev0
+version: 0.1.0
+# Zenodo takes this as the record's publication date and a DOI cannot be
+# re-dated afterwards, so it is the day the tag is cut, not the day work began.
+date-released: "2026-08-23"
 # The *concept* DOI goes here once the first release is minted; it resolves to
 # the latest version, which is what a citation of the project should point at.
 # A result should cite the version DOI of the release it was produced with.

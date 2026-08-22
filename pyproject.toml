@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ct-dosemc-core"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Patient-specific absorbed organ dose in CT (mGy) by open Monte Carlo: MC-GPU transport through a segmented, density-mapped patient phantom, with per-value provenance."
 readme = "README.md"
 license = { text = "MIT" }
