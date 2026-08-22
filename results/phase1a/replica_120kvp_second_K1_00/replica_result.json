@@ -34,5 +34,9 @@
   },
   "engine_invocations": 1,
   "projections_driven_externally": false,
-  "wall_seconds": 19.644172000000253
+  "wall_seconds": 19.644172000000253,
+  "source_route": "native_ct_trajectory",
+  "source_route_detail": "single centred fan; MC-GPU's built-in projection loop; not the sub-fan @manifest path",
+  "physics_unchanged_across_A_and_B": false,
+  "bit_identity_note": null
 }

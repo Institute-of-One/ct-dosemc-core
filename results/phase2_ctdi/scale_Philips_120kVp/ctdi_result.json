@@ -1,0 +1,29 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-17T07:21:05+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "vendor": "Philips",
+  "kvp": 120.0,
+  "histories": 200000000.0,
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "source_route": "A",
+  "bowtie_provenance": "measured (Yang 2019 DiB, CC BY 4.0)",
+  "material_energy_tag": "5-120keV",
+  "ctdi100_pmma_mgy": {
+    "centre": 0.00012498834204176845,
+    "12_o_clock": 0.00039215029476104843,
+    "3_o_clock": 0.00039229117336800963,
+    "6_o_clock": 0.00039352904441096426,
+    "9_o_clock": 0.00039267253747038195
+  },
+  "ctdiw_pmma_mgy": 0.0003034366223489902,
+  "ctdiw_sigma_mgy": 3.500908337329094e-08,
+  "wall_seconds": 73.92931219999446
+}

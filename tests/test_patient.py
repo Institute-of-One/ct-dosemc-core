@@ -2,7 +2,7 @@
 
 These exercise the two things settled in ``ct_dosemc_core.patient``: the Schneider
 composition-group assignment (bone must not fall in with soft tissue) and the 2.5 mm
-isotropic geometry. No MC-GPU run happens here -- those are gated by G0-G5.
+isotropic geometry. No MC-GPU run happens here.
 """
 
 from __future__ import annotations
@@ -16,11 +16,13 @@ import pytest
 from ct_dosemc_core.patient import (
     DOSE_GRID_MM,
     assign_material_index,
+    axial_station_z_cm,
     bone_bin_volume_fraction,
     bone_discretization_error,
     bone_volume_fraction,
     build_patient_phantom,
     default_tissue_groups,
+    material_energy_tag,
     embed_in_focal_box,
     mix_by_volume_fraction,
     organ_bounding_box,
@@ -144,6 +146,12 @@ def test_organ_bounding_box_rejects_empty_mask():
         organ_bounding_box(np.zeros((4, 4, 4), dtype=bool))
 
 
+def test_material_energy_tag_follows_the_spectrum_max():
+    assert material_energy_tag(100) == "5-120keV"
+    assert material_energy_tag(120) == "5-120keV"
+    assert material_energy_tag(140) == "5-150keV"
+
+
 def test_default_groups_reference_generated_material_files():
     """Every group's material file must be pinned in materials/PROVENANCE.json.
 
@@ -239,3 +247,17 @@ def test_union_organ_roi_covers_every_organ():
     assert (x0, x1) == (3, 7)
     assert (y0, y1) == (3, 7)
     assert (z0, z1) == (3, 7)
+
+
+def test_axial_stations_cover_a_27cm_series_at_2cm_collimation():
+    z = axial_station_z_cm(27.75, 2.0)
+    assert z.size == 14
+    assert z[0] > 0.0
+    assert z[-1] < 27.75
+    np.testing.assert_allclose(np.diff(z), 27.75 / 14)
+
+
+def test_a_short_phantom_is_one_station():
+    z = axial_station_z_cm(1.5, 2.0)
+    assert z.size == 1
+    assert z[0] == pytest.approx(0.75)

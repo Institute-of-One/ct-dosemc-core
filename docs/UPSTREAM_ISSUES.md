@@ -8,6 +8,11 @@ They are patched on a *copy* of the source, so `vendor/MCGPU` stays byte-identic
 to upstream and every substitution is recorded in `vendor/build/build_info.json`.
 See `docs/MC_SOURCE_MODEL.md` §2.1.
 
+A later **performance** change (`@manifest` / Route A) hoists the geometry parse
+out of the sub-fan loop. It is **not** a sixth defect: it changes no physics
+(byte-equality vs the unmodified engine; `docs/MC_SOURCE_MODEL.md` §2.1a) and is
+recorded separately in `build_info.json` under `performance_modifications`.
+
 > **Status: filed 2026-08-08.**
 >
 > | # | Defect | Upstream issue |

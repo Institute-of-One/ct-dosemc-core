@@ -1,0 +1,18 @@
+{
+  "what": "Why the 2026-08-17 Fig. 4 y-axis is not the Paper number",
+  "usable_for_figure4": false,
+  "defect": "single 2 cm axial rotation at mid-scan",
+  "why_not_exam_dose": "The reconstructed series is 15–40 cm long. Organ mean dose from one 2 cm rotation is the overlap of that beam with the organ mask, not the helical-exam absorbed dose. Scaling to CTDIvol does not undo the dilution.",
+  "evidence": {
+    "n_points": 342,
+    "pearson_r_all": 0.407,
+    "pearson_r_recorded": 0.080,
+    "pearson_r_reconstructed": 0.550,
+    "y_over_x_median": 0.033,
+    "recorded_y_max_mgy": 3.903,
+    "literature_order": "abdominal organ dose / CTDIvol is order 1, not 0.03"
+  },
+  "fix": "Contiguous axial stations covering the reconstructed length, same collimation as the bowtie-aware CTDI scale. TCM I(z) weights each station. Stations are summed. tools/run_patient.py + axial_station_z_cm.",
+  "ctdi_scale": "The 7-run bowtie-aware CTDIw_MC remains valid (one rotation is the CTDI definition). Do not re-run it.",
+  "not": "Not a reason to drop N=32, alias scanners, coarsen spectra, or send the PMB inquiry on the mid-scan scatter."
+}

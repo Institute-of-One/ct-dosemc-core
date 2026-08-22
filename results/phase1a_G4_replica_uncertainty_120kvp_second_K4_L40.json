@@ -1,0 +1,436 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-14T05:20:39+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
+  "beam": "120kvp",
+  "test": "second",
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "estimator_inflated": "sub-fan quadrature over independent engine invocations",
+  "n_replicas": 10,
+  "base_seed": 1234567890,
+  "engine_invocations_per_replica": [
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144
+  ],
+  "projections_driven_externally": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "comparison": {
+    "center": {
+      "mean_ev_per_photon": 11.275552132648036,
+      "replica_sample_sd": 0.048309804633871134,
+      "replica_relative_sd": 0.004284473528705658,
+      "sub_fan_quadrature_sd": 0.005019482402790436,
+      "replica_over_sub_fan": 9.624459407809598,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    },
+    "perimeter": {
+      "mean_ev_per_photon": 39.68944047900372,
+      "replica_sample_sd": 0.06168681373856535,
+      "replica_relative_sd": 0.0015542374242135902,
+      "sub_fan_quadrature_sd": 0.009303618577345662,
+      "replica_over_sub_fan": 6.630410869247468,
+      "n_replicas": 10,
+      "sd_of_the_sd_relative": 0.23570226039551587
+    }
+  },
+  "per_replica": [
+    {
+      "environment": {
+        "generated_utc": "2026-08-11T11:19:36+00:00",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+        "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+        "numpy": "2.5.1",
+        "spekpy": "2.5.4"
+      },
+      "replica_index": 0,
+      "seed": 1234575809,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.300648110776384,
+        "perimeter": 39.62780187045339
+      },
+      "quoted_uncertainty": {
+        "center": 0.005025319290649063,
+        "perimeter": 0.009306423623495794
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2128.870280499992,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "environment": {
+        "generated_utc": "2026-08-11T11:56:38+00:00",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+        "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+        "numpy": "2.5.1",
+        "spekpy": "2.5.4"
+      },
+      "replica_index": 1,
+      "seed": 1234583728,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.200693135172688,
+        "perimeter": 39.70022899325042
+      },
+      "quoted_uncertainty": {
+        "center": 0.004988212583401209,
+        "perimeter": 0.009307342165362437
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2118.057664200096,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "environment": {
+        "generated_utc": "2026-08-11T12:33:20+00:00",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+        "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+        "numpy": "2.5.1",
+        "spekpy": "2.5.4"
+      },
+      "replica_index": 2,
+      "seed": 1234591647,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.28355178672078,
+        "perimeter": 39.686208408868325
+      },
+      "quoted_uncertainty": {
+        "center": 0.005022414659944104,
+        "perimeter": 0.009293842870690202
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2111.9758186000254,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "environment": {
+        "generated_utc": "2026-08-11T13:10:17+00:00",
+        "python": "3.12.10",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+        "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+        "numpy": "2.5.1",
+        "spekpy": "2.5.4"
+      },
+      "replica_index": 3,
+      "seed": 1234599566,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.243239914653508,
+        "perimeter": 39.620596700995854
+      },
+      "quoted_uncertainty": {
+        "center": 0.005010468599317871,
+        "perimeter": 0.009286483380623498
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2123.520674599975,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 4,
+      "seed": 1234607485,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.294279543536957,
+        "perimeter": 39.628803231774
+      },
+      "quoted_uncertainty": {
+        "center": 0.005040846105065828,
+        "perimeter": 0.009288335525801415
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2111.0679915,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 5,
+      "seed": 1234615404,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.285683250004894,
+        "perimeter": 39.80953604677537
+      },
+      "quoted_uncertainty": {
+        "center": 0.005026426409032205,
+        "perimeter": 0.009330364993837869
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2115.511686800004,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 6,
+      "seed": 1234623323,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.255527751677052,
+        "perimeter": 39.69451370270505
+      },
+      "quoted_uncertainty": {
+        "center": 0.0050043312687601685,
+        "perimeter": 0.00930214922861659
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2127.580329999997,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 7,
+      "seed": 1234631242,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.238888366252917,
+        "perimeter": 39.65857019644392
+      },
+      "quoted_uncertainty": {
+        "center": 0.005011333076171857,
+        "perimeter": 0.0092842453000861
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2120.7111740999317,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 8,
+      "seed": 1234639161,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.270505245891396,
+        "perimeter": 39.7695631000379
+      },
+      "quoted_uncertainty": {
+        "center": 0.005016506241624881,
+        "perimeter": 0.009315671356131986
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2120.703727999986,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    },
+    {
+      "replica_index": 9,
+      "seed": 1234647080,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.382504221793788,
+        "perimeter": 39.698582538733
+      },
+      "quoted_uncertainty": {
+        "center": 0.005048965793937166,
+        "perimeter": 0.00932132732881074
+      },
+      "engine_invocations": 144,
+      "projections_driven_externally": true,
+      "wall_seconds": 2117.7108049999806,
+      "source_route": "B",
+      "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    }
+  ],
+  "note": "The sub-fan quadrature combines genuinely independent engine invocations, so unlike the per-voxel quadrature inside a single run it is not obviously biased. The replica SD assumes nothing at all. 'sd_of_the_sd_relative' is 1/sqrt(2(K-1)): with K replicas the SD itself is only known to that precision, so ratios should be quoted as intervals rather than point estimates. Each replica is written to its own results/phase1a/replica_*/replica_result.json as it completes and reused on a re-run, so an interrupted multi-hour job resumes without recomputing finished replicas.",
+  "source_route": "B",
+  "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+  "physics_unchanged_across_A_and_B": true,
+  "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+}

@@ -1,0 +1,232 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-14T12:29:58+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "Phase 1a close \u2014 TG-195 Case 4, production configuration",
+  "configuration": {
+    "beam": "120kvp",
+    "test": "second",
+    "n_projections": 36,
+    "n_sub_fans": 4,
+    "histories": 200000000.0,
+    "voxel_size_cm": 0.25,
+    "air_margin_cm": 50.0,
+    "L40_source_route": "B",
+    "L160_source_route": "A",
+    "bit_identity": "results/phase1a_source_routes.json"
+  },
+  "criterion_a": {
+    "requirement": "anchor uncertainty = replica SD/\u221a10 \u2264 0.15%",
+    "sd_of_the_sd_relative": 0.23570226039551587,
+    "sd_precision_note": "sample SD from N=10 is known to \u00b11/\u221a(2(N-1)) \u2248 \u00b124%",
+    "vois": {
+      "center": {
+        "mean_ev_per_photon": 11.275552132648036,
+        "replica_sample_sd": 0.048309804633871134,
+        "replica_relative_sd": 0.004284473528705658,
+        "anchor_sem_relative": 0.0013548694925408686,
+        "sd_of_the_sd_relative": 0.23570226039551587,
+        "meets_0p15pct": true,
+        "source_route": "B",
+        "n_replicas": 10,
+        "engine_invocations_per_replica": 144
+      },
+      "perimeter": {
+        "mean_ev_per_photon": 39.68944047900372,
+        "replica_sample_sd": 0.06168681373856535,
+        "replica_relative_sd": 0.0015542374242135902,
+        "anchor_sem_relative": 0.0004914930285188281,
+        "sd_of_the_sd_relative": 0.23570226039551587,
+        "meets_0p15pct": true,
+        "source_route": "B",
+        "n_replicas": 10,
+        "engine_invocations_per_replica": 144
+      }
+    },
+    "met": true
+  },
+  "criterion_b": {
+    "requirement": "|ours \u2212 PENELOPE| reported with \u03c3_comb; not a gate",
+    "yardstick": "PENELOPE (shared PENDBASE photon cross-sections), chosen before looking at which code agrees best",
+    "sigma_comb": "sqrt(anchor_SEM^2 + (1%/\u221a36)^2)",
+    "vois": {
+      "center": {
+        "ours_ev_per_photon": 11.275552132648036,
+        "penelope_ev_per_photon": 11.316216666666667,
+        "four_code_mean_ev_per_photon": 11.382118055555557,
+        "ours_minus_penelope_relative": -0.0035934743224220744,
+        "abs_ours_minus_penelope_relative": 0.0035934743224220744,
+        "sigma_comb_relative": 0.0021478941127522394,
+        "n_sigma_vs_penelope": 1.6730221015492786,
+        "reported_not_gated": true,
+        "decomposition": {
+          "penelope_vs_four_code_mean": -0.00578990558411252,
+          "ours_vs_penelope": -0.0035934743224220744,
+          "product_equals_ours_vs_mean": -0.009362574029488813,
+          "ours_vs_four_code_mean": -0.009362574029488924,
+          "identity_residual": 1.1102230246251565e-16
+        },
+        "per_code_ours_minus_reference": {
+          "EGSnrc": -0.0105331335109623,
+          "Geant4": -0.013629239527329862,
+          "MCNP": -0.00964112709634779,
+          "Penelope": -0.0035934743224220744
+        }
+      },
+      "perimeter": {
+        "ours_ev_per_photon": 39.68944047900372,
+        "penelope_ev_per_photon": 39.802945722222226,
+        "four_code_mean_ev_per_photon": 39.761378541666666,
+        "ours_minus_penelope_relative": -0.0028516794714300575,
+        "abs_ours_minus_penelope_relative": 0.0028516794714300575,
+        "sigma_comb_relative": 0.0017376257292237554,
+        "n_sigma_vs_penelope": 1.6411356159556754,
+        "reported_not_gated": true,
+        "decomposition": {
+          "penelope_vs_four_code_mean": 0.0010454159810380226,
+          "ours_vs_penelope": -0.0028516794714300575,
+          "product_equals_ours_vs_mean": -0.0018092446816843077,
+          "ours_vs_four_code_mean": -0.0018092446816841967,
+          "identity_residual": -1.1102230246251565e-16
+        },
+        "per_code_ours_minus_reference": {
+          "EGSnrc": -0.0019331916271392302,
+          "Geant4": -0.0014648001395913823,
+          "MCNP": -0.0009854041191623697,
+          "Penelope": -0.0028516794714300575
+        }
+      }
+    }
+  },
+  "delta_length": {
+    "replaces": "noise-buried 0.4% upper bound from the first-test length scan",
+    "vois": {
+      "center": {
+        "L40_mean": 11.275552132648036,
+        "L160_mean": 11.282274915462507,
+        "L160_minus_L40": 0.006722782814470918,
+        "relative_to_L40": 0.0005962264849989292,
+        "sigma_abs": 0.020598186732608412,
+        "sigma_relative": 0.0018268007180745462,
+        "n_sigma": 0.3263774089312565,
+        "distinguishable": false,
+        "L40_source_route": "B",
+        "L160_source_route": "A"
+      },
+      "perimeter": {
+        "L40_mean": 39.68944047900372,
+        "L160_mean": 39.67042142452083,
+        "L160_minus_L40": -0.01901905448288943,
+        "relative_to_L40": -0.0004791968406042605,
+        "sigma_abs": 0.027276181772781665,
+        "sigma_relative": 0.0006872402695425034,
+        "n_sigma": 0.6972770104453604,
+        "distinguishable": false,
+        "L40_source_route": "B",
+        "L160_source_route": "A"
+      }
+    },
+    "conclusion": "40 cm is indistinguishable from 160 cm at the second-test VOIs (both |\u0394| < 2\u03c3 of the two ten-replica means)",
+    "indistinguishable": true
+  },
+  "uncertainty_budget": {
+    "center": {
+      "terms": {
+        "anchor_sem": {
+          "kind": "measured",
+          "relative": 0.0013548694925408686,
+          "note": "L40 K=4 replica SD / \u221a10 (Route B)"
+        },
+        "penelope_36angle": {
+          "kind": "declared",
+          "relative": 0.0016666666666666668,
+          "note": "TG-195 \u22641% per VOI over \u221a36 discrete angles"
+        },
+        "delta_length": {
+          "kind": "measured",
+          "relative": 0.0005962264849989292,
+          "sigma_of_the_delta": 0.0018268007180745462,
+          "note": "L160 \u2212 L40; 40 cm is the production phantom length"
+        },
+        "subfan_omega_k4": {
+          "kind": "analytic",
+          "relative": 0.0006737627655568623,
+          "note": "solid-angle excess of K=4 rectangular sub-fans vs the specified fan"
+        },
+        "voxel_2p5mm": {
+          "kind": "declared_upper_bound",
+          "relative": 0.0002,
+          "measured_on": "first test, 2.5 mm \u2192 1.25 mm, segment 1",
+          "second_test": "unmeasured"
+        },
+        "spectrum_255bin": {
+          "kind": "declared",
+          "relative": 0.0,
+          "note": "TG-195 120 kVp table has 207 bins (G2_anchor_air50); MAX_ENERGY_BINS=256 is not exercised"
+        }
+      },
+      "sigma_total": 0.002337282910830595,
+      "abs_ours_minus_penelope": 0.0035934743224220744,
+      "abs_ours_minus_penelope_over_sigma_total": 1.5374580055202087
+    },
+    "perimeter": {
+      "terms": {
+        "anchor_sem": {
+          "kind": "measured",
+          "relative": 0.0004914930285188281,
+          "note": "L40 K=4 replica SD / \u221a10 (Route B)"
+        },
+        "penelope_36angle": {
+          "kind": "declared",
+          "relative": 0.0016666666666666668,
+          "note": "TG-195 \u22641% per VOI over \u221a36 discrete angles"
+        },
+        "delta_length": {
+          "kind": "measured",
+          "relative": 0.0004791968406042605,
+          "sigma_of_the_delta": 0.0006872402695425034,
+          "note": "L160 \u2212 L40; 40 cm is the production phantom length"
+        },
+        "subfan_omega_k4": {
+          "kind": "analytic",
+          "relative": 0.0006737627655568623,
+          "note": "solid-angle excess of K=4 rectangular sub-fans vs the specified fan"
+        },
+        "voxel_2p5mm": {
+          "kind": "declared_upper_bound",
+          "relative": 0.0002,
+          "measured_on": "first test, 2.5 mm \u2192 1.25 mm, segment 1",
+          "second_test": "unmeasured"
+        },
+        "spectrum_255bin": {
+          "kind": "declared",
+          "relative": 0.0,
+          "note": "TG-195 120 kVp table has 207 bins (G2_anchor_air50); MAX_ENERGY_BINS=256 is not exercised"
+        }
+      },
+      "sigma_total": 0.0019346651005164497,
+      "abs_ours_minus_penelope": 0.0028516794714300575,
+      "abs_ours_minus_penelope_over_sigma_total": 1.4739912714964545
+    }
+  },
+  "verdict": {
+    "phase1a_closed": true,
+    "criterion_a": "PASS",
+    "criterion_b": "reported, not gated",
+    "delta_length": "measured; 40 cm indistinguishable from 160 cm",
+    "patient_dose_unlocked": true,
+    "usable_as_anchor": true,
+    "note": "The deliverable is how far the numbers agree and what was assumed, not whether a self-defined threshold was crossed. (b) is a finding."
+  },
+  "evidence": {
+    "L40": "results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json",
+    "L160": "results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L160.json",
+    "tg195_per_code": "results/phase1a_G2_G2_anchor_air50.json"
+  }
+}

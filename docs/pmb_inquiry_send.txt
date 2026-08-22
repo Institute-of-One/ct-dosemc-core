@@ -1,0 +1,63 @@
+Subject: Pre-submission inquiry - Paper (not Note): TG-195-verified CT organ dose
+versus organ-weighted CTDIvol on one multi-vendor cohort
+
+
+Dear Editor,
+
+I would like to confirm that the following manuscript is appropriate as a Paper,
+rather than a Note, for Physics in Medicine and Biology.
+
+Title. How far an organ-weighted CTDIvol index is from absorbed organ dose:
+TG-195-verified Monte-Carlo measurement on the same patient anatomy across four
+vendors.
+
+Hypothesis. On the same patient anatomy, absorbed organ dose in mGy and the
+organ-weighted CTDIvol index are different quantities. I measure that difference
+after verifying the transport engine against AAPM TG-195 Case 4 with a stated,
+replica-measured uncertainty.
+
+Why this is a Paper. PMB defines Papers as original scientific research, covering
+techniques and applications. The manuscript has both.
+
+(i) Case 4 second-test agreement with PENELOPE, reported with a combined
+uncertainty rather than a homemade pass or fail: at the centre position
+|ours - PENELOPE| = 0.359%, which is 1.67 combined standard deviations. The
+phantom-length term is measured, and 40 cm is indistinguishable from 160 cm. The
+limitation budget is declared rather than assumed.
+
+(ii) Absorbed organ doses on 32 TCIA series across four vendors, with a
+pre-declared metal-implant exclusion, each scaled to a CTDIvol the series actually
+carries: recorded for 23 of 32, reconstructed for 7, unrecoverable for 2. The
+same-patient scatter is 12 organs and 342 points over 30 series, with Pearson
+r = 0.66 overall and 0.61 on the 23 series carrying a recorded CTDIvol.
+Restricting the figure to those 23 series does not change the relationship
+between index and absorbed dose. The median absorbed dose is 24.3 mGy, ranging
+from 3.9 to 84.0 mGy, and the median ratio of absorbed dose to index is 2.17.
+
+That scatter is the application result, not a software demonstration. It is the
+evidence that an organ-weighted index and an absorbed dose, computed on identical
+anatomy, are correlated without being the same quantity.
+
+Why this is not a Note. A Note would be the engine, or the TG-195 reproduction,
+on its own. Those are Methods here. The claim is the measured difference between
+two published endpoints on one cohort.
+
+Related work, and why this is not salami. Two earlier papers from this line report
+different endpoints on the same pipeline: whole-scan CTDIvol
+(doi:10.5281/zenodo.21636719, v0.1.1) and an organ-weighted CTDIvol index
+(doi:10.5281/zenodo.21817307, v0.1.1). This manuscript reports absorbed dose in
+mGy, computed by Monte-Carlo transport rather than looked up. Three endpoints, one
+pipeline; the scatter is the evidence that they are not slices of one number.
+
+Length. Within the Paper limit of 10 000 words and 12 figures. Planned: five
+figures and four tables.
+
+If the Board would prefer a different article type, I would rather hear that now
+than after review.
+
+Yours sincerely,
+
+Shuji Yamamoto
+Institute of One, LISIT Co., Ltd., Tokyo, Japan
+ORCID 0000-0001-9211-1071
+yamamoto@lisit.jp

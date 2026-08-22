@@ -1,0 +1,180 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-19T17:59:24+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077",
+  "vendor": "GE",
+  "manufacturer": "GE MEDICAL SYSTEMS",
+  "model_name": "Revolution EVO",
+  "kvp": 120.0,
+  "material_energy_tag": "5-120keV",
+  "n_slices": 337,
+  "phantom": {
+    "threshold_hu": -300.0,
+    "air_density_g_cm3": 0.00121,
+    "n_voxels": 3360000,
+    "n_body_voxels": 1517440,
+    "body_fraction": 0.4516,
+    "hu_range": [
+      -1024.0,
+      1337.9
+    ],
+    "calibration_max_hu": 3000.0,
+    "schneider_top_hu": 3000.0,
+    "n_above_calibration_in_body": 0,
+    "max_hu_in_body": 1337.9,
+    "note_above_calibration": "voxels above the Schneider top breakpoint are held at its density (2.8 g/cm^3); they are metal/contrast/artefact, not tissue, and are reported here rather than clamped silently",
+    "iso_grid_mm": 2.5,
+    "native_spacing_mm_zyx": [
+      0.625,
+      0.9766,
+      0.9766
+    ],
+    "patient_shape_zyx": [
+      84,
+      200,
+      200
+    ],
+    "resampled_shape_zyx": [
+      84,
+      520,
+      520
+    ],
+    "focal_box_xy_cm": 130.0,
+    "pad_before_zyx": [
+      0,
+      160,
+      160
+    ],
+    "n_materials": 15,
+    "material_names": [
+      "air",
+      "lung",
+      "adipose",
+      "soft_tissue",
+      "bone_1",
+      "bone_2",
+      "bone_3",
+      "bone_4",
+      "bone_5",
+      "bone_6",
+      "bone_7",
+      "bone_8",
+      "bone_9",
+      "bone_10",
+      "bone_11"
+    ]
+  },
+  "n_materials": 15,
+  "material_names": [
+    "air",
+    "lung",
+    "adipose",
+    "soft_tissue",
+    "bone_1",
+    "bone_2",
+    "bone_3",
+    "bone_4",
+    "bone_5",
+    "bone_6",
+    "bone_7",
+    "bone_8",
+    "bone_9",
+    "bone_10",
+    "bone_11"
+  ],
+  "focal_spot_gantry0_cm": [
+    65.0,
+    5.0,
+    11.55
+  ],
+  "beam_direction_gantry0": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "bbox_cm": [
+    130.0,
+    130.0,
+    21.0
+  ],
+  "sad_cm": 60.0,
+  "collimation_cm": 2.0,
+  "half_fan_deg": 26.624318352164078,
+  "n_sub_fans": 4,
+  "n_projections": 36,
+  "n_z_stations": 10,
+  "station_z_cm": [
+    1.05,
+    3.1500000000000004,
+    5.25,
+    7.3500000000000005,
+    9.450000000000001,
+    11.55,
+    13.65,
+    15.75,
+    17.85,
+    19.95
+  ],
+  "omega_total_sr": 0.029939315131567362,
+  "bowtie_provenance": "measured (Yang 2019 DiB, CC BY 4.0)",
+  "tcm": {
+    "n_samples": 337,
+    "modulated": true,
+    "min_ma": 279.0,
+    "max_ma": 410.0,
+    "mean_ma": 386.53115727002967,
+    "station_relative_weight": [
+      1.055542334236648,
+      1.0374325392865094,
+      1.0219098579006765,
+      1.0089742900791487,
+      1.0089742900791487,
+      1.0115614036434544,
+      1.0141485172077598,
+      1.0141485172077598,
+      1.0244969714649819,
+      0.8366725266964018
+    ]
+  },
+  "organs_present": [
+    "adrenal_gland_left",
+    "adrenal_gland_right",
+    "colon",
+    "gallbladder",
+    "kidney_left",
+    "kidney_right",
+    "liver",
+    "pancreas",
+    "small_bowel",
+    "spleen",
+    "stomach"
+  ],
+  "dose_roi_1based": {
+    "x": [
+      201,
+      317
+    ],
+    "y": [
+      214,
+      298
+    ],
+    "z": [
+      1,
+      67
+    ]
+  },
+  "histories_total": 200000000.0,
+  "histories_per_beamlet": 138888.88888888888,
+  "engine_invocations": 1440,
+  "route_a_batch": true,
+  "notes": [],
+  "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\GE\\CMB-BRCA__MSB-07132\\1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077",
+  "mask_dir": "D:\\DevGit\\ct_dosemc_core\\segmentations\\1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077\\1.5mm\\masks"
+}

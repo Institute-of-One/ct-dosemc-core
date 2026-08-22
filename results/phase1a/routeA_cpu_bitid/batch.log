@@ -1,0 +1,253 @@
+
+
+     *****************************************************************************
+     ***         MC-GPU, version 1.3 (http://code.google.com/p/mcgpu/)         ***
+     ***                                                                       ***
+     ***  A. Badal and A. Badano, "Accelerating Monte Carlo simulations of     *** 
+     ***  photon transport in a voxelized geometry using a massively parallel  *** 
+     ***  Graphics Processing Unit", Medical Physics 36, pp. 4878??880 (2009)  ***
+     ***                                                                       ***
+     ***                     Andreu Badal (Andreu.Badal-Soler@fda.hhs.gov)     ***
+     *****************************************************************************
+
+****** Code execution started on: Fri Aug 14 19:20:00 2026
+
+
+
+             *** SIMULATION IN THE CPU ***
+
+    -- INITIALIZATION phase:
+
+    -- [Route A] batch mode: 2 input files from manifest 'manifest.txt' (voxel geometry parsed once).
+
+
+========== [Route A] beam 1 / 2 : case4_g4_p000_fan00.in ==========
+
+
+    -- Reading the input file 'case4_g4_p000_fan00.in':
+       Material dose deposition tally ENABLED.
+       3D voxel dose deposition tally ENABLED.
+
+       Rotations from the input direction to +Y [deg]: rotZ = 11.198577 , rotX = 0.000000
+       Rotations from +Y to the input direction for the fan beam source model [deg]: rotZ = -11.198577 , rotX = 0.000000
+       Array for 4 scatter images correctly allocated (16 pixels, 0.000488 Mbytes)
+       Array for the deposited dose ROI (and uncertainty) correctly allocated (815409 voxels, 12.442154 Mbytes)
+    -- Reading the energy spectrum and initializing the Walker aliasing sampling algorithm.
+              x-ray tracks to simulate = 1388889
+                   initial random seed = 1234575809
+      azimuthal (phi), polar apertures = 7.465709 , 0.936727 degrees
+                   focal spot position = (66.000000, 6.000000, 26.000000)
+                      source direction = (0.194210, 0.980960, 0.000000)
+                  initial angle from X = 0.000000
+              source-detector distance = 100.000000 cm
+                       detector center = (85.420998, 104.096001, 26.000000)
+           detector low corner (at +Y) = (43.578094, 118.703613, 24.000000)
+                number of pixels image = 4x4 = 16
+                            pixel size = 10.000x1.000 cm
+                 number of projections = 1
+                      Input voxel file = case4_g4.vox.gz
+                     Output image file = image_g4_p000_fan00.dat
+                      Output dose file = dose_g4_p000_fan00.dat
+         Input region of interest dose = X[201,329], Y[201,329], Z[81,129]
+
+                  Energy spectrum file = tg195_120kvp.spc
+            number of energy bins read = 207
+             minimum, maximum energies = 16.500, 120.000 keV
+                  mean energy spectrum = 56.143 keV
+
+
+    -- Reading voxel file 'case4_g4.vox.gz':
+       Number of voxels in the input geometry file: 528 x 528 x 208 =  57987072
+       Size of the input voxels: 0.250000 x 0.250000 x 0.250000 cm  (voxel volume=0.015625 cm^3)
+       Voxel bounding box size: 132.000000 x 132.000000 x 52.000000 cm
+
+    -- Initializing the voxel material and density vector (442.406250 Mbytes)...
+       Total number of voxels read: 57987072
+       Total CPU memory allocated for voxels vector and data structures = 443.875916 Mbytes
+
+    -- Reading the material data files (MAX_MATERIALS=15):
+         Mat 1: File 'air_5-120keV.mcgpu.gz'
+                Nominal density = 0.001205 g/cm^3; Max density in voxels = 0.001205 g/cm^3
+                Number of energy values in the mean free path database: 23002.
+                Linear interpolation data correctly allocated (8.072601 Mbytes)
+                Lowest energy first bin = 5000.000000 eV, last bin = 120005.000000 eV; bin width = 5.000000 eV
+         Mat 2: File 'PMMA_5-120keV.mcgpu.gz'
+                Nominal density = 1.190000 g/cm^3; Max density in voxels = 1.190000 g/cm^3
+
+    -- INITIALIZATION finished: elapsed time = 14.485 s. 
+
+
+
+    -- MONTE CARLO LOOP phase. Time: Fri Aug 14 19:20:14 2026
+
+
+       Executing 1389 history batches in the CPU, with 1000 histories in each batch: 1389000 histories in total.
+
+
+          [... a Compton event tried to increase the x ray energy due to precision error. Keeping initial energy. (This warning will not be repeated.)]
+               scaling=1.00006926059723, costh_Compton=0.99820143346550
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              Simulated x rays:    1389000
+              Simulation time [s]: 3.44
+              Speed [x-rays/s]:    403427.24
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  1.980%
+              Maximum energy detected in pixel 10: (x,y)=(2,2). Maximum pixel value = 46.395238 eV/cm^2
+
+
+
+          *** VOXEL ROI DOSE TALLY REPORT ***
+
+              Reporting the 3D voxel dose distribution as binary floats in the .raw file, and the 2D dose for Z plane 104 as ASCII text.
+
+              Total energy absorved inside the dose deposition ROI: 26.34371 keV/hist
+              Maximum voxel dose (+-2 sigma): 6781.124575 +- 20.812605 eV/g per history.
+              Dose deposited in the different materials inside the input ROI computed post-processing the 3D voxel dose results:
+
+  [MAT]  [DOSE_ROI eV/g/hist]  [2*std_dev]  [Rel error %]  [Peak voxel dose]  [2*std_dev]  [Rel error %]  [Peak voxel coord]  [E_dep eV/hist]  [MASS_ROI g]  [NUM_VOXELS_ROI]
+ ===============================================================================================================================================================================
+	1	4.61486	0.34713	7.522		6781.12458	41.62521	0.614	(291,202,103)		15.95883	3.45814	183701
+	2	2.24146	0.00071	0.031		505.82430	6.27091	1.240	(292,207,103)		26327.74687	11745.82119	631708
+
+
+
+          *** MATERIALS TOTAL DOSE TALLY REPORT ***
+
+              Dose deposited in each material defined in the input file (tallied directly per material, not per voxel):
+              The results of this tally should be equal to the voxel tally doses for an ROI covering all voxels.
+
+  [MAT]  [DOSE eV/g/hist]  [2*std_dev]  [Rel_error 2*std_dev, %]  [E_dep eV/hist]  [MASS_TOTAL g]
+ =================================================================================================
+	1	0.22585		0.00440		1.95		237.77		1052.76716
+	2	0.79575		-nan(ind)		-nan(ind)		30519.78		38353.70184
+
+     WARNING: it is possible that the unsigned long long int counter used to tally the standard deviation overflowed (>2^64).
+              The standard deviation may be incorrectly measured, but it will surely be very small (<< 1%).
+              Max counter (mat=2): E_dep = 4239197840748 , E_dep^2 = 1158417594397889
+
+
+
+       ==> CUDA: Time reporting the dose data: 0.078000 s
+
+
+========== [Route A] beam 2 / 2 : case4_g4_p000_fan01.in ==========
+
+
+    -- Reading the input file 'case4_g4_p000_fan01.in':
+       Material dose deposition tally ENABLED.
+       3D voxel dose deposition tally ENABLED.
+
+       Rotations from the input direction to +Y [deg]: rotZ = 3.732883 , rotX = 0.000000
+       Rotations from +Y to the input direction for the fan beam source model [deg]: rotZ = -3.732883 , rotX = 0.000000
+       Array for 4 scatter images correctly allocated (16 pixels, 0.000488 Mbytes)
+       Array for the deposited dose ROI (and uncertainty) correctly allocated (815409 voxels, 12.442154 Mbytes)
+    -- Reading the energy spectrum and initializing the Walker aliasing sampling algorithm.
+              x-ray tracks to simulate = 1388889
+                   initial random seed = 1234576809
+      azimuthal (phi), polar apertures = 7.465709 , 0.952882 degrees
+                   focal spot position = (66.000000, 6.000000, 26.000000)
+                      source direction = (0.065105, 0.997878, 0.000000)
+                  initial angle from X = 0.000000
+              source-detector distance = 100.000000 cm
+                       detector center = (72.510498, 105.787834, 26.000000)
+           detector low corner (at +Y) = (45.469337, 110.284195, 24.000000)
+                number of pixels image = 4x4 = 16
+                            pixel size = 10.000x1.000 cm
+                 number of projections = 1
+                      Input voxel file = case4_g4.vox.gz
+                     Output image file = image_g4_p000_fan01.dat
+                      Output dose file = dose_g4_p000_fan01.dat
+         Input region of interest dose = X[201,329], Y[201,329], Z[81,129]
+
+                  Energy spectrum file = tg195_120kvp.spc
+            number of energy bins read = 207
+             minimum, maximum energies = 16.500, 120.000 keV
+                  mean energy spectrum = 56.143 keV
+
+
+    -- [Route A] reusing cached voxel geometry 'case4_g4.vox.gz' (442.406250 MB); ASCII parse skipped.
+       Total CPU memory allocated for voxels vector and data structures = 451.773010 Mbytes
+
+    -- Reading the material data files (MAX_MATERIALS=15):
+         Mat 1: File 'air_5-120keV.mcgpu.gz'
+                Nominal density = 0.001205 g/cm^3; Max density in voxels = 0.001205 g/cm^3
+                Number of energy values in the mean free path database: 23002.
+                Linear interpolation data correctly allocated (8.072601 Mbytes)
+                Lowest energy first bin = 5000.000000 eV, last bin = 120005.000000 eV; bin width = 5.000000 eV
+         Mat 2: File 'PMMA_5-120keV.mcgpu.gz'
+                Nominal density = 1.190000 g/cm^3; Max density in voxels = 1.190000 g/cm^3
+
+    -- INITIALIZATION finished: elapsed time = 0.348 s. 
+
+
+
+    -- MONTE CARLO LOOP phase. Time: Fri Aug 14 19:20:18 2026
+
+
+       Executing 1389 history batches in the CPU, with 1000 histories in each batch: 1389000 histories in total.
+
+
+
+          *** IMAGE TALLY PERFORMANCE REPORT ***
+              Simulated x rays:    1389000
+              Simulation time [s]: 3.68
+              Speed [x-rays/s]:    377856.37
+
+              Fraction of initial energy arriving at the detector (over the mean energy of the spectrum):  0.160%
+              Maximum energy detected in pixel 6: (x,y)=(2,1). Maximum pixel value = 2.100649 eV/cm^2
+
+
+
+          *** VOXEL ROI DOSE TALLY REPORT ***
+
+              Reporting the 3D voxel dose distribution as binary floats in the .raw file, and the 2D dose for Z plane 104 as ASCII text.
+
+              Total energy absorved inside the dose deposition ROI: 30.33267 keV/hist
+              Maximum voxel dose (+-2 sigma): 3759.192696 +- 11.967700 eV/g per history.
+              Dose deposited in the different materials inside the input ROI computed post-processing the 3D voxel dose results:
+
+  [MAT]  [DOSE_ROI eV/g/hist]  [2*std_dev]  [Rel error %]  [Peak voxel dose]  [2*std_dev]  [Rel error %]  [Peak voxel coord]  [E_dep eV/hist]  [MASS_ROI g]  [NUM_VOXELS_ROI]
+ ===============================================================================================================================================================================
+	1	0.92654	0.15677	16.921		3759.19270	23.93540	0.637	(274,200,104)		3.20409	3.45814	183701
+	2	2.58215	-0.01131	-0.438		558.72841	6.62891	1.186	(267,200,103)		30329.46600	11745.82119	631708
+
+
+
+          *** MATERIALS TOTAL DOSE TALLY REPORT ***
+
+              Dose deposited in each material defined in the input file (tallied directly per material, not per voxel):
+              The results of this tally should be equal to the voxel tally doses for an ROI covering all voxels.
+
+  [MAT]  [DOSE eV/g/hist]  [2*std_dev]  [Rel_error 2*std_dev, %]  [E_dep eV/hist]  [MASS_TOTAL g]
+ =================================================================================================
+	1	0.19658		0.00412		2.10		206.96		1052.76716
+	2	0.93681		-nan(ind)		-nan(ind)		35930.26		38353.70184
+
+     WARNING: it is possible that the unsigned long long int counter used to tally the standard deviation overflowed (>2^64).
+              The standard deviation may be incorrectly measured, but it will surely be very small (<< 1%).
+              Max counter (mat=2): E_dep = 4990713383158 , E_dep^2 = 1366523508728893
+
+
+
+       ==> CUDA: Time reporting the dose data: 0.080000 s
+
+
+
+    -- SIMULATION FINISHED!
+
+
+       ****** TOTAL SIMULATION PERFORMANCE (including initialization and reporting) ******
+
+          >>> Execution time including initialization, transport and report: 22.053 s.
+          >>> Time spent in the Monte Carlo transport only: 3.676 s.
+          >>> Time spent in initialization, reporting and clean up: 18.377 s.
+
+          >>> Total number of simulated x rays:  1389000
+          >>> Total speed (using 1 thread, including initialization time) [x-rays/s]:  62984.63
+
+
+****** Code execution finished on: Fri Aug 14 19:20:22 2026
+
+

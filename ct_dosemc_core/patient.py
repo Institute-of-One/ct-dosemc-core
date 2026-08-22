@@ -61,6 +61,8 @@ __all__ = [
     "bone_volume_fraction",
     "build_patient_phantom",
     "default_tissue_groups",
+    "material_energy_tag",
+    "axial_station_z_cm",
     "embed_in_focal_box",
     "mix_by_volume_fraction",
     "organ_bounding_box",
@@ -282,6 +284,11 @@ class TissueGroup:
     is_bone: bool = False
 
 
+def material_energy_tag(kvp: float) -> str:
+    """File suffix for the Schneider set. Tables must cover the spectrum max."""
+    return "5-150keV" if float(kvp) > 120.0 else "5-120keV"
+
+
 def default_tissue_groups(
     *,
     n_bone_bins: int = N_BONE_BINS,
@@ -289,6 +296,7 @@ def default_tissue_groups(
     bone_top_hu: float = BONE_TOP_HU,
     breakpoints_hu: Sequence[float] | None = None,
     density_g_cm3: Sequence[float] | None = None,
+    energy_tag: str = "5-120keV",
 ) -> tuple[TissueGroup, ...]:
     """The default Schneider group table: 4 merged soft groups + graded bone.
 
@@ -323,10 +331,10 @@ def default_tissue_groups(
     # in materials/PROVENANCE.json. The nominal density is only what the material
     # file was generated at; the per-voxel density is the continuous Schneider value.
     soft = [
-        TissueGroup("air", float("-inf"), "air_5-120keV.mcgpu.gz", 0.00120479),
-        TissueGroup("lung", -900.0, "lung_5-120keV.mcgpu.gz", 0.3),
-        TissueGroup("adipose", -200.0, "adipose_5-120keV.mcgpu.gz", 0.92),
-        TissueGroup("soft_tissue", -30.0, "soft_tissue_5-120keV.mcgpu.gz", 1.0),
+        TissueGroup("air", float("-inf"), f"air_{energy_tag}.mcgpu.gz", 0.00120479),
+        TissueGroup("lung", -900.0, f"lung_{energy_tag}.mcgpu.gz", 0.3),
+        TissueGroup("adipose", -200.0, f"adipose_{energy_tag}.mcgpu.gz", 0.92),
+        TissueGroup("soft_tissue", -30.0, f"soft_tissue_{energy_tag}.mcgpu.gz", 1.0),
     ]
     edges = bone_bin_edges(n_bone_bins, start_hu=bone_start_hu, top_hu=bone_top_hu)
     bone: list[TissueGroup] = []
@@ -337,7 +345,7 @@ def default_tissue_groups(
             TissueGroup(
                 name=f"bone_{k + 1}",
                 hu_low=lo,
-                material_file=f"bone_{k + 1}_5-120keV.mcgpu.gz",
+                material_file=f"bone_{k + 1}_{energy_tag}.mcgpu.gz",
                 nominal_density_g_cm3=rho(mid),
                 is_bone=True,
             )
@@ -409,6 +417,7 @@ def build_patient_phantom(
     breakpoints_hu: Sequence[float] | None = None,
     density_g_cm3: Sequence[float] | None = None,
     focal_box_xy_cm: float | None = FOCAL_BOX_XY_CM,
+    energy_tag: str = "5-120keV",
 ) -> tuple[VoxelPhantom, dict]:
     """Native HU volume -> a 2.5 mm :class:`VoxelPhantom` with Schneider materials.
 
@@ -419,7 +428,11 @@ def build_patient_phantom(
     ``focal_box_xy_cm`` (default 130 cm) so the focal spot at SAD sits *inside*
     the voxel box (G3). Returns ``(phantom, report)``.
     """
-    groups = tuple(groups) if groups is not None else default_tissue_groups()
+    groups = (
+        tuple(groups)
+        if groups is not None
+        else default_tissue_groups(energy_tag=energy_tag)
+    )
     hu_iso = resample_isotropic(volume_hu, spacing_zyx_mm, iso_mm=iso_mm, order=1)
 
     kw: dict = {}
@@ -452,6 +465,26 @@ def build_patient_phantom(
         }
     )
     return phantom, report
+
+
+def axial_station_z_cm(length_cm: float, collimation_cm: float) -> np.ndarray:
+    """Centres of contiguous axial stations covering a phantom of ``length_cm``.
+
+    One mid-scan rotation of width ``collimation_cm`` leaves most of a 20–40 cm
+    series unirradiated; the organ mean is then a beam-overlap fraction, not the
+    exam dose. Stations are equally spaced so their pitch equals
+    ``length_cm / n`` with ``n = round(length / collimation)`` (at least one).
+    Each centre lies strictly inside ``(0, length)`` so G3 still contains the
+    focal spot.
+    """
+    if length_cm <= 0.0 or collimation_cm <= 0.0:
+        raise ValueError("phantom length and collimation must be positive")
+    n = max(1, int(round(length_cm / collimation_cm)))
+    spacing = length_cm / n
+    z = (np.arange(n, dtype=float) + 0.5) * spacing
+    if np.any(z <= 0.0) or np.any(z >= length_cm):
+        raise ValueError(f"station z {z} not strictly inside (0, {length_cm})")
+    return z
 
 
 def embed_in_focal_box(

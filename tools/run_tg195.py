@@ -37,8 +37,10 @@ from ct_dosemc_core.mcgpu_io import (  # noqa: E402
     McgpuRun,
     read_dose_map,
     run_mcgpu,
+    split_route_a_logs,
     stage_material_files,
     write_input_file,
+    write_manifest,
     write_voxel_file,
 )
 from ct_dosemc_core.phantom import Material  # noqa: E402
@@ -170,6 +172,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", type=int, default=1234567890)
     p.add_argument("--executable", type=Path, default=DEFAULT_EXE)
     p.add_argument("--tag", type=str, default=None)
+    p.add_argument(
+        "--batch",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Route A: one MC-GPU process over @manifest so the geometry is parsed "
+        "once. Each sub-fan still writes its own dose tally (an equal-weight "
+        "single-tally sum would bias the estimator by -0.53%%). --no-batch is "
+        "Route B, one process per beam.",
+    )
     p.add_argument("--timeout-hours", type=float, default=48.0)
     p.add_argument(
         "--rescore",
@@ -366,7 +377,7 @@ def run_sub_fan_set(
     if drive_projections_here:
         print(
             f"[traj ] {n_projections} projections x {len(fans)} sub-fans = {n_runs} "
-            "engine invocations (MC-GPU re-aims at the rotation centre, so its "
+            "beams (MC-GPU re-aims at the rotation centre, so its "
             "built-in trajectory cannot carry an off-axis sub-fan)"
         )
 
@@ -388,6 +399,7 @@ def run_sub_fan_set(
     totals: dict[str, float] = {}
     variances: dict[str, float] = {}
     fan_records = []
+    jobs: list[dict] = []
 
     for p_index, beta in enumerate(gantry_angles):
         for fan in fans:
@@ -404,50 +416,66 @@ def run_sub_fan_set(
             uy = d0x * math.sin(psi) + d0y * math.cos(psi)
 
             stem = f"{label}_p{p_index:03d}_fan{fan.index:02d}"
-            if args.rescore:
-                # Re-score an existing tally. The scoring geometry is rebuilt from
-                # the same arguments, so this is only valid when they are
-                # unchanged; assert_apertures below re-reads the engine's own log
-                # and catches the case where they are not.
-                existing = rundir / f"dose_{stem}.dat"
-                if not (existing.parent / (existing.name + ".raw")).is_file():
-                    raise SystemExit(f"--rescore: no tally at {existing}.raw")
-                run = McgpuRun(
-                    executable=Path(args.executable).resolve(),
-                    input_file=rundir / f"case4_{stem}.in",
-                    log_file=rundir / f"mcgpu_{stem}.log",
-                    returncode=0,
-                    wall_seconds=float("nan"),
-                    total_histories=per_fan_histories * engine_projections,
-                )
-                _score_beamlet(
-                    run=run,
-                    rundir=rundir,
-                    stem=stem,
-                    fan=fan,
-                    phantom=phantom,
-                    spec=spec,
-                    voi_builder=voi_builder,
-                    weight=(fan.solid_angle_sr / omega_total) / len(gantry_angles),
-                    totals=totals,
-                    variances=variances,
-                    fan_records=fan_records,
-                    p_index=p_index,
-                    beta=beta,
-                    histories=per_fan_histories * engine_projections,
-                )
-                continue
+            jobs.append(
+                {
+                    "p_index": p_index,
+                    "beta": beta,
+                    "fan": fan,
+                    "stem": stem,
+                    "sx": sx,
+                    "sy": sy,
+                    "ux": ux,
+                    "uy": uy,
+                    "weight": (fan.solid_angle_sr / omega_total) / len(gantry_angles),
+                    "histories": per_fan_histories * engine_projections,
+                    "seed": args.seed + 1000 * fan.index + 7 * p_index,
+                }
+            )
 
+    use_batch = bool(getattr(args, "batch", True)) and (not args.rescore) and len(jobs) > 1
+
+    if args.rescore:
+        for job in jobs:
+            existing = rundir / f"dose_{job['stem']}.dat"
+            if not (existing.parent / (existing.name + ".raw")).is_file():
+                raise SystemExit(f"--rescore: no tally at {existing}.raw")
+            run = McgpuRun(
+                executable=Path(args.executable).resolve(),
+                input_file=rundir / f"case4_{job['stem']}.in",
+                log_file=rundir / f"mcgpu_{job['stem']}.log",
+                returncode=0,
+                wall_seconds=float("nan"),
+                total_histories=job["histories"],
+            )
+            _score_beamlet(
+                run=run,
+                rundir=rundir,
+                stem=job["stem"],
+                fan=job["fan"],
+                phantom=phantom,
+                spec=spec,
+                voi_builder=voi_builder,
+                weight=job["weight"],
+                totals=totals,
+                variances=variances,
+                fan_records=fan_records,
+                p_index=job["p_index"],
+                beta=job["beta"],
+                histories=job["histories"],
+            )
+    else:
+        input_names: list[str] = []
+        for job in jobs:
             inp = write_input_file(
-                rundir / f"case4_{stem}.in",
+                rundir / f"case4_{job['stem']}.in",
                 histories_per_projection=per_fan_histories,
-                random_seed=args.seed + 1000 * fan.index + 7 * p_index,
+                random_seed=job["seed"],
                 spectrum_file=spectrum_file,
-                source_position_cm=(sx, sy, cz),
-                source_direction=(ux, uy, 0.0),
-                polar_aperture_deg=fan.polar_aperture_deg,
-                azimuthal_aperture_deg=fan.azimuthal_aperture_deg,
-                image_file=f"image_{stem}.dat",
+                source_position_cm=(job["sx"], job["sy"], cz),
+                source_direction=(job["ux"], job["uy"], 0.0),
+                polar_aperture_deg=job["fan"].polar_aperture_deg,
+                azimuthal_aperture_deg=job["fan"].azimuthal_aperture_deg,
+                image_file=f"image_{job['stem']}.dat",
                 image_pixels=(4, 4),
                 image_size_cm=(40.0, 4.0),
                 sdd_cm=100.0,
@@ -457,48 +485,110 @@ def run_sub_fan_set(
                 ),
                 sad_cm=spec.sad_cm,
                 translation_per_projection_cm=0.0,
-                dose_file=f"dose_{stem}.dat",
+                dose_file=f"dose_{job['stem']}.dat",
                 voxel_file=vox.name,
                 materials=materials,
                 dose_roi=((xy_lo, xy_hi), (xy_lo, xy_hi), (z_lo, z_hi)),
             )
-            run = run_mcgpu(
-                args.executable,
-                inp,
-                workdir=rundir,
-                log_file=rundir / f"mcgpu_{stem}.log",
-                total_histories=per_fan_histories * engine_projections,
-                timeout_s=args.timeout_hours * 3600.0,
-            )
-            run.check()
-            _score_beamlet(
-                run=run,
-                rundir=rundir,
-                stem=stem,
-                fan=fan,
-                phantom=phantom,
-                spec=spec,
-                voi_builder=voi_builder,
-                weight=(fan.solid_angle_sr / omega_total) / len(gantry_angles),
-                totals=totals,
-                variances=variances,
-                fan_records=fan_records,
-                p_index=p_index,
-                beta=beta,
-                histories=per_fan_histories * engine_projections,
-            )
-            if len(gantry_angles) == 1:
-                print(
-                    f"[fan {fan.index:02d}] psi={fan.centre_psi_deg:+7.3f} deg  "
-                    f"w={fan_records[-1]['weight']:.4f}  "
-                    f"{fan_records[-1]['wall_seconds']:6.1f} s"
-                )
-        if len(gantry_angles) > 1:
+            input_names.append(inp.name)
+            job["input_file"] = inp
+
+        if use_batch:
+            manifest = write_manifest(rundir / "manifest.txt", input_names)
             print(
-                f"[proj {p_index + 1:3d}/{len(gantry_angles)}] "
-                f"beta={math.degrees(beta):6.1f} deg  "
-                f"{sum(r['wall_seconds'] for r in fan_records[-len(fans):]):6.1f} s"
+                f"[batch] Route A: {len(input_names)} beams in one process "
+                f"(@{manifest.name}); geometry parsed once, per-beam tallies"
             )
+            batch_run = run_mcgpu(
+                args.executable,
+                manifest,
+                workdir=rundir,
+                log_file=rundir / "mcgpu_batch.log",
+                total_histories=sum(j["histories"] for j in jobs),
+                timeout_s=args.timeout_hours * 3600.0,
+                argv1=f"@{manifest.name}",
+            )
+            batch_run.check()
+            per_log = split_route_a_logs(batch_run.log_file, rundir)
+            missing = [name for name in input_names if name not in per_log]
+            if missing:
+                raise RuntimeError(
+                    f"Route A log split missed {len(missing)} beam(s); first={missing[0]}"
+                )
+            parsed_once = batch_run.log_file.read_text(
+                encoding="latin-1", errors="replace"
+            )
+            n_parsed = parsed_once.count("Reading voxel file")
+            n_cache = parsed_once.count("ASCII parse skipped")
+            print(
+                f"[batch] wall={batch_run.wall_seconds:.1f} s  "
+                f"voxel-file reads={n_parsed}  cache-hits={n_cache}"
+            )
+            per_beam_wall = batch_run.wall_seconds / len(jobs)
+            for job in jobs:
+                run = McgpuRun(
+                    executable=batch_run.executable,
+                    input_file=job["input_file"],
+                    log_file=per_log[job["input_file"].name],
+                    returncode=0,
+                    wall_seconds=per_beam_wall,
+                    total_histories=job["histories"],
+                )
+                _score_beamlet(
+                    run=run,
+                    rundir=rundir,
+                    stem=job["stem"],
+                    fan=job["fan"],
+                    phantom=phantom,
+                    spec=spec,
+                    voi_builder=voi_builder,
+                    weight=job["weight"],
+                    totals=totals,
+                    variances=variances,
+                    fan_records=fan_records,
+                    p_index=job["p_index"],
+                    beta=job["beta"],
+                    histories=job["histories"],
+                )
+        else:
+            for job in jobs:
+                run = run_mcgpu(
+                    args.executable,
+                    job["input_file"],
+                    workdir=rundir,
+                    log_file=rundir / f"mcgpu_{job['stem']}.log",
+                    total_histories=job["histories"],
+                    timeout_s=args.timeout_hours * 3600.0,
+                )
+                run.check()
+                _score_beamlet(
+                    run=run,
+                    rundir=rundir,
+                    stem=job["stem"],
+                    fan=job["fan"],
+                    phantom=phantom,
+                    spec=spec,
+                    voi_builder=voi_builder,
+                    weight=job["weight"],
+                    totals=totals,
+                    variances=variances,
+                    fan_records=fan_records,
+                    p_index=job["p_index"],
+                    beta=job["beta"],
+                    histories=job["histories"],
+                )
+                if len(gantry_angles) == 1:
+                    print(
+                        f"[fan {job['fan'].index:02d}] psi={job['fan'].centre_psi_deg:+7.3f} deg  "
+                        f"w={fan_records[-1]['weight']:.4f}  "
+                        f"{fan_records[-1]['wall_seconds']:6.1f} s"
+                    )
+                elif job["fan"].index == fans[-1].index:
+                    print(
+                        f"[proj {job['p_index'] + 1:3d}/{len(gantry_angles)}] "
+                        f"beta={math.degrees(job['beta']):6.1f} deg  "
+                        f"{sum(r['wall_seconds'] for r in fan_records[-len(fans):]):6.1f} s"
+                    )
 
     values = {
         name: Value(
@@ -540,7 +630,8 @@ def run_sub_fan_set(
         "histories_total": float(args.histories),
         "n_projections": n_projections,
         "projections_driven_externally": drive_projections_here,
-        "engine_invocations": n_runs,
+        "engine_invocations": 1 if use_batch else n_runs,
+        "route_a_batch": use_batch,
         "air_margin_cm": args.air_margin,
         "air_margin_z_cm": args.air_margin_z,
         "beamlets": fan_records,
@@ -567,6 +658,48 @@ TG195_TOLERANCE = 0.01
 REFERENCE_CODE = "Penelope"
 AGREEMENT_SIGMAS = 2.0
 REPLICA_SD_REQUIREMENT = 0.0025
+
+SOURCE_ROUTE_BIT_IDENTITY = (
+    "One further modification hoists the geometry parse out of the sub-fan loop. "
+    "It changes no physics: on a full 10-replica reference set computed with the "
+    "unmodified engine, all 144 dose arrays are SHA-256 identical and the scored "
+    "VOI values are bit-identical "
+    "(results/phase1a/replica_120kvp_second_K4_L40_00 vs "
+    "results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+)
+
+
+def source_route_fields(
+    *,
+    n_sub_fans: int,
+    n_projections: int,
+    engine_invocations: int,
+) -> dict:
+    """Which engine path produced a Phase-1a number. Does not change the values.
+
+    Route B = one process per beam (P*K invocations). Route A = one process over
+    ``@manifest``. K=1 keeps the projection loop inside MC-GPU (neither A nor B).
+    """
+    if int(n_sub_fans) > 1 and int(n_projections) > 1:
+        route = "A" if int(engine_invocations) == 1 else "B"
+        detail = (
+            "Route A: one MC-GPU process over @manifest; geometry parsed once; "
+            "each sub-fan still writes its own dose tally"
+            if route == "A"
+            else "Route B: one MC-GPU process per (projection, sub-fan) beam"
+        )
+    else:
+        route = "native_ct_trajectory"
+        detail = (
+            "single centred fan; MC-GPU's built-in projection loop; not the "
+            "sub-fan @manifest path"
+        )
+    return {
+        "source_route": route,
+        "source_route_detail": detail,
+        "physics_unchanged_across_A_and_B": route in ("A", "B"),
+        "bit_identity_note": SOURCE_ROUTE_BIT_IDENTITY if route in ("A", "B") else None,
+    }
 
 
 def compare(values: dict[str, Value], reference: dict[str, dict[str, float]]) -> dict:
@@ -1050,8 +1183,8 @@ def replica_study(args) -> int:
     they disagree the disagreement is the finding.
     """
     k = int(args.replicas)
-    if k < 2:
-        raise SystemExit("--replicas needs at least 2 runs to form a sample SD")
+    if k < 1:
+        raise SystemExit("--replicas needs at least 1 run")
     base_seed = int(args.seed)
     # The inflation factor is a property of the estimator and the VOI, not of the
     # beam, so it has to be measured on the VOIs it will be applied to. Measuring
@@ -1117,10 +1250,11 @@ def replica_study(args) -> int:
     # other on disk.
     k_sub_fans = int(args.sub_fans)
     length_cm = int(round(float(args.phantom_length)))
+    tag_suffix = f"_{args.tag}" if args.tag else ""
     final_path = (
         REPO
         / "results"
-        / f"phase1a_G4_replica_uncertainty_{beam_choice}_{test_choice}_K{k_sub_fans}_L{length_cm}.json"
+        / f"phase1a_G4_replica_uncertainty_{beam_choice}_{test_choice}_K{k_sub_fans}_L{length_cm}{tag_suffix}.json"
     )
     progress_path = final_path.with_suffix(".progress.json")
     per_run: list[dict[str, float]] = []
@@ -1128,12 +1262,14 @@ def replica_study(args) -> int:
     replica_records: list[dict] = []
     engine_invocations_each: list[int] = []
     driven_externally_each: list[bool] = []
+    user_tag = args.tag
 
     for i in range(k):
         seed_i = base_seed + 7919 * (i + 1)  # disjoint PRNG starts
         tag = f"replica_{beam_choice}_{test_choice}_K{k_sub_fans}_L{length_cm}_{i:02d}"
+        if user_tag:
+            tag = f"{tag}_{user_tag}"
         args.seed = seed_i
-        args.tag = tag
         rundir = REPO / "results" / "phase1a" / tag
         rundir.mkdir(parents=True, exist_ok=True)
         result_path = rundir / "replica_result.json"
@@ -1192,6 +1328,11 @@ def replica_study(args) -> int:
                 "wall_seconds": float(
                     sum(b.get("wall_seconds", 0.0) or 0.0 for b in meta.get("beamlets", []))
                 ),
+                **source_route_fields(
+                    n_sub_fans=int(args.sub_fans),
+                    n_projections=n_projections,
+                    engine_invocations=int(meta.get("engine_invocations", 0)),
+                ),
             }
             replica_records.append(record)
             # Persist this replica before starting the next one, so a crash in a
@@ -1215,6 +1356,13 @@ def replica_study(args) -> int:
                 "base_seed": base_seed,
                 "engine_invocations_per_replica": engine_invocations_each,
                 "projections_driven_externally": driven_externally_each,
+                **source_route_fields(
+                    n_sub_fans=int(args.sub_fans),
+                    n_projections=n_projections,
+                    engine_invocations=(
+                        engine_invocations_each[-1] if engine_invocations_each else 0
+                    ),
+                ),
                 "comparison": _comparison(per_run, quoted) if len(per_run) >= 2 else None,
                 "per_replica": replica_records,
             },
@@ -1251,6 +1399,13 @@ def replica_study(args) -> int:
             "base_seed": base_seed,
             "engine_invocations_per_replica": engine_invocations_each,
             "projections_driven_externally": driven_externally_each,
+            **source_route_fields(
+                n_sub_fans=int(args.sub_fans),
+                n_projections=n_projections,
+                engine_invocations=(
+                    engine_invocations_each[0] if engine_invocations_each else 0
+                ),
+            ),
             "comparison": comparison,
             "per_replica": replica_records,
             "note": "The sub-fan quadrature combines genuinely independent engine "

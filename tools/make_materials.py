@@ -420,8 +420,10 @@ def main(argv: list[str] | None = None) -> int:
 
     manifest = MATERIALS_DIR / "PROVENANCE.json"
     existing = json.loads(manifest.read_text(encoding="utf-8")) if manifest.is_file() else {}
-    by_name = {r["material"]: r for r in existing.get("materials", [])}
-    by_name.update({r["material"]: r for r in records})
+    # Key by file, not material name: 5-120 keV and 5-150 keV of the same
+    # tissue must coexist. The 120 keV set stays the Phase-1a / ≤120 kVp path.
+    by_file = {r["file"]: r for r in existing.get("materials", [])}
+    by_file.update({r["file"]: r for r in records})
     manifest.write_text(
         json.dumps(
             {
@@ -436,7 +438,7 @@ def main(argv: list[str] | None = None) -> int:
                     "A code system for Monte Carlo simulation of electron and photon "
                     "transport, NEA-OECD (2006)",
                 },
-                "materials": sorted(by_name.values(), key=lambda r: str(r["material"])),
+                "materials": sorted(by_file.values(), key=lambda r: str(r["file"])),
             },
             indent=2,
         ),

@@ -1,0 +1,16 @@
+{
+  "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_CPU.exe",
+  "executable_sha256": "0ab3741f444fe9eff2ef5ffa2b1329ffe17d2fb1eb1ba903b89cd3764b848971",
+  "reference_inputs": "D:\\DevGit\\ct_dosemc_core\\results\\phase1a\\replica_120kvp_second_K4_L40_00",
+  "beams": [
+    "case4_g4_p000_fan00.in",
+    "case4_g4_p000_fan01.in"
+  ],
+  "voxel_file_reads": 1,
+  "cache_hits": 1,
+  "single_sha256": {
+    "g4_p000_fan00": "be91fcd743e450f0363e191e5212eb0a3c82166d176fb6ff65839bd57c82cca3",
+    "g4_p000_fan01": "13db5124dfab61fddbb45d5d09e8b4fbdb465798d6d507effb032da4a8904e53"
+  },
+  "pass": true
+}

@@ -1,0 +1,29 @@
+{
+  "what": "Bowtie-aware 32 cm CTDI runs required to scale Fig. 4. One run per (vendor, kVp) that the scatter uses. Phase-1 no-bowtie anchors are not this factor.",
+  "formula": "D_scaled = D_raw * CTDIvol_series / CTDIvol_MC(vendor, kVp, pitch)",
+  "source_model": {
+    "projections": 36,
+    "sub_fans": 4,
+    "histories": 2e8,
+    "route": "A",
+    "phantom_cm": 32
+  },
+  "runs": [
+    {"vendor": "Canon/Toshiba", "kvp": 120, "n_series_on_figure4": 6},
+    {"vendor": "GE", "kvp": 100, "n_series_on_figure4": 1},
+    {"vendor": "GE", "kvp": 120, "n_series_on_figure4": 5},
+    {"vendor": "Philips", "kvp": 120, "n_series_on_figure4": 9},
+    {"vendor": "Siemens", "kvp": 100, "n_series_on_figure4": 2},
+    {"vendor": "Siemens", "kvp": 120, "n_series_on_figure4": 6},
+    {"vendor": "Siemens", "kvp": 140, "n_series_on_figure4": 1, "needs_150kev_pmma": true}
+  ],
+  "omitted_from_figure4": {
+    "n": 2,
+    "reason": "CTDIvol unavailable (LightSpeed Ultra, Revolution EVO); already omitted on the x-axis"
+  },
+  "not_on_submission_path": [
+    "Fig. 6 metal-clamp re-include",
+    "Phase 1b as a second verification gate",
+    "SpekPy absolute mAs as the patient scale"
+  ]
+}

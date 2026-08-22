@@ -1,10 +1,10 @@
 {
   "environment": {
-    "generated_utc": "2026-08-14T04:47:40+00:00",
+    "generated_utc": "2026-08-14T04:55:17+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": "56dfd4f9aa06bcb78a24ca48c554a6cba29c8de4",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
@@ -145,6 +145,14 @@
       }
     },
     "caption_line": "Open squares: CTDIvol reconstructed under IORN-004's own low-confidence warning (Revolution CT matched to Revolution CT ES, score 0.50). Filled squares: reconstructed with an exact or high-confidence table match. Filled circles: recorded in DICOM/RDSR. Two series omitted (LightSpeed Ultra, Revolution EVO).",
+    "robustness_recorded_only": {
+      "gated_on": "007 organ doses (Fig. 4 y-axis)",
+      "subset": "figure4_marker == recorded",
+      "n_series": 23,
+      "sentence": "Restricting Fig. 4 to the 23 series with a recorded CTDIvol does not change the index\u2013absorbed-dose relationship.",
+      "why": "7 of 30 x-axis series are reconstructed. A reviewer will ask whether those points create the relationship. Dropping them and reading the same scatter answers that. No extra Monte Carlo.",
+      "tool": "python tools/figure4_scatter.py  (writes the line once --doses is supplied)"
+    },
     "fallback_when_ctdivol_unavailable": "relative_weight w_o is present on every organ; the mGy-vs-mGy scatter uses only series with a defined CTDIvol_o. A scanner 004's resolver refuses is unrecoverable, not aliased."
   },
   "series": [

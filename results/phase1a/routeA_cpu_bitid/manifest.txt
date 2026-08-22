@@ -1,0 +1,2 @@
+case4_g4_p000_fan00.in
+case4_g4_p000_fan01.in

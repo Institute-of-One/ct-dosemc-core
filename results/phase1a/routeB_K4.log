@@ -1,0 +1,285 @@
+﻿===== RESTART 2026-08-14 10:39:25 JST  python -u PYTHONUNBUFFERED=1  resume L40 00-03, run 04-09 =====
+
+[G4] replica 1/10: reusing replica_result.json (seed 1234575809)
+    center: 11.3006 (from disk)
+    perimeter: 39.6278 (from disk)
+
+[G4] replica 2/10: reusing replica_result.json (seed 1234583728)
+    center: 11.2007 (from disk)
+    perimeter: 39.7002 (from disk)
+
+[G4] replica 3/10: reusing replica_result.json (seed 1234591647)
+    center: 11.2836 (from disk)
+    perimeter: 39.6862 (from disk)
+
+[G4] replica 4/10: reusing replica_result.json (seed 1234599566)
+    center: 11.2432 (from disk)
+    perimeter: 39.6206 (from disk)
+
+[G4] replica 5/10, seed 1234607485
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    58.9 s
+[proj   2/36] beta=  10.0 deg    58.7 s
+[proj   3/36] beta=  20.0 deg    58.5 s
+[proj   4/36] beta=  30.0 deg    58.9 s
+[proj   5/36] beta=  40.0 deg    62.5 s
+[proj   6/36] beta=  50.0 deg    59.5 s
+[proj   7/36] beta=  60.0 deg    59.2 s
+[proj   8/36] beta=  70.0 deg    58.7 s
+[proj   9/36] beta=  80.0 deg    58.4 s
+[proj  10/36] beta=  90.0 deg    58.1 s
+[proj  11/36] beta= 100.0 deg    58.3 s
+[proj  12/36] beta= 110.0 deg    58.3 s
+[proj  13/36] beta= 120.0 deg    58.1 s
+[proj  14/36] beta= 130.0 deg    58.7 s
+[proj  15/36] beta= 140.0 deg    58.5 s
+[proj  16/36] beta= 150.0 deg    58.3 s
+[proj  17/36] beta= 160.0 deg    58.3 s
+[proj  18/36] beta= 170.0 deg    58.0 s
+[proj  19/36] beta= 180.0 deg    58.3 s
+[proj  20/36] beta= 190.0 deg    58.7 s
+[proj  21/36] beta= 200.0 deg    59.1 s
+[proj  22/36] beta= 210.0 deg    58.5 s
+[proj  23/36] beta= 220.0 deg    58.4 s
+[proj  24/36] beta= 230.0 deg    58.3 s
+[proj  25/36] beta= 240.0 deg    58.5 s
+[proj  26/36] beta= 250.0 deg    58.5 s
+[proj  27/36] beta= 260.0 deg    58.6 s
+[proj  28/36] beta= 270.0 deg    58.1 s
+[proj  29/36] beta= 280.0 deg    58.8 s
+[proj  30/36] beta= 290.0 deg    58.8 s
+[proj  31/36] beta= 300.0 deg    58.6 s
+[proj  32/36] beta= 310.0 deg    58.5 s
+[proj  33/36] beta= 320.0 deg    58.3 s
+[proj  34/36] beta= 330.0 deg    58.7 s
+[proj  35/36] beta= 340.0 deg    58.6 s
+[proj  36/36] beta= 350.0 deg    58.0 s
+    center: 11.2943 +/- 0.0050
+    perimeter: 39.6288 +/- 0.0093
+
+[G4] replica 6/10, seed 1234615404
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    58.7 s
+[proj   2/36] beta=  10.0 deg    58.8 s
+[proj   3/36] beta=  20.0 deg    59.1 s
+[proj   4/36] beta=  30.0 deg    58.5 s
+[proj   5/36] beta=  40.0 deg    59.0 s
+[proj   6/36] beta=  50.0 deg    58.4 s
+[proj   7/36] beta=  60.0 deg    58.9 s
+[proj   8/36] beta=  70.0 deg    58.9 s
+[proj   9/36] beta=  80.0 deg    58.6 s
+[proj  10/36] beta=  90.0 deg    58.8 s
+[proj  11/36] beta= 100.0 deg    58.7 s
+[proj  12/36] beta= 110.0 deg    58.4 s
+[proj  13/36] beta= 120.0 deg    59.0 s
+[proj  14/36] beta= 130.0 deg    58.5 s
+[proj  15/36] beta= 140.0 deg    58.9 s
+[proj  16/36] beta= 150.0 deg    58.8 s
+[proj  17/36] beta= 160.0 deg    58.8 s
+[proj  18/36] beta= 170.0 deg    58.5 s
+[proj  19/36] beta= 180.0 deg    58.6 s
+[proj  20/36] beta= 190.0 deg    58.6 s
+[proj  21/36] beta= 200.0 deg    58.7 s
+[proj  22/36] beta= 210.0 deg    58.7 s
+[proj  23/36] beta= 220.0 deg    58.8 s
+[proj  24/36] beta= 230.0 deg    58.6 s
+[proj  25/36] beta= 240.0 deg    58.7 s
+[proj  26/36] beta= 250.0 deg    58.8 s
+[proj  27/36] beta= 260.0 deg    58.5 s
+[proj  28/36] beta= 270.0 deg    58.8 s
+[proj  29/36] beta= 280.0 deg    58.8 s
+[proj  30/36] beta= 290.0 deg    58.8 s
+[proj  31/36] beta= 300.0 deg    58.9 s
+[proj  32/36] beta= 310.0 deg    59.1 s
+[proj  33/36] beta= 320.0 deg    58.8 s
+[proj  34/36] beta= 330.0 deg    59.0 s
+[proj  35/36] beta= 340.0 deg    58.8 s
+[proj  36/36] beta= 350.0 deg    59.1 s
+    center: 11.2857 +/- 0.0050
+    perimeter: 39.8095 +/- 0.0093
+
+[G4] replica 7/10, seed 1234623323
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    58.5 s
+[proj   2/36] beta=  10.0 deg    58.6 s
+[proj   3/36] beta=  20.0 deg    59.0 s
+[proj   4/36] beta=  30.0 deg    58.8 s
+[proj   5/36] beta=  40.0 deg    59.6 s
+[proj   6/36] beta=  50.0 deg    58.5 s
+[proj   7/36] beta=  60.0 deg    59.3 s
+[proj   8/36] beta=  70.0 deg    59.8 s
+[proj   9/36] beta=  80.0 deg    58.7 s
+[proj  10/36] beta=  90.0 deg    58.3 s
+[proj  11/36] beta= 100.0 deg    58.2 s
+[proj  12/36] beta= 110.0 deg    58.2 s
+[proj  13/36] beta= 120.0 deg    58.6 s
+[proj  14/36] beta= 130.0 deg    58.4 s
+[proj  15/36] beta= 140.0 deg    58.1 s
+[proj  16/36] beta= 150.0 deg    58.2 s
+[proj  17/36] beta= 160.0 deg    58.4 s
+[proj  18/36] beta= 170.0 deg    58.4 s
+[proj  19/36] beta= 180.0 deg    62.6 s
+[proj  20/36] beta= 190.0 deg    61.9 s
+[proj  21/36] beta= 200.0 deg    58.5 s
+[proj  22/36] beta= 210.0 deg    59.2 s
+[proj  23/36] beta= 220.0 deg    58.8 s
+[proj  24/36] beta= 230.0 deg    59.5 s
+[proj  25/36] beta= 240.0 deg    58.9 s
+[proj  26/36] beta= 250.0 deg    58.6 s
+[proj  27/36] beta= 260.0 deg    60.1 s
+[proj  28/36] beta= 270.0 deg    59.8 s
+[proj  29/36] beta= 280.0 deg    59.8 s
+[proj  30/36] beta= 290.0 deg    58.9 s
+[proj  31/36] beta= 300.0 deg    59.2 s
+[proj  32/36] beta= 310.0 deg    60.0 s
+[proj  33/36] beta= 320.0 deg    59.2 s
+[proj  34/36] beta= 330.0 deg    59.2 s
+[proj  35/36] beta= 340.0 deg    59.0 s
+[proj  36/36] beta= 350.0 deg    58.8 s
+    center: 11.2555 +/- 0.0050
+    perimeter: 39.6945 +/- 0.0093
+
+[G4] replica 8/10, seed 1234631242
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    59.2 s
+[proj   2/36] beta=  10.0 deg    59.2 s
+[proj   3/36] beta=  20.0 deg    59.9 s
+[proj   4/36] beta=  30.0 deg    59.4 s
+[proj   5/36] beta=  40.0 deg    58.9 s
+[proj   6/36] beta=  50.0 deg    58.6 s
+[proj   7/36] beta=  60.0 deg    59.5 s
+[proj   8/36] beta=  70.0 deg    58.9 s
+[proj   9/36] beta=  80.0 deg    59.1 s
+[proj  10/36] beta=  90.0 deg    59.0 s
+[proj  11/36] beta= 100.0 deg    58.7 s
+[proj  12/36] beta= 110.0 deg    58.9 s
+[proj  13/36] beta= 120.0 deg    58.9 s
+[proj  14/36] beta= 130.0 deg    58.4 s
+[proj  15/36] beta= 140.0 deg    58.9 s
+[proj  16/36] beta= 150.0 deg    58.8 s
+[proj  17/36] beta= 160.0 deg    58.6 s
+[proj  18/36] beta= 170.0 deg    58.4 s
+[proj  19/36] beta= 180.0 deg    58.8 s
+[proj  20/36] beta= 190.0 deg    58.3 s
+[proj  21/36] beta= 200.0 deg    58.8 s
+[proj  22/36] beta= 210.0 deg    58.7 s
+[proj  23/36] beta= 220.0 deg    58.6 s
+[proj  24/36] beta= 230.0 deg    58.7 s
+[proj  25/36] beta= 240.0 deg    58.6 s
+[proj  26/36] beta= 250.0 deg    59.9 s
+[proj  27/36] beta= 260.0 deg    59.0 s
+[proj  28/36] beta= 270.0 deg    59.0 s
+[proj  29/36] beta= 280.0 deg    58.9 s
+[proj  30/36] beta= 290.0 deg    58.9 s
+[proj  31/36] beta= 300.0 deg    58.7 s
+[proj  32/36] beta= 310.0 deg    58.8 s
+[proj  33/36] beta= 320.0 deg    59.3 s
+[proj  34/36] beta= 330.0 deg    58.7 s
+[proj  35/36] beta= 340.0 deg    58.8 s
+[proj  36/36] beta= 350.0 deg    59.0 s
+    center: 11.2389 +/- 0.0050
+    perimeter: 39.6586 +/- 0.0093
+
+[G4] replica 9/10, seed 1234639161
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    59.6 s
+[proj   2/36] beta=  10.0 deg    58.4 s
+[proj   3/36] beta=  20.0 deg    59.0 s
+[proj   4/36] beta=  30.0 deg    58.9 s
+[proj   5/36] beta=  40.0 deg    58.6 s
+[proj   6/36] beta=  50.0 deg    58.4 s
+[proj   7/36] beta=  60.0 deg    58.5 s
+[proj   8/36] beta=  70.0 deg    59.0 s
+[proj   9/36] beta=  80.0 deg    58.4 s
+[proj  10/36] beta=  90.0 deg    58.9 s
+[proj  11/36] beta= 100.0 deg    59.2 s
+[proj  12/36] beta= 110.0 deg    58.4 s
+[proj  13/36] beta= 120.0 deg    58.6 s
+[proj  14/36] beta= 130.0 deg    58.7 s
+[proj  15/36] beta= 140.0 deg    58.5 s
+[proj  16/36] beta= 150.0 deg    58.8 s
+[proj  17/36] beta= 160.0 deg    58.9 s
+[proj  18/36] beta= 170.0 deg    58.3 s
+[proj  19/36] beta= 180.0 deg    59.0 s
+[proj  20/36] beta= 190.0 deg    60.3 s
+[proj  21/36] beta= 200.0 deg    59.3 s
+[proj  22/36] beta= 210.0 deg    58.8 s
+[proj  23/36] beta= 220.0 deg    59.8 s
+[proj  24/36] beta= 230.0 deg    59.3 s
+[proj  25/36] beta= 240.0 deg    59.8 s
+[proj  26/36] beta= 250.0 deg    58.6 s
+[proj  27/36] beta= 260.0 deg    58.6 s
+[proj  28/36] beta= 270.0 deg    58.5 s
+[proj  29/36] beta= 280.0 deg    58.7 s
+[proj  30/36] beta= 290.0 deg    58.6 s
+[proj  31/36] beta= 300.0 deg    58.9 s
+[proj  32/36] beta= 310.0 deg    58.8 s
+[proj  33/36] beta= 320.0 deg    58.6 s
+[proj  34/36] beta= 330.0 deg    59.1 s
+[proj  35/36] beta= 340.0 deg    59.3 s
+[proj  36/36] beta= 350.0 deg    59.3 s
+    center: 11.2705 +/- 0.0050
+    perimeter: 39.7696 +/- 0.0093
+
+[G4] replica 10/10, seed 1234647080
+[roi  ] 129 x 129 x 49 = 0.82M voxels tallied of 58.0M (71x less dose I/O per invocation)
+[traj ] 36 projections x 4 sub-fans = 144 engine invocations (MC-GPU re-aims at the rotation centre, so its built-in trajectory cannot carry an off-axis sub-fan)
+[phant] r=16 cm, L=40 cm, 528x528x208 voxels of 0.25 cm (38.4 kg PMMA), 1.6 MB gz
+[fan  ] K=4, Omega=8.594542e-03 sr (+0.0674 % vs the specified rectangle)
+[proj   1/36] beta=   0.0 deg    58.9 s
+[proj   2/36] beta=  10.0 deg    58.9 s
+[proj   3/36] beta=  20.0 deg    60.5 s
+[proj   4/36] beta=  30.0 deg    59.2 s
+[proj   5/36] beta=  40.0 deg    58.6 s
+[proj   6/36] beta=  50.0 deg    58.1 s
+[proj   7/36] beta=  60.0 deg    58.1 s
+[proj   8/36] beta=  70.0 deg    58.5 s
+[proj   9/36] beta=  80.0 deg    58.8 s
+[proj  10/36] beta=  90.0 deg    59.6 s
+[proj  11/36] beta= 100.0 deg    59.5 s
+[proj  12/36] beta= 110.0 deg    58.7 s
+[proj  13/36] beta= 120.0 deg    58.9 s
+[proj  14/36] beta= 130.0 deg    58.6 s
+[proj  15/36] beta= 140.0 deg    58.9 s
+[proj  16/36] beta= 150.0 deg    58.3 s
+[proj  17/36] beta= 160.0 deg    58.3 s
+[proj  18/36] beta= 170.0 deg    59.5 s
+[proj  19/36] beta= 180.0 deg    59.0 s
+[proj  20/36] beta= 190.0 deg    58.7 s
+[proj  21/36] beta= 200.0 deg    58.4 s
+[proj  22/36] beta= 210.0 deg    58.6 s
+[proj  23/36] beta= 220.0 deg    60.0 s
+[proj  24/36] beta= 230.0 deg    59.2 s
+[proj  25/36] beta= 240.0 deg    58.7 s
+[proj  26/36] beta= 250.0 deg    58.6 s
+[proj  27/36] beta= 260.0 deg    58.7 s
+[proj  28/36] beta= 270.0 deg    58.9 s
+[proj  29/36] beta= 280.0 deg    58.6 s
+[proj  30/36] beta= 290.0 deg    58.2 s
+[proj  31/36] beta= 300.0 deg    58.7 s
+[proj  32/36] beta= 310.0 deg    58.7 s
+[proj  33/36] beta= 320.0 deg    58.7 s
+[proj  34/36] beta= 330.0 deg    58.8 s
+[proj  35/36] beta= 340.0 deg    58.7 s
+[proj  36/36] beta= 350.0 deg    58.7 s
+    center: 11.3825 +/- 0.0050
+    perimeter: 39.6986 +/- 0.0093
+  center       replica SD 0.0483 (0.4284 %)   sub-fan quadrature 0.0050   ratio 9.62x
+  perimeter    replica SD 0.0617 (0.1554 %)   sub-fan quadrature 0.0093   ratio 6.63x
+
+[G4] wrote D:\DevGit\ct_dosemc_core\results\phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json

@@ -1,0 +1,85 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-14T08:00:14+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "gate": "G4 -- Monte-Carlo uncertainty by independent-seed replicas",
+  "beam": "120kvp",
+  "test": "second",
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "estimator_inflated": "sub-fan quadrature over independent engine invocations",
+  "n_replicas": 1,
+  "base_seed": 1234567890,
+  "engine_invocations_per_replica": [
+    1
+  ],
+  "projections_driven_externally": [
+    true
+  ],
+  "comparison": {
+    "center": {
+      "mean_ev_per_photon": 11.300648110776384,
+      "replica_sample_sd": NaN,
+      "replica_relative_sd": NaN,
+      "sub_fan_quadrature_sd": 0.005025319290649063,
+      "replica_over_sub_fan": NaN,
+      "n_replicas": 1,
+      "sd_of_the_sd_relative": NaN
+    },
+    "perimeter": {
+      "mean_ev_per_photon": 39.62780187045339,
+      "replica_sample_sd": NaN,
+      "replica_relative_sd": NaN,
+      "sub_fan_quadrature_sd": 0.009306423623495794,
+      "replica_over_sub_fan": NaN,
+      "n_replicas": 1,
+      "sd_of_the_sd_relative": NaN
+    }
+  },
+  "per_replica": [
+    {
+      "replica_index": 0,
+      "seed": 1234575809,
+      "config": {
+        "histories": 200000000.0,
+        "voxel_size_cm": 0.25,
+        "air_margin_cm": 50.0,
+        "air_margin_z_cm": 6.0,
+        "phantom_length_cm": 40.0,
+        "sub_fans": 4,
+        "n_projections": 36,
+        "beam": "120kvp",
+        "test": "second",
+        "fan_thickness_cm": 1.0,
+        "material_emin_kev": 5,
+        "executable": "D:\\DevGit\\ct_dosemc_core\\vendor\\build\\MC-GPU_v1.3_GPU.exe"
+      },
+      "values_ev_per_photon": {
+        "center": 11.300648110776384,
+        "perimeter": 39.62780187045339
+      },
+      "quoted_uncertainty": {
+        "center": 0.005025319290649063,
+        "perimeter": 0.009306423623495794
+      },
+      "engine_invocations": 1,
+      "projections_driven_externally": true,
+      "wall_seconds": 110.39178280000488,
+      "source_route": "A",
+      "source_route_detail": "Route A: one MC-GPU process over @manifest; geometry parsed once; each sub-fan still writes its own dose tally",
+      "physics_unchanged_across_A_and_B": true,
+      "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+    }
+  ],
+  "note": "The sub-fan quadrature combines genuinely independent engine invocations, so unlike the per-voxel quadrature inside a single run it is not obviously biased. The replica SD assumes nothing at all. 'sd_of_the_sd_relative' is 1/sqrt(2(K-1)): with K replicas the SD itself is only known to that precision, so ratios should be quoted as intervals rather than point estimates. Each replica is written to its own results/phase1a/replica_*/replica_result.json as it completes and reused on a re-run, so an interrupted multi-hour job resumes without recomputing finished replicas.",
+  "source_route": "A",
+  "source_route_detail": "Route A: one MC-GPU process over @manifest; geometry parsed once; each sub-fan still writes its own dose tally",
+  "physics_unchanged_across_A_and_B": true,
+  "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
+}

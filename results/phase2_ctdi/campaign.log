@@ -1,0 +1,93 @@
+[campaign] 1/7 Canon/Toshiba 120 kVp
+[ctdi] Canon/Toshiba 120 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Canon-Toshiba_120kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] Canon/Toshiba 120 kVp K=4 provenance=measured (Yang 2019 DiB, CC BY 4.0)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=74.2 s
+[score] centre       0.000131004 mGy
+[score] 12_o_clock   0.000396552 mGy
+[score] 3_o_clock    0.000396258 mGy
+[score] 6_o_clock    0.000396309 mGy
+[score] 9_o_clock    0.000396634 mGy
+[score] CTDIw_PMMA = 0.00030796 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Canon-Toshiba_120kVp\ctdi_result.json
+[campaign] 2/7 GE 100 kVp
+[ctdi] GE 100 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_GE_100kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] GE 100 kVp K=4 provenance=measured (Yang 2019 DiB, CC BY 4.0)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=71.7 s
+[score] centre       0.000115569 mGy
+[score] 12_o_clock   0.000375831 mGy
+[score] 3_o_clock    0.000376234 mGy
+[score] 6_o_clock    0.000376865 mGy
+[score] 9_o_clock    0.000376691 mGy
+[score] CTDIw_PMMA = 0.00028946 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_GE_100kVp\ctdi_result.json
+[campaign] 3/7 GE 120 kVp
+[ctdi] GE 120 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_GE_120kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] GE 120 kVp K=4 provenance=measured (Yang 2019 DiB, CC BY 4.0)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=71.6 s
+[score] centre       0.000130469 mGy
+[score] 12_o_clock   0.000394632 mGy
+[score] 3_o_clock    0.000393744 mGy
+[score] 6_o_clock    0.000393924 mGy
+[score] 9_o_clock    0.000394578 mGy
+[score] CTDIw_PMMA = 0.000306302 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_GE_120kVp\ctdi_result.json
+[campaign] 4/7 Philips 120 kVp
+[ctdi] Philips 120 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Philips_120kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] Philips 120 kVp K=4 provenance=measured (Yang 2019 DiB, CC BY 4.0)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=73.9 s
+[score] centre       0.000124988 mGy
+[score] 12_o_clock   0.00039215 mGy
+[score] 3_o_clock    0.000392291 mGy
+[score] 6_o_clock    0.000393529 mGy
+[score] 9_o_clock    0.000392673 mGy
+[score] CTDIw_PMMA = 0.000303437 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Philips_120kVp\ctdi_result.json
+[campaign] 5/7 Siemens 100 kVp
+[ctdi] Siemens 100 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_100kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] Siemens 100 kVp K=4 provenance=cross-vendor average (declared uncertainty band = inter-vendor spread)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=75.8 s
+[score] centre       0.000113166 mGy
+[score] 12_o_clock   0.000376597 mGy
+[score] 3_o_clock    0.000378208 mGy
+[score] 6_o_clock    0.000377859 mGy
+[score] 9_o_clock    0.000377062 mGy
+[score] CTDIw_PMMA = 0.000289343 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_100kVp\ctdi_result.json
+[campaign] 6/7 Siemens 120 kVp
+[ctdi] Siemens 120 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_120kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] Siemens 120 kVp K=4 provenance=cross-vendor average (declared uncertainty band = inter-vendor spread)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=76.1 s
+[score] centre       0.000129722 mGy
+[score] 12_o_clock   0.000393869 mGy
+[score] 3_o_clock    0.000393129 mGy
+[score] 6_o_clock    0.000393573 mGy
+[score] 9_o_clock    0.000394683 mGy
+[score] CTDIw_PMMA = 0.000305783 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_120kVp\ctdi_result.json
+[campaign] 7/7 Siemens 140 kVp
+[ctdi] Siemens 140 kVp  D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_140kVp
+[phant] (520, 520, 76) @ 0.25 cm  focus0=(65.0, 5.0, 9.5)
+[bowtie] Siemens 140 kVp K=4 provenance=cross-vendor average (declared uncertainty band = inter-vendor spread)
+[batch] Route A 144 beams @manifest.txt
+[batch] wall=76.4 s
+[score] centre       0.000142989 mGy
+[score] 12_o_clock   0.000415641 mGy
+[score] 3_o_clock    0.000416124 mGy
+[score] 6_o_clock    0.000415973 mGy
+[score] 9_o_clock    0.000415129 mGy
+[score] CTDIw_PMMA = 0.000324808 mGy
+[done] D:\DevGit\ct_dosemc_core\results\phase2_ctdi\scale_Siemens_140kVp\ctdi_result.json
+[campaign] session finished
+CTDI_SCALE_DONE

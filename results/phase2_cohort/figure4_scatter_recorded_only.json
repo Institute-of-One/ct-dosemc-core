@@ -1,0 +1,14 @@
+{
+  "gated_on": "007 organ doses (Fig. 4 y-axis)",
+  "subset": "figure4_marker == recorded",
+  "n_series": 23,
+  "sentence": "Restricting Fig. 4 to the 23 series with a recorded CTDIvol does not change the index–absorbed-dose relationship.",
+  "why": "7 of 30 x-axis series are reconstructed. A reviewer will ask whether those points create the relationship. Dropping them and reading the same scatter answers that. No extra Monte Carlo.",
+  "tool": "python tools/figure4_scatter.py  (writes the line once --doses is supplied)",
+  "n_series_plotted": 30,
+  "n_series_recorded_only": 23,
+  "n_points_plotted": 342,
+  "n_points_recorded_only": 262,
+  "status": "ready",
+  "sentence_to_report": "Restricting Fig. 4 to the 23 series with a recorded CTDIvol does not change the index–absorbed-dose relationship."
+}

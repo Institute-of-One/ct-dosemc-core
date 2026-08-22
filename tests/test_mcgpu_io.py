@@ -155,3 +155,37 @@ def test_histories_field_is_documented_as_per_projection(tmp_path):
     # who takes this field for the whole scan is out by the projection count.
     text = _input(tmp_path)
     assert "PER PROJECTION" in text
+
+
+def test_write_manifest_lists_one_input_per_line(tmp_path):
+    from ct_dosemc_core.mcgpu_io import write_manifest
+
+    path = write_manifest(tmp_path / "manifest.txt", ["a.in", "b.in"])
+    lines = [
+        ln
+        for ln in path.read_text(encoding="ascii").splitlines()
+        if ln.strip() and not ln.startswith("#")
+    ]
+    assert lines == ["a.in", "b.in"]
+
+
+def test_split_route_a_logs_isolates_per_beam_apertures(tmp_path):
+    from ct_dosemc_core.mcgpu_io import split_route_a_logs
+
+    batch = tmp_path / "mcgpu_batch.log"
+    batch.write_text(
+        "preamble\n"
+        "========== [Route A] beam 1 / 2 : case4_g4_p000_fan00.in ==========\n"
+        "      azimuthal (phi), polar apertures = 1.0 , 0.5 degrees\n"
+        "========== [Route A] beam 2 / 2 : case4_g4_p000_fan01.in ==========\n"
+        "      azimuthal (phi), polar apertures = 2.0 , 0.5 degrees\n",
+        encoding="latin-1",
+    )
+    logs = split_route_a_logs(batch, tmp_path)
+    assert set(logs) == {"case4_g4_p000_fan00.in", "case4_g4_p000_fan01.in"}
+    t0 = logs["case4_g4_p000_fan00.in"].read_text(encoding="latin-1")
+    t1 = logs["case4_g4_p000_fan01.in"].read_text(encoding="latin-1")
+    assert "apertures = 1.0" in t0 and "apertures = 2.0" not in t0
+    assert "apertures = 2.0" in t1 and "apertures = 1.0" not in t1
+    assert logs["case4_g4_p000_fan00.in"].name == "mcgpu_g4_p000_fan00.log"
+

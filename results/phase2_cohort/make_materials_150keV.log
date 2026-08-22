@@ -1,0 +1,37 @@
+[make_materials] PMMA (PENDBASE #224)
+[make_materials] air (PENDBASE #104)
+[make_materials] water (PENDBASE #278)
+[make_materials] lung (PENDBASE #191)
+[make_materials] adipose (PENDBASE #103)
+[make_materials] soft_tissue (PENDBASE #262)
+[make_materials] bone_cortical (PENDBASE #120)
+[make_materials] bone_1  HU[100,124] f_vol=0.004 w_bone=0.008 rho=1.083
+[make_materials] bone_2  HU[124,196] f_vol=0.021 w_bone=0.038 rho=1.111
+[make_materials] bone_3  HU[196,316] f_vol=0.054 w_bone=0.095 rho=1.168
+[make_materials] bone_4  HU[316,483] f_vol=0.103 w_bone=0.176 rho=1.253
+[make_materials] bone_5  HU[483,699] f_vol=0.169 w_bone=0.274 rho=1.367
+[make_materials] bone_6  HU[699,963] f_vol=0.252 w_bone=0.384 rho=1.509
+[make_materials] bone_7  HU[963,1274] f_vol=0.351 w_bone=0.500 rho=1.679
+[make_materials] bone_8  HU[1274,1634] f_vol=0.467 w_bone=0.618 rho=1.878
+[make_materials] bone_9  HU[1634,2041] f_vol=0.599 w_bone=0.734 rho=2.106
+[make_materials] bone_10  HU[2041,2497] f_vol=0.748 w_bone=0.846 rho=2.363
+[make_materials] bone_11  HU[2497,3000] f_vol=0.913 w_bone=0.951 rho=2.650
+[make_materials] wrote D:\DevGit\ct_dosemc_core\materials\PROVENANCE.json
+    PMMA   rho=1.19  PMMA_5-150keV.mcgpu.gz
+    air    rho=0.00120479  air_5-150keV.mcgpu.gz
+    water  rho=1.0  water_5-150keV.mcgpu.gz
+    lung   rho=0.3  lung_5-150keV.mcgpu.gz
+    adipose rho=0.92  adipose_5-150keV.mcgpu.gz
+    soft_tissue rho=1.0  soft_tissue_5-150keV.mcgpu.gz
+    bone_cortical rho=1.85  bone_cortical_5-150keV.mcgpu.gz
+    bone_1 rho=1.0831  bone_1_5-150keV.mcgpu.gz
+    bone_2 rho=1.1115  bone_2_5-150keV.mcgpu.gz
+    bone_3 rho=1.1682  bone_3_5-150keV.mcgpu.gz
+    bone_4 rho=1.2534  bone_4_5-150keV.mcgpu.gz
+    bone_5 rho=1.3669  bone_5_5-150keV.mcgpu.gz
+    bone_6 rho=1.5087  bone_6_5-150keV.mcgpu.gz
+    bone_7 rho=1.679  bone_7_5-150keV.mcgpu.gz
+    bone_8 rho=1.8776  bone_8_5-150keV.mcgpu.gz
+    bone_9 rho=2.1059  bone_9_5-150keV.mcgpu.gz
+    bone_10 rho=2.3635  bone_10_5-150keV.mcgpu.gz
+    bone_11 rho=2.6497  bone_11_5-150keV.mcgpu.gz

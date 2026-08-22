@@ -1,0 +1,37 @@
+{
+  "note": "Route A is a performance modification, not a defect fix. It changes no physics. Classification is provenance of the path, not of the value.",
+  "bit_identity": {
+    "statement": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical.",
+    "reference_route_B": "results/phase1a/replica_120kvp_second_K4_L40_00",
+    "same_seed_route_A": "results/phase1a/replica_120kvp_second_K4_L40_00_routeA",
+    "dose_raw_sha256_identical": "144/144",
+    "voi_center": 11.300648110776384,
+    "voi_perimeter": 39.62780187045339,
+    "gpu_parse_once": {"voxel_file_reads": 1, "cache_hits": 143, "wall_seconds": 110.4},
+    "cpu_two_beam_check": {
+      "path": "results/phase1a/routeA_cpu_bitid/cpu_bitid.json",
+      "pass": true,
+      "detail": "same Route A definition on the CPU target: two off-axis sub-fans from L40 replica 00 inputs; standalone vs @manifest dose .raw SHA-256 identical; geometry parsed once"
+    }
+  },
+  "cited_phase1a": {
+    "L40_K4_anchor": {
+      "path": "results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json",
+      "source_route": "B",
+      "engine_invocations_per_replica": 144,
+      "detail": "one MC-GPU process per (projection, sub-fan) beam; the production K=4 40 cm anchor"
+    },
+    "L160_K4_length_arm": {
+      "path": "results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L160.json",
+      "source_route": "A",
+      "engine_invocations_per_replica": 1,
+      "detail": "one MC-GPU process over @manifest; geometry parsed once; per-beam tallies. Bit-identical to Route B on the L40 reference, so the path does not change the scored values.",
+      "status": "complete; 10/10 replicas; per-replica JSON under results/phase1a/replica_120kvp_second_K4_L160_XX/"
+    },
+    "L40_routeA_bit_identity_check": {
+      "path": "results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40_routeA.json",
+      "source_route": "A",
+      "role": "not an anchor; demonstrates byte-equality against Route B replica 00 at the same seed"
+    }
+  }
+}

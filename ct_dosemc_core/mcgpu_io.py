@@ -30,7 +30,9 @@ __all__ = [
     "McgpuRun",
     "read_dose_map",
     "run_mcgpu",
+    "split_route_a_logs",
     "write_input_file",
+    "write_manifest",
     "write_voxel_file",
 ]
 
@@ -321,6 +323,51 @@ class McgpuRun:
                 )
 
 
+_ROUTE_A_BEAM = re.compile(
+    r"========== \[Route A\] beam (\d+) / (\d+) : (\S+) =========="
+)
+
+
+def write_manifest(path: str | Path, input_files: list[str]) -> Path:
+    """Write a Route A ``@manifest`` list: one input filename per line.
+
+    Comment lines and blanks are ignored by the engine.  Filenames are relative
+    to the engine's working directory, the same convention as a standalone
+    invocation's argv[1].
+    """
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    body = "# Route A beam list: one MC-GPU input file per line\n"
+    body += "\n".join(input_files) + "\n"
+    out.write_text(body, encoding="ascii")
+    return out
+
+
+def split_route_a_logs(batch_log: Path, rundir: Path) -> dict[str, Path]:
+    """Split a Route A batch stdout capture into one log per input file.
+
+    ``_score_beamlet`` asserts the apertures the engine echoed.  Those lines
+    live in the per-beam section; feeding the combined log to every beamlet
+    would re-read the first beam's apertures for all of them.
+    """
+    text = batch_log.read_text(encoding="latin-1", errors="replace")
+    matches = list(_ROUTE_A_BEAM.finditer(text))
+    if not matches:
+        raise ValueError(f"no Route A beam markers in {batch_log}")
+    out: dict[str, Path] = {}
+    for i, m in enumerate(matches):
+        start = m.start()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        name = m.group(3)
+        stem = Path(name).stem
+        if stem.startswith("case4_"):
+            stem = stem[len("case4_") :]
+        dest = rundir / f"mcgpu_{stem}.log"
+        dest.write_text(text[start:end], encoding="latin-1")
+        out[name] = dest
+    return out
+
+
 def run_mcgpu(
     executable: str | Path,
     input_file: str | Path,
@@ -329,11 +376,16 @@ def run_mcgpu(
     log_file: str | Path | None = None,
     total_histories: float = 0.0,
     timeout_s: float | None = None,
+    argv1: str | None = None,
 ) -> McgpuRun:
     """Run MC-GPU on ``input_file``, capturing stdout to ``log_file``.
 
     The engine resolves every path in the input file relative to its working
     directory, so ``workdir`` defaults to the directory holding the input file.
+
+    ``argv1`` overrides the argument passed to the executable.  Route A uses
+    ``@manifest.txt`` so the engine expands the list and parses the geometry
+    once; each listed input still writes its own dose tally.
     """
     exe = Path(executable).resolve()
     if not exe.is_file():
@@ -344,11 +396,12 @@ def run_mcgpu(
     cwd = Path(workdir).resolve() if workdir else inp.parent
     log = Path(log_file) if log_file else inp.with_suffix(".out")
     log.parent.mkdir(parents=True, exist_ok=True)
+    arg = argv1 if argv1 is not None else (inp.name if inp.parent == cwd else str(inp))
 
     started = time.perf_counter()
     with log.open("w", encoding="utf-8", errors="replace") as fh:
         proc = subprocess.run(
-            [str(exe), inp.name if inp.parent == cwd else str(inp)],
+            [str(exe), arg],
             cwd=str(cwd),
             stdout=fh,
             stderr=subprocess.STDOUT,

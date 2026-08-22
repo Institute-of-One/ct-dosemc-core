@@ -1,0 +1,29 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-17T07:17:44+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "vendor": "GE",
+  "kvp": 100.0,
+  "histories": 200000000.0,
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "source_route": "A",
+  "bowtie_provenance": "measured (Yang 2019 DiB, CC BY 4.0)",
+  "material_energy_tag": "5-120keV",
+  "ctdi100_pmma_mgy": {
+    "centre": 0.00011556893498990504,
+    "12_o_clock": 0.00037583092717945833,
+    "3_o_clock": 0.0003762343405773864,
+    "6_o_clock": 0.00037686486734252476,
+    "9_o_clock": 0.0003766914321877545
+  },
+  "ctdiw_pmma_mgy": 0.0002894599062111557,
+  "ctdiw_sigma_mgy": 3.431240681395268e-08,
+  "wall_seconds": 71.69569560000673
+}

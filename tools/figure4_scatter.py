@@ -6,7 +6,8 @@ recorded CTDIvol. Open squares are IORN-004's own low-confidence warning
 (Revolution CT → Revolution CT ES, score 0.50), not a second policy invented
 for the plot.
 
-    python tools/figure4_scatter.py            # needs 007 organ doses
+    python tools/figure4_scatter.py            # needs 007 organ doses; also writes
+                                              # the recorded-only robustness line
     python tools/figure4_scatter.py --legend-only
 """
 
@@ -22,7 +23,11 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "tools"))
 
-from extract_iorn006_index import FIGURE4_MARKERS, figure4_marker  # noqa: E402
+from extract_iorn006_index import (  # noqa: E402
+    FIGURE4_MARKERS,
+    FIGURE4_RECORDED_ONLY,
+    figure4_marker,
+)
 
 DEFAULT_INDEX = REPO / "results" / "phase2_cohort" / "iorn006_organ_index.json"
 DEFAULT_OUT = REPO / "results" / "phase2_cohort" / "figure4_scatter.png"
@@ -79,6 +84,32 @@ def points_from_index(
             if organ["organ"] in by_organ:
                 rec["y"] = float(by_organ[organ["organ"]])
             out.append(rec)
+    return out
+
+
+def recorded_only(points: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Fig. 4 robustness subset: recorded CTDIvol, no extra Monte Carlo."""
+    return [p for p in points if p.get("figure4_marker") == "recorded"]
+
+
+def robustness_recorded_only_line(
+    points: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """One reserved sentence. Filled when every point has y; otherwise gated."""
+    rec = recorded_only(points)
+    n_all = len({p["series_instance_uid"] for p in points})
+    n_rec = len({p["series_instance_uid"] for p in rec})
+    ready = bool(points) and all("y" in p for p in points)
+    out = {
+        **FIGURE4_RECORDED_ONLY,
+        "n_series_plotted": n_all,
+        "n_series_recorded_only": n_rec,
+        "n_points_plotted": len(points),
+        "n_points_recorded_only": len(rec),
+        "status": "ready" if ready else "gated",
+    }
+    if ready:
+        out["sentence_to_report"] = FIGURE4_RECORDED_ONLY["sentence"]
     return out
 
 
@@ -150,10 +181,28 @@ def main(argv: list[str] | None = None) -> int:
     ]["label"]
     doses = None
     if args.doses is not None:
-        doses = json.loads(args.doses.read_text(encoding="utf-8"))
+        raw = json.loads(args.doses.read_text(encoding="utf-8"))
+        if "doses" in raw:
+            if raw.get("usable_for_figure4") is False:
+                raise SystemExit(
+                    "Figure 4 y-axis is not ready: "
+                    f"scaled={raw.get('n_scaled')} "
+                    f"awaiting_scale={raw.get('n_awaiting_scale')} "
+                    f"incomplete={raw.get('n_production_incomplete')}. "
+                    "Finish production and the bowtie-aware CTDI scale first."
+                )
+            doses = raw["doses"]
+        else:
+            doses = raw
     points = points_from_index(index, doses)
+    line = robustness_recorded_only_line(points)
     draw_scatter(points, args.out, caption=caption)
+    side = args.out.with_name(args.out.stem + "_recorded_only.json")
+    side.write_text(json.dumps(line, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"wrote {args.out}  n={len(points)}")
+    rob = f"recorded-only robustness [{line['status']}]: {line['sentence']}"
+    encoding = sys.stdout.encoding or "utf-8"
+    print(rob.encode(encoding, errors="replace").decode(encoding, errors="replace"))
     return 0
 
 

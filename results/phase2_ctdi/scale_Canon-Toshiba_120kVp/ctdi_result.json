@@ -1,0 +1,29 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-17T07:16:01+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "vendor": "Canon/Toshiba",
+  "kvp": 120.0,
+  "histories": 200000000.0,
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "source_route": "A",
+  "bowtie_provenance": "measured (Yang 2019 DiB, CC BY 4.0)",
+  "material_energy_tag": "5-120keV",
+  "ctdi100_pmma_mgy": {
+    "centre": 0.0001310039869916715,
+    "12_o_clock": 0.0003965522540121138,
+    "3_o_clock": 0.0003962582877497966,
+    "6_o_clock": 0.00039630856889281404,
+    "9_o_clock": 0.00039663365318461585
+  },
+  "ctdiw_pmma_mgy": 0.0003079601229704472,
+  "ctdiw_sigma_mgy": 3.527466734852106e-08,
+  "wall_seconds": 74.22020060000068
+}

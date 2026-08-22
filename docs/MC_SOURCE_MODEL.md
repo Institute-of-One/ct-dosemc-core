@@ -140,6 +140,29 @@ file is plain C in the non-CUDA path) and `/Dinline=static` (C99 `inline` with n
 external definition leaves the kernel helpers unresolved under MSVC; upstream
 relies on `gcc -O3` always inlining them).
 
+### 2.1a Performance modification — Route A (not a defect fix)
+
+Defects #22–#26 above change physics or silently wrong results. Route A does
+neither. It is recorded in `vendor/build/build_info.json` under
+`performance_modifications`, not in `patches`.
+
+One further modification hoists the geometry parse out of the sub-fan loop.
+It changes no physics: on a full 10-replica reference set computed with the
+unmodified engine, all 144 dose arrays are SHA-256 identical and the scored
+VOI values are bit-identical.
+
+(`results/phase1a/replica_120kvp_second_K4_L40_00` vs
+`results/phase1a/replica_120kvp_second_K4_L40_00_routeA`. The same C is applied
+to both `win_cpu.cu` and `win_gpu.cu` from `tools/apply_route_a.py`, so G5 keeps
+comparing one definition.)
+
+Route A reopens the input file and the spectrum file on every beam. Upstream
+never `fclose`s them, which is invisible when the process exits after one
+invocation. A 144-beam G2 run stays under the MSVC `fopen` cap of 512 FILE*; a
+z-station manifest (14 × 144 = 2016) dies around beam 255 with
+`report_voxels_dose!! Binary file ... can not be opened`. The fclose is in
+`apply_route_a.py`, not a physics patch.
+
 ### 2.2 CPU vs GPU, and what "agreement" means for gate G5
 
 Both targets compile the same physics from the same source. The CPU target needs
@@ -446,17 +469,18 @@ and is copyrighted (§5.4).
 | **G0** | spectrum beam quality vs TG-195 | our HVL estimator reproduces TG-195's stated HVL from TG-195's own table | **done** — −2.3% (120 kVp), −1.8% (100 kVp) |
 | **G1** | Case 4 first test: 56.4 keV monoenergetic, single projection, four 10 mm axial sections | within 1% of the four-code mean | **PASSED** — worst 0.147% |
 | **G1′** | as G1, with TG-195's distributed 120 kVp W/Al spectrum | as above | **PASSED** — worst 0.338% |
-| **G2** | Case 4 second test: 120 kVp W/Al, 36 projections, two 10 mm PMMA cylinders | see §5.1.4 — **the ±1% four-code criterion was wrong for this quantity** | open; centre −1.29% against the four-code mean, −0.72% (1.4σ) against PENELOPE |
-| **G3** | convergence in voxel size, phantom length, air margin, sub-fan count | each smaller than the G1/G2 margin | sub-fans, length and air margin done (§5.3); voxel size running |
-| G4 | replica-based uncertainty, K ≥ 10 independent seeds | consistent with the sub-fan quadrature estimate | running |
-| G5 | CPU/GPU agreement | within statistics on the full G1/G2 set | **blocked**: no CUDA toolkit |
+| **G2** | Case 4 second test: 120 kVp W/Al, 36 projections, two 10 mm PMMA cylinders | (a) anchor SEM ≤ 0.15%; (b) \|ours − PENELOPE\| reported, not gated | **PASS on (a)**; (b) reported. Centre SEM 0.1355%; \|ours−PENELOPE\| 0.359% (1.67σ_comb). `results/phase1a_close.json` |
+| **G3** | convergence in voxel size, phantom length, air margin, sub-fan count | each smaller than the G1/G2 margin; length measured | **PASS** — 40 cm indistinguishable from 160 cm; voxel/air/K/spectrum declared |
+| G4 | replica-based uncertainty, N = 10 independent seeds at production K = 4 | replica sample SD; SEM = SD/√10 | **PASS** — centre SD 0.428% → SEM 0.1355%; perimeter SD 0.155% → SEM 0.0491% (Route B) |
+| G5 | CPU/GPU agreement | byte agreement on G1/G2 (integer atomicAdd) | **PASS**; Route A byte-equality on both builds |
 
 **G5 is not a formality.** Defect #22 — `abs()` on a `double` — manifests *only*
 in the CPU build, because `nvcc` compiles `.cu` as C++ where `abs` has a `double`
 overload. A defect that makes the two builds disagree for identical input is
-exactly what this gate exists to catch, and it has already produced one. It needs
-a CUDA toolkit installation (administrator; the pip distribution ships only
-`ptxas` on Windows, not `nvcc`) plus the `cuda-samples` `Common` headers.
+exactly what this gate exists to catch, and it has already produced one. CUDA is
+installed locally under `vendor/cuda-12.9` (no administrator install; pip ships
+only `ptxas` on Windows). G5 **PASS** on G1/G2; Route A byte-equality on both
+builds.
 
 ### 5.1.1 Which TG-195 sub-case a run is compared against
 
@@ -553,31 +577,31 @@ indefensible on its own; it is defensible only because the choice is made on a
 stated physical ground — shared cross-sections — *before* looking at which code
 agrees best, and because every other comparison is reported next to it.
 
-Against this criterion the anchor now stands as follows, with the centre and
-perimeter replica SD **measured directly** at the production configuration
-(K = 10 independent seeds). Criterion (a) is no longer a bound on a single run's
-SD (that 0.25% target was arbitrary and is **withdrawn**); it is a bound on the
-uncertainty of the *anchor* — the number that enters (b) — which for an anchor
-that is the mean of N independent replicas is the replica SD divided by √N. The
-requirement is **anchor uncertainty ≤ 0.15%**.
+Against this criterion the production anchor stands as follows. The centre and
+perimeter replica SD are **measured directly** at K = 4, N = 10, 2×10⁸ histories,
+air 50 cm, Route B
+(`results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json`). Criterion
+(a) is a bound on the uncertainty of the *anchor* — the number that enters (b) —
+which for an N-replica mean is the replica SD divided by √N. The requirement is
+**anchor uncertainty ≤ 0.15%**. Arithmetic and the RSS budget live in
+`results/phase1a_close.json` (re-derived by `tests/test_phase1a_close.py`).
 
 | | measured | requirement | |
 |---|---|---|---|
-| (a) centre replica SD at 2×10⁸ | **0.406%** (±24%, K=10 seeds, 50 cm) | — | measured |
-| (a) perimeter replica SD at 2×10⁸ | **0.145%** (±24%, K=10 seeds, 50 cm) | — | measured |
-| (a) centre anchor uncertainty, N=10 mean | **0.128%** (= 0.406%/√10) | ≤ 0.15% | met once the K=4 ×10 anchor is run (**pending**) |
-| (a) perimeter anchor uncertainty, N=10 mean | **0.046%** (= 0.145%/√10) | ≤ 0.15% | met |
-| (a) perimeter, 94-position replicated | **0.0156%** | ≤ 0.15% | met |
-| (b) \|ours − PENELOPE\|, centre | **0.349%** (50 cm, K=4) | *reported*, not a gate | 0.80σ at the current anchor — see caveat |
-| (b) \|ours − PENELOPE\|, perimeter | **0.280%** (50 cm, K=4) | *reported*, not a gate | 1.27σ |
+| (a) centre replica SD at 2×10⁸, K=4 | **0.428%** (±24%, N=10, Route B) | — | measured |
+| (a) perimeter replica SD at 2×10⁸, K=4 | **0.155%** (±24%, N=10, Route B) | — | measured |
+| (a) centre anchor uncertainty, N=10 mean | **0.1355%** (= SD/√10) | ≤ 0.15% | **PASS** |
+| (a) perimeter anchor uncertainty, N=10 mean | **0.0491%** | ≤ 0.15% | **PASS** |
+| (a) K=1 replica SD (independent, not the anchor) | centre 0.406%, perimeter 0.145% | — | cross-check only (`…_K1.json`) |
+| (b) \|ours − PENELOPE\|, centre | **0.359%** (L40 N=10 mean) | *reported*, not a gate | 1.67σ_comb |
+| (b) \|ours − PENELOPE\|, perimeter | **0.285%** (L40 N=10 mean) | *reported*, not a gate | 1.64σ_comb |
 
-The centre replica SD is a direct measurement, not an extrapolation. A K = 10
-replica study at the production configuration (air margin 50 cm, 2×10⁸ histories,
-one MC-GPU invocation per replica via the native CT trajectory,
-`results/phase1a_G4_replica_uncertainty_120kvp_second_K1.json`) measures the centre
-replica SD at **0.406%** and the perimeter at 0.145%. The ten centre values span
+The K = 1 study at the same histories
+(`results/phase1a_G4_replica_uncertainty_120kvp_second_K1.json`) measured centre
+0.406% and perimeter 0.145%. That predicted SEM 0.128%; the K = 4 measurement
+is slightly higher and is the number that counts. The ten K=1 centre values spanned
 11.19–11.33 eV with no outlier (all within ±1.7σ); the 94-position azimuthal SD
-(0.0156% × √94 = 0.151% per position) independently reproduces the perimeter
+(0.0156% × √94 = 0.151% per position) independently reproduces the K=1 perimeter
 replica SD (0.145%).
 
 **Retraction — the "1/√N does not hold" reading is withdrawn.** An earlier
@@ -596,36 +620,26 @@ histories are inefficient" therefore loses its basis and is **held**. A real
 scaling check, if wanted, must re-measure 5×10⁷ at the identical configuration
 (2×10⁸, K = 1, air 50, GPU) and compare like with like.
 
-Because the 0.25% single-run target is withdrawn, **(a) is met** at the anchor
-level: an N = 10 mean has centre uncertainty 0.406%/√10 = 0.128% ≤ 0.15% and
-perimeter 0.046%. The one outstanding action is to actually build that anchor as
-the K = 4 ten-replica mean (the value must stay at K ≥ 4 for the solid-angle
-correctness of §5.1.2a); that run is pending and its cost is discussed in
-§5.3.0e — it is not the trivial job the withdrawn "1/√N is broken" reading implied,
-but neither does it need variance reduction.
+Because the 0.25% single-run target is withdrawn, **(a) is met** by the measured
+K = 4 ten-replica mean: centre SEM 0.1355% ≤ 0.15%, perimeter 0.0491%. The K = 1
+prediction (0.406%/√10 = 0.128%) is retired as the quoted SEM; it remains a
+cross-check. Cost of the K = 4 run is discussed in §5.3.0e.
 
-(b) is evaluated with σ combining our replica SD with PENELOPE's own 36-angle
-statistics (≈0.167% = the report's ≤1% per VOI over √36): at the *current*
-single-anchor σ, centre σ = √(0.406² + 0.167²)% = 0.439%, so −0.349% is 0.80σ;
-perimeter σ = 0.221%, so −0.280% is 1.27σ. The "ours" is the 50 cm, K = 4 anchor
-(`results/phase1a_G2_G2_anchor_air50.json`), **not** the degenerate 44 cm value
-that produced the old 0.719/0.810% figures. **A caveat that must not be lost:
-sharpening the anchor tightens (b) toward its 2σ boundary, it does not loosen
-it.** With the centre anchor σ falling from 0.406% (0.79σ) to 0.128% (1.66σ) and,
-in the limit of a perfect anchor, to PENELOPE's 0.167% alone (0.349/0.167 =
-**2.09σ, NOT met**), the 0.349% is a *real systematic difference* that statistics
-cannot remove — which is why **(b) is reported, not gated** (it is an internal
-agreement check, not a publication requirement; scope record
-`IORN007_scope_to_acceptance.md` §3/§7). Chasing it with more histories would only
-push it across an internal 2σ line that carries no publication weight, and there
-is a floor below which sharpening the *systematics* also buys nothing: PENELOPE's
-own 0.167% statistical uncertainty is the yardstick's own noise, so measuring a
-model term below it cannot make the comparison finer. The honest σ_comb is
-therefore `σ_MC ⊕ σ_PENELOPE (0.167%)` widened by the model terms carried as
-**declared upper bounds** — with the single exception of **phantom length**,
-re-measured because the 400 mm implementation against a 3000 mm spec is a gap a
-reviewer will see (§5.3.0e). The earlier plan to re-measure voxel, air and length
-together as (b)'s acceptance budget is **withdrawn**.
+(b) uses the N=10 mean as "ours", combined with PENELOPE's 36-angle statistics
+(≈0.167% = 1%/√36). Centre: |ours−PENELOPE| = 0.359%, σ_comb = 0.215%, **1.67σ**.
+Perimeter: 0.285%, σ_comb = 0.174%, **1.64σ**. Decomposition (centre): PENELOPE vs
+four-code mean −0.579%; ours vs PENELOPE −0.359%; product = ours vs mean −0.936%.
+The single-run G2_anchor_air50 values (0.349% / 0.80σ at the K=1 SD) are
+**superseded**. As predicted, sharpening the anchor tightened (b) toward ~1.7σ; it
+did not loosen. In the limit of a perfect anchor the centre residual is still
+0.359/0.167 ≈ 2.15σ against PENELOPE's floor alone — a *real systematic
+difference* that statistics cannot remove, which is why **(b) is reported, not
+gated**. The RSS budget (measured SEM, declared PENELOPE floor, measured
+Δ_length, analytic K=4 Ω excess, declared voxel 0.02% first-test bound, spectrum
+cap not exercised) is in `phase1a_close.json`: centre σ_total 0.234%,
+|ours−PENELOPE|/σ_total = 1.54. Phantom length is the one re-measured model term
+(§5.3.0e). The earlier plan to re-measure voxel, air and length together as (b)'s
+acceptance budget is **withdrawn**.
 
 **Twice now, an uncertainty from one run has been applied to a value from
 another.** The 1.40σ originally proposed used the 5×10⁷ replica SD against a
@@ -939,7 +953,11 @@ voxel-ρ / file-nominal-ρ, so the split composition/continuous-density model is
 exact). Soft tissues are merged (Z barely moves across them); bone groups are kept
 separate (Z is exactly what moves). MC-GPU v1.3 is built with **MAX_MATERIALS = 15**
 (`vendor/MCGPU/MC-GPU_v1.3.h:62`; echoed in every run log), so the group count is
-capped there. Metal is out of the Schneider calibration and is removed by the
+capped there. The Compton shell table is **MAX_SHELLS = 40** on a copied header
+(upstream 30): ICRP soft tissue uses 30 shells and the Schneider soft+cortical
+mixes emit up to 32, which is why a patient run with the unpatched bound exits
+before the first history. Array size only; sampling still loops `noscco[mat]`.
+Metal is out of the Schneider calibration and is removed by the
 eligibility criterion upstream, so the set only spans **air → cortical bone**.
 
 The default table is 15 materials — 4 merged soft (`air`, `lung`, `adipose`,
@@ -1029,11 +1047,11 @@ the TG-195 reference. Measured so far, on the Case 4 first test:
   0.417% at K = 8 and 0.080% at K = 16 — all inside the gate, and the spread
   between them is consistent with the Monte-Carlo noise of those runs rather than
   with any residual geometric bias.
-* **Phantom length.** 40 → 200 cm moves the answer by at most 0.4%, with no trend,
-  so the specified 3,000 mm "infinite cylinder" is not needed at these VOIs. Runs
-  use 40–60 cm and record the fact. Re-measured on the *centre* VOI at 120 kVp
-  (§5.3.2), which is where a long-range-scatter deficit would show, with the same
-  answer.
+* **Phantom length.** First-test 40 → 200 cm moved the answer by at most 0.4%,
+  with no trend (noise-buried). **Re-measured at the second-test VOIs:** L160 − L40
+  is +0.060% (centre, 0.33σ) and −0.048% (perimeter, 0.70σ). **40 cm is
+  indistinguishable from 160 cm.** Production runs keep 40 cm. Evidence:
+  `results/phase1a_close.json`.
 
 ### 5.3.0 The G2 anchor at the documented default: it does not pass
 
@@ -1112,18 +1130,18 @@ them the withdrawn "it's a 5-minute job" reading:
    a standalone invocation would (the sub-fan weights, which are unequal —
    0.24786/0.25214/0.25214/0.24786 — are applied afterwards in the Python
    combination, unchanged), so the estimator is identical to Route B, not an
-   equal-weight single-tally sum. The patch is applied to **both** `win_cpu.cu` and
-   `win_gpu.cu` from one definition (so G5 keeps comparing the same source) and is
-   recorded as the 7th entry in `build_info.json`. **Validation is byte-equality,
-   not "within statistics":** on the CPU build the dose `.raw` from a single-file
-   run and from an `@manifest` batch are SHA256-identical for two off-axis
-   sub-fans, with the geometry parsed exactly once
-   (`results/phase1a/routeA_smoke`). The GPU executable rebuild is deferred until
-   Route B releases it (a running `.exe` is locked on Windows); G5's established
-   CPU==GPU byte-agreement then carries the guarantee to the GPU binary. Route A's
-   remaining payoff is the 20-run phantom-length study below and general per-beam
-   batching, not this one anchor; the larger Δ-budget campaign it was scoped for is
-   **withdrawn**.
+   equal-weight single-tally sum. This is a **performance** change, not a sixth
+   defect: it is recorded in `build_info.json` under `performance_modifications`,
+   separate from the #22–#26 patches. The same definition is applied to both
+   `win_cpu.cu` and `win_gpu.cu` (`tools/apply_route_a.py`) so G5 keeps comparing
+   one source. **Validation is byte-equality, not "within statistics":** on the
+   GPU, a same-seed Route A replica against the Route B L40 10-replica reference
+   has SHA-256-identical dose `.raw` for all 144 beams and bit-identical scored
+   VOI values (`results/phase1a/replica_120kvp_second_K4_L40_00_routeA`). The
+   CPU build shows the same single-file vs `@manifest` byte-equality
+   (`results/phase1a/routeA_cpu_bitid`). Route A's remaining payoff is the
+   20-run phantom-length study below and general per-beam batching; the larger
+   Δ-budget campaign it was scoped for is **withdrawn**.
 
 **The Δ-budget campaign is withdrawn; only phantom length stays a measurement.**
 An earlier version of this section argued that, once the anchor reached 0.128%,
@@ -1139,11 +1157,12 @@ campaign buys nothing. Voxel, air, sub-fan K and spectrum therefore stay as
 reject *hidden* limitations, not *declared* ones.
 
 The **one exception is phantom length**: the spec is 3000 mm and the
-implementation is 400 mm, a gap a reviewer will see, so it is the single term
-worth converting from a bound into a measurement. Run **length 40 cm vs 160 cm,
-ten replicas each — 20 runs total** — and report the measured Δ with its
-uncertainty. That study, not the withdrawn 90-run campaign, is Route A's remaining
-payoff on the budget side.
+implementation is 400 mm, a gap a reviewer will see, so it was converted from a
+bound into a measurement. Ten replicas at 40 cm (Route B) and ten at 160 cm
+(Route A): centre L160 − L40 = **+0.060%** (0.33σ), perimeter **−0.048%** (0.70σ).
+**40 cm is indistinguishable from 160 cm.** That study, not the withdrawn 90-run
+campaign, was Route A's remaining payoff on the budget side. Numbers:
+`results/phase1a_close.json`.
 
 ### 5.3.0d The 44 cm default puts the source exactly on the voxel-box face
 
@@ -1483,20 +1502,18 @@ where only an in-run estimator is available, say that it is a lower bound.**
 
 ## 7. Open items before Phase 2
 
-Phase 2 is released by the Phase-1a gates in §5.1 — G0–G5 — **not** by the
-physical anchor. Remaining, in order:
+Phase 1a is **closed** (`results/phase1a_close.json`). G0–G5 have passed on (a);
+(b) is reported; Δ_length is measured. Remaining, in order:
 
-1. **G2** complete: TG-195 Case 4 second test (120 kVp, 36 projections).
-2. **G3** convergence: phantom length to the specified 3,000 mm; projection count.
-3. **G4** replica-based uncertainty, K ≥ 10 independent seeds (§6.3).
-4. **G5** CPU/GPU agreement — blocked on a CUDA toolkit installation.
-5. Fixed-seed reproducibility and anti-fabrication tests green (`tests/`).
+1. **One-series patient smoke** — geometry write → MC-GPU → dose ROI readback →
+   organ reduction; `usable_as_result: false`; low histories. Not the 32-series
+   production.
+2. **32-series production** after the smoke.
+3. Phase 1b (bowtie radial fluence / G6 sensitivity) before the manuscript;
+   patient dose is scaled to a recorded CTDIvol (23/32) or an IORN-004
+   reconstruction (7/32) (§4.5).
 
-Phase 1b (G6–G9: bowtie, filtration, μ_en/ρ, measured CTDIvol) may run in
-parallel with Phase 2. Scaling patient dose to a recorded CTDIvol (23/32) or an
-IORN-004 reconstruction (7/32) (§4.5) removes most of the dependence on the bowtie's absolute
-transmission — but not its effect on the *radial* fluence distribution, so the G6
-sensitivity analysis is required before the manuscript regardless.
+Anti-fabrication tests include `tests/test_phase1a_close.py`.
 
 ---
 
@@ -1527,27 +1544,15 @@ sensitivity analysis is required before the manuscript regardless.
 
 ---
 
-## 8. The next measurement, and the exact command
+## 8. The next command (patient smoke, not another TG-195 replica)
 
-Phase 1a is open on **one** unmeasured quantity: the centre VOI's replica standard
-deviation at the production configuration. Every open question about G2 —
-whether the −0.7…−0.9% against PENELOPE is significant, whether the air-margin
-dependence is real, whether K = 4 matters — is currently being judged against an
-uncertainty that has only ever been measured at a quarter of the production
-history count and then extrapolated. Two successive significance figures have
-already been withdrawn for exactly that reason (§5.1.4).
+Phase 1a is closed. The next GPU job is **one** eligible series, low histories,
+`usable_as_result: false`:
 
 ```
-python tools/run_tg195.py --gate G2 --beam 120kvp --test second \
-    --replicas 10 --projections 36 --sub-fans 1 --histories 2e8 \
-    --voxel-size 0.25 --phantom-length 40 --air-margin 50 --air-margin-z 6 \
-    --executable vendor/build/MC-GPU_v1.3_GPU.exe
+python -u tools/run_patient.py --run --projections 1 --sub-fans 1 --histories 1.2e5 --tag phase1a_close_smoke
 ```
 
-`--sub-fans 1` is deliberate: the variance of the combined estimate depends on
-the number of photons, not on how many invocations they are split across, so one
-invocation per replica measures the same standard deviation at 1/144 of the cost.
-The resulting value is **not** an anchor (§5.3.3) — only its scatter is used.
-
-Expect several hours. When it lands, fill the `(a)` row of §5.1.4 and only then
-evaluate `(b)`.
+Do not start the 32-series production from this command. The L40 K=4 replica SD
+command that this section previously specified has landed
+(`phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json`).

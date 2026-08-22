@@ -1,0 +1,301 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-20T23:47:46+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181",
+  "vendor": "Canon/Toshiba",
+  "n_projections": 36,
+  "n_sub_fans": 4,
+  "n_z_stations": 27,
+  "histories": 388800000.0,
+  "smoke": false,
+  "usable_as_result": true,
+  "source_route": "A",
+  "note": "Production configuration: 36 projections, K=4 sub-fans, 27 z-stations covering the reconstructed length, 3.89e+08 histories, source_route=A. Absolute mGy still needs CTDIvol/RDSR scale (post).",
+  "organs": {
+    "adrenal_gland_left": {
+      "dose_mgy": 0.0004414758212217951,
+      "sigma_mgy": 4.1286238046177733e-07,
+      "n_voxels": 261,
+      "mass_g": 4.293625836106249
+    },
+    "adrenal_gland_right": {
+      "dose_mgy": 0.00042883893400773033,
+      "sigma_mgy": 4.223162398418422e-07,
+      "n_voxels": 237,
+      "mass_g": 3.8910039948425763
+    },
+    "colon": {
+      "dose_mgy": 0.0009666714463958654,
+      "sigma_mgy": 5.037544336986738e-08,
+      "n_voxels": 65890,
+      "mass_g": 1002.658549023279
+    },
+    "gallbladder": {
+      "dose_mgy": 0.0006070132388318225,
+      "sigma_mgy": 1.9554845619826785e-07,
+      "n_voxels": 2042,
+      "mass_g": 33.0863091758595
+    },
+    "kidney_left": {
+      "dose_mgy": 0.0007608883083215287,
+      "sigma_mgy": 8.73192672025176e-08,
+      "n_voxels": 12509,
+      "mass_g": 214.74818228715245
+    },
+    "kidney_right": {
+      "dose_mgy": 0.0009441841984030563,
+      "sigma_mgy": 1.0434892446288804e-07,
+      "n_voxels": 12878,
+      "mass_g": 221.31232506729623
+    },
+    "liver": {
+      "dose_mgy": 0.0005342360234194498,
+      "sigma_mgy": 2.1474486789690038e-08,
+      "n_voxels": 115752,
+      "mass_g": 1926.3108663045637
+    },
+    "pancreas": {
+      "dose_mgy": 0.0005802497125050987,
+      "sigma_mgy": 1.2142836164922694e-07,
+      "n_voxels": 5162,
+      "mass_g": 86.06966273252482
+    },
+    "small_bowel": {
+      "dose_mgy": 0.0008204008232612224,
+      "sigma_mgy": 3.726051485348513e-08,
+      "n_voxels": 100123,
+      "mass_g": 1630.462455939022
+    },
+    "spleen": {
+      "dose_mgy": 0.0006245425469682043,
+      "sigma_mgy": 6.173530512385916e-08,
+      "n_voxels": 16417,
+      "mass_g": 279.0646472919784
+    },
+    "stomach": {
+      "dose_mgy": 0.0006293659680790475,
+      "sigma_mgy": 5.987943828607426e-08,
+      "n_voxels": 22601,
+      "mass_g": 348.0883970366693
+    },
+    "urinary_bladder": {
+      "dose_mgy": 0.0005812452516975817,
+      "sigma_mgy": 7.809068435926623e-08,
+      "n_voxels": 14004,
+      "mass_g": 225.19670060242603
+    }
+  },
+  "plan": {
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181",
+    "vendor": "Canon/Toshiba",
+    "manufacturer": "TOSHIBA",
+    "model_name": "Aquilion PRIME",
+    "kvp": 120.0,
+    "material_energy_tag": "5-120keV",
+    "n_slices": 268,
+    "phantom": {
+      "threshold_hu": -300.0,
+      "air_density_g_cm3": 0.00121,
+      "n_voxels": 7563616,
+      "n_body_voxels": 3104334,
+      "body_fraction": 0.4104,
+      "hu_range": [
+        -2048.0,
+        6792.2
+      ],
+      "calibration_max_hu": 3000.0,
+      "schneider_top_hu": 3000.0,
+      "n_above_calibration_in_body": 136,
+      "max_hu_in_body": 6792.2,
+      "note_above_calibration": "voxels above the Schneider top breakpoint are held at its density (2.8 g/cm^3); they are metal/contrast/artefact, not tissue, and are reported here rather than clamped silently",
+      "iso_grid_mm": 2.5,
+      "native_spacing_mm_zyx": [
+        2.0,
+        0.919,
+        0.919
+      ],
+      "patient_shape_zyx": [
+        214,
+        188,
+        188
+      ],
+      "resampled_shape_zyx": [
+        214,
+        520,
+        520
+      ],
+      "focal_box_xy_cm": 130.0,
+      "pad_before_zyx": [
+        0,
+        166,
+        166
+      ],
+      "n_materials": 15,
+      "material_names": [
+        "air",
+        "lung",
+        "adipose",
+        "soft_tissue",
+        "bone_1",
+        "bone_2",
+        "bone_3",
+        "bone_4",
+        "bone_5",
+        "bone_6",
+        "bone_7",
+        "bone_8",
+        "bone_9",
+        "bone_10",
+        "bone_11"
+      ]
+    },
+    "n_materials": 15,
+    "material_names": [
+      "air",
+      "lung",
+      "adipose",
+      "soft_tissue",
+      "bone_1",
+      "bone_2",
+      "bone_3",
+      "bone_4",
+      "bone_5",
+      "bone_6",
+      "bone_7",
+      "bone_8",
+      "bone_9",
+      "bone_10",
+      "bone_11"
+    ],
+    "focal_spot_gantry0_cm": [
+      65.0,
+      5.0,
+      26.75
+    ],
+    "beam_direction_gantry0": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "bbox_cm": [
+      130.0,
+      130.0,
+      53.5
+    ],
+    "sad_cm": 60.0,
+    "collimation_cm": 2.0,
+    "half_fan_deg": 26.624318352164078,
+    "n_sub_fans": 4,
+    "n_projections": 36,
+    "n_z_stations": 27,
+    "station_z_cm": [
+      0.9907407407407407,
+      2.9722222222222223,
+      4.953703703703703,
+      6.935185185185185,
+      8.916666666666666,
+      10.898148148148147,
+      12.87962962962963,
+      14.86111111111111,
+      16.84259259259259,
+      18.824074074074073,
+      20.805555555555554,
+      22.787037037037035,
+      24.76851851851852,
+      26.75,
+      28.73148148148148,
+      30.712962962962962,
+      32.69444444444444,
+      34.675925925925924,
+      36.657407407407405,
+      38.638888888888886,
+      40.62037037037037,
+      42.60185185185185,
+      44.58333333333333,
+      46.56481481481481,
+      48.5462962962963,
+      50.52777777777778,
+      52.50925925925926
+    ],
+    "omega_total_sr": 0.029939315131567362,
+    "bowtie_provenance": "measured (Yang 2019 DiB, CC BY 4.0)",
+    "tcm": {
+      "n_samples": 268,
+      "modulated": true,
+      "min_ma": 100.0,
+      "max_ma": 495.0,
+      "mean_ma": 265.3320895522388,
+      "station_relative_weight": [
+        0.37688618880873026,
+        0.3988712164892397,
+        0.47173587965892677,
+        0.5684700014531678,
+        0.8008831512185518,
+        1.0452310302962124,
+        1.3033980696301928,
+        1.3913381803522291,
+        1.6046976394611707,
+        1.8655866346032148,
+        1.8655866346032148,
+        1.7923032090015176,
+        1.7713650874010323,
+        1.7261387447439844,
+        1.5439770868197644,
+        1.257962345757138,
+        1.0596783342005465,
+        1.0850134613371336,
+        0.9696444113184608,
+        0.7650789632817215,
+        0.5931769849417414,
+        0.4928833824754174,
+        0.4956053382834803,
+        0.5177997471799944,
+        0.4840893714032131,
+        0.39447421095313795,
+        0.37688618880873026
+      ]
+    },
+    "organs_present": [
+      "adrenal_gland_left",
+      "adrenal_gland_right",
+      "colon",
+      "gallbladder",
+      "kidney_left",
+      "kidney_right",
+      "liver",
+      "pancreas",
+      "small_bowel",
+      "spleen",
+      "stomach",
+      "urinary_bladder"
+    ],
+    "dose_roi_1based": {
+      "x": [
+        196,
+        318
+      ],
+      "y": [
+        202,
+        322
+      ],
+      "z": [
+        35,
+        200
+      ]
+    },
+    "histories_total": 388800000.0,
+    "histories_per_beamlet": 100000.0,
+    "engine_invocations": 3888,
+    "route_a_batch": true,
+    "notes": [],
+    "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Canon_Toshiba\\CMB-OV__MSB-09899\\1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181",
+    "mask_dir": "D:\\DevGit\\ct_dosemc_core\\segmentations\\1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181\\1.5mm\\masks"
+  }
+}

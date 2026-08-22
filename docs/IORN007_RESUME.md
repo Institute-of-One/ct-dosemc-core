@@ -1,109 +1,97 @@
 # IORN-007 — resume here
 
-**Written:** 2026-08-10 · **HEAD at time of writing:** `e26d27e` · **Tests:** 134 passing
-
-Read this first after a reboot. It is the state of play, the one thing that is
-blocking, and the traps that have already cost time.
-
-The authoritative technical record is [`MC_SOURCE_MODEL.md`](MC_SOURCE_MODEL.md) —
-this file is the index into it, not a replacement.
+**Written:** 2026-08-14 · **Phase 1a closed.** Evidence:
+[`results/phase1a_close.json`](../results/phase1a_close.json) (re-derived by
+`tests/test_phase1a_close.py`). The authoritative technical record is
+[`MC_SOURCE_MODEL.md`](MC_SOURCE_MODEL.md) — this file is the index into it.
 
 ---
 
 ## 1. One-line status
 
-**Phase 1a (code verification against AAPM TG-195 Case 4) is open on exactly one
-unmeasured quantity.** Everything else in the phase passes. No patient dose has
-been computed and none may be until the gate closes.
+**32/32 scan-covering production is complete.** Fig. 4 is usable
+(`figure4_stats.json`: 12 organs, r = 0.66 / recorded 0.61). Results 3.3,
+Table 4, and Fig. 5 are filled from those files. Send
+`docs/PMB_PRESUBMISSION.md` (Paper, not Note). Do not first-submit Medical
+Physics.
+
+Remaining PMB path:
+
+1. Send the PMB inquiry. Submit the Paper after the Board confirms article type.
+2. Do not fill tables from `figure4_y_axis.json` (mid-scan defect).
+
+**Not on the submission path** (do after accept, or if a reviewer asks):
+Fig. 6 metal-clamp re-include, launcher polish, extra engine work, Phase 1b as
+a second gate, SpekPy absolute mAs as the patient scale.
 
 | Gate | What | State |
 |---|---|---|
-| G0 | spectrum beam quality vs TG-195 | pass (−2.3% 120 kVp, −1.8% 100 kVp; model difference, IPEM-78 vs SpekPy) |
-| G1 | 56.4 keV, single projection, 4 axial sections | **pass**, worst 0.147% |
-| G1′ | as G1 with TG-195's distributed 120 kVp spectrum | **pass**, worst 0.338% |
-| G2 | 120 kVp, 36 projections, two 10 mm cylinders | **open** — see §2 |
-| G3 | convergence (voxel, length, air, sub-fans) | done; K axis closed analytically |
-| G4 | replica uncertainty | done for first test; **second test at production statistics is the blocker** |
-| G5 | CPU/GPU agreement | **pass** on both G1 and G2 |
+| G0 | spectrum beam quality vs TG-195 | **PASS** (−2.3% 120 kVp, −1.8% 100 kVp; model difference, IPEM-78 vs SpekPy) |
+| G1 | 56.4 keV, single projection, 4 axial sections | **PASS**, worst 0.147% |
+| G1′ | as G1 with TG-195's distributed 120 kVp spectrum | **PASS**, worst 0.338% |
+| G2 | 120 kVp, 36 projections, two 10 mm cylinders | **PASS on (a)**; (b) **reported** — see §2 |
+| G3 | convergence (voxel, length, air, sub-fans) | **PASS** — length measured; other axes declared limits |
+| G4 | replica uncertainty at the production configuration | **PASS** — K=4, N=10, L40 Route B |
+| G5 | CPU/GPU agreement | **PASS** on G1/G2; Route A byte-equality |
 
 ---
 
-## 2. The one thing blocking, and its exact command
+## 2. What closed, and the next command
 
-The **K = 1 replica SD at the production configuration is now measured** — centre
-0.406%, perimeter 0.145% at 2×10⁸ histories, air 50 cm
-(`results/phase1a_G4_replica_uncertainty_120kvp_second_K1.json`, §5.1.4). That
-retired the old 5×10⁷→2×10⁸ extrapolation and confirmed the air-margin scatter was
-ordinary run-to-run noise, not a geometry artefact (§5.3.0d).
+The close file is `results/phase1a_close.json`. It is not a typed-in verdict:
+`tools/close_phase1a.py` recomputes every figure from the L40/L160 replica JSON
+and the TG-195 per-code values stored beside G2.
 
-What blocks now is the **anchor**: criterion (a) is no longer a single-run SD
-bound (the 0.25% target is withdrawn) but *anchor uncertainty = replica SD/√N ≤
-0.15%*, and the anchor value must stay at K ≥ 4 for the solid-angle correctness of
-§5.1.2a. So the outstanding measurement is a **K = 4 ten-replica anchor** whose
-mean has centre uncertainty 0.406%/√10 = 0.128%. This is **Route B** — the K = 4
-sub-fan decomposition forces 144 engine invocations per replica (the projection
-loop cannot move inside MC-GPU for off-axis sub-fans, §5.3.0c / §5.3.0e), so at
-~15 s parse per invocation a replica is ~36 min and the ten-replica anchor is ~6 h.
+**(a)** L40 K=4 replica SD / √10: centre **0.1355%** (SD 0.428%, ±24% on the SD
+itself), perimeter **0.0491%** (SD 0.155%). Both ≤ 0.15%. The K=1 prediction
+was 0.406%/√10 = 0.128%; the K=4 measurement is the number that counts.
+
+**(b)** |ours − PENELOPE| using the N=10 mean, **reported, not gated.** Centre
+0.359% (1.67 σ_comb); perimeter 0.285% (1.64 σ_comb). Decomposition (centre):
+PENELOPE vs four-code mean **−0.579%**, ours vs PENELOPE **−0.359%**, product
+= ours vs mean **−0.936%**. Yardstick chosen before looking at which code agrees
+best (shared PENDBASE cross-sections).
+
+**Δ_length.** L160 − L40: centre **+0.060%** (0.33σ), perimeter **−0.048%**
+(0.70σ). **40 cm is indistinguishable from 160 cm.** This replaces the first-test
+noise-buried 0.4% upper bound. L40 is Route B; L160 is Route A
+(`results/phase1a_source_routes.json`).
+
+**Budget RSS** (measured vs declared, listed in the close file): centre
+σ_total **0.234%**, |ours−PENELOPE|/σ_total **1.54**; perimeter 0.193% / 1.47.
+Voxel 2.5 mm is a first-test upper bound (0.02%); the second test did not
+re-measure it. Spectrum 255-bin is not exercised (TG-195 table is 207 bins).
+
+The one-series smoke has landed:
+`results/phase2_patient/phase1a_close_smoke/organ_doses.json` (`usable_as_result:
+false`). Geometry write → MC-GPU → dose ROI readback → organ reduction. The first
+attempt died on `MAX_SHELLS=30` (Schneider bone mixes emit up to 32 Compton
+shells); the GPU and CPU engines were rebuilt with a copied header at 40. That is
+a capacity bound, not a physics change, and is after Phase 1a close.
+
+**Next — 32-series production** at the G2 configuration (36 projections, K=4,
+2×10⁸ histories, Route A, `usable_as_result: true`). Resume-safe: finished
+series are skipped. Standalone window:
 
 ```powershell
 cd d:\DevGit\ct_dosemc_core
-powercfg /change standby-timeout-ac 0   # do not sleep mid-run
-$env:PYTHONUNBUFFERED = "1"
-.venv\Scripts\python.exe -u tools\run_tg195.py --gate G2 --beam 120kvp --test second `
-    --replicas 10 --projections 36 --sub-fans 4 --histories 2e8 `
-    --voxel-size 0.25 --phantom-length 40 --air-margin 50 --air-margin-z 6 `
-    --executable vendor\build\MC-GPU_v1.3_GPU.exe >> results\phase1a\routeB_K4.log 2>&1
+powershell.exe -NoExit -ExecutionPolicy Bypass -File tools\watch_phase2_prod.ps1
 ```
 
-`-u` / `PYTHONUNBUFFERED=1` is required when stdout is redirected: a fully-buffered
-log stays empty until the process dies, which is how a stall at replica 4/10 went
-unnoticed for hours. With line buffering a dead replica is visible immediately.
+The watchdog waits while MC-GPU / `run_patient.py` / `run_cohort.py` are alive,
+then calls `run_phase2_prod.ps1`. Log: `results/phase2_patient/watchdog.log`
+and `cohort.log`. Do not start a second GPU job beside a live engine. After
+32/32 the watchdog runs `collect_figure4_doses.py` → `figure4_scatter.py`.
+The smoke command below is already done; do not reuse it as production.
 
-Run it in a shell that survives — the harness's background tasks do not outlive a
-session. Each replica is written to
-`results/phase1a/replica_120kvp_second_K4_L{length}_XX/replica_result.json` as it
-completes and reused on a re-run, so an interrupted job resumes without
-recomputing finished replicas. The length is in the tag because the 40 cm K=4
-anchor and the 160 cm length arm must not clobber each other.
+**2026-08-17 — 140 kVp still open.** 5–150 keV tables exist, but MC-GPU
+`MAX_ENERGYBINS_RAYLEIGH=25005` rejects 29002 bins. Capacity bump to 32000
+(array size only, same 5 eV grid; do not coarsen the spectrum). Rebuild GPU,
+then re-run that one series. 31/32 results are intact.
 
-* Output: `results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json` (the
-  filename carries `K{sub_fans}_L{length}` so the K = 1 SD run, the K = 4 40 cm
-  anchor, and the K = 4 160 cm length arm do not clobber each other).
-* **Route A** is an engine change: loop over the K sub-fan aperture sets *inside
-  one MC-GPU process* so the geometry is parsed once. Its acceptance is
-  byte-equality (single == `@manifest` batch, already shown on CPU); the GPU
-  rebuild waits for Route B to release the `.exe`. Its remaining payoff is now the
-  20-run phantom-length study (§5.3.0e), not the withdrawn ~90-run Δ campaign, so
-  it is **off the critical path** to closing the gate.
-* The single-run 2×10⁹ shortcut (Route C) is **not** used: a single run cannot
-  measure σ, so its number is not citable; only run it for a same-day feel.
-
-**When Route B lands:** the anchor uncertainty row of §5.1.4 becomes measured, and
-criterion (a) is met. Criterion (b) (|ours − PENELOPE|) is **reported, not gated**
-(`IORN007_scope_to_acceptance.md` §3/§7): it cannot be sharpened below PENELOPE's
-own 0.167% floor, so the only model term still re-measured is **phantom length**
-(40 vs 160 cm); voxel, air, K and spectrum are carried as **declared** upper-bound
-limitations (§5.3.0e). The earlier "(b) depends on a re-measured Δ budget" is
-withdrawn.
-
-The 40 cm arm of the length study **is** Route B once tags include `L40`. After
-B finishes, only the 160 cm arm is new (same production config, `--phantom-length 160`,
-10 replicas). Then Phase 1a closes. Then **one** patient path-through, not the 40:
-
-```powershell
-$env:PYTHONUNBUFFERED = "1"
-.venv\Scripts\python.exe -u tools\run_tg195.py --gate G2 --beam 120kvp --test second `
-    --replicas 10 --projections 36 --sub-fans 4 --histories 2e8 `
-    --voxel-size 0.25 --phantom-length 160 --air-margin 50 --air-margin-z 6 `
-    --executable vendor\build\MC-GPU_v1.3_GPU.exe >> results\phase1a\routeB_K4_L160.log 2>&1
-
-# after that, one series (GPU). Plan-only (no GPU) already passed:
-#   python -u tools/run_patient.py --plan-only
-.venv\Scripts\python.exe -u tools\run_patient.py --run --histories 3.2e6 --projections 8
-```
-
-Do not start `--run` while Route B still owns the GPU. Forty-series production
-is after this one-series smoke.
+`-u` / `PYTHONUNBUFFERED=1` is required when stdout is redirected. Route A is a
+**performance** modification, not a sixth defect (`performance_modifications` in
+`build_info.json`). The L40 anchor remains Route B.
 
 ---
 
@@ -200,12 +188,13 @@ clear.
 
 ## 5. What is gated, and what is not
 
-**The gate locks *dose calculation*, not preparation for it.** Only the Phase-2
-cohort **dose** waits on G0–G5. Everything that does not compute dose can and
-should run now — see the split below. (Authoritative scope:
+**The gate locked *dose calculation*, not preparation for it.** That lock is now
+released: G0–G5 are closed on (a). The one-series smoke (`usable_as_result:
+false`) has landed. The GPU is now on the 32-series production (G2 configuration,
+Route A). (Authoritative scope:
 [`IORN007_scope_to_acceptance.md`](IORN007_scope_to_acceptance.md) §0/§7.)
 
-**Not gated — start in parallel now:**
+**Not gated — data preparation (already running in parallel):**
 
 1. **Task D data preparation.** `ct_dosemc_core/eligibility.py` and its 13 tests
    are written (criterion re-derived for absorbed dose, not inherited from
@@ -216,9 +205,10 @@ should run now — see the split below. (Authoritative scope:
    * **D3** — TotalSegmentator masks (CPU),
    * **D4** — HU→density write-out verification.
 
-**Gated — after G0–G5 close:**
+**Unlocked — after G0–G5 close:**
 
-2. **Phase 2 cohort dose** — the actual dose computation, released only by G0–G5.
+2. **Phase 2 cohort dose** — smoke done. 32-series production is the current
+   GPU job (`tools/run_phase2_prod.ps1`).
 
 **Downgraded — no longer a verification gate:**
 
@@ -256,7 +246,7 @@ yet — worth checking, and they belong in the paper's Data Availability stateme
 provenance. `tests/test_no_fabrication.py` re-derives the quoted figures from the
 recorded inputs, so a hand-edited number fails the suite.
 
-The G2 anchor currently on disk (`results/phase1a/G2_gpu_air44/`) was computed at
-the **44 cm** margin now known to be degenerate. It should be re-taken at 50 cm
-once §2 has established what its uncertainty actually is — in that order, not
-before.
+The G2 production anchor is `results/phase1a_G4_replica_uncertainty_120kvp_second_K4_L40.json`
+(air 50 cm, K = 4, N = 10, Route B). The close arithmetic is
+`results/phase1a_close.json`. The 44 cm run (`results/phase1a/G2_gpu_air44/`) is
+the degenerate-margin diagnostic, not the anchor.

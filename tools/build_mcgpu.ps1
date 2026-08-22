@@ -68,10 +68,13 @@ $zsrc = @(
 #  2. cudaThreadSynchronize() was removed in CUDA 12 (gpu target only).
 $patches = @(
     @{ from = 'fopen(file_binary, "w")'; to = 'fopen(file_binary, "wb")';
+       kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#24';
        why = 'binary image file opened in text mode corrupts the .raw output on Windows' },
     @{ from = 'fopen(file_binary_mean, "w")'; to = 'fopen(file_binary_mean, "wb")';
+       kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#24';
        why = 'binary dose file opened in text mode corrupts the .raw output on Windows' },
     @{ from = 'fopen(file_binary_sigma, "w")'; to = 'fopen(file_binary_sigma, "wb")';
+       kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#24';
        why = 'binary dose-uncertainty file opened in text mode corrupts the .raw output on Windows' },
     #  The pencil-beam guard calls abs() on a double.  In C that is
     #  <stdlib.h>'s int abs(int), so the argument is truncated: EVERY aperture
@@ -81,12 +84,15 @@ $patches = @(
     #  compiles .cu as C++, where abs() has a double overload -- which is why it
     #  has survived in the build upstream documents as "gcc -x c".
     @{ from = 'if (abs(theta_aperture) < 1.0e-7)'; to = 'if (fabs(theta_aperture) < 1.0e-7)';
+       kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#22';
        why = 'abs() on a double truncates to int in C: polar apertures below 1 deg became pencil beams' },
     @{ from = 'if (abs(phi_aperture) < 1.0e-7)'; to = 'if (fabs(phi_aperture) < 1.0e-7)';
+       kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#22';
        why = 'abs() on a double truncates to int in C: azimuthal apertures below 1 deg became pencil beams' }
 )
 if ($Target -eq 'gpu') {
     $patches += @{ from = 'cudaThreadSynchronize'; to = 'cudaDeviceSynchronize';
+                   kind = 'portability'; upstream = $null;
                    why = 'removed from the CUDA runtime in CUDA 12' }
 }
 else {
@@ -104,6 +110,7 @@ else {
     $patches += @{
         from = 'track_particles(CPU_batch, histories_per_thread, num_p, seed_input, image,'
         to   = 'track_particles(CPU_batch + num_p*total_threads, histories_per_thread, num_p, seed_input, image,'
+        kind = 'defect_fix'; upstream = 'DIDSR/MCGPU#23';
         why  = 'CPU branch reused one random sequence for every projection; offset the PRNG batch index per projection'
     }
 }
@@ -115,9 +122,72 @@ foreach ($p in $patches) {
     $count = ([regex]::Matches($text, [regex]::Escape($p.from))).Count
     if ($count -eq 0) { throw "patch target not found in upstream source: $($p.from)" }
     $text = $text.Replace($p.from, $p.to)
-    $applied += [ordered]@{ from = $p.from; to = $p.to; occurrences = $count; reason = $p.why }
+    $applied += [ordered]@{
+        kind = $p.kind
+        upstream = $p.upstream
+        from = $p.from
+        to = $p.to
+        occurrences = $count
+        reason = $p.why
+    }
 }
 Set-Content -Path $src -Value $text -Encoding ascii -NoNewline
+
+# Capacity: Schneider soft+cortical bone mixes emit up to 32 Compton shells
+# (bone_4..bone_11). Upstream MAX_SHELLS=30 is enough for TG-195 PMMA/air
+# (4 and 9 shells) and for ICRP soft tissue (30), but not for the mixes.
+# Array bound only; Compton sampling still loops noscco[mat]. Not a defect
+# fix and not a physics change. Applied to a COPY of the header in vendor/build
+# so vendor/MCGPU stays byte-identical to upstream.
+$headerSrc = Join-Path $mcgpu 'MC-GPU_v1.3.h'
+$headerDst = Join-Path $build 'MC-GPU_v1.3.h'
+$header = Get-Content $headerSrc -Raw
+$shellFrom = '#define  MAX_SHELLS         30'
+$shellTo   = '#define  MAX_SHELLS         40'
+$binsFrom  = '#define  MAX_ENERGYBINS_RAYLEIGH  25005'
+$binsTo    = '#define  MAX_ENERGYBINS_RAYLEIGH  32000'
+if ($header -notlike "*$shellFrom*") { throw "MAX_SHELLS patch target not found in $headerSrc" }
+if ($header -notlike "*$binsFrom*") { throw "MAX_ENERGYBINS_RAYLEIGH patch target not found in $headerSrc" }
+$header = $header.Replace($shellFrom, $shellTo).Replace($binsFrom, $binsTo)
+Set-Content -Path $headerDst -Value $header -Encoding ascii -NoNewline
+$applied += [ordered]@{
+    kind = 'capacity'
+    upstream = $null
+    from = $shellFrom
+    to = $shellTo
+    occurrences = 1
+    reason = 'Schneider soft+cortical bone mixes emit up to 32 Compton shells; upstream MAX_SHELLS=30 is enough for TG-195 PMMA/air. Array bound only; sampling still loops noscco[mat].'
+}
+$applied += [ordered]@{
+    kind = 'capacity'
+    upstream = $null
+    from = $binsFrom
+    to = $binsTo
+    occurrences = 1
+    reason = '5-150 keV Schneider tables at 5 eV step have 29002 Rayleigh bins; upstream MAX_ENERGYBINS_RAYLEIGH=25005 fits 5-120 keV (23001 bins) only. Array bound only; same 5 eV grid. Do not coarsen the 140 kVp tables.'
+}
+
+# Route A (@manifest + load_voxels memo) is the same C on both targets, so G5
+# keeps comparing one definition. tools/apply_route_a.py is idempotent.
+$py = Join-Path $repo '.venv\Scripts\python.exe'
+if (-not (Test-Path $py)) { $py = 'python' }
+& $py (Join-Path $PSScriptRoot 'apply_route_a.py') $src
+if ($LASTEXITCODE -ne 0) { throw "apply_route_a.py failed on $src" }
+# Route A is a performance modification, not a defect fix. It must not sit in
+# patches[] next to #22-#26: a reviewer who sees "we modified the engine" will
+# ask whether the physics changed. Answer: it did not (byte-equality vs Route B).
+$performance = @([ordered]@{
+    kind = 'performance'
+    name = 'Route A batch mode (in-process sub-fan loop)'
+    not_a_defect_fix = $true
+    physics_unchanged = $true
+    from = 'single input file (argv[1]); load_voxels re-parses every invocation'
+    to = "argv[1]=='@manifest' runs every listed input file sequentially in one process; load_voxels memoises the parsed geometry by filename and hands each later beam a fresh copy"
+    applied_to = @('MC-GPU_v1.3_win_cpu.cu', 'MC-GPU_v1.3_win_gpu.cu')
+    identical_definition_both_targets = $true
+    reason = 'hoist the ~58M-voxel ASCII parse out of the P*K sub-fan loop. Transport, RNG and per-beam tallies are unchanged. An equal-weight single-tally sum would bias the estimator by -0.53%; each beam still writes its own dose file. Route A also fclose()s the input and spectrum FILE* per beam: a standalone process exits, but a 2016-beam z-station manifest hits the MSVC 512-handle cap around beam 255.'
+    validation = 'byte-equality, not within-statistics: on the GPU L40 10-replica Route B reference, a same-seed Route A replica matches all 144 dose .raw SHA-256 and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00_routeA).'
+})
 
 if ($Target -eq 'cpu') {
     $exe = Join-Path $build 'MC-GPU_v1.3_CPU.exe'
@@ -135,7 +205,7 @@ if ($Target -eq 'cpu') {
         '/nologo', '/TC', '/O2', '/fp:fast', '/std:c17', '/wd4996',
         '/D_CRT_SECURE_NO_WARNINGS', '/D_USE_MATH_DEFINES', '/Dinline=static',
         '/F', '536870912',
-        "/I`"$mcgpu`"", "/I`"$zlib`""
+        "/I`"$build`"", "/I`"$mcgpu`"", "/I`"$zlib`""
     )
     $line = 'cl ' + ($flags -join ' ') + " `"$src`" " + ($zsrc -join ' ') + " /Fe`"$exe`""
     $compiler = 'MSVC cl.exe (/TC /O2 /std:c17)'
@@ -181,7 +251,7 @@ else {
         # before the first history (0xC00000FD).  nvcc has to pass it through to
         # the host linker rather than handling it itself.
         '-Xlinker', '/STACK:536870912',
-        "-I`"$mcgpu`"", "-I`"$zlib`"", "-I`"$common`"",
+        "-I`"$build`"", "-I`"$mcgpu`"", "-I`"$zlib`"", "-I`"$common`"",
         "-gencode=arch=compute_$cc,code=$Arch"
     )
     if ($CudaPath) {
@@ -210,24 +280,69 @@ cmd.exe /c "`"$bat`""
 if (-not (Test-Path $exe)) { throw "compilation failed: $exe was not produced (see output above)" }
 
 # record what was built, so provenance can quote it
+$builtUtc = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
+$thisTarget = [ordered]@{
+    executable        = $exe
+    executable_sha256 = (Get-FileHash $exe -Algorithm SHA256).Hash
+    patched_source    = $src
+    patched_sha256    = (Get-FileHash $src -Algorithm SHA256).Hash
+    compiler          = $compiler
+    built_utc         = $builtUtc
+}
+if ($Target -eq 'gpu') {
+    $thisTarget.cuda_version = $nvccVersion
+    $thisTarget.cuda_path = $CudaPath
+    $thisTarget.cuda_samples = $CudaSamples
+}
+
+$metaPath = Join-Path $build 'build_info.json'
+$targets = [ordered]@{}
+if (Test-Path $metaPath) {
+    $prev = Get-Content $metaPath -Raw -Encoding utf8 | ConvertFrom-Json
+    if ($prev.targets) {
+        foreach ($name in @('cpu', 'gpu')) {
+            if ($prev.targets.$name) {
+                $targets[$name] = $prev.targets.$name
+            }
+        }
+    }
+    elseif ($prev.target -and $prev.target -ne $Target) {
+        $targets[$prev.target] = [ordered]@{
+            executable        = $prev.executable
+            executable_sha256 = $prev.executable_sha256
+            patched_source    = $prev.patched_source
+            patched_sha256    = $prev.patched_sha256
+            compiler          = $prev.compiler
+        }
+    }
+}
+$targets[$Target] = $thisTarget
+
+# Production numbers are GPU. Keep that as the top-level record when both exist
+# so a CPU rebuild does not look like the cited executable changed.
+$prod = if ($targets['gpu']) { 'gpu' } else { $Target }
+$prodInfo = $targets[$prod]
+
 $meta = [ordered]@{
     engine            = 'MC-GPU v1.3 (DIDSR/FDA, Andreu Badal) -- public domain'
     engine_source     = 'https://github.com/DIDSR/MCGPU'
-    target            = $Target
-    executable        = $exe
-    executable_sha256 = (Get-FileHash $exe -Algorithm SHA256).Hash
     source_sha256     = (Get-FileHash (Join-Path $mcgpu 'MC-GPU_v1.3.cu') -Algorithm SHA256).Hash
-    patched_source    = $src
-    patched_sha256    = (Get-FileHash $src -Algorithm SHA256).Hash
+    patch_kinds       = 'patches[] are defect_fix, portability (#22-#24, CUDA 12), or capacity (MAX_SHELLS, MAX_ENERGYBINS_RAYLEIGH). performance_modifications[] are not defect fixes and change no physics.'
     patches           = $applied
-    compiler          = $compiler
+    performance_modifications = $performance
+    targets           = $targets
+    target            = $prod
+    executable        = $prodInfo.executable
+    executable_sha256 = $prodInfo.executable_sha256
+    patched_source    = $prodInfo.patched_source
+    patched_sha256    = $prodInfo.patched_sha256
+    compiler          = $prodInfo.compiler
     cuda_version      = $nvccVersion
     cuda_path         = $CudaPath
     cuda_samples      = $CudaSamples
     vs_installation   = $vsPath
     zlib              = 'zlib 1.3.1 (madler/zlib, zlib licence), statically compiled in'
 }
-$metaPath = Join-Path $build 'build_info.json'
-$meta | ConvertTo-Json -Depth 4 | Set-Content -Path $metaPath -Encoding utf8
+$meta | ConvertTo-Json -Depth 6 | Set-Content -Path $metaPath -Encoding utf8
 Write-Host "[build_mcgpu] ok  sha256=$($meta.executable_sha256)"
 Write-Host "[build_mcgpu] wrote $metaPath"

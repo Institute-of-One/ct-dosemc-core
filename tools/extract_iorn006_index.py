@@ -140,6 +140,24 @@ FIGURE4_MARKERS = {
     },
 }
 
+# Fig. 4 robustness, reserved until the y-axis exists. Same (x, y) pairs,
+# reconstructed series dropped. No extra Monte Carlo.
+FIGURE4_RECORDED_ONLY = {
+    "gated_on": "007 organ doses (Fig. 4 y-axis)",
+    "subset": "figure4_marker == recorded",
+    "n_series": 23,
+    "sentence": (
+        "Restricting Fig. 4 to the 23 series with a recorded CTDIvol does not "
+        "change the index–absorbed-dose relationship."
+    ),
+    "why": (
+        "7 of 30 x-axis series are reconstructed. A reviewer will ask whether "
+        "those points create the relationship. Dropping them and reading the "
+        "same scatter answers that. No extra Monte Carlo."
+    ),
+    "tool": "python tools/figure4_scatter.py  (writes the line once --doses is supplied)",
+}
+
 
 def figure4_marker(
     origin: str,
@@ -607,6 +625,7 @@ def main(argv: list[str] | None = None) -> int:
                     "recorded in DICOM/RDSR. Two series omitted (LightSpeed Ultra, "
                     "Revolution EVO)."
                 ),
+                "robustness_recorded_only": FIGURE4_RECORDED_ONLY,
                 "fallback_when_ctdivol_unavailable": (
                     "relative_weight w_o is present on every organ; the mGy-vs-mGy "
                     "scatter uses only series with a defined CTDIvol_o. A scanner "

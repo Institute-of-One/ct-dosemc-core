@@ -152,3 +152,24 @@ def test_extracted_index_is_the_release_blob_and_closes_arithmetically() -> None
     assert low[0]["model_name"] == "Revolution CT"
     assert payload["scatter"]["markers"]["reconstructed_low_confidence"]["facecolor"] == "none"
     assert "Open squares" in payload["scatter"]["caption_line"]
+    reserved = payload["scatter"]["robustness_recorded_only"]
+    assert reserved["n_series"] == 23
+    assert reserved["gated_on"].startswith("007")
+    assert "23 series with a recorded CTDIvol" in reserved["sentence"]
+
+
+@pytest.mark.skipif(not RESULTS.is_file(), reason="extract has not been run yet")
+def test_recorded_only_robustness_is_a_subset_not_a_new_calculation() -> None:
+    from figure4_scatter import points_from_index, recorded_only, robustness_recorded_only_line
+
+    index = json.loads(RESULTS.read_text(encoding="utf-8"))
+    points = points_from_index(index, doses=None)
+    rec = recorded_only(points)
+    assert rec
+    assert all(p["figure4_marker"] == "recorded" for p in rec)
+    assert len({p["series_instance_uid"] for p in rec}) == 23
+    assert len({p["series_instance_uid"] for p in points}) == 30
+    line = robustness_recorded_only_line(points)
+    assert line["status"] == "gated"
+    assert line["n_series_recorded_only"] == 23
+    assert "sentence_to_report" not in line

@@ -1,0 +1,188 @@
+{
+  "environment": {
+    "generated_utc": "2026-08-20T02:37:31+00:00",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
+    "numpy": "2.5.1",
+    "spekpy": "2.5.4"
+  },
+  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+  "vendor": "Siemens",
+  "manufacturer": "SIEMENS",
+  "model_name": "SOMATOM Definition AS+",
+  "kvp": 120.0,
+  "material_energy_tag": "5-120keV",
+  "n_slices": 140,
+  "phantom": {
+    "threshold_hu": -300.0,
+    "air_density_g_cm3": 0.00121,
+    "n_voxels": 3236800,
+    "n_body_voxels": 2052568,
+    "body_fraction": 0.6341,
+    "hu_range": [
+      -1024.0,
+      1710.6
+    ],
+    "calibration_max_hu": 3000.0,
+    "schneider_top_hu": 3000.0,
+    "n_above_calibration_in_body": 0,
+    "max_hu_in_body": 1710.6,
+    "note_above_calibration": "voxels above the Schneider top breakpoint are held at its density (2.8 g/cm^3); they are metal/contrast/artefact, not tissue, and are reported here rather than clamped silently",
+    "iso_grid_mm": 2.5,
+    "native_spacing_mm_zyx": [
+      2.0,
+      0.8281,
+      0.8281
+    ],
+    "patient_shape_zyx": [
+      112,
+      170,
+      170
+    ],
+    "resampled_shape_zyx": [
+      112,
+      520,
+      520
+    ],
+    "focal_box_xy_cm": 130.0,
+    "pad_before_zyx": [
+      0,
+      175,
+      175
+    ],
+    "n_materials": 15,
+    "material_names": [
+      "air",
+      "lung",
+      "adipose",
+      "soft_tissue",
+      "bone_1",
+      "bone_2",
+      "bone_3",
+      "bone_4",
+      "bone_5",
+      "bone_6",
+      "bone_7",
+      "bone_8",
+      "bone_9",
+      "bone_10",
+      "bone_11"
+    ]
+  },
+  "n_materials": 15,
+  "material_names": [
+    "air",
+    "lung",
+    "adipose",
+    "soft_tissue",
+    "bone_1",
+    "bone_2",
+    "bone_3",
+    "bone_4",
+    "bone_5",
+    "bone_6",
+    "bone_7",
+    "bone_8",
+    "bone_9",
+    "bone_10",
+    "bone_11"
+  ],
+  "focal_spot_gantry0_cm": [
+    65.0,
+    5.0,
+    15.0
+  ],
+  "beam_direction_gantry0": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "bbox_cm": [
+    130.0,
+    130.0,
+    28.0
+  ],
+  "sad_cm": 60.0,
+  "collimation_cm": 2.0,
+  "half_fan_deg": 26.624318352164078,
+  "n_sub_fans": 4,
+  "n_projections": 36,
+  "n_z_stations": 14,
+  "station_z_cm": [
+    1.0,
+    3.0,
+    5.0,
+    7.0,
+    9.0,
+    11.0,
+    13.0,
+    15.0,
+    17.0,
+    19.0,
+    21.0,
+    23.0,
+    25.0,
+    27.0
+  ],
+  "omega_total_sr": 0.029939315131567362,
+  "bowtie_provenance": "cross-vendor average (declared uncertainty band = inter-vendor spread)",
+  "tcm": {
+    "n_samples": 140,
+    "modulated": true,
+    "min_ma": 292.0,
+    "max_ma": 422.0,
+    "mean_ma": 351.55,
+    "station_relative_weight": [
+      1.194709145214052,
+      1.171952780543308,
+      1.0720889123676778,
+      1.0795050490684113,
+      1.131316415059837,
+      1.121258914602678,
+      1.0008736818578945,
+      0.8806916309405287,
+      0.8334518560659935,
+      0.8617957209907146,
+      0.8732754942397951,
+      0.898876404494382,
+      0.8704309486559522,
+      0.9816729991669544
+    ]
+  },
+  "organs_present": [
+    "adrenal_gland_left",
+    "adrenal_gland_right",
+    "colon",
+    "gallbladder",
+    "kidney_left",
+    "kidney_right",
+    "liver",
+    "pancreas",
+    "small_bowel",
+    "spleen",
+    "stomach"
+  ],
+  "dose_roi_1based": {
+    "x": [
+      200,
+      324
+    ],
+    "y": [
+      216,
+      309
+    ],
+    "z": [
+      1,
+      107
+    ]
+  },
+  "histories_total": 201600000.0,
+  "histories_per_beamlet": 100000.0,
+  "engine_invocations": 2016,
+  "route_a_batch": true,
+  "notes": [],
+  "dicom_dir": "D:\\DevGit\\ctsegdose_core\\data\\Siemens\\Adrenal-ACC-Ki67-Seg__Adrenal_Ki67_Seg_039\\1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+  "mask_dir": "D:\\DevGit\\ct_dosemc_core\\segmentations\\1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678\\1.5mm\\masks"
+}

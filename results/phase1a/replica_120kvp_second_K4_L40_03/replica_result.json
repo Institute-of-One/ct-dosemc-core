@@ -34,5 +34,9 @@
   },
   "engine_invocations": 144,
   "projections_driven_externally": true,
-  "wall_seconds": 2123.520674599975
+  "wall_seconds": 2123.520674599975,
+  "source_route": "B",
+  "source_route_detail": "Route B: one MC-GPU process per (projection, sub-fan) beam",
+  "physics_unchanged_across_A_and_B": true,
+  "bit_identity_note": "One further modification hoists the geometry parse out of the sub-fan loop. It changes no physics: on a full 10-replica reference set computed with the unmodified engine, all 144 dose arrays are SHA-256 identical and the scored VOI values are bit-identical (results/phase1a/replica_120kvp_second_K4_L40_00 vs results/phase1a/replica_120kvp_second_K4_L40_00_routeA)."
 }
