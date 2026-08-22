@@ -121,13 +121,16 @@ redistributed and each material file carries the digest of the data it came from
 X-ray spectra come from SpekPy [11,12], which supplies the spectrum, the half-value
 layer and the absolute tube output for each tube potential. The source is modelled as
 an equivalent spectrum and filtration in the manner of Turner *et al* [17], with a
-bowtie profile represented as a set of sub-fans, each carrying its own spectrum.
+bowtie profile represented as a set of sub-fans, each carrying its own spectrum. The
+profiles are derived from the published measurements of Yang *et al* [18], which
+cover three vendors; the fourth is represented by the cross-vendor average with its
+spread declared.
 Geometry, collimation, source-to-axis distance and the number of projections come
 from the series metadata.
 
 ### 2.3 Verification against TG-195 Case 4
 
-The engine is verified against Case 4 of AAPM Task Group 195 [18], the voxelised
+The engine is verified against Case 4 of AAPM Task Group 195 [19], the voxelised
 phantom case with published results from four independent codes. Two properties of
 this verification matter for what follows.
 
@@ -148,7 +151,7 @@ indistinguishable from a 160 cm phantom at these volumes of interest.
 
 ### 2.4 Cohort selection
 
-Series were selected from a public archive [19,20] by a recorded funnel that begins
+Series were selected from a public archive [20,21] by a recorded funnel that begins
 at the collection index and ends at the series carried forward, with every exclusion
 counted and named (figure 1). The selection is re-derivable: the criteria are in
 code, and the surviving Series Instance UIDs, their collection and their licence are
@@ -188,7 +191,7 @@ derived from a simulated CTDI phantom measurement at the same tube potential and
 vendor, matched to the CTDIvol the series carries. Where the series records a
 CTDIvol, that value is used; where it does not, the value reconstructed from scanner
 model and technique by a companion tool is used, and the two are distinguished
-throughout [21]. Of [[results:manifest.json:metrics.n_eligible]] eligible series,
+throughout [22]. Of [[results:manifest.json:metrics.n_eligible]] eligible series,
 [[results:manifest.json:metrics.n_recorded]] carry a recorded CTDIvol,
 [[results:manifest.json:metrics.n_reconstructed]] carry a reconstructed one, and
 [[results:manifest.json:metrics.n_omitted_no_ctdivol]] carry neither and are omitted
@@ -412,7 +415,7 @@ vendor-level one, which would have four. No vendor claim is made; table 1 and fi
 are descriptive.
 
 There is no ground-truth absorbed dose in a patient. The engine is verified against a
-published reference phantom case [18] with a measured uncertainty, and the patient
+published reference phantom case [19] with a measured uncertainty, and the patient
 doses inherit that verification, but they are not independently measured. What the
 verification supports is the transport; what it cannot support is the segmentation, the
 HU-to-density mapping, or the source model as applied to a particular scanner.
@@ -456,7 +459,7 @@ The software is under the MIT licence at
 `https://github.com/Institute-of-One/ct-dosemc-core`, with the frozen result tables and
 the commands that regenerate every figure. No imaging is redistributed: the collection,
 Series Instance UID, licence and retrieval date of every series are recorded so that each
-can be re-fetched from the archive [19,20]. Every number reported here is resolved at
+can be re-fetched from the archive [20,21]. Every number reported here is resolved at
 build time from a machine-readable result file, and the build fails if a number cannot be
 traced to one.
 
@@ -493,7 +496,8 @@ This research received no external funding.
 15. J. Wasserthal, H.-C. Breit, M. T. Meyer, *et al.*, "TotalSegmentator: robust segmentation of 104 anatomic structures in CT images," *Radiol. Artif. Intell.* **5**(5), e230024 (2023) [doi:10.1148/ryai.230024].
 16. F. Salvat, J. M. Fernández-Varea, and J. Sempau, *PENELOPE — a code system for Monte Carlo simulation of electron and photon transport* (NEA-OECD, Issy-les-Moulineaux, 2006).
 17. A. C. Turner, D. Zhang, H. J. Kim, *et al.*, "A method to generate equivalent energy spectra and filtration models based on measurement for multidetector CT Monte Carlo dosimetry simulations," *Med. Phys.* **36**(6), 2154–2164 (2009) [doi:10.1118/1.3117683].
-18. I. Sechopoulos, E. S. M. Ali, A. Badal, *et al.*, "Monte Carlo reference data sets for imaging research: executive summary of the report of AAPM Research Committee Task Group 195," *Med. Phys.* **42**(10), 5679–5691 (2015) [doi:10.1118/1.4928676].
-19. K. Clark, B. Vendt, K. Smith, *et al.*, "The Cancer Imaging Archive (TCIA): maintaining and operating a public information repository," *J. Digit. Imaging* **26**(6), 1045–1057 (2013) [doi:10.1007/s10278-013-9622-7].
-20. A. M. Moawad, D. Fuentes, M. M. ElBanan, *et al.*, "Multimodality annotated hepatocellular carcinoma data set including pre- and post-TACE with imaging segmentation," *Sci. Data* **10**, 33 (2023) [doi:10.1038/s41597-023-01928-3].
-21. S. Yamamoto, *ctdose-core: open, auditable CT dose surveillance from DICOM, with a physics reconstruction when the dose attributes are missing*, v0.1.1, Zenodo (2026) [doi:10.5281/zenodo.21636719].
+18. K. Yang, C. Ruan, X. Li, and B. Liu, "Data of CT bow tie filter profiles from three modern CT scanners," *Data in Brief* **25**, 104261 (2019) [doi:10.1016/j.dib.2019.104261]. Licensed CC BY 4.0.
+19. I. Sechopoulos, E. S. M. Ali, A. Badal, *et al.*, "Monte Carlo reference data sets for imaging research: executive summary of the report of AAPM Research Committee Task Group 195," *Med. Phys.* **42**(10), 5679–5691 (2015) [doi:10.1118/1.4928676].
+20. K. Clark, B. Vendt, K. Smith, *et al.*, "The Cancer Imaging Archive (TCIA): maintaining and operating a public information repository," *J. Digit. Imaging* **26**(6), 1045–1057 (2013) [doi:10.1007/s10278-013-9622-7].
+21. A. M. Moawad, D. Fuentes, M. M. ElBanan, *et al.*, "Multimodality annotated hepatocellular carcinoma data set including pre- and post-TACE with imaging segmentation," *Sci. Data* **10**, 33 (2023) [doi:10.1038/s41597-023-01928-3].
+22. S. Yamamoto, *ctdose-core: open, auditable CT dose surveillance from DICOM, with a physics reconstruction when the dose attributes are missing*, v0.1.1, Zenodo (2026) [doi:10.5281/zenodo.21636719].

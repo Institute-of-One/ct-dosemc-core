@@ -1,0 +1,16 @@
+{
+  "file": "yang2019_dib_mmc1.xlsx",
+  "sha256": "6149e33ef88d6e7be591adbeb0544b5d515ceb1a4ed36e31225e848585025c34",
+  "bytes": 145226,
+  "downloaded_from": "https://ars.els-cdn.com/content/image/1-s2.0-S2352340919306158-mmc1.xlsx",
+  "citation": "Yang K, Ruan C, Li X, Liu B. Data of CT bow tie filter profiles from three modern CT scanners. Data in Brief 25:104261 (2019).",
+  "doi": "10.1016/j.dib.2019.104261",
+  "pmcid": "PMC6706760",
+  "licence": "CC BY 4.0",
+  "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+  "licence_verified_from": "PMC JATS <license license-type='CC BY' href='creativecommons.org/licenses/by/4.0/'>; (c) 2019 The Author(s)",
+  "extracted_by": "tools/build_bowtie_profiles.py",
+  "derived_products": {
+    "bowtie_profiles.json": "per-vendor t(psi); Siemens = cross-vendor average with declared spread"
+  }
+}

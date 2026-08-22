@@ -37,6 +37,10 @@ classifiers = [
 dependencies = [
   "numpy>=1.23",
   "pydicom>=2.3",
+  # ndimage, for the body contour and the isotropic resample. It was imported
+  # by patient.py and phantom.py and declared nowhere, so a fresh install of
+  # this package could not run the pipeline the paper describes.
+  "scipy>=1.10",
 ]
 
 [project.optional-dependencies]

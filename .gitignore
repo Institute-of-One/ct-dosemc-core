@@ -17,6 +17,15 @@ data/*
 !data/README.md
 !data/PROVENANCE.json
 !data/tg195/
+# The bowtie profiles are the source model of the paper's Methods, derived by
+# tools/build_bowtie_profiles.py from a Data in Brief supplement that is CC BY
+# 4.0, with the attribution, DOI, SHA-256 and retrieval URL in PROVENANCE.json
+# beside them. The derived profiles ship; the supplement itself does not, and is
+# re-fetchable from the URL recorded there.
+!data/bowtie/
+data/bowtie/*
+!data/bowtie/PROVENANCE.json
+!data/bowtie/bowtie_profiles.json
 # AAPM Report 195 and its electronic resources are free to download but
 # copyrighted ((c) 2015 AAPM, all rights reserved).  Same rule as the DICOM:
 # fetch and use locally, never redistribute.  Only the digests are committed.
