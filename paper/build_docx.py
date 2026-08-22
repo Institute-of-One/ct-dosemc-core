@@ -39,7 +39,14 @@ import collect_figures  # noqa: E402
 
 DEFAULT_OUTPUT = PAPER / "build" / "manuscript.docx"
 
-_FIGURE_MENTION = re.compile(r"\bFigure (\d+)\b")
+#: Case-insensitive, and accepting the abbreviated form. Journal prose names a
+#: figure mid-sentence in lower case, and a mention this pattern misses is a figure
+#: that never reaches the page -- the build refuses to continue when that happens,
+#: which is how it was caught.
+#: The trailing guard is ``(?!\d)`` and not ``\b``: prose names a panel as
+#: "figure 5a", and a word boundary does not hold between "5" and "a", so the only
+#: figure whose every mention carried a panel letter was never placed.
+_FIGURE_MENTION = re.compile(r"\bfigs?(?:ure)?\.?\s*(\d+)(?!\d)", re.I)
 
 
 def _figure_block(number: int, caption: str) -> str:

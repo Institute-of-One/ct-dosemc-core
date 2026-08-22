@@ -54,6 +54,9 @@ MARKER = re.compile(r"\[\[results:([^:|\]]+):(.+?)(?:\|([^|\]]+))?\]\](?!\])")
 _STEP = re.compile(r"([^.\[\]]+)|\[([^\]]*)\]")
 #: Capturing, so ``re.split`` returns the comments too, in place.
 _COMMENT = re.compile(r"(<!--.*?-->)", re.S)
+#: ``[[table:<name>]]`` -- a whole table built from the frozen results by
+#: ``paper/tables.py``, so that no cell in it is ever typed by hand.
+TABLE_MARKER = re.compile(r"\[\[table:([A-Za-z0-9_]+)\]\]")
 
 #: Unicode superscripts, for the exponent of ``|sciN``.
 _SUPERSCRIPT = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
@@ -158,11 +161,30 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
             problems.append(f"{path!r}: cannot format {value!r} as {spec!r} ({exc})")
             return match.group(0)
 
+    def substitute_table(match: re.Match[str]) -> str:
+        """``[[table:<name>]]`` -> a whole table, rendered from the frozen results.
+
+        A table is where a stale number hides best: sixty cells rebuilt by hand, and
+        the one that drifted looks like the fifty-nine that did not.
+        """
+        import tables  # noqa: PLC0415
+
+        name = match.group(1)
+        builder = tables.TABLES.get(name)
+        if builder is None:
+            problems.append(
+                f"no table named {name!r}; known: {sorted(tables.TABLES)}"
+            )
+            return match.group(0)
+        return builder()
+
     # Markers inside HTML comments document the syntax; the file explains its own
     # notation in a comment at the top and that example must not be resolved.
     pieces = _COMMENT.split(source)
     rendered = "".join(
-        piece if _COMMENT.fullmatch(piece) else MARKER.sub(substitute, piece)
+        piece
+        if _COMMENT.fullmatch(piece)
+        else TABLE_MARKER.sub(substitute_table, MARKER.sub(substitute, piece))
         for piece in pieces
     )
     if problems:

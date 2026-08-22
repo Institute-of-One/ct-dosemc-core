@@ -115,10 +115,21 @@ def test_a_cited_but_unlisted_reference_is_caught() -> None:
     assert any("cited but not listed" in message for message in check.errors)
 
 
-def test_a_reference_without_a_doi_warns() -> None:
+def test_a_reference_a_reader_cannot_follow_warns() -> None:
+    """Neither a DOI nor an issuing body and year is the shape of a fabrication."""
     source = "Body cites [1].\n\n## References\n1. A book with no identifier\n"
     check.check_references(source)
-    assert any("no DOI" in message for message in check.warnings)
+    assert any("cannot follow" in message for message in check.warnings)
+
+
+def test_a_report_with_an_issuing_body_and_year_is_traceable() -> None:
+    """PENELOPE and the AAPM reports have no DOI and are not thereby suspect."""
+    source = (
+        "Body cites [1].\n\n## References\n"
+        "1. F. Salvat, *PENELOPE* (NEA-OECD, Issy-les-Moulineaux, 2006).\n"
+    )
+    check.check_references(source)
+    assert not any("cannot follow" in message for message in check.warnings)
 
 
 def test_the_series_accounting_holds_on_the_real_freeze() -> None:

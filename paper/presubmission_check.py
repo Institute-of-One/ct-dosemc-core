@@ -76,12 +76,24 @@ def check_control_characters(built: str) -> None:
 
 
 def check_emphasis(built: str) -> None:
-    """Bold does one job: run-in headings. It had accumulated on ordinary terms."""
-    for match in re.finditer(r"\*\*(.+?)\*\*", built, flags=re.S):
+    """Bold does one job: run-in headings. It had accumulated on ordinary terms.
+
+    The reference list is excluded. A bold volume number is bibliographic style,
+    not emphasis, and flagging twenty of them buries the one that matters.
+    """
+    body = built.split("## References")[0]
+    for match in re.finditer(r"\*\*(.+?)\*\*", body, flags=re.S):
         span = match.group(1)
-        line_start = built.rfind("\n", 0, match.start()) + 1
-        prefix = built[line_start : match.start()].strip()
-        is_run_in = prefix in {"", "-", "*", ">"} or prefix.endswith("|")
+        line_start = body.rfind("\n", 0, match.start()) + 1
+        prefix = body[line_start : match.start()].strip()
+        # A numbered list item opening with a bold term is a run-in heading too:
+        # "1. **a single factor** for the whole cohort" labels the item, it does
+        # not shout inside a sentence.
+        is_run_in = (
+            prefix in {"", "-", "*", ">"}
+            or prefix.endswith("|")
+            or re.fullmatch(r"\d+\.", prefix) is not None
+        )
         if is_run_in:
             continue
         if len(span) > 60:
@@ -91,8 +103,12 @@ def check_emphasis(built: str) -> None:
 
 
 def check_markers_resolved(built: str) -> None:
-    """An unresolved marker means the build did not run, or ran and was ignored."""
-    opened = len(re.findall(r"\[\[results:", built))
+    """An unresolved marker means the build did not run, or ran and was ignored.
+
+    Comments are stripped first: the source carries a comment explaining the marker
+    convention, and the example inside it is not an unresolved number.
+    """
+    opened = len(re.findall(r"\[\[results:", _strip_comments(built)))
     if opened:
         fail(f"{opened} unresolved [[results:...]] marker(s) in the built manuscript")
 
@@ -196,7 +212,7 @@ def check_figures(built: str) -> None:
 
     captions = collect_figures.captions()
     for number, (name, _) in sorted(collect_figures.FIGURE_SOURCES.items()):
-        if not re.search(rf"\bFig(?:ure)?\.?\s*{number}\b", built):
+        if not re.search(rf"\bfigs?(?:ure)?\.?\s*{number}(?!\d)", built, re.I):
             fail(f"Figure {number} is never named in the prose, so it is never placed")
 
         caption = captions.get(number, "")
@@ -232,8 +248,13 @@ def check_figures(built: str) -> None:
 
 
 def check_references(source: str) -> None:
-    """Contiguous, all cited, none uncited, in order of first citation, with DOIs."""
-    prose = _strip_comments(source)
+    """Contiguous, all cited, none uncited, in order of first citation, with DOIs.
+
+    Markers are stripped before citations are counted. A marker path may index a
+    list -- ``...range[0]`` -- and ``[0]`` read as a citation of reference zero,
+    which then made the whole list look out of order.
+    """
+    prose = re.sub(r"\[\[results:.+?\]\]", "", _strip_comments(source), flags=re.S)
     body, _, tail = prose.rpartition("## References")
     if not body:
         fail("the manuscript has no '## References' section")
@@ -262,16 +283,24 @@ def check_references(source: str) -> None:
     if cited != sorted(cited):
         fail(f"references are not numbered in order of first citation: {cited}")
 
-    without_doi = [
+    # A reference must be traceable. A DOI is the usual way; a report or a
+    # standard often has none, and for those the issuing body and place stand in.
+    # What is not acceptable is an entry a reader cannot follow to anything, which
+    # is the shape a fabricated reference takes.
+    untraceable = [
         number
         for number, entry in enumerate(
             re.findall(r"^\s*\d+\.\s+(.+?)(?=^\s*\d+\.\s|\Z)", tail, flags=re.M | re.S),
             start=1,
         )
         if "doi" not in entry.lower()
+        and re.search(r"\((?:[^)]*,\s*)?[^)]*\b(19|20)\d{2}\)", entry) is None
     ]
-    if without_doi:
-        warn(f"reference(s) with no DOI, so unverifiable as written: {without_doi}")
+    if untraceable:
+        warn(
+            f"reference(s) with neither a DOI nor an issuing body and year, so a "
+            f"reader cannot follow them: {untraceable}"
+        )
 
     words = len(re.findall(r"\b\w+\b", body))
     density = len(listed) / max(words, 1) * 1000
