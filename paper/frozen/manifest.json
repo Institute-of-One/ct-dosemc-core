@@ -1,0 +1,43 @@
+{
+ "what": "Metrics the IORN-007 manuscript quotes, derived from paper/frozen/. Do not edit: run paper/freeze.py.",
+ "sources": [
+  "cohort_overlap.json",
+  "ctdi_scale.json",
+  "density_eligibility.json",
+  "figure4_doses.json",
+  "figure4_scatter_recorded_only.json",
+  "figure4_stats.json",
+  "metal_distribution.json",
+  "organ_volume_vs_icrp89.json",
+  "phase1a_close.json",
+  "table4_organ_doses.json"
+ ],
+ "excluded": {
+  "phase2_cohort/figure4_y_axis.json": "mid-scan defect: the y-axis is not an exam dose. Superseded by figure4_stats.json, which declares usable_for_figure4.",
+  "phase2_cohort/ctdi_scale_plan.json": "the plan, not the outcome. ctdi_scale.json records what ran."
+ },
+ "metrics": {
+  "n_eligible": 32,
+  "n_scaled": 30,
+  "n_recorded": 23,
+  "n_reconstructed": 7,
+  "n_omitted_no_ctdivol": 2,
+  "n_organs": 12,
+  "n_points": 342,
+  "n_points_recorded": 262,
+  "pearson_r_all": 0.660076689594463,
+  "pearson_r_recorded": 0.6107751149161844,
+  "y_over_x_median": 2.174563727158052,
+  "y_over_x_median_recorded": 2.170391336900975,
+  "dose_median_mgy": 24.266635873748726,
+  "dose_min_mgy": 3.860968322768126,
+  "dose_max_mgy": 84.03000327496144,
+  "tg195_centre_abs_rel": 0.0035934743224220744,
+  "tg195_centre_n_sigma": 1.6730221015492786,
+  "n_iorn007": 40,
+  "n_iorn006": 40,
+  "n_shared": 40,
+  "n_table4_series": 30,
+  "tg195_centre_abs_pct": 0.35934743224220744
+ }
+}

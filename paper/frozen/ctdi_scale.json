@@ -1,0 +1,76 @@
+{
+  "what": "Bowtie-aware CTDIw_MC at the patient source model, for Fig. 4",
+  "formula": "D_scaled = D_raw * CTDIvol_series / CTDIw_MC(vendor, kVp)",
+  "not": "Not the Phase-1 no-bowtie CTDI anchor. Both MC legs are axial; recorded CTDIvol carries pitch.",
+  "source_model": {
+    "projections": 36,
+    "sub_fans": 4,
+    "histories": 200000000.0,
+    "route": "A",
+    "phantom_cm": 32,
+    "sad_cm": 60.0,
+    "collimation_cm": 2.0
+  },
+  "n_complete": 7,
+  "n_planned": 7,
+  "ctdiw_pmma_mgy_by_vendor_kvp": {
+    "Canon/Toshiba|120": 0.0003079601229704472,
+    "GE|100": 0.0002894599062111557,
+    "GE|120": 0.00030630230158600345,
+    "Philips|120": 0.0003034366223489902,
+    "Siemens|100": 0.0002893430099511204,
+    "Siemens|120": 0.00030578284598323577,
+    "Siemens|140": 0.00032480761516256876
+  },
+  "runs": [
+    {
+      "vendor": "Canon/Toshiba",
+      "kvp": 120.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.0003079601229704472,
+      "tag": "scale_Canon-Toshiba_120kVp"
+    },
+    {
+      "vendor": "GE",
+      "kvp": 100.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.0002894599062111557,
+      "tag": "scale_GE_100kVp"
+    },
+    {
+      "vendor": "GE",
+      "kvp": 120.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.00030630230158600345,
+      "tag": "scale_GE_120kVp"
+    },
+    {
+      "vendor": "Philips",
+      "kvp": 120.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.0003034366223489902,
+      "tag": "scale_Philips_120kVp"
+    },
+    {
+      "vendor": "Siemens",
+      "kvp": 100.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.0002893430099511204,
+      "tag": "scale_Siemens_100kVp"
+    },
+    {
+      "vendor": "Siemens",
+      "kvp": 120.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.00030578284598323577,
+      "tag": "scale_Siemens_120kVp"
+    },
+    {
+      "vendor": "Siemens",
+      "kvp": 140.0,
+      "complete": true,
+      "ctdiw_pmma_mgy": 0.00032480761516256876,
+      "tag": "scale_Siemens_140kVp"
+    }
+  ]
+}

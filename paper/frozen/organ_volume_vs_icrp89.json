@@ -1,0 +1,175 @@
+{
+  "primary_result_device_independence": "METHODS. IORN-007 (CPU, torch cpu) reproduces IORN-006 (GPU, torch cu128) 1.5 mm organ volumes on the same 40 series to a median ratio of 1.00 (pancreas 0.99), both TotalSegmentator 2.17.0. This is an independent validation that the ported segmentation is device-independent -- structurally the same claim as the G5 CPU/GPU bit-identity gate on the transport engine, applied here to the anatomy input.",
+  "icrp89_not_a_requirement": "DISCUSSION, one paragraph. Agreement with ICRP 89 is NOT an IORN-007 requirement and is not a validation gate. IORN-007 computes dose on each patient's own segmented organ mass, so departure from a reference-phantom mass is the expected behaviour, not a defect: the spleen (+72%) and pancreas (-39%) figures are reproduced at fixed 1.5 mm with the same model, so they are not a resolution artefact, and per the handover a true model-vs-anatomy split would need a second segmentation *model*, not a second resolution (the same model at 3 mm shares the boundary-definition problem). The numbers are tabulated here as descriptive context only.",
+  "reference": "ICRP Publication 89 (2002) adult-male reference organ masses",
+  "iorn006_segmentation": "1.5mm full, TotalSegmentator 2.17.0, GPU (torch cu128)",
+  "iorn007_segmentation": "1.5mm full, TotalSegmentator 2.17.0, CPU (torch cpu)",
+  "iorn007_n_series_used": 40,
+  "organs": [
+    {
+      "organ": "liver",
+      "icrp89_mass_g": 1800.0,
+      "iorn006_1.5mm_mass_g": {
+        "n": 34,
+        "median": 1900.8,
+        "mean": 1996.19,
+        "p25": 1550.9,
+        "p75": 2307.6,
+        "min": 989.9,
+        "max": 3924.6
+      },
+      "iorn006_1.5mm_volume_cm3": {
+        "n": 34,
+        "median": 1806.47,
+        "mean": 1895.1,
+        "p25": 1487.93,
+        "p75": 2176.82,
+        "min": 906.52,
+        "max": 3897.87
+      },
+      "iorn007_1.5mm_volume_cm3": {
+        "n": 34,
+        "median": 1806.37,
+        "mean": 1888.24,
+        "p25": 1487.87,
+        "p75": 2176.9,
+        "min": 906.4,
+        "max": 3897.71
+      },
+      "iorn006_median_mass_dev_vs_icrp89_pct": 5.6,
+      "iorn007_over_iorn006_median_volume": 1.0
+    },
+    {
+      "organ": "spleen",
+      "icrp89_mass_g": 150.0,
+      "iorn006_1.5mm_mass_g": {
+        "n": 38,
+        "median": 258.65,
+        "mean": 270.95,
+        "p25": 171.5,
+        "p75": 354.6,
+        "min": 57.6,
+        "max": 671.0
+      },
+      "iorn006_1.5mm_volume_cm3": {
+        "n": 38,
+        "median": 244.67,
+        "mean": 255.11,
+        "p25": 163.48,
+        "p75": 338.9,
+        "min": 51.13,
+        "max": 634.48
+      },
+      "iorn007_1.5mm_volume_cm3": {
+        "n": 38,
+        "median": 244.65,
+        "mean": 253.27,
+        "p25": 150.42,
+        "p75": 336.52,
+        "min": 51.13,
+        "max": 634.49
+      },
+      "iorn006_median_mass_dev_vs_icrp89_pct": 72.4,
+      "iorn007_over_iorn006_median_volume": 1.0
+    },
+    {
+      "organ": "kidney_left",
+      "icrp89_mass_g": 155.0,
+      "iorn006_1.5mm_mass_g": {
+        "n": 34,
+        "median": 178.6,
+        "mean": 182.62,
+        "p25": 141.9,
+        "p75": 221.1,
+        "min": 4.3,
+        "max": 342.1
+      },
+      "iorn006_1.5mm_volume_cm3": {
+        "n": 34,
+        "median": 167.71,
+        "mean": 171.18,
+        "p25": 128.2,
+        "p75": 208.09,
+        "min": 4.02,
+        "max": 317.25
+      },
+      "iorn007_1.5mm_volume_cm3": {
+        "n": 34,
+        "median": 167.7,
+        "mean": 170.78,
+        "p25": 128.19,
+        "p75": 208.12,
+        "min": 4.02,
+        "max": 317.27
+      },
+      "iorn006_median_mass_dev_vs_icrp89_pct": 15.2,
+      "iorn007_over_iorn006_median_volume": 1.0
+    },
+    {
+      "organ": "kidney_right",
+      "icrp89_mass_g": 155.0,
+      "iorn006_1.5mm_mass_g": {
+        "n": 35,
+        "median": 181.9,
+        "mean": 181.57,
+        "p25": 144.3,
+        "p75": 226.6,
+        "min": 46.3,
+        "max": 289.8
+      },
+      "iorn006_1.5mm_volume_cm3": {
+        "n": 35,
+        "median": 173.63,
+        "mean": 170.05,
+        "p25": 133.09,
+        "p75": 215.37,
+        "min": 42.93,
+        "max": 268.62
+      },
+      "iorn007_1.5mm_volume_cm3": {
+        "n": 35,
+        "median": 173.63,
+        "mean": 169.41,
+        "p25": 132.48,
+        "p75": 215.38,
+        "min": 42.93,
+        "max": 268.63
+      },
+      "iorn006_median_mass_dev_vs_icrp89_pct": 17.4,
+      "iorn007_over_iorn006_median_volume": 1.0
+    },
+    {
+      "organ": "pancreas",
+      "icrp89_mass_g": 140.0,
+      "iorn006_1.5mm_mass_g": {
+        "n": 36,
+        "median": 86.05,
+        "mean": 82.89,
+        "p25": 62.1,
+        "p75": 102.4,
+        "min": 25.3,
+        "max": 134.5
+      },
+      "iorn006_1.5mm_volume_cm3": {
+        "n": 36,
+        "median": 80.95,
+        "mean": 79.12,
+        "p25": 57.66,
+        "p75": 99.07,
+        "min": 24.35,
+        "max": 132.53
+      },
+      "iorn007_1.5mm_volume_cm3": {
+        "n": 36,
+        "median": 80.12,
+        "mean": 78.46,
+        "p25": 57.36,
+        "p75": 99.04,
+        "min": 24.34,
+        "max": 132.51
+      },
+      "iorn006_median_mass_dev_vs_icrp89_pct": -38.5,
+      "iorn007_over_iorn006_median_volume": 0.99
+    }
+  ]
+}

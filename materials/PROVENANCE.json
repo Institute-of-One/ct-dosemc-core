@@ -1,10 +1,10 @@
 {
   "environment": {
-    "generated_utc": "2026-08-14T01:40:17+00:00",
+    "generated_utc": "2026-08-16T06:36:06+00:00",
     "python": "3.12.10",
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
-    "git_commit": "aef14257ab4490b355906bf07faf78bb5abf5b80",
+    "git_commit": "48b79fc45439e62aebda52a3ca0aa18f3f90a78d",
     "numpy": "2.5.1",
     "spekpy": "2.5.4"
   },
@@ -31,6 +31,34 @@
       "energy_step_ev": 5
     },
     {
+      "material": "PMMA",
+      "file": "PMMA_5-120keV.mcgpu.gz",
+      "sha256": "01cae13a8988729061a0418170dfc5a90d40aca1a9066d6d7497dd1ebe39f208",
+      "pendbase_id": 224,
+      "pendbase_label": "POLYMETHYL METHACRALATE (LUCITE, PERSPEX, PLEXIGLASS)",
+      "nominal_density_g_cm3": 1.19,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "PMMA",
+      "file": "PMMA_5-150keV.mcgpu.gz",
+      "sha256": "c7848833ccc04a5e3d4128734e7eb12dfdad06057fdaf215c79b5fb3f98dd8da",
+      "pendbase_id": 224,
+      "pendbase_label": "POLYMETHYL METHACRALATE (LUCITE, PERSPEX, PLEXIGLASS)",
+      "nominal_density_g_cm3": 1.19,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "adipose",
       "file": "adipose_5-120keV.mcgpu.gz",
       "sha256": "3f398c48cf4b6efb8e4ea27669a7dc727195a12f65db76ac09a6d7853eca0c9a",
@@ -41,6 +69,20 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "adipose",
+      "file": "adipose_5-150keV.mcgpu.gz",
+      "sha256": "3ff81c4e915d948f1f9dea3736e7ca47a0422553ca409f5593e77602f95d7f20",
+      "pendbase_id": 103,
+      "pendbase_label": "ADIPOSE TISSUE (ICRP)",
+      "nominal_density_g_cm3": 0.92,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -59,45 +101,16 @@
       "energy_step_ev": 5
     },
     {
-      "material": "bone_1",
-      "file": "bone_1_5-120keV.mcgpu.gz",
-      "sha256": "a61dac1f4d776d4906c602be117841d1799546a669cae0a90bb4f50d912c1768",
-      "composition": "Schneider two-endpoint volume-fraction mix",
-      "endpoints": {
-        "soft_tissue_pendbase_id": 262,
-        "cortical_bone_pendbase_id": 120,
-        "rho_soft_g_cm3": 1.0,
-        "rho_cortical_g_cm3": 1.85
-      },
-      "hu_bin": [
-        100.0,
-        124.0
-      ],
-      "volume_fraction_f": 0.0041,
-      "spacing": "uniform in sqrt(f)",
-      "power": 2.0,
-      "mass_fraction_bone": 0.0076,
-      "rho_mix_endpoints_g_cm3": 1.0035,
-      "weight_fractions": {
-        "1": 0.104036,
-        "6": 0.231521,
-        "7": 0.02501,
-        "8": 0.628835,
-        "11": 0.001121,
-        "12": 0.000146,
-        "15": 0.00212,
-        "16": 0.001999,
-        "17": 0.00133,
-        "19": 0.001975,
-        "20": 0.001827,
-        "26": 5e-05,
-        "30": 3.1e-05
-      },
-      "nominal_density_g_cm3": 1.0831,
+      "material": "air",
+      "file": "air_5-150keV.mcgpu.gz",
+      "sha256": "909a5c9ceabac7c321f244db617410d00c29082b941fe494a95263ea735b4ac4",
+      "pendbase_id": 104,
+      "pendbase_label": "AIR, DRY (NEAR SEA LEVEL)",
+      "nominal_density_g_cm3": 0.00120479,
       "insulator": true,
       "energy_range_ev": [
         5000,
-        120000
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -145,6 +158,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_10",
+      "file": "bone_10_5-150keV.mcgpu.gz",
+      "sha256": "7672e2336c9270ffe32198fccc113b342c2a6b6afed86bd135ff1fa7188822dd",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        2041.3,
+        2496.7
+      ],
+      "volume_fraction_f": 0.7479,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.8459,
+      "rho_mix_endpoints_g_cm3": 1.6357,
+      "weight_fractions": {
+        "1": 0.056054,
+        "6": 0.157869,
+        "7": 0.039353,
+        "8": 0.474472,
+        "11": 0.000174,
+        "12": 0.001881,
+        "15": 0.088999,
+        "16": 0.002971,
+        "17": 0.000206,
+        "19": 0.000307,
+        "20": 0.177615,
+        "26": 8e-06,
+        "30": 8.9e-05
+      },
+      "nominal_density_g_cm3": 2.3635,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_11",
       "file": "bone_11_5-120keV.mcgpu.gz",
       "sha256": "86be0e4b1115d8637ad193a83ec97c5e882639d5cb2c8299a390dac78828b082",
@@ -184,6 +240,135 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_11",
+      "file": "bone_11_5-150keV.mcgpu.gz",
+      "sha256": "ea4d551181cb627805a58dd1fa17ef694377c982e069a66d00c3250a668a896b",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        2496.7,
+        3000.0
+      ],
+      "volume_fraction_f": 0.9132,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.9511,
+      "rho_mix_endpoints_g_cm3": 1.7762,
+      "weight_fractions": {
+        "1": 0.05003,
+        "6": 0.148622,
+        "7": 0.041154,
+        "8": 0.455092,
+        "11": 5.5e-05,
+        "12": 0.002099,
+        "15": 0.099907,
+        "16": 0.003093,
+        "17": 6.5e-05,
+        "19": 9.7e-05,
+        "20": 0.199685,
+        "26": 2e-06,
+        "30": 9.7e-05
+      },
+      "nominal_density_g_cm3": 2.6497,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_1",
+      "file": "bone_1_5-120keV.mcgpu.gz",
+      "sha256": "a61dac1f4d776d4906c602be117841d1799546a669cae0a90bb4f50d912c1768",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        100.0,
+        124.0
+      ],
+      "volume_fraction_f": 0.0041,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.0076,
+      "rho_mix_endpoints_g_cm3": 1.0035,
+      "weight_fractions": {
+        "1": 0.104036,
+        "6": 0.231521,
+        "7": 0.02501,
+        "8": 0.628835,
+        "11": 0.001121,
+        "12": 0.000146,
+        "15": 0.00212,
+        "16": 0.001999,
+        "17": 0.00133,
+        "19": 0.001975,
+        "20": 0.001827,
+        "26": 5e-05,
+        "30": 3.1e-05
+      },
+      "nominal_density_g_cm3": 1.0831,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_1",
+      "file": "bone_1_5-150keV.mcgpu.gz",
+      "sha256": "c7ff1213b0c1ca586e756b9ae6f85158497a5425198492e32a03b55a069d7c12",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        100.0,
+        124.0
+      ],
+      "volume_fraction_f": 0.0041,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.0076,
+      "rho_mix_endpoints_g_cm3": 1.0035,
+      "weight_fractions": {
+        "1": 0.104036,
+        "6": 0.231521,
+        "7": 0.02501,
+        "8": 0.628835,
+        "11": 0.001121,
+        "12": 0.000146,
+        "15": 0.00212,
+        "16": 0.001999,
+        "17": 0.00133,
+        "19": 0.001975,
+        "20": 0.001827,
+        "26": 5e-05,
+        "30": 3.1e-05
+      },
+      "nominal_density_g_cm3": 1.0831,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -231,6 +416,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_2",
+      "file": "bone_2_5-150keV.mcgpu.gz",
+      "sha256": "4eace6a84eafebff09fa50eeee18fd902fd91518bf6c62b83c75af3c88cf5127",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        124.0,
+        195.9
+      ],
+      "volume_fraction_f": 0.0207,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.0376,
+      "rho_mix_endpoints_g_cm3": 1.0176,
+      "weight_fractions": {
+        "1": 0.102322,
+        "6": 0.22889,
+        "7": 0.025523,
+        "8": 0.623321,
+        "11": 0.001088,
+        "12": 0.000208,
+        "15": 0.005223,
+        "16": 0.002034,
+        "17": 0.00129,
+        "19": 0.001915,
+        "20": 0.008107,
+        "26": 4.8e-05,
+        "30": 3.3e-05
+      },
+      "nominal_density_g_cm3": 1.1115,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_3",
       "file": "bone_3_5-120keV.mcgpu.gz",
       "sha256": "ad9fd30a06e123bd0bbd7238f4babdca369d5601ec1137b67f3187f6987fc1c5",
@@ -270,6 +498,49 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_3",
+      "file": "bone_3_5-150keV.mcgpu.gz",
+      "sha256": "851c1533f1e1299930007f3df65587e5acb2ff2fb53a2ca2f213a3c74f897e49",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        195.9,
+        315.7
+      ],
+      "volume_fraction_f": 0.0537,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.095,
+      "rho_mix_endpoints_g_cm3": 1.0457,
+      "weight_fractions": {
+        "1": 0.099032,
+        "6": 0.22384,
+        "7": 0.026506,
+        "8": 0.612737,
+        "11": 0.001023,
+        "12": 0.000327,
+        "15": 0.01118,
+        "16": 0.0021,
+        "17": 0.001213,
+        "19": 0.001801,
+        "20": 0.02016,
+        "26": 4.5e-05,
+        "30": 3.7e-05
+      },
+      "nominal_density_g_cm3": 1.1682,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -317,6 +588,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_4",
+      "file": "bone_4_5-150keV.mcgpu.gz",
+      "sha256": "3e8e80a44bfa523a2440a6f65f6f83bc408c26511d02006e42a638ac55b5b1bc",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        315.7,
+        483.5
+      ],
+      "volume_fraction_f": 0.1033,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.1757,
+      "rho_mix_endpoints_g_cm3": 1.0878,
+      "weight_fractions": {
+        "1": 0.094416,
+        "6": 0.216754,
+        "7": 0.027886,
+        "8": 0.597886,
+        "11": 0.000931,
+        "12": 0.000494,
+        "15": 0.019538,
+        "16": 0.002194,
+        "17": 0.001105,
+        "19": 0.00164,
+        "20": 0.037072,
+        "26": 4.1e-05,
+        "30": 4.2e-05
+      },
+      "nominal_density_g_cm3": 1.2534,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_5",
       "file": "bone_5_5-120keV.mcgpu.gz",
       "sha256": "ef3ec6805985e4c954b5cc78bcf80024ea6e8f28544ce2b1809c4a8639639f18",
@@ -356,6 +670,49 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_5",
+      "file": "bone_5_5-150keV.mcgpu.gz",
+      "sha256": "ddc61808b64c16927ba1cc5c1518085ddc37f6f7262d5db8ec08e4db862691c5",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        483.5,
+        699.2
+      ],
+      "volume_fraction_f": 0.1694,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.274,
+      "rho_mix_endpoints_g_cm3": 1.144,
+      "weight_fractions": {
+        "1": 0.08879,
+        "6": 0.208119,
+        "7": 0.029568,
+        "8": 0.579788,
+        "11": 0.00082,
+        "12": 0.000697,
+        "15": 0.029725,
+        "16": 0.002308,
+        "17": 0.000973,
+        "19": 0.001445,
+        "20": 0.057683,
+        "26": 3.6e-05,
+        "30": 4.9e-05
+      },
+      "nominal_density_g_cm3": 1.3669,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -403,6 +760,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_6",
+      "file": "bone_6_5-150keV.mcgpu.gz",
+      "sha256": "2f689baa9d40c532bb5781681a1be353216996b2f255d6d63ac0dc1cf26a2c3f",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        699.2,
+        962.8
+      ],
+      "volume_fraction_f": 0.2521,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.384,
+      "rho_mix_endpoints_g_cm3": 1.2143,
+      "weight_fractions": {
+        "1": 0.08249,
+        "6": 0.198448,
+        "7": 0.031451,
+        "8": 0.55952,
+        "11": 0.000696,
+        "12": 0.000925,
+        "15": 0.041132,
+        "16": 0.002435,
+        "17": 0.000825,
+        "19": 0.001226,
+        "20": 0.080763,
+        "26": 3.1e-05,
+        "30": 5.7e-05
+      },
+      "nominal_density_g_cm3": 1.5087,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_7",
       "file": "bone_7_5-120keV.mcgpu.gz",
       "sha256": "06573ed15afd337cc7bbf02c2ae32a2a2c2197a54308753028a8c360268132d2",
@@ -442,6 +842,49 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_7",
+      "file": "bone_7_5-150keV.mcgpu.gz",
+      "sha256": "18e11bd5571070933b327d5072b282208db9f709b0b054932c6e83be89e7a08b",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        962.8,
+        1274.4
+      ],
+      "volume_fraction_f": 0.3512,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.5004,
+      "rho_mix_endpoints_g_cm3": 1.2986,
+      "weight_fractions": {
+        "1": 0.07583,
+        "6": 0.188225,
+        "7": 0.033442,
+        "8": 0.538094,
+        "11": 0.000565,
+        "12": 0.001166,
+        "15": 0.053191,
+        "16": 0.00257,
+        "17": 0.000669,
+        "19": 0.000994,
+        "20": 0.105163,
+        "26": 2.5e-05,
+        "30": 6.5e-05
+      },
+      "nominal_density_g_cm3": 1.679,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -489,6 +932,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_8",
+      "file": "bone_8_5-150keV.mcgpu.gz",
+      "sha256": "ab0791cf901c6372d46e6ddd7baf907438308f6b8401c2447485e97db4d50d77",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        1274.4,
+        1633.9
+      ],
+      "volume_fraction_f": 0.4669,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.6184,
+      "rho_mix_endpoints_g_cm3": 1.3969,
+      "weight_fractions": {
+        "1": 0.069076,
+        "6": 0.177857,
+        "7": 0.035461,
+        "8": 0.516365,
+        "11": 0.000431,
+        "12": 0.00141,
+        "15": 0.065421,
+        "16": 0.002707,
+        "17": 0.000511,
+        "19": 0.000759,
+        "20": 0.129908,
+        "26": 1.9e-05,
+        "30": 7.3e-05
+      },
+      "nominal_density_g_cm3": 1.8776,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_9",
       "file": "bone_9_5-120keV.mcgpu.gz",
       "sha256": "3325130f5b1b5e3f07f65af4f07de8e9e2425b0e3f4018c8e8b8a0a9cf0b3262",
@@ -532,6 +1018,49 @@
       "energy_step_ev": 5
     },
     {
+      "material": "bone_9",
+      "file": "bone_9_5-150keV.mcgpu.gz",
+      "sha256": "ca8c98166f13fab4892daaaa7f0ebcafb85ec7c7a7a5c09f8abe2271c2171a9d",
+      "composition": "Schneider two-endpoint volume-fraction mix",
+      "endpoints": {
+        "soft_tissue_pendbase_id": 262,
+        "cortical_bone_pendbase_id": 120,
+        "rho_soft_g_cm3": 1.0,
+        "rho_cortical_g_cm3": 1.85
+      },
+      "hu_bin": [
+        1633.9,
+        2041.3
+      ],
+      "volume_fraction_f": 0.5992,
+      "spacing": "uniform in sqrt(f)",
+      "power": 2.0,
+      "mass_fraction_bone": 0.7344,
+      "rho_mix_endpoints_g_cm3": 1.5093,
+      "weight_fractions": {
+        "1": 0.062435,
+        "6": 0.167663,
+        "7": 0.037446,
+        "8": 0.494999,
+        "11": 0.0003,
+        "12": 0.00165,
+        "15": 0.077446,
+        "16": 0.002842,
+        "17": 0.000356,
+        "19": 0.000528,
+        "20": 0.15424,
+        "26": 1.3e-05,
+        "30": 8.1e-05
+      },
+      "nominal_density_g_cm3": 2.1059,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "bone_cortical",
       "file": "bone_cortical_5-120keV.mcgpu.gz",
       "sha256": "4d67a9561b45e14119bff4b2b72c747dcf68d70283400e26a4b79d21016c39e0",
@@ -542,6 +1071,20 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "bone_cortical",
+      "file": "bone_cortical_5-150keV.mcgpu.gz",
+      "sha256": "856a9e69c05abb35b2dd08af829080c880bef7207bfe4e48213cfaeeedc85ac1",
+      "pendbase_id": 120,
+      "pendbase_label": "BONE, CORTICAL (ICRP)",
+      "nominal_density_g_cm3": 1.85,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     },
@@ -560,6 +1103,20 @@
       "energy_step_ev": 5
     },
     {
+      "material": "lung",
+      "file": "lung_5-150keV.mcgpu.gz",
+      "sha256": "b0e2fd8f74c2299c04ff986362793b18f45df055248137583056b268cbb14130",
+      "pendbase_id": 191,
+      "pendbase_label": "LUNG (ICRP)",
+      "nominal_density_g_cm3": 0.3,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "soft_tissue",
       "file": "soft_tissue_5-120keV.mcgpu.gz",
       "sha256": "597a78bdb2fc54a9a1fc69fd30507280ad8d3fa8d4abec2025e8e4eecede64fd",
@@ -574,6 +1131,20 @@
       "energy_step_ev": 5
     },
     {
+      "material": "soft_tissue",
+      "file": "soft_tissue_5-150keV.mcgpu.gz",
+      "sha256": "17f234183fa2d8014d64d8ea7563e0c52b573c9d60561da2a5127444a6489a7c",
+      "pendbase_id": 262,
+      "pendbase_label": "TISSUE, SOFT (ICRP)",
+      "nominal_density_g_cm3": 1.0,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
+      ],
+      "energy_step_ev": 5
+    },
+    {
       "material": "water",
       "file": "water_5-120keV.mcgpu.gz",
       "sha256": "c7b5f1cca27e73aef2bf70f6835615f03a9f8000ff72bb437d5c0f2112ca010a",
@@ -584,6 +1155,20 @@
       "energy_range_ev": [
         5000,
         120000
+      ],
+      "energy_step_ev": 5
+    },
+    {
+      "material": "water",
+      "file": "water_5-150keV.mcgpu.gz",
+      "sha256": "6a0260e38ba2468170efeb484ca165d40bc7ff407ac59c64c0f28315d17bf46f",
+      "pendbase_id": 278,
+      "pendbase_label": "WATER, LIQUID",
+      "nominal_density_g_cm3": 1.0,
+      "insulator": true,
+      "energy_range_ev": [
+        5000,
+        150000
       ],
       "energy_step_ev": 5
     }
