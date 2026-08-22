@@ -7,6 +7,7 @@ isotropic geometry. No MC-GPU run happens here.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
 
@@ -32,6 +33,16 @@ from ct_dosemc_core.patient import (
     union_organ_roi,
 )
 from ct_dosemc_core.phantom import MCGPU_MAX_MATERIALS
+
+
+#: Two tests below reach NIST mass attenuation coefficients through SpekPy, which
+#: pyproject declares as the optional `spectra` extra. test_spectra.py already skips
+#: on it; these did not, so a checkout without the extra reported two failures that
+#: were nothing to do with the code under test.
+needs_spekpy = pytest.mark.skipif(
+    importlib.util.find_spec("spekpy") is None,
+    reason="SpekPy supplies the NIST attenuation coefficients (optional extra)",
+)
 
 
 def test_default_group_table_fits_max_materials():
@@ -188,6 +199,7 @@ def test_binned_volume_fraction_is_the_bin_midpoint():
     assert f == pytest.approx(0.5 / 11**2)
 
 
+@needs_spekpy
 def test_sqrt_f_spacing_beats_equal_hu_at_the_soft_boundary():
     soft = [(1, 0.10), (6, 0.20), (8, 0.70)]
     bone = [(1, 0.04), (8, 0.43), (20, 0.53)]
@@ -207,6 +219,7 @@ def test_mix_elemental_weights_follow_the_mass_fraction():
     assert by_z[20] == pytest.approx(w * 0.96)
 
 
+@needs_spekpy
 def test_more_bins_beat_one_bin():
     # Magnitude is reported, not gated -- this only insists the measurement runs
     # and that 11 √f bins beat a single bin.

@@ -17,12 +17,32 @@ def _info():
     return json.loads(INFO.read_text(encoding="utf-8-sig"))
 
 
+#: What a source patch to the engine may be. `capacity` raises a compile-time array
+#: bound to admit a larger input -- it changes neither the physics nor the speed --
+#: and was added when the Schneider tables at 140 kVp overran MAX_SHELLS and
+#: MAX_ENERGYBINS_RAYLEIGH. `performance` is deliberately absent: Route A belongs in
+#: performance_modifications, which is what this file exists to keep separate.
+PATCH_KINDS = {"defect_fix", "portability", "capacity"}
+
+
 def test_route_a_is_not_listed_among_defect_fixes():
     info = _info()
     kinds = {p["kind"] for p in info["patches"]}
     assert "performance" not in kinds
     assert all("Route A" not in (p.get("name") or "") for p in info["patches"])
-    assert all(p["kind"] in {"defect_fix", "portability"} for p in info["patches"])
+    unknown = kinds - PATCH_KINDS
+    assert not unknown, f"patch kinds outside {sorted(PATCH_KINDS)}: {sorted(unknown)}"
+
+
+def test_every_capacity_patch_says_why_it_was_raised():
+    """A bound raised without a reason is indistinguishable from one raised to
+    make a failure go away. The manuscript cites this file as build provenance."""
+    for patch in _info()["patches"]:
+        if patch["kind"] != "capacity":
+            continue
+        reason = (patch.get("reason") or "").strip()
+        assert len(reason) > 40, f"capacity patch with no stated reason: {patch}"
+        assert patch.get("from") and patch.get("to"), patch
 
 
 def test_route_a_sits_in_performance_modifications():
