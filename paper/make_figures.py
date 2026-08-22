@@ -111,14 +111,15 @@ def figure1_selection_funnel() -> Path:
     positions = range(len(stages))
     left.set_xscale("log")
     left.set_xlim(10, counts[0] * 4.5)
-    for position, count in zip(positions, counts):
+    for position, count in zip(positions, counts, strict=True):
         left.plot(
-            [10, count], [position, position],
-            color="#C8D3E0", linewidth=0.9, zorder=1,
+            [10, count],
+            [position, position],
+            color="#C8D3E0",
+            linewidth=0.9,
+            zorder=1,
         )
-        left.plot(
-            count, position, marker="o", color="#4C72B0", markersize=6, zorder=2
-        )
+        left.plot(count, position, marker="o", color="#4C72B0", markersize=6, zorder=2)
         left.text(count * 1.35, position, f"{count:,}", va="center", fontsize=ANNOT)
     left.set_yticks(list(positions))
     left.set_yticklabels(labels, fontsize=TICK)
@@ -135,12 +136,10 @@ def figure1_selection_funnel() -> Path:
         height=0.62,
     )
     right.set_yticks(list(reason_positions))
-    right.set_yticklabels(
-        [name.replace("-", "‑") for name, _ in ordered], fontsize=TICK
-    )
+    right.set_yticklabels([name.replace("-", "‑") for name, _ in ordered], fontsize=TICK)
     right.set_xlabel("Series rejected at probe", fontsize=LABEL)
     right.set_xlim(0, max(count for _, count in ordered) * 1.28)
-    for position, (_, count) in zip(reason_positions, ordered):
+    for position, (_, count) in zip(reason_positions, ordered, strict=True):
         right.text(count + 0.25, position, str(count), va="center", fontsize=ANNOT)
     right.set_title(
         f"(b) Why {funnel['n_probe_rejected']} of {funnel['probed']} were rejected",
@@ -161,9 +160,7 @@ def figure2_density_gate() -> Path:
     """The pre-declared density gate, with every assessed series shown."""
     eligibility = _load("density_eligibility.json")
     threshold = eligibility["threshold_cm3"]
-    series = sorted(
-        eligibility["series"], key=lambda row: row["largest_component_cm3"]
-    )
+    series = sorted(eligibility["series"], key=lambda row: row["largest_component_cm3"])
     values = [row["largest_component_cm3"] for row in series]
     n_zero = sum(1 for value in values if value == 0.0)
 
@@ -221,18 +218,33 @@ def figure2_density_gate() -> Path:
 
     handles = [
         Line2D(
-            [], [], color=colour, marker=marker, linestyle="none", markersize=5,
+            [],
+            [],
+            color=colour,
+            marker=marker,
+            linestyle="none",
+            markersize=5,
             label=vendor,
         )
         for vendor, (colour, marker) in VENDOR_STYLE.items()
     ]
     handles += [
         Line2D(
-            [], [], color="#333333", marker="o", linestyle="none", markersize=5,
+            [],
+            [],
+            color="#333333",
+            marker="o",
+            linestyle="none",
+            markersize=5,
             label=f"eligible (n = {eligibility['n_eligible']})",
         ),
         Line2D(
-            [], [], color="#333333", marker="o", linestyle="none", markersize=5,
+            [],
+            [],
+            color="#333333",
+            marker="o",
+            linestyle="none",
+            markersize=5,
             markerfacecolor="none",
             label=f"excluded (n = {eligibility['n_excluded']})",
         ),
@@ -262,7 +274,7 @@ def figure3_tg195() -> Path:
 
     fig, axes = plt.subplots(1, 2, figsize=(6.5, 3.0), sharey=True)
 
-    for axis, (voi_name, voi) in zip(axes, vois.items()):
+    for axis, (voi_name, voi) in zip(axes, vois.items(), strict=True):
         per_code = voi["per_code_ours_minus_reference"]
         # PENELOPE last, so the yardstick reads as the reference point, and the
         # order is otherwise fixed rather than sorted by how well each agrees.
@@ -274,7 +286,7 @@ def figure3_tg195() -> Path:
         positions = range(len(codes))
         axis.axhspan(-sigma, sigma, color="#DDE7F0", zorder=1)
         axis.axhline(0.0, color="#333333", linewidth=0.9, zorder=2)
-        for position, (code, value) in zip(positions, zip(codes, values)):
+        for position, code, value in zip(positions, codes, values, strict=True):
             is_yardstick = code.lower().startswith("pen")
             axis.errorbar(
                 position,
@@ -335,31 +347,44 @@ def figure5_conversion_ceiling() -> Path:
     )
 
     positions = list(range(len(order)))
-    for position, (key, _) in zip(positions, order):
+    for position, (key, _) in zip(positions, order, strict=True):
         q = models[key]["quantiles"]
         left.plot(
-            [q["p10"] * 100, q["p90"] * 100], [position, position],
-            color="#9AA7B4", linewidth=1.4, solid_capstyle="round", zorder=2,
+            [q["p10"] * 100, q["p90"] * 100],
+            [position, position],
+            color="#9AA7B4",
+            linewidth=1.4,
+            solid_capstyle="round",
+            zorder=2,
         )
         left.plot(
-            [q["p25"] * 100, q["p75"] * 100], [position, position],
-            color="#4C72B0", linewidth=4.0, solid_capstyle="butt", zorder=3,
+            [q["p25"] * 100, q["p75"] * 100],
+            [position, position],
+            color="#4C72B0",
+            linewidth=4.0,
+            solid_capstyle="butt",
+            zorder=3,
         )
         left.plot(
-            q["p50"] * 100, position, marker="o", color="#12263A",
-            markersize=6, zorder=4,
+            q["p50"] * 100,
+            position,
+            marker="o",
+            color="#12263A",
+            markersize=6,
+            zorder=4,
         )
         left.text(
-            q["p90"] * 100 + 2.5, position,
-            f"{q['p50'] * 100:.0f}%", va="center", fontsize=ANNOT,
+            q["p90"] * 100 + 2.5,
+            position,
+            f"{q['p50'] * 100:.0f}%",
+            va="center",
+            fontsize=ANNOT,
         )
 
     left.set_yticks(positions)
     left.set_yticklabels([label for _, label in order], fontsize=TICK)
     left.set_ylim(len(order) - 0.5, -0.5)
-    left.set_xlabel(
-        "Absolute error in absorbed organ dose (%), held out", fontsize=LABEL
-    )
+    left.set_xlabel("Absolute error in absorbed organ dose (%), held out", fontsize=LABEL)
     left.set_xlim(0, max(m["quantiles"]["p90"] for m in models.values()) * 100 + 16)
     left.axvline(20, color="#B0B0B0", linestyle=":", linewidth=1.0, zorder=1)
     left.text(20.8, -0.42, "20 %", fontsize=ANNOT, color="#666666")
@@ -374,12 +399,13 @@ def figure5_conversion_ceiling() -> Path:
     ]
     share_positions = list(range(len(shares)))
     right.barh(
-        share_positions, [share * 100 for _, share in shares],
-        color=["#4C72B0", "#B0B0B0", "#B0B0B0"], height=0.55,
+        share_positions,
+        [share * 100 for _, share in shares],
+        color=["#4C72B0", "#B0B0B0", "#B0B0B0"],
+        height=0.55,
     )
-    for position, (_, share) in zip(share_positions, shares):
-        right.text(share * 100 + 2.0, position, f"{share:.0%}", va="center",
-                   fontsize=ANNOT)
+    for position, (_, share) in zip(share_positions, shares, strict=True):
+        right.text(share * 100 + 2.0, position, f"{share:.0%}", va="center", fontsize=ANNOT)
     right.set_yticks(share_positions)
     right.set_yticklabels([label for label, _ in shares], fontsize=TICK)
     right.set_ylim(len(shares) - 0.5, -0.5)

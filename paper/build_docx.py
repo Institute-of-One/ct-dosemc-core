@@ -79,9 +79,7 @@ def assemble(built: str) -> str:
             placed.add(number)
     missing = sorted(set(collect_figures.FIGURE_SOURCES) - placed)
     if missing:
-        raise SystemExit(
-            f"figures never named in the prose, so never placed: {missing}"
-        )
+        raise SystemExit(f"figures never named in the prose, so never placed: {missing}")
     return "\n\n".join(out)
 
 
@@ -95,9 +93,7 @@ def _set_property(fragment: str, container: str, element: str, prop: str) -> str
     """
     opened = f"<{element}>"
     fragment = re.sub(re.escape(opened), f"{opened}{prop}", fragment)
-    fragment = re.sub(
-        rf"<{re.escape(element)}\s*/>", f"{opened}{prop}</{element}>", fragment
-    )
+    fragment = re.sub(rf"<{re.escape(element)}\s*/>", f"{opened}{prop}</{element}>", fragment)
     return re.sub(
         rf"(<{re.escape(container)}\b[^>]*>)(?<!/>)(?!<{re.escape(element)})",
         rf"\1{opened}{prop}</{element}>",
@@ -122,9 +118,7 @@ def keep_tables_whole(path: Path) -> Path:
         # The last row is left free: binding it drags the paragraph after the table onto
         # the same page, which trades one defect for another.
         for row in rows[:-1]:
-            table = table.replace(
-                row, _set_property(row, "w:p", "w:pPr", "<w:keepNext/>"), 1
-            )
+            table = table.replace(row, _set_property(row, "w:p", "w:pPr", "<w:keepNext/>"), 1)
         return caption + table
 
     document = re.sub(
@@ -159,9 +153,7 @@ _FOOTER_XML = (
 
 _FOOTER_PART = "word/footer1.xml"
 _FOOTER_RELATIONSHIP = "rIdPageFooter"
-_FOOTER_TYPE = (
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"
-)
+_FOOTER_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"
 
 #: Continuous line numbering down the left margin, every line, restarting never.
 #: ``distance`` is twentieths of a point: 360 is a quarter inch clear of the text.
@@ -192,9 +184,7 @@ def number_pages_and_lines(path: Path) -> Path:
 
     reference = f'<w:footerReference w:type="default" r:id="{_FOOTER_RELATIONSHIP}"/>'
     document = document.replace("<w:sectPr>", f"<w:sectPr>{reference}", 1)
-    document = document.replace(
-        "</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1
-    )
+    document = document.replace("</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1)
     contents["word/document.xml"] = document.encode("utf-8")
 
     rels = contents["word/_rels/document.xml.rels"].decode("utf-8")

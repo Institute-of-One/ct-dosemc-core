@@ -63,8 +63,7 @@ def collect(*, check: bool = False) -> int:
             origin = RESULTS / source
             if not origin.exists():
                 problems.append(
-                    f"Figure {number}: {source} has not been produced by the "
-                    f"production pipeline"
+                    f"Figure {number}: {source} has not been produced by the production pipeline"
                 )
                 continue
             if check:
@@ -91,9 +90,7 @@ def collect(*, check: bool = False) -> int:
 
     orphaned = sorted(set(written) - set(FIGURE_SOURCES))
     if orphaned:
-        problems.append(
-            f"captions in paper/README.md for figures that do not exist: {orphaned}"
-        )
+        problems.append(f"captions in paper/README.md for figures that do not exist: {orphaned}")
 
     if problems:
         for problem in problems:
@@ -107,9 +104,7 @@ def collect(*, check: bool = False) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
-        "--check", action="store_true", help="verify rather than copy"
-    )
+    parser.add_argument("--check", action="store_true", help="verify rather than copy")
     return collect(check=parser.parse_args(argv).check)
 
 

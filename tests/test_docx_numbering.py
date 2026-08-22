@@ -39,9 +39,7 @@ A paragraph, so the document has a section and a body.
 @pytest.fixture(scope="module")
 def numbered(tmp_path_factory: pytest.TempPathFactory) -> Path:
     output = tmp_path_factory.mktemp("docx") / "manuscript.docx"
-    pypandoc.convert_text(
-        MARKDOWN, to="docx", format="markdown", outputfile=str(output)
-    )
+    pypandoc.convert_text(MARKDOWN, to="docx", format="markdown", outputfile=str(output))
     build_docx.keep_tables_whole(output)
     build_docx.number_pages_and_lines(output)
     return output
@@ -55,9 +53,7 @@ def _part(path: Path, name: str) -> str:
 def test_pandoc_supplies_neither_on_its_own(tmp_path: Path) -> None:
     """The premise: this is not something the converter would have done."""
     plain = tmp_path / "plain.docx"
-    pypandoc.convert_text(
-        MARKDOWN, to="docx", format="markdown", outputfile=str(plain)
-    )
+    pypandoc.convert_text(MARKDOWN, to="docx", format="markdown", outputfile=str(plain))
     document = _part(plain, "word/document.xml")
     assert "lnNumType" not in document
     assert "footerReference" not in document
@@ -100,9 +96,7 @@ def test_section_properties_are_in_schema_order(numbered: Path) -> None:
         section.find("lnNumType"),
     ]
     assert all(position >= 0 for position in positions), positions
-    assert positions == sorted(positions), (
-        f"sectPr children out of schema order: {positions}"
-    )
+    assert positions == sorted(positions), f"sectPr children out of schema order: {positions}"
 
 
 def test_rows_cannot_split_across_a_page(numbered: Path) -> None:

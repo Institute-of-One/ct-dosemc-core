@@ -27,8 +27,9 @@ import argparse
 import json
 import math
 import statistics
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
 COHORT = REPO / "results" / "phase2_cohort"
@@ -42,9 +43,7 @@ class Point(dict):
 
 def _collect() -> list[Point]:
     doses = json.loads((COHORT / "figure4_doses.json").read_text(encoding="utf-8"))
-    index = json.loads(
-        (COHORT / "iorn006_organ_index.json").read_text(encoding="utf-8")
-    )
+    index = json.loads((COHORT / "iorn006_organ_index.json").read_text(encoding="utf-8"))
     by_uid = {row["series_instance_uid"]: row for row in index["series"]}
 
     geometry: dict[str, dict[str, Any]] = {}
@@ -142,9 +141,7 @@ def model_length(train: Sequence[Point]) -> Callable[[Point], float]:
         [math.log(p["n_z_stations"]) for p in train],
         [math.log(p["ratio"]) for p in train],
     )
-    return lambda point: math.exp(
-        intercept + slope * math.log(point["n_z_stations"])
-    )
+    return lambda point: math.exp(intercept + slope * math.log(point["n_z_stations"]))
 
 
 def model_length_and_organ(train: Sequence[Point]) -> Callable[[Point], float]:
@@ -162,9 +159,7 @@ def model_length_and_organ(train: Sequence[Point]) -> Callable[[Point], float]:
         ]
         offsets[organ] = statistics.fmean(residuals)
     return lambda point: math.exp(
-        intercept
-        + slope * math.log(point["n_z_stations"])
-        + offsets.get(point["organ"], 0.0)
+        intercept + slope * math.log(point["n_z_stations"]) + offsets.get(point["organ"], 0.0)
     )
 
 
@@ -175,8 +170,7 @@ def model_length_and_size(train: Sequence[Point]) -> Callable[[Point], float]:
         [math.log(p["ratio"]) for p in train],
     )
     residuals = [
-        math.log(p["ratio"]) - (intercept + slope * math.log(p["n_z_stations"]))
-        for p in train
+        math.log(p["ratio"]) - (intercept + slope * math.log(p["n_z_stations"])) for p in train
     ]
     size_intercept, size_slope = _fit_line(
         [math.log(p["effective_diameter_cm"]) for p in train], residuals
@@ -249,8 +243,7 @@ def _variance_decomposition(points: Sequence[Point]) -> dict[str, Any]:
         for point in points:
             groups.setdefault(point[key], []).append(math.log(point["ratio"]))
         between = sum(
-            len(values) * (statistics.fmean(values) - grand) ** 2
-            for values in groups.values()
+            len(values) * (statistics.fmean(values) - grand) ** 2 for values in groups.values()
         ) / len(points)
         shares[f"between_{key}_share"] = between / total
         shares[f"n_{key}"] = len(groups)
@@ -276,8 +269,7 @@ def analyse() -> dict[str, Any]:
 
     patients = sorted({p["uid"] for p in points})
     patient_ratio = {
-        uid: statistics.median([p["ratio"] for p in points if p["uid"] == uid])
-        for uid in patients
+        uid: statistics.median([p["ratio"] for p in points if p["uid"] == uid]) for uid in patients
     }
 
     # Is the length dependence physics or arithmetic? A slope of one on
@@ -318,8 +310,7 @@ def analyse() -> dict[str, Any]:
             "max": max(p["ratio"] for p in points),
             "patient_median_min": min(patient_ratio.values()),
             "patient_median_max": max(patient_ratio.values()),
-            "patient_fold_span": max(patient_ratio.values())
-            / min(patient_ratio.values()),
+            "patient_fold_span": max(patient_ratio.values()) / min(patient_ratio.values()),
             "within_patient_spread_median_fold": statistics.median(within_patient),
         },
         "variance": _variance_decomposition(points),
@@ -336,11 +327,7 @@ def analyse() -> dict[str, Any]:
             "what": "patient effective diameter against the patient-level factor",
             "pearson_r_log": _pearson(
                 [
-                    math.log(
-                        next(
-                            p["effective_diameter_cm"] for p in points if p["uid"] == uid
-                        )
-                    )
+                    math.log(next(p["effective_diameter_cm"] for p in points if p["uid"] == uid))
                     for uid in patients
                 ],
                 [math.log(patient_ratio[uid]) for uid in patients],
@@ -370,9 +357,7 @@ def main(argv: list[str] | None = None) -> int:
 
     payload = analyse()
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    args.out.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"wrote {args.out}")
     for name, scores in payload["models"].items():
         print(

@@ -195,9 +195,7 @@ def check_code_is_reachable(built: str) -> None:
     and naming no repository; nothing else in the package carried a URL either. A
     locator is a URL or a DOI. "this repository" is neither.
     """
-    section = re.search(
-        r"^##\s*Data and code[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
-    )
+    section = re.search(r"^##\s*Data and code[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S)
     if section is None:
         fail("the manuscript has no 'Data and code' section")
         return
@@ -334,9 +332,7 @@ def check_inquiry(built: str) -> None:
         return
     letter = INQUIRY.read_text(encoding="utf-8")
 
-    title = next(
-        (line[2:].strip() for line in built.splitlines() if line.startswith("# ")), ""
-    )
+    title = next((line[2:].strip() for line in built.splitlines() if line.startswith("# ")), "")
     if title:
         # Compare on normalised whitespace: the letter wraps, the heading does not.
         flat_letter = " ".join(letter.split()).lower()

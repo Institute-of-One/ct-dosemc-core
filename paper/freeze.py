@@ -23,7 +23,6 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -139,9 +138,7 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
         "dose_min_mgy": stats["y_min_mgy"],
         "dose_max_mgy": stats["y_max_mgy"],
         # TG-195 Case 4, centre position.
-        "tg195_centre_abs_rel": _first_number(
-            close, "abs_ours_minus_penelope_relative"
-        ),
+        "tg195_centre_abs_rel": _first_number(close, "abs_ours_minus_penelope_relative"),
         "tg195_centre_n_sigma": _first_number(close, "n_sigma_vs_penelope"),
         # Cohort.
         "n_iorn007": overlap["n_iorn007"],
@@ -163,9 +160,7 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
             "ratio_patient_min": ceiling["ratio"]["patient_median_min"],
             "ratio_patient_max": ceiling["ratio"]["patient_median_max"],
             "ratio_patient_fold": ceiling["ratio"]["patient_fold_span"],
-            "ratio_within_patient_fold": ceiling["ratio"][
-                "within_patient_spread_median_fold"
-            ],
+            "ratio_within_patient_fold": ceiling["ratio"]["within_patient_spread_median_fold"],
             "variance_between_patient": ceiling["variance"]["between_patient_share"],
             "variance_between_organ": ceiling["variance"]["between_organ_share"],
             "variance_between_vendor": ceiling["variance"]["between_vendor_share"],
@@ -212,7 +207,7 @@ def freeze(check_only: bool = False) -> int:
 
     if check_only:
         stale: list[str] = []
-        for src, name in CITED:
+        for _source, name in CITED:
             frozen = FROZEN / name
             if not frozen.exists() or _load(frozen) != sources[name]:
                 stale.append(name)
@@ -239,9 +234,7 @@ def freeze(check_only: bool = False) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
-        "--check", action="store_true", help="fail if the freeze is stale"
-    )
+    parser.add_argument("--check", action="store_true", help="fail if the freeze is stale")
     args = parser.parse_args(argv)
     return freeze(check_only=args.check)
 

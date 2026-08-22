@@ -47,9 +47,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"\n=== {description}  [skipped: no manuscript]")
             continue
         print(f"\n=== {description}")
-        result = subprocess.run(
-            [sys.executable, *command], cwd=REPO, check=False, text=True
-        )
+        result = subprocess.run([sys.executable, *command], cwd=REPO, check=False, text=True)
         if result.returncode != 0:
             print(f"\nstopped at: {description}")
             return result.returncode

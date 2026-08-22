@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install the package and its dev tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          # pypandoc_binary carries the pandoc executable, so the .docx tests run
+          # here rather than skipping. Page and line numbering exist only in the
+          # artefact that reaches an editor, and a companion submission was
+          # returned before peer review for the want of them.
+          python -m pip install pypandoc_binary pillow
+
+      # Lint is scoped to the paper build and the analysis behind it. The rest of
+      # the tree predates any enforcement and carries 24 findings; fixing them is
+      # worth doing and is not worth doing in the week a manuscript goes out, so
+      # the scope is declared here rather than the check quietly weakened.
+      - name: Ruff (paper build and analysis)
+        run: |
+          ruff check paper tools/conversion_ceiling.py \
+            tests/test_conversion_ceiling.py tests/test_presubmission_check.py \
+            tests/test_docx_numbering.py tests/test_build_info_kinds.py
+          ruff format --check paper tools/conversion_ceiling.py \
+            tests/test_conversion_ceiling.py tests/test_presubmission_check.py \
+            tests/test_docx_numbering.py tests/test_build_info_kinds.py
+
+      - name: Pytest
+        run: pytest -q
+
+      # The manuscript is rebuilt from the frozen results on every push, and the
+      # checks run in --strict. A number that has drifted from the run that
+      # produced it fails the build rather than reaching a reader.
+      - name: Rebuild and check the manuscript
+        run: python paper/build_all.py

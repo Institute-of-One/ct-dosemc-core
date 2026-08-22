@@ -108,9 +108,7 @@ def resolve(payload: Any, path: str) -> Any:
             current = current[key]
             continue
         if not isinstance(current, list):
-            raise ResolutionError(
-                f"{path!r}: {bracket!r} indexes something that is not a list"
-            )
+            raise ResolutionError(f"{path!r}: {bracket!r} indexes something that is not a list")
         if re.fullmatch(r"-?\d+", bracket):
             index = int(bracket)
             if not -len(current) <= index < len(current):
@@ -122,10 +120,7 @@ def resolve(payload: Any, path: str) -> Any:
             item
             for item in current
             if isinstance(item, dict)
-            and all(
-                key in item and _match_value(item[key], value)
-                for key, value in criteria
-            )
+            and all(key in item and _match_value(item[key], value) for key, value in criteria)
         ]
         if len(matches) != 1:
             raise ResolutionError(
@@ -172,9 +167,7 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
         name = match.group(1)
         builder = tables.TABLES.get(name)
         if builder is None:
-            problems.append(
-                f"no table named {name!r}; known: {sorted(tables.TABLES)}"
-            )
+            problems.append(f"no table named {name!r}; known: {sorted(tables.TABLES)}")
             return match.group(0)
         return builder()
 
@@ -189,8 +182,7 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
     )
     if problems:
         raise ResolutionError(
-            "the manuscript cites values that cannot be resolved:\n  "
-            + "\n  ".join(problems)
+            "the manuscript cites values that cannot be resolved:\n  " + "\n  ".join(problems)
         )
     return rendered
 

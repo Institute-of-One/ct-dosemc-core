@@ -16,8 +16,8 @@ that pools every series. Nothing is lost: the paper makes no vendor claim.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 FROZEN = Path(__file__).resolve().parent / "frozen"
 
@@ -64,9 +64,7 @@ def _number(value: float) -> str:
 
 def organ_doses() -> str:
     """Absorbed organ dose by vendor: median (n), and the pooled interquartile range."""
-    payload = json.loads(
-        (FROZEN / "table4_organ_doses.json").read_text(encoding="utf-8")
-    )
+    payload = json.loads((FROZEN / "table4_organ_doses.json").read_text(encoding="utf-8"))
     by_organ = {entry["organ"]: entry for entry in payload["organs"]}
 
     header = ["Organ", *VENDOR_ORDER, "All series"]
@@ -82,9 +80,7 @@ def organ_doses() -> str:
         cells = [_label(organ)]
         for vendor in VENDOR_ORDER:
             stats = entry["by_vendor"].get(vendor)
-            cells.append(
-                f"{_number(stats['median_mgy'])} ({stats['n']})" if stats else "—"
-            )
+            cells.append(f"{_number(stats['median_mgy'])} ({stats['n']})" if stats else "—")
         pooled = entry["all"]
         cells.append(
             f"{_number(pooled['median_mgy'])} "

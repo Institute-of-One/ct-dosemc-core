@@ -38,9 +38,7 @@ def recorded():
 def test_the_pairing_matches_the_figure_it_shares_a_cohort_with(points) -> None:
     """342 points over 30 series is what Figure 4 plots; this must be the same set."""
     stats = json.loads(
-        (REPO / "results" / "phase2_cohort" / "figure4_stats.json").read_text(
-            encoding="utf-8"
-        )
+        (REPO / "results" / "phase2_cohort" / "figure4_stats.json").read_text(encoding="utf-8")
     )
     assert len(points) == stats["n_points"]
     assert len({p["uid"] for p in points}) == stats["n_series"]
@@ -97,10 +95,7 @@ def test_a_per_organ_table_does_not_beat_a_single_factor(recorded) -> None:
 def test_the_residual_is_physical_not_statistical(recorded) -> None:
     """If Monte-Carlo noise were the same size as the residual, there is no result."""
     floor = recorded["monte_carlo_noise_floor"]["median"]
-    best = min(
-        model["median_absolute_relative_error"]
-        for model in recorded["models"].values()
-    )
+    best = min(model["median_absolute_relative_error"] for model in recorded["models"].values())
     assert best > 100 * floor, (
         f"the best model's error {best:.3f} is not far above the Monte-Carlo "
         f"noise floor {floor:.5f}"
@@ -137,9 +132,7 @@ def test_within_patient_spread_is_tighter_than_between(recorded) -> None:
 
 def test_ratios_agree_with_the_raw_dose_and_index(points) -> None:
     for point in points[:20]:
-        assert point["ratio"] == pytest.approx(
-            point["dose_mgy"] / point["index_mgy"]
-        )
+        assert point["ratio"] == pytest.approx(point["dose_mgy"] / point["index_mgy"])
 
 
 def test_log_fit_recovers_a_known_line() -> None:

@@ -63,4 +63,6 @@ def test_both_targets_are_recorded():
     assert "cpu" in info["targets"] and "gpu" in info["targets"]
     assert info["targets"]["cpu"]["executable_sha256"]
     assert info["targets"]["gpu"]["executable_sha256"]
-    assert info["targets"]["cpu"]["executable_sha256"] != info["targets"]["gpu"]["executable_sha256"]
+    assert (
+        info["targets"]["cpu"]["executable_sha256"] != info["targets"]["gpu"]["executable_sha256"]
+    )

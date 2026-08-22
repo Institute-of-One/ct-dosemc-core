@@ -63,17 +63,12 @@ def test_the_marker_form_of_the_same_number_passes() -> None:
 
 
 def test_the_mid_scan_defect_file_cannot_be_cited() -> None:
-    check.check_the_defective_file_is_not_cited(
-        "Doses are in `figure4_y_axis.json`.", ""
-    )
+    check.check_the_defective_file_is_not_cited("Doses are in `figure4_y_axis.json`.", "")
     assert check.errors
 
 
 def test_a_data_and_code_section_without_a_locator_is_caught() -> None:
-    built = (
-        "## Data and code\n\nSoftware under the MIT licence, in this repository.\n\n"
-        "## Next\n"
-    )
+    built = "## Data and code\n\nSoftware under the MIT licence, in this repository.\n\n## Next\n"
     check.check_code_is_reachable(built)
     assert check.errors
 
@@ -94,17 +89,14 @@ def test_a_missing_data_and_code_section_is_caught() -> None:
 
 def test_references_out_of_citation_order_are_caught() -> None:
     source = (
-        "Body cites [2] and then [1].\n\n"
-        "## References\n1. First, doi:10/a\n2. Second, doi:10/b\n"
+        "Body cites [2] and then [1].\n\n## References\n1. First, doi:10/a\n2. Second, doi:10/b\n"
     )
     check.check_references(source)
     assert any("order of first citation" in message for message in check.errors)
 
 
 def test_an_uncited_reference_is_caught() -> None:
-    source = (
-        "Body cites [1].\n\n## References\n1. First, doi:10/a\n2. Orphan, doi:10/b\n"
-    )
+    source = "Body cites [1].\n\n## References\n1. First, doi:10/a\n2. Orphan, doi:10/b\n"
     check.check_references(source)
     assert any("never cited" in message for message in check.errors)
 
