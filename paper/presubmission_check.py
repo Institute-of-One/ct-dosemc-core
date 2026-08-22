@@ -35,6 +35,12 @@ DOCX = PAPER / "build" / "manuscript.docx"
 sys.path.insert(0, str(PAPER))
 import collect_figures  # noqa: E402
 
+#: The pre-submission inquiry: a copy of the paper's claims that lives outside the
+#: build and therefore drifts. It already did once -- rewritten around a floor, the
+#: paper left an inquiry still quoting the correlation and the median ratio that had
+#: been the headline the week before.
+INQUIRY = REPO / "docs" / "pmb_inquiry_send.txt"
+
 #: PMB's text block, in inches.
 TEXT_WIDTH_IN = 6.5
 TEXT_HEIGHT_IN = 8.7
@@ -314,6 +320,48 @@ def check_references(source: str) -> None:
 # ------------------------------------------------------------------------- .docx
 
 
+def check_inquiry(built: str) -> None:
+    """The pre-submission inquiry must quote the paper it is inquiring about.
+
+    It is the one copy of the argument that the build does not generate, so it is
+    the one that goes stale. When the paper was rebuilt around a measured floor,
+    the inquiry still argued the correlation and the median ratio, and still
+    carried the title from two framings earlier. An editor reading it would have
+    been told about a different manuscript.
+    """
+    if not INQUIRY.exists():
+        warn("no pre-submission inquiry at docs/pmb_inquiry_send.txt")
+        return
+    letter = INQUIRY.read_text(encoding="utf-8")
+
+    title = next(
+        (line[2:].strip() for line in built.splitlines() if line.startswith("# ")), ""
+    )
+    if title:
+        # Compare on normalised whitespace: the letter wraps, the heading does not.
+        flat_letter = " ".join(letter.split()).lower()
+        if " ".join(title.split()).lower().rstrip(".") not in flat_letter:
+            fail("the inquiry does not quote the manuscript's current title")
+
+    metrics = _manifest()["metrics"]
+    # The figures the inquiry leads with must be the ones the paper reports.
+    for name, spec in (
+        ("ceiling_global_factor_median_pct", "{:.0f}%"),
+        ("ceiling_per_organ_factor_median_pct", "{:.0f}%"),
+        ("ceiling_scan_length_and_size_median_pct", "{:.0f}%"),
+        ("variance_between_patient", "{:.0%}"),
+        ("tg195_centre_abs_pct", "{:.3f}%"),
+    ):
+        rendered = spec.format(metrics[name])
+        if rendered not in letter:
+            fail(f"the inquiry does not carry {name} as {rendered}")
+
+    # And must not still carry the framing the paper withdrew.
+    for stale in ("How far an organ-weighted", "Pearson r = 0.66"):
+        if stale in letter:
+            fail(f"the inquiry still carries withdrawn wording: {stale!r}")
+
+
 def check_docx_furniture() -> None:
     """The file the editor opens, not the markdown that produced it."""
     if not DOCX.exists():
@@ -361,6 +409,7 @@ def main(argv: list[str] | None = None) -> int:
             check_code_is_reachable(built)
             check_figures(built)
             check_docx_furniture()
+            check_inquiry(built)
         check_references(source)
 
     for message in warnings:

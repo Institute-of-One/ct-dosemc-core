@@ -141,3 +141,40 @@ def test_the_series_accounting_holds_on_the_real_freeze() -> None:
 def test_the_freeze_is_current() -> None:
     check.check_frozen_is_current()
     assert not check.errors
+
+
+def test_the_inquiry_check_catches_a_stale_title(tmp_path, monkeypatch) -> None:
+    """The defect this exists for: the paper was reframed, the inquiry was not."""
+    stale = tmp_path / "inquiry.txt"
+    stale.write_text(
+        "Title. How far an organ-weighted CTDIvol index is from absorbed organ "
+        "dose.\nPearson r = 0.66 over all series.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(check, "INQUIRY", stale)
+    check.check_inquiry("# A measured floor on index-based organ dose estimation\n")
+    assert any("current title" in message for message in check.errors)
+    assert any("withdrawn wording" in message for message in check.errors)
+
+
+def test_the_inquiry_check_catches_a_number_the_paper_no_longer_reports(
+    tmp_path, monkeypatch
+) -> None:
+    built = "# A measured floor on index-based organ dose estimation\n"
+    letter = tmp_path / "inquiry.txt"
+    letter.write_text(
+        "Title. A measured floor on index-based organ dose estimation.\n"
+        "The floor is reached at a median of 99%.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(check, "INQUIRY", letter)
+    check.check_inquiry(built)
+    assert any("does not carry" in message for message in check.errors)
+
+
+def test_the_real_inquiry_agrees_with_the_real_manuscript() -> None:
+    built_path = check.BUILT
+    if not built_path.is_file() or not check.INQUIRY.is_file():
+        pytest.skip("run paper/build_all.py")
+    check.check_inquiry(built_path.read_text(encoding="utf-8"))
+    assert not check.errors, check.errors

@@ -1,7 +1,15 @@
 # Manuscript skeleton — IORN-007
 
-*Working title:* Device-independent Monte-Carlo CT organ dosimetry on patient
-anatomy: a TG-195-verified MC-GPU source model with a fully re-derivable cohort.
+> **Superseded. This is the planning skeleton, not the manuscript.**
+>
+> It records the claim-to-evidence mapping the project was built against, and is
+> kept for provenance. It predates the reframing: the paper is no longer about the
+> difference between an index and a dose, which nobody disputes, but about the
+> measured floor on converting one to the other and the finding that per-organ
+> coefficients do not lower it.
+>
+> The manuscript is `paper/manuscript.md`, and every number in it resolves from
+> `paper/frozen/` at build time. Nothing here should be quoted.
 
 **Status of this file.** Skeleton only. Each section lists the claim, the evidence
 artefact (a `results/*.json` or a canonical doc), and whether it is **DONE**,

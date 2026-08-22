@@ -1,5 +1,5 @@
-Subject: Pre-submission inquiry - Paper (not Note): TG-195-verified CT organ dose
-versus organ-weighted CTDIvol on one multi-vendor cohort
+Subject: Pre-submission inquiry - Paper (not Note): a measured floor on index-based
+organ dose estimation in CT
 
 
 Dear Editor,
@@ -7,53 +7,93 @@ Dear Editor,
 I would like to confirm that the following manuscript is appropriate as a Paper,
 rather than a Note, for Physics in Medicine and Biology.
 
-Title. How far an organ-weighted CTDIvol index is from absorbed organ dose:
-TG-195-verified Monte-Carlo measurement on the same patient anatomy across four
-vendors.
+Title. A measured floor on index-based organ dose estimation in CT, where per-organ
+coefficients do not improve on a single conversion factor.
 
-Hypothesis. On the same patient anatomy, absorbed organ dose in mGy and the
-organ-weighted CTDIvol index are different quantities. I measure that difference
-after verifying the transport engine against AAPM TG-195 Case 4 with a stated,
-replica-measured uncertainty.
+The question. CTDIvol is a scanner output and not a patient dose, and the field
+converts it toward organ dose in three established ways: a size correction, a
+dose-length-product factor, and libraries of per-organ coefficients computed once on
+reference phantoms. Each replaces transport through this patient with a coefficient
+obtained from someone else's. How close such a conversion can get has not, to my
+knowledge, been measured against transport on the same anatomy. That is what this
+manuscript measures.
 
-Why this is a Paper. PMB defines Papers as original scientific research, covering
-techniques and applications. The manuscript has both.
+I am not claiming that an index and an absorbed dose are the same quantity, nor that
+anyone believes they are. The contribution is the size and the structure of what is
+left over.
 
-(i) Case 4 second-test agreement with PENELOPE, reported with a combined
-uncertainty rather than a homemade pass or fail: at the centre position
-|ours - PENELOPE| = 0.359%, which is 1.67 combined standard deviations. The
-phantom-length term is measured, and 40 cm is indistinguishable from 160 cm. The
-limitation budget is declared rather than assumed.
+Approach. A GPU Monte-Carlo pipeline computes absorbed organ dose from routine
+metadata, through each patient's own segmented and density-mapped anatomy, with every
+dose coefficient computed rather than looked up. The engine is verified against AAPM
+TG-195 Case 4 against a yardstick fixed before any comparison was run, with a
+replica-measured rather than assumed uncertainty: at the centre volume of interest
+|ours - PENELOPE| = 0.359%, or 1.67 combined standard deviations, and the phantom
+length term is measured and null. All four published codes are shown, so that the
+choice of yardstick is auditable rather than convenient.
 
-(ii) Absorbed organ doses on 32 TCIA series across four vendors, with a
-pre-declared metal-implant exclusion, each scaled to a CTDIvol the series actually
-carries: recorded for 23 of 32, reconstructed for 7, unrecoverable for 2. The
-same-patient scatter is 12 organs and 342 points over 30 series, with Pearson
-r = 0.66 overall and 0.61 on the 23 series carrying a recorded CTDIvol.
-Restricting the figure to those 23 series does not change the relationship
-between index and absorbed dose. The median absorbed dose is 24.3 mGy, ranging
-from 3.9 to 84.0 mGy, and the median ratio of absorbed dose to index is 2.17.
+On 30 multi-vendor abdominal series from a public archive - 342 organ-series pairs
+over 12 organs - I then fit conversions of increasing richness from an organ-weighted
+CTDIvol index to the absorbed dose, and score each under leave-one-patient-out
+cross-validation.
 
-That scatter is the application result, not a software demonstration. It is the
-evidence that an organ-weighted index and an absorbed dose, computed on identical
-anatomy, are correlated without being the same quantity.
+Main results. Held out, on patients the fit never saw:
 
-Why this is not a Note. A Note would be the engine, or the TG-195 reproduction,
-on its own. Those are Methods here. The claim is the measured difference between
-two published endpoints on one cohort.
+  a single conversion factor for the cohort     median 31%   90th percentile 75%
+  one factor per organ                          median 32%   90th percentile 68%
+  a scan-length term                            median 16%   90th percentile 39%
+  scan length and a per-organ offset            median 13%   90th percentile 36%
+  scan length and patient size                  median 13%   90th percentile 32%
+
+Two of these are the paper. A per-organ coefficient - which is the form in which
+published organ-dose coefficient libraries are used - does not improve on a single
+number for the whole cohort; cross-validated it is slightly worse, because twelve
+organ means fitted on twenty-nine patients do not transfer to the thirtieth. And the
+floor is reached at a median of 13%: nothing an index carries closes the remaining
+gap.
+
+The variance decomposition says why. 88% of the variance in the log index-to-dose
+ratio lies between patients, 6% between organs and 4% between vendors. Within one
+patient a single number converts the index to absorbed dose for every one of that
+patient's organs to within a factor of 1.18; across patients that number spans 0.88
+to 4.79. The information an index withholds is a property of the patient, nearly
+common to all of that patient's organs at once, and a per-organ coefficient cannot
+supply it. Patient size, the standard patient-level correction, does not carry it
+either: its correlation with the patient-level factor is r = -0.30.
+
+Per-organ Monte-Carlo statistical uncertainty is 0.012% of the dose at the median, so
+the residual is more than three orders of magnitude above the sampling noise. It is
+physical.
+
+One point I would rather state than have inferred. The scan-length term is not
+offered as a discovery: CTDIvol is defined per rotation and carries no length,
+dose-length product is the standard quantity that does, and the fitted slope on
+log n_z is 1.14, close enough to one that the dependence is largely accumulation. It
+is included because a conversion that omitted it would be a straw man, and its slope
+is reported in the manuscript so a reader can judge that.
+
+Why this is a Paper. PMB defines Papers as original scientific research covering
+techniques and applications, and the manuscript has both: a verification with a
+measured uncertainty budget and a pre-declared yardstick, and a cross-validated
+measurement of a limit on a class of methods in wide clinical use.
+
+Why this is not a Note. A Note would be the engine, or the TG-195 reproduction, on
+its own. Those are Methods here. The claim is a measured floor and a decomposition of
+what sits beneath it.
 
 Related work, and why this is not salami. Two earlier papers from this line report
 different endpoints on the same pipeline: whole-scan CTDIvol
 (doi:10.5281/zenodo.21636719, v0.1.1) and an organ-weighted CTDIvol index
-(doi:10.5281/zenodo.21817307, v0.1.1). This manuscript reports absorbed dose in
-mGy, computed by Monte-Carlo transport rather than looked up. Three endpoints, one
-pipeline; the scatter is the evidence that they are not slices of one number.
+(doi:10.5281/zenodo.21817307, v0.1.1). This manuscript reports absorbed dose in mGy
+by Monte-Carlo transport, and uses it to measure how far the index endpoint can be
+pushed. Three endpoints, one pipeline.
 
-Length. Within the Paper limit of 10 000 words and 12 figures. Planned: five
-figures and four tables.
+Length and limitations. Within the Paper limit: about 4 000 words of body, six
+figures and one table. The cohort is 30 series with six to nine per vendor, which is
+adequate for the patient-level question and inadequate for a vendor-level one; no
+vendor claim is made, and the per-vendor table is descriptive.
 
-If the Board would prefer a different article type, I would rather hear that now
-than after review.
+If the Board would prefer a different article type, I would rather hear that now than
+after review.
 
 Yours sincerely,
 
