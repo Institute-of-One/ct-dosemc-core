@@ -1,0 +1,123 @@
+{
+  "what": "How close an index-based conversion can get to absorbed organ dose, scored under leave-one-patient-out cross-validation.",
+  "not": "Not a claim that a scan-length term is a discovery. CTDIvol is a per-rotation index and carries no length by construction; DLP is the standard quantity that does. The length term is included because a conversion that omitted it would be a straw man, and the fitted slope is reported so a reader can see how close to proportional it is.",
+  "n_points": 342,
+  "n_patients": 30,
+  "n_organs": 12,
+  "ratio": {
+    "definition": "absorbed organ dose (mGy) / organ-weighted CTDIvol (mGy)",
+    "median": 2.174563727158052,
+    "min": 0.6134363398106334,
+    "max": 5.301307361595936,
+    "patient_median_min": 0.878251180985238,
+    "patient_median_max": 4.793738285188768,
+    "patient_fold_span": 5.4582770726377685,
+    "within_patient_spread_median_fold": 1.1750479824419178
+  },
+  "variance": {
+    "total_variance_of_log_ratio": 0.19938501655335575,
+    "between_organ_share": 0.06024235268195146,
+    "n_organ": 12,
+    "between_vendor_share": 0.03737644892001289,
+    "n_vendor": 4,
+    "between_patient_share": 0.8788791363000218,
+    "n_patients": 30
+  },
+  "length_dependence": {
+    "fit": "log(ratio) = intercept + slope * log(n_z_stations)",
+    "intercept": -2.889545091169799,
+    "slope": 1.1371525046120488,
+    "interpretation": "a slope of 1 is simple accumulation per z station; this is reported, not claimed as a result"
+  },
+  "size_dependence": {
+    "what": "patient effective diameter against the patient-level factor",
+    "pearson_r_log": -0.2973280855205703,
+    "effective_diameter_cm_range": [
+      23.496512856632844,
+      38.73977989171835
+    ]
+  },
+  "monte_carlo_noise_floor": {
+    "what": "per-organ Monte-Carlo statistical uncertainty, relative",
+    "n": 342,
+    "median": 0.00011680978825022976,
+    "max": 0.008265347066086103
+  },
+  "models": {
+    "global_factor": {
+      "description": "a single conversion factor for the cohort",
+      "n_points": 342,
+      "median_absolute_relative_error": 0.3089333032866175,
+      "p90_absolute_relative_error": 0.7491309884643413,
+      "max_absolute_relative_error": 1.7101242511262598,
+      "within_20_percent": 0.3538011695906433,
+      "quantiles": {
+        "p10": 0.06846828528198112,
+        "p25": 0.15259672914525346,
+        "p50": 0.3089333032866175,
+        "p75": 0.5179476987531809,
+        "p90": 0.7491309884643413
+      }
+    },
+    "per_organ_factor": {
+      "description": "one factor per organ, as a coefficient table offers",
+      "n_points": 342,
+      "median_absolute_relative_error": 0.32387586895256026,
+      "p90_absolute_relative_error": 0.6824575625350842,
+      "max_absolute_relative_error": 1.8231707798565044,
+      "within_20_percent": 0.3713450292397661,
+      "quantiles": {
+        "p10": 0.05318925086935411,
+        "p25": 0.10778868034120648,
+        "p50": 0.32387586895256026,
+        "p75": 0.4916190618844367,
+        "p90": 0.6824575625350842
+      }
+    },
+    "scan_length": {
+      "description": "a scan-length term alone",
+      "n_points": 342,
+      "median_absolute_relative_error": 0.161995889553455,
+      "p90_absolute_relative_error": 0.39402230302828256,
+      "max_absolute_relative_error": 2.051895444790006,
+      "within_20_percent": 0.6257309941520468,
+      "quantiles": {
+        "p10": 0.03042012265854066,
+        "p25": 0.08382016914436996,
+        "p50": 0.161995889553455,
+        "p75": 0.2813143964987408,
+        "p90": 0.39402230302828256
+      }
+    },
+    "scan_length_and_organ": {
+      "description": "a scan-length term and a per-organ offset: everything an index carries",
+      "n_points": 342,
+      "median_absolute_relative_error": 0.13243328544919442,
+      "p90_absolute_relative_error": 0.35466440538252564,
+      "max_absolute_relative_error": 1.8623172012183833,
+      "within_20_percent": 0.6842105263157895,
+      "quantiles": {
+        "p10": 0.016674210962288938,
+        "p25": 0.06360000813206557,
+        "p50": 0.13243328544919442,
+        "p75": 0.22441669016578492,
+        "p90": 0.35466440538252564
+      }
+    },
+    "scan_length_and_size": {
+      "description": "a scan-length term and patient effective diameter",
+      "n_points": 342,
+      "median_absolute_relative_error": 0.1295925108695728,
+      "p90_absolute_relative_error": 0.31764085201935177,
+      "max_absolute_relative_error": 1.9494182100745556,
+      "within_20_percent": 0.7192982456140351,
+      "quantiles": {
+        "p10": 0.021554502313174906,
+        "p25": 0.062365627203294416,
+        "p50": 0.1295925108695728,
+        "p75": 0.212690228268259,
+        "p90": 0.31764085201935177
+      }
+    }
+  }
+}

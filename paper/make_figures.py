@@ -1,10 +1,11 @@
-"""Draw Figures 1-3 from ``paper/frozen/``, at the size they print.
+"""Draw Figures 1-3 and 5 from ``paper/frozen/``, at the size they print.
 
     python paper/make_figures.py
 
-Figures 4 and 5 are drawn by ``tools/figure4_scatter.py`` and
-``tools/collect_phase2_results.py`` from the production runs; this module covers
-the three the manuscript declares and that had no drawing code at all.
+Figures 4 and 6 are drawn by ``tools/figure4_scatter.py`` and
+``tools/collect_phase2_results.py`` from the production runs. Figure 5 is the
+primary endpoint and is drawn here, as are the three the manuscript declared
+and that had no drawing code at all.
 
 Nothing here is decorative. Each choice below answers a defect that reached a
 built manuscript in a companion paper:
@@ -315,11 +316,92 @@ def figure3_tg195() -> Path:
     return _save(fig, "figure3_tg195_case4.png")
 
 
+def figure5_conversion_ceiling() -> Path:
+    """The primary endpoint: how close an index-based conversion gets, held out."""
+    ceiling = _load("conversion_ceiling.json")
+    models = ceiling["models"]
+
+    # Ordered as the argument runs, not by how well each does.
+    order = [
+        ("global_factor", "One factor for the cohort"),
+        ("per_organ_factor", "One factor per organ\n(a coefficient table)"),
+        ("scan_length", "Scan-length term"),
+        ("scan_length_and_organ", "Scan length + per organ"),
+        ("scan_length_and_size", "Scan length + patient size"),
+    ]
+
+    fig, (left, right) = plt.subplots(
+        1, 2, figsize=(6.5, 3.4), gridspec_kw={"width_ratios": [1.5, 1.0]}
+    )
+
+    positions = list(range(len(order)))
+    for position, (key, _) in zip(positions, order):
+        q = models[key]["quantiles"]
+        left.plot(
+            [q["p10"] * 100, q["p90"] * 100], [position, position],
+            color="#9AA7B4", linewidth=1.4, solid_capstyle="round", zorder=2,
+        )
+        left.plot(
+            [q["p25"] * 100, q["p75"] * 100], [position, position],
+            color="#4C72B0", linewidth=4.0, solid_capstyle="butt", zorder=3,
+        )
+        left.plot(
+            q["p50"] * 100, position, marker="o", color="#12263A",
+            markersize=6, zorder=4,
+        )
+        left.text(
+            q["p90"] * 100 + 2.5, position,
+            f"{q['p50'] * 100:.0f}%", va="center", fontsize=ANNOT,
+        )
+
+    left.set_yticks(positions)
+    left.set_yticklabels([label for _, label in order], fontsize=TICK)
+    left.set_ylim(len(order) - 0.5, -0.5)
+    left.set_xlabel(
+        "Absolute error in absorbed organ dose (%), held out", fontsize=LABEL
+    )
+    left.set_xlim(0, max(m["quantiles"]["p90"] for m in models.values()) * 100 + 16)
+    left.axvline(20, color="#B0B0B0", linestyle=":", linewidth=1.0, zorder=1)
+    left.text(20.8, -0.42, "20 %", fontsize=ANNOT, color="#666666")
+    left.set_title("(a) What an index can reach", fontsize=PANEL, loc="left")
+    left.tick_params(labelsize=TICK)
+
+    variance = ceiling["variance"]
+    shares = [
+        ("Between patients", variance["between_patient_share"]),
+        ("Between organs", variance["between_organ_share"]),
+        ("Between vendors", variance["between_vendor_share"]),
+    ]
+    share_positions = list(range(len(shares)))
+    right.barh(
+        share_positions, [share * 100 for _, share in shares],
+        color=["#4C72B0", "#B0B0B0", "#B0B0B0"], height=0.55,
+    )
+    for position, (_, share) in zip(share_positions, shares):
+        right.text(share * 100 + 2.0, position, f"{share:.0%}", va="center",
+                   fontsize=ANNOT)
+    right.set_yticks(share_positions)
+    right.set_yticklabels([label for label, _ in shares], fontsize=TICK)
+    right.set_ylim(len(shares) - 0.5, -0.5)
+    right.set_xlim(0, 108)
+    right.set_xlabel("Share of the variance in log ratio (%)", fontsize=LABEL)
+    right.set_title("(b) Where the ratio varies", fontsize=PANEL, loc="left")
+    right.tick_params(labelsize=TICK)
+
+    for axis in (left, right):
+        axis.spines["top"].set_visible(False)
+        axis.spines["right"].set_visible(False)
+
+    fig.tight_layout()
+    return _save(fig, "figure5_conversion_ceiling.png")
+
+
 def main() -> int:
     print("drawing figures 1-3 into paper/figures/")
     figure1_selection_funnel()
     figure2_density_gate()
     figure3_tg195()
+    figure5_conversion_ceiling()
     return 0
 
 

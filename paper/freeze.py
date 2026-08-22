@@ -49,6 +49,7 @@ CITED: tuple[tuple[str, str], ...] = (
     ("phase2_cohort/metal_distribution.json", "metal_distribution.json"),
     ("phase2_cohort/ctdi_scale.json", "ctdi_scale.json"),
     ("phase2_cohort/organ_volume_vs_icrp89.json", "organ_volume_vs_icrp89.json"),
+    ("phase2_cohort/conversion_ceiling.json", "conversion_ceiling.json"),
 )
 
 #: Named so a reader of the manifest can see why the file is not cited.
@@ -148,6 +149,36 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
         "n_shared": overlap["n_shared"],
         "n_table4_series": table4["n_scaled_series"],
     }
+
+    # The primary endpoint: how close an index-based conversion gets, held out.
+    ceiling = sources["conversion_ceiling.json"]
+    models = ceiling["models"]
+    for name, scores in models.items():
+        metrics[f"ceiling_{name}_median"] = scores["median_absolute_relative_error"]
+        metrics[f"ceiling_{name}_p90"] = scores["p90_absolute_relative_error"]
+        metrics[f"ceiling_{name}_within20"] = scores["within_20_percent"]
+    metrics.update(
+        {
+            "ratio_median": ceiling["ratio"]["median"],
+            "ratio_patient_min": ceiling["ratio"]["patient_median_min"],
+            "ratio_patient_max": ceiling["ratio"]["patient_median_max"],
+            "ratio_patient_fold": ceiling["ratio"]["patient_fold_span"],
+            "ratio_within_patient_fold": ceiling["ratio"][
+                "within_patient_spread_median_fold"
+            ],
+            "variance_between_patient": ceiling["variance"]["between_patient_share"],
+            "variance_between_organ": ceiling["variance"]["between_organ_share"],
+            "variance_between_vendor": ceiling["variance"]["between_vendor_share"],
+            "length_slope": ceiling["length_dependence"]["slope"],
+            "size_pearson_r": ceiling["size_dependence"]["pearson_r_log"],
+            "mc_sigma_median": ceiling["monte_carlo_noise_floor"]["median"],
+            "mc_sigma_max": ceiling["monte_carlo_noise_floor"]["max"],
+        }
+    )
+    # Percent forms, so prose never multiplies by a hundred by hand.
+    for name in list(metrics):
+        if name.startswith("ceiling_") or name.startswith("mc_sigma"):
+            metrics[f"{name}_pct"] = metrics[name] * 100.0
     # Percent forms, so prose never multiplies by a hundred by hand.
     metrics["tg195_centre_abs_pct"] = metrics["tg195_centre_abs_rel"] * 100.0
 

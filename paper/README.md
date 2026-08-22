@@ -36,11 +36,17 @@ asks the Board to confirm the type before the manuscript is written.
 Finding-led, not artefact-led, and **must not begin with "Open"**. Three working
 titles were in circulation, each naming what was built — a source model, a cohort,
 a pipeline — which is the shape that had a companion paper desk-rejected as a
-resource description. The title names the measured difference instead:
+resource description. A fourth named the difference between index and dose, which
+is true but is not news to this readership: nobody believes CTDIvol is organ dose.
 
-> How far an organ-weighted CTDIvol index is from absorbed organ dose:
-> TG-195-verified Monte-Carlo measurement on the same patient anatomy across
-> four vendors
+The title names the measured limit, and the result that is genuinely unexpected:
+
+> A measured floor on index-based organ dose estimation in CT, where per-organ
+> coefficients do not improve on a single conversion factor
+
+A floor is a boundary, and a boundary cannot be filed as a Note. The second clause
+carries the finding a reader would not have predicted, and it is the one a
+coefficient-table user has to act on.
 
 ## Figure captions
 
@@ -53,8 +59,9 @@ paragraph — prints twice in the converted document, in two wordings.
 | Fig 1 | Cohort selection. (a) Series remaining at each stage, from the 47 181 rows of the collection index to the 40 series carried forward, on a logarithmic axis. Position carries the count: a bar length on a logarithmic axis would encode the ratio to the axis floor rather than the number. (b) The reason each of the 22 probed-and-rejected series was rejected; almost all lacked the per-slice tube current the pipeline requires |
 | Fig 2 | The pre-declared density gate. Largest out-of-calibration component per series — voxels inside the body contour at or above the calibration ceiling — for all 40 assessed series, ordered by that volume, on a symmetric-logarithmic axis so that the 14 series with no such voxel are visible rather than dropped. Filled markers are the 32 eligible series, open markers the 8 excluded. The gate at 1 cm³ was declared before the volumes were computed |
 | Fig 3 | Verification against AAPM TG-195 Case 4, at the centre and perimeter volumes of interest. Each point is the relative difference between this engine and one published code, with error bars of the combined standard uncertainty. PENELOPE, marked with a diamond, is the yardstick, and was chosen before any comparison was run because it shares the photon cross-section database this work generates its materials from; the other three codes are shown so the choice can be seen not to have been made after the fact |
-| Fig 4 | Same-patient scatter: the IORN-006 organ-weighted CTDIvol index against absorbed organ dose in mGy, one point per organ per series. 12 organs, 342 points, 30 series. Filled circles are the 23 series carrying a recorded CTDIvol, filled squares the 6 reconstructed on an exact or high-confidence table match, open squares the 1 reconstructed under IORN-004's own low-confidence warning. Index and absorbed dose are correlated and are not the same quantity |
-| Fig 5 | Absorbed organ dose by vendor, per organ, with the number of series in which each organ is present |
+| Fig 4 | Same-patient scatter: the organ-weighted CTDIvol index against absorbed organ dose in mGy, one point per organ per series. 12 organs, 342 points, 30 series. Filled circles are the 23 series carrying a recorded CTDIvol, filled squares the 6 reconstructed on an exact or high-confidence table match, open squares the 1 reconstructed under a low-confidence warning. The two quantities are correlated and are not the same quantity; how far apart they remain after every available correction is Figure 5 |
+| Fig 5 | The primary endpoint. (a) Absolute error in absorbed organ dose for each index-based conversion, under leave-one-patient-out cross-validation: point is the median, thick bar the interquartile range, thin bar the 10th to 90th percentile. A per-organ coefficient does not improve on a single factor for the whole cohort. A scan-length term does, and adding either the organ or the patient's size to it changes little: the floor is reached at a median of 13 %. (b) Where the index-to-dose ratio varies. Almost all of it is between patients; organ identity and vendor together account for under a tenth |
+| Fig 6 | Absorbed organ dose by vendor, per organ, with the number of series in which each organ is present. Descriptive: with six to nine series per vendor the cohort is not powered for a vendor comparison, and none is claimed |
 
 ## Data provenance
 

@@ -34,7 +34,8 @@ FIGURE_SOURCES: dict[int, tuple[str, str | None]] = {
     2: ("figure2_density_gate.png", None),
     3: ("figure3_tg195_case4.png", None),
     4: ("figure4_scatter.png", "phase2_cohort/figure4_scatter.png"),
-    5: ("figure5_vendor.png", "phase2_cohort/figure5_vendor.png"),
+    5: ("figure5_conversion_ceiling.png", None),
+    6: ("figure6_vendor.png", "phase2_cohort/figure5_vendor.png"),
 }
 
 _CAPTION_ROW = re.compile(r"^\|\s*Fig\s*(\d+)\s*\|\s*(.+?)\s*\|\s*$", re.M)
