@@ -9,16 +9,16 @@
 
 ## 1. One-line status
 
-**32/32 scan-covering production is complete.** Fig. 4 is usable
-(`figure4_stats.json`: 12 organs, r = 0.66 / recorded 0.61). Results 3.3,
-Table 4, and Fig. 5 are filled from those files. Send
-`docs/PMB_PRESUBMISSION.md` (Paper, not Note). Do not first-submit Medical
-Physics.
+**This Cursor project is parked until PMB reviews.** 32/32 scan-covering
+production is complete. Fig. 4 is usable (`figure4_stats.json`: 12 organs,
+r = 0.66 / recorded 0.61). Results 3.3, Table 4, and Fig. 5 are filled.
+Final copy-edit and manuscript organisation were handed to Claude Code
+(2026-08-23). Do not restart GPU production or refill tables from
+`figure4_y_axis.json` (mid-scan defect).
 
-Remaining PMB path:
-
-1. Send the PMB inquiry. Submit the Paper after the Board confirms article type.
-2. Do not fill tables from `figure4_y_axis.json` (mid-scan defect).
+Venue is *Physics in Medicine & Biology*, **Paper not Note**. Do not
+first-submit Medical Physics. When this chat reopens, the input is the
+review; not a new production campaign.
 
 **Not on the submission path** (do after accept, or if a reviewer asks):
 Fig. 6 metal-clamp re-include, launcher polish, extra engine work, Phase 1b as

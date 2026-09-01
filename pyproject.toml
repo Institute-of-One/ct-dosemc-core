@@ -54,6 +54,16 @@ seg = ["TotalSegmentator>=2.0", "nibabel>=5.0"]
 # Data acquisition works over the public NBIA REST API with the standard library.
 tcia = ["tcia_utils>=2.0"]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "matplotlib>=3.7"]
+# Rebuilding the paper. Found the same way scipy was: a clean checkout installed
+# into a fresh virtual environment ran the figures and resolved every number, then
+# stopped at "render the manuscript to Word" with ModuleNotFoundError: pypandoc.
+# pypandoc_binary is used rather than pypandoc so that the pandoc executable comes
+# with it; a reader should not have to install pandoc separately to rebuild the
+# manuscript. Pillow is imported by paper/presubmission_check.py to measure the
+# figures, and matplotlib by paper/make_figures.py.
+paper = ["matplotlib>=3.7", "pypandoc_binary>=1.13", "pillow>=10.0"]
+# tools/build_bowtie_profiles.py reads the published bowtie spreadsheet.
+bowtie = ["openpyxl>=3.1"]
 
 [project.urls]
 Homepage = "https://github.com/Institute-of-One/ct-dosemc-core"
