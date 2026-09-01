@@ -188,21 +188,85 @@ def check_series_account_for_one_another() -> None:
         )
 
 
-def check_code_is_reachable(built: str) -> None:
-    """The data and code statement must name somewhere a reader can go.
+def check_author_block(built: str) -> None:
+    """Title, author, the canonical affiliation, e-mail and ORCID -- all present.
 
-    A companion paper was submitted saying the software was "in this repository"
-    and naming no repository; nothing else in the package carried a URL either. A
-    locator is a URL or a DOI. "this repository" is neither.
+    The manuscript went from title straight to abstract and carried no author block at
+    all, which was found only by extracting the text of the built PDF and looking for the
+    affiliation. PMB is submitted under single-anonymous review here, so the identity
+    belongs on the manuscript.
+
+    The affiliation is asserted character for character. Crossref carries
+    "Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan" for the author's published
+    work, and a second ordering of the same address reads to an affiliation-matching
+    system as a second affiliation.
     """
-    section = re.search(r"^##\s*Data and code[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S)
+    head = built.split("## Abstract")[0]
+    flat = " ".join(head.split())
+    for what, value in (
+        ("the author's name", "Shuji Yamamoto"),
+        ("the canonical affiliation", "Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan"),
+        ("a corresponding e-mail", "yamamoto@lisit.jp"),
+        ("an ORCID", "0000-0001-9211-1071"),
+    ):
+        if value not in flat:
+            fail(f"the manuscript's title block is missing {what}: {value!r}")
+    if "150-0044 Tokyo" in flat:
+        fail("the affiliation gives the postcode before the city; Crossref carries "
+             "'Tokyo 150-0044', and two orderings read as two affiliations")
+
+
+def check_code_is_reachable(built: str) -> None:
+    """IOP's data availability statement: the heading, the placement, the wording, a DOI.
+
+    IOP Publishing has required a data availability statement in every article since 2022.
+    It must sit under the heading 'Data availability', after the acknowledgements, and use
+    one of the publisher's template forms. The locator matters as much as the wording: a
+    companion paper was submitted saying the software was "in this repository" and naming
+    no repository, and nothing else in the package carried a URL either. "this repository"
+    is neither a URL nor a DOI.
+    """
+    section = re.search(
+        r"^##\s*Data availability[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
+    )
     if section is None:
-        fail("the manuscript has no 'Data and code' section")
-        return
-    if not re.search(r"https?://|doi\.org|doi:", section.group(1)):
         fail(
-            "the data and code statement names no URL or DOI: a reviewer cannot reach "
+            "the manuscript has no 'Data availability' section; IOP requires one, under "
+            "that heading, in every article"
+        )
+        return
+    text = " ".join(section.group(1).split())
+
+    headings = re.findall(r"^##\s*(.+?)\s*$", built, flags=re.M)
+    names = [h.lower() for h in headings]
+    if "acknowledgements" in names and "data availability" in names:
+        if names.index("data availability") < names.index("acknowledgements"):
+            fail("'Data availability' must come after 'Acknowledgements', as IOP asks")
+
+    # One of IOP's template openings, quoted from the publisher's data policy.
+    templates = (
+        "The data that support the findings of this study are openly available",
+        "The data that support the findings of this study will be openly available",
+        "The data that support the findings of this study are available upon reasonable",
+        "All data that support the findings of this study are included within the article",
+        "No new data were created or analysed in this study",
+    )
+    if not any(t.lower() in text.lower() for t in templates):
+        fail(
+            "the data availability statement does not open with one of IOP's template "
+            "forms, which the publisher's data policy requires"
+        )
+
+    if not re.search(r"https?://|doi\.org|doi:", text):
+        fail(
+            "the data availability statement names no URL or DOI: a reviewer cannot reach "
             "the software from the manuscript"
+        )
+    elif not re.search(r"10\.\d{4,9}/\S+", text):
+        fail(
+            "the data availability statement carries a URL but no DOI. A repository URL "
+            "is not an archive: it moves, and the version a reviewer fetches is not the "
+            "version the results came from"
         )
 
 
@@ -252,11 +316,13 @@ def check_figures(built: str) -> None:
 
 
 def check_references(source: str) -> None:
-    """Contiguous, all cited, none uncited, in order of first citation, with DOIs.
+    """Harvard: every citation resolves, every entry is cited, alphabetical, traceable.
 
-    Markers are stripped before citations are counted. A marker path may index a
-    list -- ``...range[0]`` -- and ``[0]`` read as a citation of reference zero,
-    which then made the whole list look out of order.
+    Physics in Medicine & Biology requires the Harvard alphabetical style exclusively, so
+    this checks author-year rather than the numbering it used to check. Markers are
+    stripped before citations are counted: a marker path may index a list --
+    ``...range[0]`` -- which a numbered-citation scan read as a citation of reference
+    zero, and which an author-year scan would ignore anyway.
     """
     prose = re.sub(r"\[\[results:.+?\]\]", "", _strip_comments(source), flags=re.S)
     body, _, tail = prose.rpartition("## References")
@@ -264,45 +330,69 @@ def check_references(source: str) -> None:
         fail("the manuscript has no '## References' section")
         return
 
-    listed = [int(number) for number in re.findall(r"^\s*(\d+)\.\s", tail, flags=re.M)]
-    if listed != list(range(1, len(listed) + 1)):
-        fail(f"the reference list is not numbered 1..n: {listed}")
+    if re.search(r"(?<![\w.])\[\d+(?:\s*,\s*\d+)*\]", body):
+        fail(
+            "a numbered citation is still in the body; PMB requires Harvard "
+            "(alphabetical) references exclusively"
+        )
 
-    cited: list[int] = []
-    for group in re.findall(r"\[(\d+(?:\s*,\s*\d+)*)\]", body):
-        for number in group.split(","):
-            value = int(number)
-            if value not in cited:
-                cited.append(value)
-
-    if not cited:
-        fail("no reference is cited in the body")
+    # An entry begins at the left margin with a surname and initials, and carries a year.
+    entries = [
+        entry.strip()
+        for entry in re.split(r"\n\s*\n", tail.strip())
+        if entry.strip()
+    ]
+    listed: list[tuple[str, str]] = []
+    for entry in entries:
+        match = re.match(r"([A-Z][A-Za-z\u00C0-\u024F'\-]+)\b.*?\b((?:19|20)\d{2}[ab]?)\b",
+                         " ".join(entry.split()))
+        if match is None:
+            fail(f"a reference entry has no leading surname and year: {entry[:70]!r}")
+            continue
+        listed.append((match.group(1), match.group(2)))
+    if not listed:
+        fail("the reference list is empty")
         return
-    missing = sorted(set(cited) - set(listed))
-    if missing:
-        fail(f"cited but not listed: {missing}")
-    uncited = sorted(set(listed) - set(cited))
+
+    surnames = [surname for surname, _ in listed]
+    if surnames != sorted(surnames, key=str.casefold):
+        out_of_order = [
+            f"{b} after {a}"
+            for a, b in zip(surnames, surnames[1:])
+            if b.casefold() < a.casefold()
+        ]
+        fail(f"the reference list is not in alphabetical order: {out_of_order}")
+
+    # Every (surname, year) in the list must be cited, and every citation must resolve.
+    flat = " ".join(body.split())
+    uncited = [
+        f"{surname} {year}"
+        for surname, year in listed
+        # The year may sit in its own brackets, as in "Turner *et al* (2009)", so the
+        # span between the surname and the year has to be allowed to contain them.
+        if not re.search(rf"\b{re.escape(surname)}\b.{{0,40}}?{re.escape(year)}", flat)
+    ]
     if uncited:
         fail(f"listed but never cited: {uncited}")
-    if cited != sorted(cited):
-        fail(f"references are not numbered in order of first citation: {cited}")
+
+    years = {year for _, year in listed}
+    cited_years = set(re.findall(r"\b((?:19|20)\d{2}[ab]?)\b", flat))
+    dangling = sorted(y for y in cited_years - years if re.search(rf"\({{0,1}}[A-Z][^()]*{y}\)", flat))
+    if dangling:
+        warn(f"a year appears in a citation but in no reference entry: {dangling}")
 
     # A reference must be traceable. A DOI is the usual way; a report or a
     # standard often has none, and for those the issuing body and place stand in.
     # What is not acceptable is an entry a reader cannot follow to anything, which
     # is the shape a fabricated reference takes.
     untraceable = [
-        number
-        for number, entry in enumerate(
-            re.findall(r"^\s*\d+\.\s+(.+?)(?=^\s*\d+\.\s|\Z)", tail, flags=re.M | re.S),
-            start=1,
-        )
-        if "doi" not in entry.lower()
-        and re.search(r"\((?:[^)]*,\s*)?[^)]*\b(19|20)\d{2}\)", entry) is None
+        entry.split(" 20")[0][:48]
+        for entry in entries
+        if "doi" not in entry.lower() and "(" not in entry
     ]
     if untraceable:
         warn(
-            f"reference(s) with neither a DOI nor an issuing body and year, so a "
+            f"reference(s) with neither a DOI nor a publisher and place, so a "
             f"reader cannot follow them: {untraceable}"
         )
 
@@ -402,6 +492,7 @@ def main(argv: list[str] | None = None) -> int:
             check_markers_resolved(built)
             check_no_typed_numbers(source, built)
             check_the_defective_file_is_not_cited(source, built)
+            check_author_block(built)
             check_code_is_reachable(built)
             check_figures(built)
             check_docx_furniture()

@@ -1,0 +1,27 @@
+One paragraph per line, with a blank line between paragraphs. Paste as-is into the
+ScholarOne cover-letter box; do not re-wrap. Delete these three lines first.
+
+Dear Editors,
+
+Please consider the enclosed Paper, "A measured floor on index-based organ dose estimation in CT, where per-organ coefficients do not improve on a single conversion factor", for publication in Physics in Medicine & Biology.
+
+The volume CT dose index is a scanner output rather than a patient dose, and the field converts it to organ dose with size corrections, dose-length-product factors and libraries of per-organ coefficients. How close any such conversion can get has not, to my knowledge, been measured against transport on the same anatomy. This paper measures that floor. A GPU Monte-Carlo pipeline computes absorbed organ dose in each patient's own segmented, density-mapped anatomy from routine metadata alone; the engine is verified against Case 4 of AAPM Task Group 195 to 0.359 per cent of PENELOPE, or 1.67 combined standard deviations, against a yardstick fixed before the comparison. On 30 multi-vendor abdominal series from a public archive, 342 organ-series pairs across 12 organs, conversions of increasing richness are scored under leave-one-patient-out cross-validation. A single factor for the cohort recovers absorbed organ dose to a median 31 per cent; one factor per organ does not improve on it; adding a scan-length term reaches 16 per cent; and adding either organ identity or patient size reaches a floor of 13 per cent. Eighty-eight per cent of the variance in the index-to-dose ratio lies between patients and six per cent between organs, while the Monte-Carlo statistical uncertainty is 0.012 per cent of the dose at the median, so the residual is physical rather than a sampling artefact.
+
+The result is a negative one stated positively: the information an index withholds is a property of the patient, not of the organ, so a per-organ coefficient table cannot supply it and neither can a size correction. I have tried to keep the claim inside what the data support. The paper does not claim novelty for GPU Monte-Carlo photon transport, for spectrum modelling, for Hounsfield-unit-to-density calibration or for deep-learning organ segmentation; each is used as published and cited. What is new is the measurement of the ceiling, and the decomposition that says where the missing information lives.
+
+I am grateful to the editorial office for confirming on 1 September 2026 that this work is suitable to submit as a Paper.
+
+Every number in the manuscript is resolved at build time from a machine-readable result file, and the build fails if a number cannot be traced to one. The software that produced them is public under the MIT licence and archived at https://doi.org/10.5281/zenodo.22233153, which is the release the paper describes. No imaging is redistributed: the collection, Series Instance UID, licence and retrieval date of every series are recorded so that each can be re-fetched from The Cancer Imaging Archive. The study used openly released, de-identified public data and involved no new recruitment or intervention.
+
+Conflict of interest: I am Representative Director of LISIT Co., Ltd., which funds Institute of One and which is my affiliation on this paper. The work received no external funding, and no commercial product of LISIT Co., Ltd. is evaluated, recommended or used in it. I declare no other competing interest, financial or personal.
+
+The manuscript is not under consideration elsewhere and has not been published before. It is my own work as sole author. I have not suggested reviewers, and would rather leave the choice to the Board than propose names.
+
+Thank you for considering the paper. I would be glad to answer editorial or reviewer questions and to make reasonable improvements to the public software during review.
+
+Yours sincerely,
+
+Shuji Yamamoto
+Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan
+yamamoto@lisit.jp
+ORCID 0000-0001-9211-1071
