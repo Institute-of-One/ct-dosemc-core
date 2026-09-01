@@ -10,7 +10,7 @@ authors:
     given-names: Shuji
     email: yamamoto@lisit.jp
     orcid: 'https://orcid.org/0000-0001-9211-1071'
-    affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+    affiliation: Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan
 repository-code: https://github.com/Institute-of-One/ct-dosemc-core
 url: https://github.com/Institute-of-One/ct-dosemc-core
 abstract: >-
@@ -49,7 +49,7 @@ license: MIT
 version: 0.1.0
 # Zenodo takes this as the record's publication date and a DOI cannot be
 # re-dated afterwards, so it is the day the tag is cut, not the day work began.
-date-released: "2026-08-23"
+date-released: "2026-09-01"
 # The *concept* DOI goes here once the first release is minted; it resolves to
 # the latest version, which is what a citation of the project should point at.
 # A result should cite the version DOI of the release it was produced with.
@@ -96,7 +96,7 @@ references:
       - family-names: Yamamoto
         given-names: Shuji
         orcid: 'https://orcid.org/0000-0001-9211-1071'
-        affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+        affiliation: Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan
   - type: software
     title: >-
       ctdose-core: open, auditable CT dose surveillance from DICOM, with a
@@ -107,7 +107,7 @@ references:
       - family-names: Yamamoto
         given-names: Shuji
         orcid: 'https://orcid.org/0000-0001-9211-1071'
-        affiliation: Institute of One, LISIT Co., Ltd., Tokyo, Japan
+        affiliation: Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan
   - type: report
     title: >-
       PENELOPE -- A code system for Monte Carlo simulation of electron and photon
