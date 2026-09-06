@@ -73,10 +73,15 @@ def test_a_data_and_code_section_without_a_locator_is_caught() -> None:
     assert check.errors
 
 
-def test_a_data_and_code_section_with_a_url_passes() -> None:
+def test_a_data_availability_section_with_a_doi_passes() -> None:
+    """IOP mandates the heading 'Data availability'. '## Data and code' is not it,
+    which is why this test failed silently from the day the checker was moved to
+    the publisher's wording and the test was left on the old heading."""
     built = (
-        "## Data and code\n\nSoftware is at "
-        "https://github.com/Institute-of-One/ct-dosemc-core.\n\n## Next\n"
+        "## Acknowledgements\n\nThanks.\n\n"
+        "## Data availability\n\nThe data that support the findings of this study "
+        "are openly available at the following URL/DOI: "
+        "https://doi.org/10.5281/zenodo.22233153.\n"
     )
     check.check_code_is_reachable(built)
     assert not check.errors
@@ -87,29 +92,49 @@ def test_a_missing_data_and_code_section_is_caught() -> None:
     assert check.errors
 
 
-def test_references_out_of_citation_order_are_caught() -> None:
+def test_references_out_of_alphabetical_order_are_caught() -> None:
+    """Harvard orders by surname, not by first citation.
+
+    These four tests injected numbered-citation defects into an author-year checker
+    from the day check_references was rewritten for PMB, and had failed ever since.
+    That is worse than having no tests: a permanently red suite stops being read, and
+    nothing then established that the Harvard checks caught anything at all.
+    """
     source = (
-        "Body cites [2] and then [1].\n\n## References\n1. First, doi:10/a\n2. Second, doi:10/b\n"
+        "Body cites Zeta (2020) and Alpha (2019).\n\n## References\n\n"
+        "Zeta B 2020 A later work doi:10/b\n\n"
+        "Alpha A 2019 An earlier work doi:10/a\n"
     )
     check.check_references(source)
-    assert any("order of first citation" in message for message in check.errors)
+    assert any("not in alphabetical order" in message for message in check.errors)
 
 
 def test_an_uncited_reference_is_caught() -> None:
-    source = "Body cites [1].\n\n## References\n1. First, doi:10/a\n2. Orphan, doi:10/b\n"
+    source = (
+        "Body cites Alpha (2019).\n\n## References\n\n"
+        "Alpha A 2019 A cited work doi:10/a\n\n"
+        "Orphan O 2021 Never mentioned doi:10/b\n"
+    )
     check.check_references(source)
     assert any("never cited" in message for message in check.errors)
 
 
-def test_a_cited_but_unlisted_reference_is_caught() -> None:
-    source = "Body cites [1] and [2].\n\n## References\n1. Only one, doi:10/a\n"
+def test_a_surviving_numbered_citation_is_caught() -> None:
+    """PMB takes Harvard exclusively, so a surviving [1] is itself the defect."""
+    source = (
+        "Body cites [1] and Alpha (2019).\n\n## References\n\n"
+        "Alpha A 2019 A cited work doi:10/a\n"
+    )
     check.check_references(source)
-    assert any("cited but not listed" in message for message in check.errors)
+    assert any("numbered citation" in message for message in check.errors)
 
 
 def test_a_reference_a_reader_cannot_follow_warns() -> None:
     """Neither a DOI nor an issuing body and year is the shape of a fabrication."""
-    source = "Body cites [1].\n\n## References\n1. A book with no identifier\n"
+    source = (
+        "Body cites Alpha (2019).\n\n## References\n\n"
+        "Alpha A 2019 A book with no identifier at all\n"
+    )
     check.check_references(source)
     assert any("cannot follow" in message for message in check.warnings)
 

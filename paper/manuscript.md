@@ -464,6 +464,14 @@ is physical: it is the transport that an index does not perform.
 The author thanks the maintainers of MC-GPU, SpekPy, PENELOPE and TotalSegmentator, whose
 published work this pipeline is assembled from.
 
+A generative artificial intelligence assistant (Claude Opus 5, Anthropic) was used as a tool
+in developing the software, in preparing figures from result files already computed, and in
+language editing of this manuscript. It was not used to generate, impute or select any
+reported value: every number in the text is resolved at build time from a machine-readable
+result file produced by the code, and the build fails if a number cannot be traced to one.
+The study design, the dosimetry, and all scientific judgements, interpretations and
+conclusions are the author's, who takes full responsibility for the content of this paper.
+
 The author is Representative Director of LISIT Co., Ltd., which funds Institute of One.
 No other competing interest is declared.
 

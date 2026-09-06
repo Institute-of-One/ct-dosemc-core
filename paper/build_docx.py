@@ -159,13 +159,24 @@ _FOOTER_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.f
 #: ``distance`` is twentieths of a point: 360 is a quarter inch clear of the text.
 _LINE_NUMBERING = '<w:lnNumType w:countBy="1" w:restart="continuous" w:distance="360"/>'
 
+#: Whether this paper's .docx carries its own line numbers. False for PMB: ScholarOne
+#: numbers the lines of the proof it builds from the upload, and a manuscript that
+#: brings its own ends up with two sets that do not agree. Set True for a journal that
+#: requires them, Medical Physics among them.
+LINE_NUMBERS = False
 
-def number_pages_and_lines(path: Path) -> Path:
-    """Add page numbers and continuous line numbering to a written ``.docx``.
+
+def number_pages_and_lines(path: Path, line_numbers: bool = LINE_NUMBERS) -> Path:
+    """Add page numbers, and line numbering only where the journal wants it.
 
     Medical Physics returned a companion submission before peer review for the want of
     both. Elsevier recommends line numbering rather than requiring it, but the cost of
     carrying it is nothing and the cost of discovering it at the desk is a round trip.
+
+    PMB is the exception, and it is why this is now a switch. Its ScholarOne site
+    numbers the lines of the proof it builds, so a manuscript that already carries its
+    own arrives with two columns of numbers down the same page, disagreeing with each
+    other. Page numbers are added either way; only the line numbers are conditional.
 
     Pandoc emits neither and no reference document supplies them. Line numbering is one
     section property; a page number needs a footer part carrying a PAGE field, a
@@ -179,12 +190,17 @@ def number_pages_and_lines(path: Path) -> Path:
         contents = {name: archive.read(name) for name in names}
 
     document = contents["word/document.xml"].decode("utf-8")
-    if "lnNumType" in document:
+    # The footer is added in every case, so it, and not the optional line numbering,
+    # is what says the furniture is already in place.
+    if _FOOTER_PART in names:
         return path
 
     reference = f'<w:footerReference w:type="default" r:id="{_FOOTER_RELATIONSHIP}"/>'
     document = document.replace("<w:sectPr>", f"<w:sectPr>{reference}", 1)
-    document = document.replace("</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1)
+    if line_numbers:
+        document = document.replace(
+            "</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1
+        )
     contents["word/document.xml"] = document.encode("utf-8")
 
     rels = contents["word/_rels/document.xml.rels"].decode("utf-8")
@@ -210,7 +226,7 @@ def number_pages_and_lines(path: Path) -> Path:
     return path
 
 
-def build(output: Path = DEFAULT_OUTPUT) -> int:
+def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> int:
     import pypandoc  # noqa: PLC0415
 
     source = build_manuscript.DEFAULT_SOURCE.read_text(encoding="utf-8")
@@ -229,7 +245,7 @@ def build(output: Path = DEFAULT_OUTPUT) -> int:
         extra_args=["--resource-path", str(PAPER)],
     )
     keep_tables_whole(output)
-    number_pages_and_lines(output)
+    number_pages_and_lines(output, line_numbers=line_numbers)
     print(f"wrote {output} ({output.stat().st_size // 1024} KB)")
     return 0
 
@@ -237,7 +253,12 @@ def build(output: Path = DEFAULT_OUTPUT) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    return build(parser.parse_args(argv).output)
+    parser.add_argument(
+        "--line-numbers", action="store_true",
+        help="carry line numbers in the .docx; PMB's ScholarOne adds its own, so off here",
+    )
+    args = parser.parse_args(argv)
+    return build(args.output, line_numbers=args.line_numbers or LINE_NUMBERS)
 
 
 if __name__ == "__main__":

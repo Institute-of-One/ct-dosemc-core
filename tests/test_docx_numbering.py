@@ -38,11 +38,52 @@ A paragraph, so the document has a section and a body.
 
 @pytest.fixture(scope="module")
 def numbered(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """A .docx built with line numbering on, whatever this journal's default is.
+
+    ``LINE_NUMBERS`` is False for PMB, whose ScholarOne numbers the proof it builds
+    from the upload; a manuscript that brings its own ends up with two columns that
+    disagree. These tests are about the numbering machinery, so they ask for it
+    explicitly rather than inheriting a venue's choice.
+    """
     output = tmp_path_factory.mktemp("docx") / "manuscript.docx"
     pypandoc.convert_text(MARKDOWN, to="docx", format="markdown", outputfile=str(output))
     build_docx.keep_tables_whole(output)
-    build_docx.number_pages_and_lines(output)
+    build_docx.number_pages_and_lines(output, line_numbers=True)
     return output
+
+
+@pytest.fixture(scope="module")
+def unnumbered(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """What is actually uploaded to PMB: page numbers, no line numbers."""
+    output = tmp_path_factory.mktemp("docx-pmb") / "manuscript.docx"
+    pypandoc.convert_text(MARKDOWN, to="docx", format="markdown", outputfile=str(output))
+    build_docx.keep_tables_whole(output)
+    build_docx.number_pages_and_lines(output, line_numbers=False)
+    return output
+
+
+def test_the_pmb_default_omits_line_numbers_but_keeps_page_numbers(
+    unnumbered: Path,
+) -> None:
+    """The submitted file depends on this and nothing proved it before.
+
+    ScholarOne adds its own line numbers. Leaving ours in produced two columns that
+    did not agree, which is what this switch exists to prevent; dropping the footer
+    with them would lose the page numbers the journal does want.
+    """
+    with zipfile.ZipFile(unnumbered) as archive:
+        document = archive.read("word/document.xml").decode("utf-8")
+        parts = archive.namelist()
+    assert "lnNumType" not in document, "PMB uploads must not carry their own line numbers"
+    assert any(part.startswith("word/footer") for part in parts), "page numbers are still required"
+
+
+def test_the_shipped_default_is_the_one_this_journal_needs() -> None:
+    """A switch nobody reads is a switch that drifts back."""
+    assert build_docx.LINE_NUMBERS is False, (
+        "this repository submits to PMB; set True only for a journal that requires "
+        "line numbers in the manuscript itself, Medical Physics among them"
+    )
 
 
 def _part(path: Path, name: str) -> str:

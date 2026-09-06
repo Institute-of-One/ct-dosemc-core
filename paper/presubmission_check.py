@@ -456,8 +456,22 @@ def check_docx_furniture() -> None:
     with zipfile.ZipFile(DOCX) as archive:
         document = archive.read("word/document.xml").decode("utf-8")
         parts = archive.namelist()
-    if "lnNumType" not in document:
-        fail("the .docx carries no line numbering")
+    # Line numbering is per journal, not universal. Medical Physics returns a
+    # submission that lacks it; PMB's ScholarOne adds its own to the proof it builds,
+    # so a file that brings its own arrives with two disagreeing columns of numbers.
+    # build_docx.LINE_NUMBERS is the single place that decides, and this asserts the
+    # .docx agrees with it rather than asserting one journal's rule for all of them.
+    sys.path.insert(0, str(PAPER))
+    import build_docx  # noqa: PLC0415
+
+    carries = "lnNumType" in document
+    if carries and not build_docx.LINE_NUMBERS:
+        fail(
+            "the .docx carries line numbering while build_docx.LINE_NUMBERS is False; "
+            "PMB's submission system numbers the proof itself and the two sets disagree"
+        )
+    if build_docx.LINE_NUMBERS and not carries:
+        fail("the .docx carries no line numbering, and this journal requires it")
     if not any(name.startswith("word/footer") for name in parts):
         fail("the .docx carries no footer, so no page numbers")
     if "cantSplit" not in document:
@@ -467,6 +481,39 @@ def check_docx_furniture() -> None:
 
 
 # -------------------------------------------------------------------------- main
+
+
+def check_generative_ai_is_declared(built: str) -> None:
+    """IOP requires the use of generative AI to be disclosed in the Acknowledgements.
+
+    The policy asks for the model and version and how it was used, and it names the
+    Acknowledgements as the place. This manuscript went to PMB on 2026-09-01 with no
+    such declaration anywhere in it, while every other paper in this programme carried
+    one -- so it was an omission, not a decision. A missing disclosure is not a
+    formatting slip: found after publication it is what a correction notice is for.
+    """
+    if not re.search(r"generative artificial intelligence|generative AI", built, re.I):
+        fail(
+            "no generative-AI declaration; IOP requires the model, its version and how "
+            "it was used, disclosed in the Acknowledgements"
+        )
+        return
+    section = re.search(
+        r"^##\s*Acknowledge?ments[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
+    )
+    if section is None or not re.search(
+        r"generative artificial intelligence|generative AI", section.group(1), re.I
+    ):
+        fail(
+            "the generative-AI declaration is not in the Acknowledgements, which is "
+            "where IOP's policy puts it"
+        )
+        return
+    if not re.search(r"\(([^)]*,\s*[^)]*)\)", section.group(1)):
+        warn(
+            "the generative-AI declaration names no model and vendor in brackets; "
+            "IOP asks for the model and version"
+        )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -493,6 +540,7 @@ def main(argv: list[str] | None = None) -> int:
             check_no_typed_numbers(source, built)
             check_the_defective_file_is_not_cited(source, built)
             check_author_block(built)
+            check_generative_ai_is_declared(built)
             check_code_is_reachable(built)
             check_figures(built)
             check_docx_furniture()
