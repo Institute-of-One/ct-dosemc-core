@@ -212,8 +212,10 @@ def check_author_block(built: str) -> None:
         if value not in flat:
             fail(f"the manuscript's title block is missing {what}: {value!r}")
     if "150-0044 Tokyo" in flat:
-        fail("the affiliation gives the postcode before the city; Crossref carries "
-             "'Tokyo 150-0044', and two orderings read as two affiliations")
+        fail(
+            "the affiliation gives the postcode before the city; Crossref carries "
+            "'Tokyo 150-0044', and two orderings read as two affiliations"
+        )
 
 
 def check_code_is_reachable(built: str) -> None:
@@ -239,9 +241,12 @@ def check_code_is_reachable(built: str) -> None:
 
     headings = re.findall(r"^##\s*(.+?)\s*$", built, flags=re.M)
     names = [h.lower() for h in headings]
-    if "acknowledgements" in names and "data availability" in names:
-        if names.index("data availability") < names.index("acknowledgements"):
-            fail("'Data availability' must come after 'Acknowledgements', as IOP asks")
+    if (
+        "acknowledgements" in names
+        and "data availability" in names
+        and names.index("data availability") < names.index("acknowledgements")
+    ):
+        fail("'Data availability' must come after 'Acknowledgements', as IOP asks")
 
     # One of IOP's template openings, quoted from the publisher's data policy.
     templates = (
@@ -337,15 +342,13 @@ def check_references(source: str) -> None:
         )
 
     # An entry begins at the left margin with a surname and initials, and carries a year.
-    entries = [
-        entry.strip()
-        for entry in re.split(r"\n\s*\n", tail.strip())
-        if entry.strip()
-    ]
+    entries = [entry.strip() for entry in re.split(r"\n\s*\n", tail.strip()) if entry.strip()]
     listed: list[tuple[str, str]] = []
     for entry in entries:
-        match = re.match(r"([A-Z][A-Za-z\u00C0-\u024F'\-]+)\b.*?\b((?:19|20)\d{2}[ab]?)\b",
-                         " ".join(entry.split()))
+        match = re.match(
+            r"([A-Z][A-Za-z\u00C0-\u024F'\-]+)\b.*?\b((?:19|20)\d{2}[ab]?)\b",
+            " ".join(entry.split()),
+        )
         if match is None:
             fail(f"a reference entry has no leading surname and year: {entry[:70]!r}")
             continue
@@ -358,7 +361,8 @@ def check_references(source: str) -> None:
     if surnames != sorted(surnames, key=str.casefold):
         out_of_order = [
             f"{b} after {a}"
-            for a, b in zip(surnames, surnames[1:])
+            # strict=False on purpose: the tail is one shorter, which is the point
+            for a, b in zip(surnames, surnames[1:], strict=False)
             if b.casefold() < a.casefold()
         ]
         fail(f"the reference list is not in alphabetical order: {out_of_order}")
@@ -377,7 +381,9 @@ def check_references(source: str) -> None:
 
     years = {year for _, year in listed}
     cited_years = set(re.findall(r"\b((?:19|20)\d{2}[ab]?)\b", flat))
-    dangling = sorted(y for y in cited_years - years if re.search(rf"\({{0,1}}[A-Z][^()]*{y}\)", flat))
+    dangling = sorted(
+        y for y in cited_years - years if re.search(rf"\({{0,1}}[A-Z][^()]*{y}\)", flat)
+    )
     if dangling:
         warn(f"a year appears in a citation but in no reference entry: {dangling}")
 

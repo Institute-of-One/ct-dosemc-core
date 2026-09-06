@@ -122,8 +122,7 @@ def test_an_uncited_reference_is_caught() -> None:
 def test_a_surviving_numbered_citation_is_caught() -> None:
     """PMB takes Harvard exclusively, so a surviving [1] is itself the defect."""
     source = (
-        "Body cites [1] and Alpha (2019).\n\n## References\n\n"
-        "Alpha A 2019 A cited work doi:10/a\n"
+        "Body cites [1] and Alpha (2019).\n\n## References\n\nAlpha A 2019 A cited work doi:10/a\n"
     )
     check.check_references(source)
     assert any("numbered citation" in message for message in check.errors)

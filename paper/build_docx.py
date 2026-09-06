@@ -198,9 +198,7 @@ def number_pages_and_lines(path: Path, line_numbers: bool = LINE_NUMBERS) -> Pat
     reference = f'<w:footerReference w:type="default" r:id="{_FOOTER_RELATIONSHIP}"/>'
     document = document.replace("<w:sectPr>", f"<w:sectPr>{reference}", 1)
     if line_numbers:
-        document = document.replace(
-            "</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1
-        )
+        document = document.replace("</w:footnotePr>", f"</w:footnotePr>{_LINE_NUMBERING}", 1)
     contents["word/document.xml"] = document.encode("utf-8")
 
     rels = contents["word/_rels/document.xml.rels"].decode("utf-8")
@@ -254,7 +252,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument(
-        "--line-numbers", action="store_true",
+        "--line-numbers",
+        action="store_true",
         help="carry line numbers in the .docx; PMB's ScholarOne adds its own, so off here",
     )
     args = parser.parse_args(argv)
