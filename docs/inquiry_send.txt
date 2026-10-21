@@ -1,0 +1,30 @@
+Subject: Pre-submission inquiry - Paper (not Note): the accuracy limit of index-based organ dose in abdominal CT
+
+--- everything below this line is the message body ---
+
+Dear Editor,
+
+I would like to ask whether the following study is appropriate as a Paper, rather than a Note, for the Journal of Radiological Protection, and whether its subject sits within the journal's scope.
+
+Title. Per-organ coefficients do not improve on a single conversion factor: a cross-validated bound on index-based organ dose in abdominal CT.
+
+Question. Organ dose is routinely estimated from the volume CT dose index by a conversion - a single factor, a size correction, a dose-length-product factor, or a per-organ coefficient library. How close such a conversion can get to the dose that transport actually deposits, in a real patient rather than a reference phantom, has not been measured on the same anatomy. This study measures it.
+
+Method. A GPU Monte-Carlo pipeline computes absorbed organ dose in patient anatomy from routine acquisition metadata alone. The transport engine is verified against Case 4 of AAPM Task Group 195: at the central volume of interest it differs from PENELOPE by 0.359%, with an uncertainty measured from ten independent replicas rather than assumed. On 30 multi-vendor abdominal CT series from a public archive - 342 organ-series pairs across 12 organs - five conversions of increasing richness are scored under leave-one-patient-out cross-validation, so that every error reported is on a patient the conversion was not fitted on.
+
+Results. A single conversion factor for the whole cohort recovers absorbed organ dose to a median 31%. One factor per organ, which is what a coefficient library offers, does not improve on it: 32%. Adding a scan-length term helps, and adding either the organ or the patient's size on top of that changes little; the best of the five reaches a median 13%. The reason is in the variance: 88% of the variance of the dose-to-index ratio is between patients and 6% is between organs, so a table indexed by organ is refining the smaller term.
+
+Why I am asking. The finding that matters to a reader is negative - a per-organ coefficient table does not repay the effort - and negative findings are sometimes read as slight. The work is a full study rather than a single observation: a verified engine with a measured uncertainty, a pre-declared eligibility gate, a cohort with every exclusion counted, five conversions compared under cross-validation, and a variance decomposition that explains the result. At 6,000 words with six figures and one table it is within the 8,500-word equivalent the journal allows a Paper, and well beyond what a 2,500-word Note can carry.
+
+I should also be clear about what the study does not do, since the journal's readership will ask. The quantity is absorbed organ dose, not risk. A risk statement would need age and sex, which the public archive does not supply, and a risk model, which is not used here. The paper says so.
+
+The implementation, the drivers that produced every number, the recorded design with its amendments, and the measured values as data files are public and archived with a DOI; the manuscript is generated from those files, so no number in it is typed by hand. No imaging is redistributed.
+
+I would be grateful for your view on the article type and the fit.
+
+Yours sincerely,
+
+Shuji Yamamoto
+Institute of One, LISIT Co., Ltd., Tokyo 150-0044, Japan
+ORCID 0000-0001-9211-1071
+yamamoto@lisit.jp
