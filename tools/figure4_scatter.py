@@ -40,6 +40,19 @@ _EDGE = {
     "reconstructed_low_confidence": "#b2182b",
 }
 
+#: What the legend says, as against what ``FIGURE4_MARKERS[kind]["label"]`` says.
+#:
+#: The long labels are prose and belong in the caption, where PMB-122419's referee 2 found
+#: them anyway -- printed a second time inside the image. Drawn into a legend they ran off
+#: the left edge of the canvas and were cut mid-word, because matplotlib places a legend
+#: inside the axes and will not shrink the text to fit. They also name IORN-004, which is
+#: this programme's own numbering and means nothing to a reader of the journal.
+_LEGEND_LABEL = {
+    "recorded": "recorded CTDIvol",
+    "reconstructed": "reconstructed, exact or high-confidence match",
+    "reconstructed_low_confidence": "reconstructed, low-confidence match",
+}
+
 
 def matplotlib_style(kind: str) -> dict[str, Any]:
     """kwargs for ax.scatter. Hollow = facecolors 'none'."""
@@ -53,7 +66,7 @@ def matplotlib_style(kind: str) -> dict[str, Any]:
         "facecolors": color if filled else "none",
         "edgecolors": color,
         "linewidths": 1.2,
-        "label": spec["label"],
+        "label": _LEGEND_LABEL.get(kind, spec["label"]),
     }
 
 
@@ -144,6 +157,12 @@ def draw_scatter(points: list[dict[str, Any]], path: Path, *, caption: str) -> P
             "Figure 4 y-axis is gated: 007 organ doses are not in the point list. "
             "Pass doses once G0–G5 close, or use --legend-only."
         )
+    # The caption is the journal's to print under the figure. It used to be drawn into the
+    # image as well, where referee 2 of PMB-122419 found it and asked for its removal; it is
+    # still accepted as an argument so the caller's contract does not change, and it is still
+    # what the manuscript places, but it is no longer painted on top of the data.
+    del caption
+
     fig, ax = plt.subplots(figsize=(5.2, 5.2))
     for kind in ("recorded", "reconstructed", "reconstructed_low_confidence"):
         xs = [p["x"] for p in points if p["figure4_marker"] == kind]
@@ -151,13 +170,24 @@ def draw_scatter(points: list[dict[str, Any]], path: Path, *, caption: str) -> P
         if not xs:
             continue
         ax.scatter(xs, ys, s=28, **matplotlib_style(kind))
-    ax.set_xlabel("IORN-006 organ-weighted CTDIvol (mGy)")
-    ax.set_ylabel("IORN-007 absorbed organ dose (mGy)")
-    ax.legend(frameon=False, fontsize=7)
-    fig.text(0.02, 0.01, caption, fontsize=7, wrap=True)
+    # No IORN numbers on the axes: they are this programme's filing system, not a quantity.
+    ax.set_xlabel("Organ-weighted CTDIvol (mGy)")
+    ax.set_ylabel("Absorbed organ dose (mGy)")
+    # Under the axes, not inside them: three entries of this length have nowhere to sit in a
+    # square panel, and matplotlib's "best" placement put them over the edge of the canvas.
+    ax.legend(
+        frameon=False,
+        fontsize=7,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.11),
+        ncol=1,
+        handletextpad=0.6,
+        borderaxespad=0.0,
+    )
+    ax.spines[["top", "right"]].set_visible(False)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.tight_layout(rect=(0, 0.08, 1, 1))
-    fig.savefig(path, dpi=200)
+    fig.tight_layout()
+    fig.savefig(path, dpi=200, bbox_inches="tight", pad_inches=0.04)
     plt.close(fig)
     return path
 

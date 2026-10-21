@@ -265,7 +265,7 @@ Across [[results:manifest.json:metrics.n_points]] organ-series pairs the median
 absorbed organ dose is [[results:manifest.json:metrics.dose_median_mgy|.1f]] mGy, with
 a range of [[results:manifest.json:metrics.dose_min_mgy|.1f]] to
 [[results:manifest.json:metrics.dose_max_mgy|.1f]] mGy. Per-organ values by vendor are
-given in table 1 and figure 6; with six to nine series per vendor the cohort is not
+given in table 1; with six to nine series per vendor the cohort is not
 powered for a vendor comparison and none is offered.
 
 [[table:organ_doses]]
@@ -404,9 +404,16 @@ beat one number — and a table with more coefficients, fitted on more organs, w
 fitting more finely into the [[results:manifest.json:metrics.variance_between_organ|.0%]]
 of variance that organ identity explains.
 
+<!-- scope-of-claim -->
 Whether the floor found here is the floor everywhere is not something one cohort can
-settle. It is a floor on abdominal CT, on twelve abdominal organs, in a cohort selected
-for having per-slice tube current recorded. What is more likely to generalise is the
+settle, and it is not something five conversions can settle either. The bound is over
+the five conversions scored in section 2.9 — a single cohort factor, one factor per
+organ, a scan-length term, and that term combined with either the organ or the patient's
+size — each cross-validated on this cohort. It is a floor on those, on abdominal CT, on
+twelve abdominal organs, in a cohort selected for having per-slice tube current recorded.
+It is not a proof that no index-based conversion can do better: a richer predictor,
+given more of the patient than an index carries, is not excluded by anything measured
+here. What is more likely to generalise is the
 structure of the residual rather than its size: an index conditions on the scanner and
 the protocol, and the transport it omits is a function of the patient.
 

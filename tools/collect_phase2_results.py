@@ -27,7 +27,12 @@ DOSES = REPO / "results" / "phase2_cohort" / "figure4_doses.json"
 INDEX = REPO / "results" / "phase2_cohort" / "iorn006_organ_index.json"
 TABLE4 = REPO / "results" / "phase2_cohort" / "table4_organ_doses.json"
 STATS = REPO / "results" / "phase2_cohort" / "figure4_stats.json"
-FIG5 = REPO / "results" / "phase2_cohort" / "figure5_vendor.png"
+#: The vendor figure, named for what it shows and not for where it lands in a manuscript.
+#: It used to be figure5_vendor.png, which is this pipeline's own numbering; the paper places
+#: it as figure 6, so the copy into paper/figures/ renamed it and the title drawn inside the
+#: image went on saying Figure 5. A figure number belongs to a manuscript, and a manuscript
+#: renumbers; results files outlive that and must not carry one.
+VENDOR_FIGURE = REPO / "results" / "phase2_cohort" / "vendor_organ_dose.png"
 
 VENDORS = ("GE", "Siemens", "Canon/Toshiba", "Philips")
 ORGAN_ORDER = (
@@ -151,7 +156,7 @@ def figure4_stats(index: dict[str, Any], doses_payload: dict[str, Any]) -> dict[
     }
 
 
-def draw_figure5(table: dict[str, Any], path: Path) -> Path:
+def draw_vendor_figure(table: dict[str, Any], path: Path) -> Path:
     import matplotlib.pyplot as plt
 
     organs = [row["organ"] for row in table["organs"] if int(row["all"].get("n") or 0) > 0]
@@ -181,11 +186,28 @@ def draw_figure5(table: dict[str, Any], path: Path) -> Path:
     ax.set_xticks(x)
     ax.set_xticklabels([o.replace("_", " ") for o in organs], rotation=35, ha="right")
     ax.set_ylabel("Absorbed organ dose (mGy), median")
-    ax.legend(frameon=False, fontsize=8)
-    ax.set_title("Figure 5  Scan-covering organ dose by vendor")
+    # Below the axes in one row. Inside them the four entries sat in the top right, where the
+    # tallest bar of the last organ group rises into the same band -- close enough that
+    # deciding whether they touch needs a magnified crop, which is not a thing a figure should
+    # require. Outside the axes the question cannot arise.
+    ax.legend(
+        frameon=False,
+        fontsize=8,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.28),
+        ncol=4,
+        borderaxespad=0.0,
+    )
+    # No title drawn into the image. This file is copied into paper/figures/ as figure 6, and
+    # the title said "Figure 5" because that is what this pipeline calls it -- so the
+    # manuscript printed Figure 5 above the image and Figure 6 in the caption below, which is
+    # what referee 2 of PMB-122419 asked about. Renaming a file does not repaint it. The
+    # caption belongs to the manuscript; the image carries no number at all.
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(path, dpi=200)
+    # bbox_inches="tight" so the legend below the axes is inside the canvas rather than
+    # hanging off it, which is how figure 4's legend reached the referees cut mid-word.
+    fig.savefig(path, dpi=200, bbox_inches="tight", pad_inches=0.04)
     plt.close(fig)
     return path
 
@@ -211,14 +233,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--index", type=Path, default=INDEX)
     ap.add_argument("--table4", type=Path, default=TABLE4)
     ap.add_argument("--stats", type=Path, default=STATS)
-    ap.add_argument("--figure5", type=Path, default=FIG5)
+    ap.add_argument("--vendor-figure", type=Path, default=VENDOR_FIGURE)
     args = ap.parse_args(argv)
     doses_payload = _load(args.doses)
     index = _load(args.index)
     table, stats = collect(doses_payload=doses_payload, index=index)
     args.table4.write_text(json.dumps(table, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     args.stats.write_text(json.dumps(stats, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    draw_figure5(table, args.figure5)
+    draw_vendor_figure(table, args.vendor_figure)
     print(
         f"[phase2] table4={args.table4}  stats={args.stats}  "
         f"n_organs={stats['n_organs']}  r_all={stats['pearson_r_all']:.3f}  "
