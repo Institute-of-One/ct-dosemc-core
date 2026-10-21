@@ -33,6 +33,10 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("collect every figure and its caption", ["paper/collect_figures.py"], False),
     ("resolve the manuscript's numbers", ["paper/build_manuscript.py"], True),
     ("render the manuscript to Word", ["paper/build_docx.py"], True),
+    # The PDF is the file the portal receives, so it is an artefact and needs a step. It did
+    # not have one, and the PDF sitting in paper/build/ was six weeks older than the .docx
+    # beside it when this was noticed.
+    ("render the Word file to the submission PDF", ["paper/render_pdf.py"], True),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 

@@ -224,6 +224,34 @@ def number_pages_and_lines(path: Path, line_numbers: bool = LINE_NUMBERS) -> Pat
     return path
 
 
+def plain_headings(path: Path) -> Path:
+    """Make every heading black.
+
+    Pandoc styles headings in its own blue, which is how a converted file looks rather than
+    how a manuscript looks. The editorial office sees the upload before a referee does, and a
+    document announcing its own toolchain is an avoidable distraction. Nothing else is
+    touched: the journal typesets its own, and a manuscript that arrives over-formatted is no
+    better than one that arrives blue.
+    """
+    import docx                                               # noqa: PLC0415
+    from docx.shared import RGBColor                          # noqa: PLC0415
+
+    document = docx.Document(str(path))
+    black = RGBColor(0, 0, 0)
+    for style in document.styles:
+        if style.name.startswith(("Heading", "Title", "Subtitle")):
+            try:
+                style.font.color.rgb = black
+            except AttributeError:
+                pass
+    for paragraph in document.paragraphs:
+        if paragraph.style.name.startswith(("Heading", "Title", "Subtitle")):
+            for run in paragraph.runs:
+                run.font.color.rgb = black
+    document.save(str(path))
+    return path
+
+
 def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> int:
     import pypandoc  # noqa: PLC0415
 
@@ -243,6 +271,7 @@ def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> i
         extra_args=["--resource-path", str(PAPER)],
     )
     keep_tables_whole(output)
+    plain_headings(output)
     number_pages_and_lines(output, line_numbers=line_numbers)
     print(f"wrote {output} ({output.stat().st_size // 1024} KB)")
     return 0

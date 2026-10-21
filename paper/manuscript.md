@@ -16,11 +16,10 @@ ORCID: 0000-0001-9211-1071
 
 ## Abstract
 
-**Objective.** The volume CT dose index is a scanner output, not a patient dose, and
-the field converts it with size corrections, dose-length-product factors and
-per-organ coefficient libraries. How close such a conversion can get
-has not been measured against transport on the same anatomy. We measure how close five
-of them get, and whether a richer conversion improves on the simplest.
+**Objective.** The volume CT dose index is a scanner output, not a patient dose, and the
+field converts it with size corrections, dose-length-product factors and per-organ
+coefficient libraries. How close such a conversion can get has not been measured against
+transport on the same anatomy. We measure five of them.
 
 **Approach.** A GPU Monte-Carlo pipeline computes absorbed organ dose in patient
 anatomy from routine metadata alone. The transport engine is verified against AAPM
@@ -48,12 +47,12 @@ Monte-Carlo statistical uncertainty is
 [[results:manifest.json:metrics.mc_sigma_median_pct|.3f]] % of the dose at the median,
 so the residual is physical.
 
-**Significance.** The information an index withholds is a property of the patient,
-not of the organ. A per-organ coefficient table cannot supply it, and neither can a
-size correction; on this cohort the best index-based conversion still misses absorbed
-organ dose by a median of [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %
-and by [[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at
-the ninetieth percentile.
+**Significance.** The information an index withholds is a property of the patient, not of
+the organ, so neither a per-organ coefficient table nor a size correction can supply it. On
+this cohort the best index-based conversion still misses absorbed organ dose by a median
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %, and by
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at the
+ninetieth percentile.
 
 **Keywords:** computed tomography, organ dose, Monte Carlo, CTDIvol, dose index,
 cross-validation
