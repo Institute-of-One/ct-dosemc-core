@@ -71,7 +71,7 @@ v0.1.1 release, 3 filled here); 2/32 cannot be scaled this way. Phase 1b
 | **Fig. 2** | Density-calibration gate: largest out-of-calibration component (cm³), 1 cm³ threshold, N = 32. | DONE | `metal_distribution.json`, `density_eligibility.json` |
 | **Fig. 3** | TG-195 Case 4: G1/G1′/G2 vs PENELOPE, with measured replica σ. | DONE | `results/phase1a_close.json`; L40 Route B, L160 Route A |
 | **Fig. 4** | Same-patient scatter: IORN-006 organ-weighted CTDIvol (x) vs IORN-007 absorbed mGy (y), one point per organ. 30/32 series have a defined index: 23 recorded (filled circles), 6 reconstructed with an exact or high-confidence table match (filled squares), 1 reconstructed under IORN-004's own low-confidence warning (open squares: Revolution CT → Revolution CT ES, score 0.50). LightSpeed Ultra and Revolution EVO are omitted: not in the open table, and 004's resolver refuses a near miss. **12 organs, 342 points. Pearson r = 0.66 (all), 0.61 (recorded-only).** | DONE | `figure4_doses.json`, `figure4_stats.json`, `figure4_scatter.png` |
-| **Fig. 5** | Per-organ absorbed dose by vendor (with N). | DONE | `table4_organ_doses.json`, `figure5_vendor.png` |
+| **Fig. 5** | Per-organ absorbed dose by vendor (with N). | DONE | `table4_organ_doses.json`, `vendor_organ_dose.png` |
 | **Fig. 6** | Robustness: one metal-excluded series re-included under a density clamp; max organ-dose change. | **Not on the PMB submission path** | run if a reviewer asks; do not hold the Paper for it |
 | **Table 1** | Gate outcomes G0–G5 (criterion, status, evidence). | DONE | `IORN007_scope_to_acceptance.md`; `phase1a_close.json` |
 | **Table 2** | Cohort by vendor, with N: selected 10/10/10/10 → eligible 8/9/6/9. | DONE | `density_eligibility.json` |
@@ -236,7 +236,7 @@ index–absorbed-dose relationship (`figure4_scatter_recorded_only.json`).
   **Table 4** median [Q1, Q3] mGy. Vendor N is series on the scatter (GE 6,
   Siemens 9, Canon/Toshiba 6, Philips 9); GE 8 eligible minus 2 without CTDIvol.
   Per-cell n is series in which that organ is present. Evidence:
-  `table4_organ_doses.json`, `figure5_vendor.png`.
+  `table4_organ_doses.json`, `vendor_organ_dose.png`.
 
   | Organ | GE | Siemens | Canon/Toshiba | Philips | All |
   |---|---|---|---|---|---|
