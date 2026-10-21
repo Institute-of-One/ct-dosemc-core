@@ -190,7 +190,10 @@ def test_the_inquiry_check_catches_a_number_the_paper_no_longer_reports(
 
 def test_the_real_inquiry_agrees_with_the_real_manuscript() -> None:
     built_path = check.BUILT
-    if not built_path.is_file() or not check.INQUIRY.is_file():
-        pytest.skip("run paper/build_all.py")
+    if not built_path.is_file():
+        pytest.skip("no built manuscript; run paper/build_all.py")
+    if not check.INQUIRY.is_file():
+        # Two different reasons were reported as one, and the message named the wrong fix.
+        pytest.skip(f"no inquiry drafted at {check.INQUIRY.name}; nothing to compare")
     check.check_inquiry(built_path.read_text(encoding="utf-8"))
     assert not check.errors, check.errors

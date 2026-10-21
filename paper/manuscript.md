@@ -4,7 +4,7 @@ at build time. A marker that cannot be resolved is a build error, and a test fai
 if a frozen metric appears here as a typed literal. Do not type numbers.
 -->
 
-# A measured floor on index-based organ dose estimation in CT, where per-organ coefficients do not improve on a single conversion factor
+# Per-organ coefficients do not improve on a single conversion factor: a cross-validated bound on index-based organ dose in abdominal CT
 
 **Shuji Yamamoto**
 
@@ -19,7 +19,8 @@ ORCID: 0000-0001-9211-1071
 **Objective.** The volume CT dose index is a scanner output, not a patient dose, and
 the field converts it with size corrections, dose-length-product factors and
 per-organ coefficient libraries. How close such a conversion can get
-has not been measured against transport on the same anatomy. We measure that floor.
+has not been measured against transport on the same anatomy. We measure how close five
+of them get, and whether a richer one buys anything.
 
 **Approach.** A GPU Monte-Carlo pipeline computes absorbed organ dose in patient
 anatomy from routine metadata alone. The transport engine is verified against AAPM

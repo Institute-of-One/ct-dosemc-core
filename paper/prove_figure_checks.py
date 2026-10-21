@@ -163,22 +163,46 @@ def main() -> int:
          run=lambda: gate.check_a_bounding_claim_declares_its_scope("body text", plain))
 
     print("\nthe manuscript as it stands")
+    shipped: list[str] = []
+    built = PAPER / "build" / "manuscript.md"
+    # Nothing to examine is not a pass. Without this, deleting the built manuscript and
+    # emptying paper/figures/ made this section silent and the script exited 0.
+    if not built.exists():
+        failures.append("paper/build/manuscript.md is missing; nothing was checked")
+    present = [
+        name for name, _ in collect_figures.FIGURE_SOURCES.values()
+        if (gate.FIGURES / name).exists()
+    ]
+    if not present:
+        # Gate 3 now reports a registered image that is not on disk, so an empty
+        # paper/figures/ no longer passes in silence. This stays as the belt to that
+        # brace: if nothing is registered either, there is still nothing to look at.
+        failures.append("no registered figure image is on disk; nothing was checked")
     with collecting() as reported:
-        built = (PAPER / "build" / "manuscript.md")
         gate.check_figures_are_first_cited_in_order(
             built.read_text(encoding="utf-8") if built.exists() else ""
         )
         gate.check_no_figure_is_renumbered_on_the_way_in("")
         gate.check_every_figure_image_has_been_looked_at()
-        for message in reported:
+        shipped = list(reported)
+        for message in shipped:
             print(f"  FAIL  {message}")
-        if not reported:
+        if not shipped:
             print("  the submitted figures now pass all three")
 
+    # This section used to print FAIL and return 0, so the script could report that every
+    # injected defect was caught while the real figures failed every gate. A script whose
+    # exit code disagrees with its own output is worse than no script.
     if failures:
         print(f"\nthe checks are not doing their job ({len(failures)}):")
         for failure in failures:
             print(f"  {failure}")
+        return 1
+    if shipped:
+        print(
+            f"\nthe checks work, and the manuscript does not pass them "
+            f"({len(shipped)} outstanding). Fix the figures, not the checks."
+        )
         return 1
     print("\nevery injected defect was caught and every correct case passed")
     return 0

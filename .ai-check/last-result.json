@@ -1,0 +1,44 @@
+{
+  "project": "ct-dosemc-core-figure-and-claim-gates",
+  "manifest": "D:\\DevGit\\ct_dosemc_core\\.ai-check\\check.json",
+  "summary": "C:\\Users\\YamamotoShuji\\Documents\\Codex\\SharedTools\\AI-Check\\runs\\20261021T040111Z-8474cb47\\summary.json",
+  "run_directory": "C:\\Users\\YamamotoShuji\\Documents\\Codex\\SharedTools\\AI-Check\\runs\\20261021T040111Z-8474cb47",
+  "ran_at": "2026-10-21T04:01:11Z",
+  "verdict": "FAIL",
+  "tests": [
+    {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.25,
+      "tests_executed": 73,
+      "tests_passed": 73,
+      "tests_skipped": 0,
+      "tests_expected_failures": 0,
+      "complete": true,
+      "tests_planned": 73,
+      "failures": 0,
+      "errors": 0,
+      "unexpected_successes": 0,
+      "missing_test_files": []
+    }
+  ],
+  "inputs_sha256": {
+    "presubmission_check.py": "801453ebaf02e73578aaad60dfb406fbe58322c4a845a5c6c170d27f9eaf019e",
+    "collect_figures.py": "154c1eaeba78f5f4d01922d8ee3384fffc53f78f20bbdbc4d00c5ee3239d9ee5",
+    "prove_figure_checks.py": "09c658ab680ca707a7e19ee5c541c145c9875f5280971818f825b0b5bbc538d1",
+    "test_figure_gates.py": "5967b7f25776754d781c4e326def9fcd93b0fc356704be680961d2e3581bfe86"
+  },
+  "note": "Eighteen rounds. The first six found defects that were real and reproduced here before being fixed, including two that would have passed a defective manuscript (the scope gate never read the abstract; a plural figure citation was invisible), two that would have failed a correct one (a [[marker]] in the scope paragraph; a count after a comma read as a figure number), and one crash introduced by a fix in round 11 and caught in round 12. Rounds beyond that returned lexical edge cases.",
+  "unresolved": [
+    "A multi-letter panel group -- 'figures 1(a-c)' with the letters inside one bracket, or '1a,b' -- ends the citation at the group, so a number after it is not read. Not a form this manuscript uses. Documented in check_figures_are_first_cited_in_order.",
+    "A figure of another work is excluded only when what follows looks bibliographic ('of Sechopoulos et al', 'of TG-195'); 'figure 3 of the manual' is read as ours. Documented in the same place.",
+    "The scope gate traces the paragraph's prose into the build; what a [[...]] marker rendered to is not traced (check_markers_resolved covers the values), and the bounding-word list is a list. Documented in the gate.",
+    "AI-Check v1 runs standard unittest only, so the 248 pytest tests in tests/ and the image, DOCX and figure checks were run locally and are not part of this verdict."
+  ],
+  "run_locally_at_this_version": {
+    "python -m unittest discover -s paper": "73 tests, OK",
+    "python -m pytest tests/ -q": "247 passed, 4 skipped",
+    "python paper/presubmission_check.py": "0 failures, 1 warning (no inquiry drafted)",
+    "python paper/prove_figure_checks.py": "every injected defect caught"
+  }
+}

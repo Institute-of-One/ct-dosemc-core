@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "name": "ct-dosemc-core-figure-and-claim-gates",
+  "project_root": "../paper",
+  "scope": "Only the four gates added to presubmission_check.py on 2026-10-21 and the tests and injection proof that go with them: check_a_bounding_claim_declares_its_scope, check_figures_are_first_cited_in_order, check_no_figure_is_renumbered_on_the_way_in, check_every_figure_image_has_been_looked_at. The other checks in the same file are context, not the subject. No patient data, no images, no manuscript text, no correspondence: all four files are from a public repository, github.com/Institute-of-One/ct-dosemc-core.",
+  "requirements": "Each gate must fail on the defect it was written for and pass on the corrected form, and the tests must demonstrate both directions rather than only the failing one. Specifically: (1) a figure first cited out of numerical order is reported, repeated mentions do not count as first ones, and two-digit figure numbers are not confused with one-digit ones; (2) a figure copied from a source filename carrying a different number is reported, and a source with no number, or the same number, or no source at all, is not; (3) an image absent from paper/figures_reviewed.json, or present under a hash it no longer has, is reported, and a missing ledger file is a failure rather than a silent pass; (4) when a bounding word reaches the title or abstract, a <!-- scope-of-claim --> paragraph is required, must be longer than a token, and must survive into the built manuscript, while a title claiming no bound requires nothing and a bounding word appearing only below the abstract does not trigger it. Review the gates for ways they could report a pass on a manuscript that still carries the defect, and for ways they could report a failure on a correct manuscript. Gate 4 deliberately does not judge whether the declared scope justifies the claim; say so if that is wrong, but do not treat it as an unnoticed omission.",
+  "files": [
+    "presubmission_check.py",
+    "collect_figures.py",
+    "prove_figure_checks.py",
+    "test_figure_gates.py"
+  ],
+  "tests": [["{python}", "-m", "unittest", "discover", "-s", ".", "-v"]]
+}

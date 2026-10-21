@@ -39,7 +39,9 @@ import collect_figures  # noqa: E402
 #: build and therefore drifts. It already did once -- rewritten around a floor, the
 #: paper left an inquiry still quoting the correlation and the median ratio that had
 #: been the headline the week before.
-INQUIRY = REPO / "docs" / "pmb_inquiry_send.txt"
+#: Named for the next venue, not for PMB: the letter sent on 2026-08-23 is parked beside it
+#: as pmb_inquiry_sent_2026-08-23.txt and is a record, not a draft.
+INQUIRY = REPO / "docs" / "inquiry_send.txt"
 
 #: PMB's text block, in inches.
 TEXT_WIDTH_IN = 6.5
@@ -61,6 +63,24 @@ def warn(message: str) -> None:
 
 def _strip_comments(text: str) -> str:
     return re.sub(r"<!--.*?-->", "", text, flags=re.S)
+
+
+def _plain_prose(text: str) -> str:
+    """Comments gone and emphasis markers turned into spaces.
+
+    Both gates that read the built manuscript need this, and they needed it separately: "_"
+    is a word character, so ``\\b`` never matches between "_" and the letter after it. A
+    title reading "a measured _floor_" matched no bounding word, and "_figure 6_" was not a
+    citation. Fixing one and not the other is how the two citation patterns drifted apart
+    earlier, so there is one function.
+
+    Only emphasis is removed, by Markdown's own rule that an underscore inside a word does
+    not emphasise anything: removing every underscore turned ``figure4_stats.json``, a file
+    this manuscript names, into ``figure4 stats.json`` and back into a citation of figure 4.
+    """
+    return re.sub(
+        r"(?<![0-9A-Za-z])[_*]+|[_*]+(?![0-9A-Za-z])", " ", _strip_comments(text)
+    )
 
 
 def _manifest() -> dict:
@@ -318,12 +338,48 @@ def check_figures(built: str) -> None:
 
 
 #: Words that turn a measurement into a statement about everything of its kind. The list is
-#: short on purpose: these are the words that appeared in the title and abstract of
-#: this manuscript's title and abstract, not every word that could ever overreach.
+#: short on purpose: these are the words that appeared in this manuscript's title and
+#: abstract, not every word that could ever overreach.
+#:
+#: Matched on word boundaries against whitespace-normalised text. As plain substrings,
+#: "all index" fired on "overall index" and "no better than" went unseen when the source
+#: wrapped it across a line.
+#: The optional trailing s below pluralises the last word, which is right for "floors" and
+#: "fundamental limits" and wrong for "any index", so the irregular plurals are listed.
+#: "bound" is on the list because the title was narrowed to use it. A word that this
+#: manuscript's own claim rests on and the gate does not know is a gate renamed around.
 _BOUNDING_WORDS = (
-    "floor", "ceiling", "irreducible", "fundamental limit", "cannot be improved",
-    "no better than", "any index", "all index",
+    "floor", "ceiling", "bound", "irreducible", "fundamental limit", "cannot be improved",
+    "no better than", "any index", "all index", "any indices", "all indices",
+    "any indexes", "all indexes",
 )
+
+
+def _title_and_abstract(built: str) -> str:
+    """The title and the abstract: where a claim is made, rather than qualified.
+
+    This was ``built[: built.find("\\n## ")]``, which stops at the first ``##`` heading --
+    and the first ``##`` heading is ``## Abstract``. The result was the title alone, so a
+    bound claimed in the abstract body was never seen. Stopping at the first heading that is
+    *not* the abstract gives the two places the claim is actually made.
+    """
+    # Comments first: a heading inside one -- "<!-- ## Notes -->" -- would otherwise end the
+    # scan before the abstract and let a claim in it through.
+    built = _strip_comments(built)
+    headings = list(re.finditer(r"^##\s+(.*)$", built, flags=re.M))
+    title = built[: headings[0].start()] if headings else built
+
+    # The title, plus the abstract section wherever it sits -- not everything up to it. Taking
+    # the whole run meant a "## Keywords" section before the abstract was read as part of the
+    # claim, and a keyword list that happens to contain "floor" demanded a scope paragraph.
+    for index, heading in enumerate(headings):
+        # Emphasis stripped from the heading too: "## **Abstract**" is an abstract.
+        name = re.sub(r"[_*]+", "", heading.group(1)).strip().lower()
+        if not name.startswith("abstract"):
+            continue
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(built)
+        return title + built[heading.end(): end]
+    return title
 
 #: The marker that points at the sentence delimiting the claim. An HTML comment, so it
 #: survives into paper/build/manuscript.md and vanishes from the .docx.
@@ -346,9 +402,22 @@ def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
     marked ``<!-- scope-of-claim -->`` that says what the bound was measured over, and that
     paragraph must survive into the built manuscript. Writing it is the work; the gate only
     makes its absence impossible to miss.
+
+    Known limits, left here deliberately rather than papered over. The survival search
+    traces the paragraph's *prose* into the build; what a ``[[...]]`` marker rendered to is
+    not traced, because this file cannot know what the value should be --
+    ``check_markers_resolved`` and ``check_no_typed_numbers`` are what cover the values. And
+    the bounding-word list is a list: a claim made in words that are not on it goes unasked.
+    Both are reasons to read the paragraph, which is the point of making you write one.
     """
-    head = built[: built.find("\n## ") if "\n## " in built else len(built)]
-    found = [word for word in _BOUNDING_WORDS if word in head.lower()]
+    # Whitespace flattened so a phrase wrapped across a line is still one phrase, word
+    # boundaries so "all index" does not fire on "overall index", and a trailing s so a title
+    # that says "two floors" is not a way past the gate.
+    head = " ".join(_plain_prose(_title_and_abstract(built)).lower().split())
+    found = [
+        word for word in _BOUNDING_WORDS
+        if re.search(rf"\b{re.escape(word)}s?\b", head)
+    ]
     if not found:
         return
 
@@ -362,21 +431,141 @@ def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
         )
         return
 
-    paragraph = source.split(_SCOPE_MARKER, 1)[1].lstrip().split("\n\n", 1)[0]
+    # Split on the same blank-line rule the build is split on below. Cutting the source at a
+    # literal "\n\n" while splitting the build at "\n\s*\n" meant a blank line carrying a
+    # stray space swallowed the next paragraph into the scope text, and a correct manuscript
+    # failed for a character nobody can see.
+    paragraph = re.split(r"\n\s*\n", source.split(_SCOPE_MARKER, 1)[1].lstrip(), maxsplit=1)[0]
     carried = _strip_comments(paragraph).strip()
-    if len(carried) < 80:
+    # Measure the words, not the markers. Counting raw text let a paragraph made of
+    # [[results:...]] markers clear an 80-character minimum while saying nothing itself.
+    # re.S because a marker wrapped across a source line is still one marker.
+    segments = [" ".join(part.split()) for part in re.split(r"\[\[.*?\]\]", carried, flags=re.S)]
+    written = " ".join(segment for segment in segments if segment)
+    # Characters and words both: eighty characters of one token is not a sentence, and the
+    # paragraph is meant to say what the bound is over.
+    if len(written) < 80 or len(written.split()) < 12:
         fail(
-            f"the paragraph marked {_SCOPE_MARKER} is {len(carried)} characters; it is "
+            f"the paragraph marked {_SCOPE_MARKER} has {len(written)} characters and "
+            f"{len(written.split())} words of prose outside its interpolated values; it is "
             f"meant to delimit the claim, not to satisfy the check"
         )
         return
 
-    opening = re.sub(r"\[\[.*?\]\]", "", carried)[:60].strip()
-    if opening and opening not in _strip_comments(built):
+    # Require every substantial run of plain words to reach the build, not just the longest
+    # one: a surviving fragment is not a surviving paragraph. The first sixty raw characters
+    # were used before, which broke twice over -- a [[...]] marker is replaced by its value in
+    # the build and left a double space behind in the needle, and the source's wrapping need
+    # not match the build's -- so a correct manuscript was reported as a failure.
+    # Paragraph by paragraph, not one flattened document: with the boundaries gone, two
+    # halves of the paragraph sitting in different sections counted as a surviving paragraph.
+    paragraphs = [
+        " ".join(block.split())
+        for block in re.split(r"\n\s*\n", _strip_comments(built))
+        if block.strip()
+    ]
+    checkable = [segment for segment in segments if segment]
+    if not [segment for segment in checkable if len(segment) >= 12]:
+        # Not "could not be checked, carry on". An unverifiable claim-scope paragraph is a
+        # failure, or the gate becomes a warning that nothing acts on.
         fail(
-            f"the paragraph marked {_SCOPE_MARKER} does not reach the built manuscript, so "
-            f"the claim is bounded only in the source a reader never sees"
+            f"the paragraph marked {_SCOPE_MARKER} is broken into fragments too short to "
+            f"trace into the built manuscript; write it as prose so that its survival can "
+            f"be checked"
         )
+        return
+    # One run, in order, with only a short interpolated value allowed between the passages.
+    # Testing each passage on its own passed a build where both halves of the paragraph
+    # existed in different sections, in the wrong order -- which is every passage present
+    # and no paragraph at all.
+    # The gap has to allow spaces: a marker can render as "38 to 40" or "5.2 mGy", and a
+    # gap of "no whitespace" failed a correct manuscript for it.
+    pattern = r".{0,80}?".join(re.escape(segment) for segment in checkable)
+    if not any(re.search(pattern, paragraph) for paragraph in paragraphs):
+        flat = " ".join(paragraphs)
+        missing = next((s for s in checkable if s not in flat), None)
+        detail = (
+            f"the passage {missing[:40]!r} is not there"
+            if missing
+            else "its passages are there but not together and in order"
+        )
+        fail(
+            f"the paragraph marked {_SCOPE_MARKER} does not reach the built manuscript "
+            f"intact: {detail}. The claim is bounded only in the source a reader never sees"
+        )
+
+
+#: One figure citation, with every number it names: "figure 4", "figs. 4 and 5",
+#: "figures 4-6".
+#:
+#: Commas are deliberately not a continuation. Three rounds of cross-review turned the comma
+#: into an arms race: honour it and "In figure 1, 38 of 40 series pass" cites a figure 38
+#: that does not exist; guard it with "requires an and" and "In figure 1, 12 and 28 series
+#: were excluded" cites figures 12 and 28; drop the guard and a real "figures 1, 6" list
+#: hides an out-of-order mention. Prose cannot be parsed reliably for this, so the citation
+#: form this manuscript may use is narrowed instead: write "figures 1 and 6", not
+#: "figures 1, 6". Narrowing it in a comment would only be a wish, so _COMMA_LIST enforces it.
+#: Panel letters are allowed on every number -- this manuscript writes "figure 1b" and
+#: "figure 5a" -- and a citation that carries one must still be read to its end: "figures
+#: 1(a) and 6" stopped at the bracket and dropped figure 6's first mention.
+#: One figure number with an optional panel letter: "4", "4b", "4(b)". The trailing lookahead
+#: keeps the "a" of "and" from being taken for a panel.
+_NUMBER = r"\d+\s*(?:\(\s*[a-z]\s*\)|[a-z](?![a-z]))?"
+#: What continues a citation. A comma is not here: see _COMMA_LIST.
+_JOIN = r"(?:&|and|or|to|through|vs\.?|/|-|–|—)"
+#: The number list a citation can carry, built once so the two patterns below cannot drift
+#: apart -- which they did the moment panel letters were added to one of them and not the
+#: other, letting "figures 1a, 6" past the comma rule.
+#: A joiner may be followed by a bare panel letter rather than a number -- "figures 1a-c and
+#: 6" -- and stopping at the "c" dropped figure 6's first mention.
+_PANEL_ONLY = r"(?:\(\s*[a-z]\s*\)|[a-z](?![a-z]))"
+_NUMBER_LIST = rf"(?:{_NUMBER})(?:\s*{_JOIN}\s*(?:{_NUMBER}|{_PANEL_ONLY}))*"
+
+#: The trailing boundary keeps a filename out of it: "figure4_stats.json" and "figure6.png"
+#: are files this manuscript names in prose, not citations. A full stop followed by a letter
+#: is an extension; a full stop followed by a space is the end of a sentence, and "figure 6."
+#: is still a citation.
+_FIGURE_CITATION = re.compile(
+    rf"\b(?:figs?|figures?)\.?\s*({_NUMBER_LIST})(?!\w|\.\w)", re.I
+)
+
+
+#: A plural citation continued by a comma -- "figures 1, 6" -- which this file refuses to
+#: parse and therefore refuses to accept. The plural keeps "In figure 1, 38 of 40 series
+#: pass" out of it, where the comma introduces a count and the manuscript is correct. It is
+#: not a complete separation: "In figures 1 and 2, 38 of 40 series pass" is refused too, and
+#: that is deliberate, because nothing in the text says which of the two it is. Rewrite it.
+#: The comma may also come after a list that parsed cleanly -- "figures 1 and 2, 6" -- where
+#: the citation regex stops at the comma and figure 6's first mention is dropped in silence.
+#: Singular too -- "fig. 1, 6" is as unparseable as "figs 1, 6" -- so the plural is no longer
+#: what keeps "In figure 1, 38 of 40 series pass" out of it. What does is the number after the
+#: comma: 38 is not one of this manuscript's figures and 6 is. A paper with 38 figures would
+#: have that sentence flagged, and should rewrite it, because nothing in the text says which
+#: of the two it is.
+_COMMA_LIST = re.compile(rf"\b(?:figs?|figures?)\.?\s*{_NUMBER_LIST}\s*,\s*(\d+)", re.I)
+
+
+def _numbers_cited(citation: str) -> list[int]:
+    """Every figure a citation names, expanding ``4-6`` to 4, 5, 6.
+
+    Panel letters are dropped: "1(a)" and "1b" are both figure 1.
+
+    The split is built from :data:`_JOIN`, the same fragment the citation pattern is built
+    from. Listing the separators again here is what broke it: a joiner added to one list and
+    not the other left "1 or 2" unsplit and ``int()`` raised on a correct manuscript.
+    """
+    citation = re.sub(r"\(\s*[a-z]\s*\)|(?<=\d)\s*[a-z]\b", "", citation, flags=re.I)
+    parts = re.split(rf"\s*({_JOIN})\s*", citation, flags=re.I)
+    numbers = [int(parts[0])]
+    for separator, value in zip((p.lower() for p in parts[1::2]), parts[2::2]):
+        if not value.strip().isdigit():
+            continue        # a bare panel letter: "1a-c" is still figure 1
+        number = int(value)
+        if separator in {"to", "through", "-", "–", "—"} and number > numbers[-1]:
+            numbers.extend(range(numbers[-1] + 1, number + 1))
+        else:
+            numbers.append(number)
+    return numbers
 
 
 def check_figures_are_first_cited_in_order(built: str) -> None:
@@ -385,14 +574,64 @@ def check_figures_are_first_cited_in_order(built: str) -> None:
     This manuscript did it: the Results cited "table 1 and figure 6" before figure 4 and
     figure 5 were mentioned at all, so a reader met figure 6 first and the numbering served
     the order the figures were made rather than the order they are read.
+
+    Known limits, after eighteen rounds of adversarial review and left here on purpose. A
+    multi-letter panel group -- "figures 1(a-c)" written with the letters inside one bracket,
+    or "1a,b" -- ends the citation at the group, so a number after it is not read. A figure of
+    another work is excluded only when the reference that follows looks bibliographic
+    ("of Sechopoulos et al", "of TG-195"); "figure 3 of the manual" is read as ours. Neither
+    is a form this manuscript uses, and both are reasons the proof PDF still gets looked at.
     ``check_figures`` above requires every figure to be named somewhere and captioned once,
     which this manuscript satisfied, and says nothing about the order -- a check can be
     green and a reader still lost.
     """
+    # Two things this got wrong before. "figs?(?:ure)?" cannot match "figures" at all, because
+    # the optional s sits before "ure". And matching one number per citation reads "figures 6
+    # and 7" as a citation of figure 6 only, so figure 7's first mention is invisible and a
+    # manuscript that names it out of order passes. A citation names every number in its list,
+    # and a range names the figures between its ends.
+    #
+    # Comments are stripped first: they survive into the built manuscript -- that is how the
+    # scope marker gets there -- so an editorial note reading "check figure 9 before
+    # submitting" would otherwise be read as a citation and fail a correct manuscript.
+    # Numbers inside one citation are ordered by where they sit in it, not treated as
+    # simultaneous: "see figures 2 and 1" puts figure 2 in front of figure 1 for a reader,
+    # and giving both the same position made that invisible.
+    # Only this manuscript's own figures. "figure 7 of Sechopoulos et al (2015)" is somebody
+    # else's figure and ordering it against ours is meaningless; a number past the end of
+    # FIGURE_SOURCES cannot be ours. A foreign figure whose number happens to fall inside our
+    # range is still read as ours -- that one is not decidable from the text, and the manual
+    # look at the proof is where it would be caught.
+    ours = set(collect_figures.FIGURE_SOURCES)
+    prose = _plain_prose(built)
+    # "figure 7 of Sechopoulos et al (2015)" is somebody else's figure. Numbers past the end
+    # of our own set are already ignored below; this catches the ones that collide with ours,
+    # which was the remaining way to fail a correctly ordered manuscript.
+    #
+    # It has to be the shape of a bibliographic citation, not merely a capital letter after
+    # "of" or "in": any capitalised word let "figure 3 in Section 4" and "figure 2 in Results"
+    # be read as another paper's, which is a way to pass a manuscript that is out of order.
+    foreign = re.compile(
+        r"\s*(?:of|in|from)\s+(?:"
+        r"[A-Z][\w.'-]*(?:\s+et\s+al\b|\s*\(\s*\d{4}|\s+\d{4}\b)"   # Sechopoulos et al (2015)
+        r"|[A-Z]{2,}[-\s]?\d"                                        # TG-195
+        r")"
+    )
+    for comma in _COMMA_LIST.finditer(prose):
+        if int(comma.group(1)) not in ours:
+            continue
+        fail(
+            f"a figure citation continued by a comma, {comma.group(0).strip()!r}: write "
+            f"'and' instead. This file cannot tell a comma list from a citation followed by "
+            f"a count, so the form is narrowed rather than guessed at"
+        )
     first: dict[int, int] = {}
-    for match in re.finditer(r"\bfigs?(?:ure)?\.?\s*(\d+)(?!\d)", built, re.I):
-        number = int(match.group(1))
-        first.setdefault(number, match.start())
+    for match in _FIGURE_CITATION.finditer(prose):
+        if foreign.match(prose, match.end()):
+            continue
+        for offset, number in enumerate(_numbers_cited(match.group(1))):
+            if number in ours:
+                first.setdefault(number, match.start() * 1000 + offset)
 
     cited = sorted(first)
     out_of_order = [
@@ -418,11 +657,21 @@ def check_no_figure_is_renumbered_on_the_way_in(built: str) -> None:
     There is no OCR here, and installing one to read a number we already know would be the
     wrong fix. The source filename carries the number the drawing code used, and a
     disagreement between that and the number the manuscript gives it is the defect itself.
+
+    What this cannot do: once a source file carries no number -- which is the fix, and what
+    ``vendor_organ_dose.png`` now is -- this check has nothing to compare and says nothing
+    about whether a number is still painted inside the image. Only
+    :func:`check_every_figure_image_has_been_looked_at`, and the person it obliges, covers
+    that. The two are not alternatives.
     """
     for number, (_name, source) in sorted(collect_figures.FIGURE_SOURCES.items()):
         if not source:
             continue
-        drawn = re.search(r"fig(?:ure)?[_\- ]?(\d+)", Path(source).name, re.I)
+        # Anchored to a token boundary: unanchored, the "fig" in "config2_figure6" matched
+        # and the file was reported as drawn under figure 2.
+        drawn = re.search(
+            r"(?:^|[._\- ])fig(?:ure)?[._\- ]?(\d+)", Path(source).name, re.I
+        )
         if drawn and int(drawn.group(1)) != number:
             fail(
                 f"figure {number} is copied from {source}, which was drawn as figure "
@@ -458,6 +707,12 @@ def check_every_figure_image_has_been_looked_at() -> None:
     for number, (name, _source) in sorted(collect_figures.FIGURE_SOURCES.items()):
         path = FIGURES / name
         if not path.exists():
+            # Skipping it meant an empty paper/figures/ produced no findings at all, and
+            # nothing to look at is not a figure that has been looked at.
+            fail(
+                f"figure {number} ({name}) is registered and not on disk; run "
+                f"paper/collect_figures.py"
+            )
             continue
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         entry = ledger.get(name)
@@ -579,9 +834,15 @@ def check_inquiry(built: str) -> None:
     the inquiry still argued the correlation and the median ratio, and still
     carried the title from two framings earlier. An editor reading it would have
     been told about a different manuscript.
+
+    A letter that has been sent is a record and is not rewritten to match a manuscript that
+    moved afterwards: the one sent to PMB on 2026-08-23 is kept at
+    ``docs/pmb_inquiry_sent_<date>.txt`` and is not read here. This path is the inquiry for
+    the venue the paper is going to next, and its absence is a warning rather than a failure
+    because not every venue is asked first.
     """
     if not INQUIRY.exists():
-        warn("no pre-submission inquiry at docs/pmb_inquiry_send.txt")
+        warn(f"no pre-submission inquiry drafted at {INQUIRY.relative_to(REPO)}")
         return
     letter = INQUIRY.read_text(encoding="utf-8")
 
