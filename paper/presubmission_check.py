@@ -317,6 +317,163 @@ def check_figures(built: str) -> None:
             )
 
 
+#: Words that turn a measurement into a statement about everything of its kind. The list is
+#: short on purpose: these are the words that appeared in the title and abstract of
+#: PMB-122419, not every word that could ever overreach.
+_BOUNDING_WORDS = (
+    "floor", "ceiling", "irreducible", "fundamental limit", "cannot be improved",
+    "no better than", "any index", "all index",
+)
+
+#: The marker that points at the sentence delimiting the claim. An HTML comment, so it
+#: survives into paper/build/manuscript.md and vanishes from the .docx.
+_SCOPE_MARKER = "<!-- scope-of-claim -->"
+
+
+def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
+    """A paper that claims a limit must say, in the text, what the limit is over.
+
+    This is referee 2's general comment 5 on PMB-122419, and it is the comment that decided
+    the paper: "What evidence demonstrates that the reported 13% error represents an
+    irreducible physical limit rather than a limitation of the evaluated prediction
+    models?" The study cross-validated five conversions that it chose. That bounds those
+    five. The title said "a measured floor on index-based organ dose estimation", which is
+    a statement about every index-based conversion there is or could be.
+
+    Whether a given sentence justifies a given claim is not computable and this check does
+    not pretend otherwise. What it does is refuse to let the question go unasked: if a
+    bounding word reaches the title or the abstract, the source must carry a paragraph
+    marked ``<!-- scope-of-claim -->`` that says what the bound was measured over, and that
+    paragraph must survive into the built manuscript. Writing it is the work; the gate only
+    makes its absence impossible to miss.
+    """
+    head = built[: built.find("\n## ") if "\n## " in built else len(built)]
+    found = [word for word in _BOUNDING_WORDS if word in head.lower()]
+    if not found:
+        return
+
+    if _SCOPE_MARKER not in source:
+        fail(
+            f"the title or abstract claims a bound ({', '.join(found)}) and no paragraph "
+            f"is marked {_SCOPE_MARKER}. Say in the text what the bound was measured over "
+            f"-- which conversions, which cohort -- or narrow the claim to it. PMB-122419 "
+            f"was rejected on exactly this: five conversions were cross-validated and the "
+            f"title spoke for all of them"
+        )
+        return
+
+    paragraph = source.split(_SCOPE_MARKER, 1)[1].lstrip().split("\n\n", 1)[0]
+    carried = _strip_comments(paragraph).strip()
+    if len(carried) < 80:
+        fail(
+            f"the paragraph marked {_SCOPE_MARKER} is {len(carried)} characters; it is "
+            f"meant to delimit the claim, not to satisfy the check"
+        )
+        return
+
+    opening = re.sub(r"\[\[.*?\]\]", "", carried)[:60].strip()
+    if opening and opening not in _strip_comments(built):
+        fail(
+            f"the paragraph marked {_SCOPE_MARKER} does not reach the built manuscript, so "
+            f"the claim is bounded only in the source a reader never sees"
+        )
+
+
+def check_figures_are_first_cited_in_order(built: str) -> None:
+    """Figure n must be first named before figure n+1.
+
+    PMB-122419's referee 2 found this: the Results cite "table 1 and figure 6" before
+    figure 4 and figure 5 are mentioned at all, so a reader meets figure 6 first and the
+    numbering serves the order the figures were made rather than the order they are read.
+    ``check_figures`` above requires every figure to be named somewhere and captioned once,
+    which this manuscript satisfied, and says nothing about the order -- a check can be
+    green and a reader still lost.
+    """
+    first: dict[int, int] = {}
+    for match in re.finditer(r"\bfigs?(?:ure)?\.?\s*(\d+)(?!\d)", built, re.I):
+        number = int(match.group(1))
+        first.setdefault(number, match.start())
+
+    cited = sorted(first)
+    out_of_order = [
+        (a, b) for a, b in zip(cited, cited[1:]) if first[a] > first[b]
+    ]
+    for earlier, later in out_of_order:
+        fail(
+            f"figure {later} is first named before figure {earlier}; figures must be "
+            f"first cited in numerical order, or they are numbered for the author and "
+            f"not for the reader"
+        )
+
+
+def check_no_figure_is_renumbered_on_the_way_in(built: str) -> None:
+    """A figure copied from the pipeline keeps the number drawn into its pixels.
+
+    ``collect_figures`` renames the file; it cannot repaint the image. PMB-122419 shipped
+    figure 6 with "Figure 5  Scan-covering organ dose by vendor" drawn across the top of
+    it, because the pipeline that produced it called it figure 5 and the copy into
+    paper/figures/ changed only the filename. The referee saw one number above the image
+    and a different one in the caption below and asked which was right.
+
+    There is no OCR here, and installing one to read a number we already know would be the
+    wrong fix. The source filename carries the number the drawing code used, and a
+    disagreement between that and the number the manuscript gives it is the defect itself.
+    """
+    for number, (_name, source) in sorted(collect_figures.FIGURE_SOURCES.items()):
+        if not source:
+            continue
+        drawn = re.search(r"fig(?:ure)?[_\- ]?(\d+)", Path(source).name, re.I)
+        if drawn and int(drawn.group(1)) != number:
+            fail(
+                f"figure {number} is copied from {source}, which was drawn as figure "
+                f"{drawn.group(1)}: the file is renamed but the title inside the image is "
+                f"not, so the manuscript prints two different numbers for one figure. "
+                f"Redraw it with the number it has here, or with no number at all"
+            )
+
+
+def check_every_figure_image_has_been_looked_at() -> None:
+    """Each image must be recorded as seen, by its hash, since it last changed.
+
+    This is the one check here that does not describe a defect; it describes how three of
+    them escaped. Figure 4 of PMB-122419 reached the referees with its legend running off
+    the left edge of the canvas, a paragraph of the caption repeated inside the image, and
+    "IORN-006" and "IORN-007" -- this programme's own internal identifiers -- printed on
+    its axes. No check in this file could have seen any of that, and no check ever will:
+    they are visible, not computable. What is computable is whether anybody opened the
+    file after it last changed.
+
+    So the ledger records a hash per figure. Change the image and the hash stops matching,
+    the gate fails, and the only way through it is to open the image and record what was
+    seen. ``--strict`` is not needed: an unreviewed figure is a failure, because the
+    looking is the check.
+    """
+    import hashlib
+
+    ledger_path = PAPER / "figures_reviewed.json"
+    ledger = {}
+    if ledger_path.exists():
+        ledger = json.loads(ledger_path.read_text(encoding="utf-8")).get("figures", {})
+
+    for number, (name, _source) in sorted(collect_figures.FIGURE_SOURCES.items()):
+        path = FIGURES / name
+        if not path.exists():
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        entry = ledger.get(name)
+        if entry is None:
+            fail(
+                f"figure {number} ({name}) has never been recorded as looked at; open it, "
+                f"then add it to paper/figures_reviewed.json with sha256 {digest[:16]}..."
+            )
+        elif entry.get("sha256") != digest:
+            fail(
+                f"figure {number} ({name}) has changed since it was last looked at on "
+                f"{entry.get('reviewed')}; open it again and update "
+                f"paper/figures_reviewed.json to sha256 {digest[:16]}..."
+            )
+
+
 # -------------------------------------------------------------------- references
 
 
@@ -548,7 +705,11 @@ def main(argv: list[str] | None = None) -> int:
             check_author_block(built)
             check_generative_ai_is_declared(built)
             check_code_is_reachable(built)
+            check_a_bounding_claim_declares_its_scope(source, built)
             check_figures(built)
+            check_figures_are_first_cited_in_order(built)
+            check_no_figure_is_renumbered_on_the_way_in(built)
+            check_every_figure_image_has_been_looked_at()
             check_docx_furniture()
             check_inquiry(built)
         check_references(source)

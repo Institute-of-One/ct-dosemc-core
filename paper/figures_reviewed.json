@@ -1,0 +1,34 @@
+{
+  "_why": "A figure image is checked by looking at it. paper/presubmission_check.py requires every image in collect_figures.FIGURE_SOURCES to appear here with the sha256 it currently has; change the image and the gate fails until somebody opens it again. This exists because figure 4 of PMB-122419 reached the referees with its legend running off the left edge, a paragraph of its caption repeated inside the image, and IORN-006 and IORN-007 printed on its axes, and no computable check could have seen any of it.",
+  "_entry": "filename -> {sha256, reviewed (ISO date), by, note}. Record what was seen, not that it was opened. An image with a known defect does not belong here: leave it out and let the gate stay red until it is redrawn.",
+  "figures": {
+    "figure1_selection_funnel.png": {
+      "sha256": "2c5223dc3115492d499c03eac44d2e6ef1bd4082b5efeb0bdf76f2fa96dfe23d",
+      "reviewed": "2026-10-21",
+      "by": "Claude Opus 5, on the author's instruction",
+      "note": "Two panels, (a) selection funnel on a log axis and (b) rejection reasons. Labels do not collide, counts are readable, both axis titles present, nothing clipped, no text drawn over the plot area, no figure number inside the image."
+    },
+    "figure2_density_gate.png": {
+      "sha256": "59af02199de6808b0a0a2230f55f09a4514c947e22557b4c45a8cff802e47e70",
+      "reviewed": "2026-10-21",
+      "by": "Claude Opus 5, on the author's instruction",
+      "note": "Single panel, log y. Legend sits in the empty top left and covers no marker; the pre-declared 1 cm3 gate is drawn and labelled; the annotation about 14 series plotted at zero points at the right cluster. Nothing clipped, no figure number inside the image."
+    },
+    "figure3_tg195_case4.png": {
+      "sha256": "1a77ac3e5f6061ac2c123b8b1e2d6fc98b5fc9386f62d0a28df6ccc1c10f85ab",
+      "reviewed": "2026-10-21",
+      "by": "Claude Opus 5, on the author's instruction",
+      "note": "Two panels, Centre and Perimeter VOI, shared y, error bars within the axes, the sigma_comb band drawn and labelled. Drawing is sound. Separately, referee 2 asked for the scored quantity, its units and normalisation, the VOI dimensions and locations, and the reference values behind the relative differences: that is missing prose, not a defect in this image."
+    },
+    "figure5_conversion_ceiling.png": {
+      "sha256": "c2975be296dd47bf5049be2e692bac4573435bb1c27b2775437b6ada66107e53",
+      "reviewed": "2026-10-21",
+      "by": "Claude Opus 5, on the author's instruction",
+      "note": "Two panels, (a) held-out error per conversion and (b) variance share. Row labels, value labels and the 20 % guide all legible and inside the canvas; no figure number inside the image. Referee 2's complaint about 'Figure 5 title' is about the caption in paper/README.md, which carries a result sentence, not about this image."
+    }
+  },
+  "_not_recorded": {
+    "figure4_scatter.png": "DEFECTIVE, must be redrawn before submission anywhere. Seen 2026-10-21: the legend runs off the left edge of the canvas and its three entries are cut mid-word; the legend also overlaps the plot; a four-line paragraph is drawn inside the image repeating what the caption already says (referee 2, page 10); and both axis titles carry this programme's internal identifiers, 'IORN-006 organ-weighted CTDIvol' and 'IORN-007 absorbed organ dose', which mean nothing to a reader of the journal.",
+    "figure6_vendor.png": "DEFECTIVE, must be redrawn before submission anywhere. Seen 2026-10-21: the image has 'Figure 5  Scan-covering organ dose by vendor' drawn across the top, because the pipeline that produced it numbered it 5 and collect_figures renamed the file to 6 without repainting the image. The manuscript therefore prints Figure 5 above the image and Figure 6 in the caption below, which is what referee 2 asked about."
+  }
+}
