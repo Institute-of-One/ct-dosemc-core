@@ -46,10 +46,10 @@ keywords:
   - TG-195
   - cross-validation
 license: MIT
-version: 0.1.0
+version: 0.2.0
 # Zenodo takes this as the record's publication date and a DOI cannot be
 # re-dated afterwards, so it is the day the tag is cut, not the day work began.
-date-released: "2026-09-01"
+date-released: "2026-10-21"
 # The *concept* DOI goes here once the first release is minted; it resolves to
 # the latest version, which is what a citation of the project should point at.
 # A result should cite the version DOI of the release it was produced with.
