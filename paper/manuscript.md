@@ -573,7 +573,7 @@ This research received no external funding.
 ## Data availability
 
 The data that support the findings of this study are openly available at the following
-URL/DOI: https://doi.org/10.5281/zenodo.22233153.
+URL/DOI: https://doi.org/10.5281/zenodo.23537665.
 
 That archive is the release of the software described here, under the MIT licence, and
 holds the frozen result tables and the commands that regenerate every figure; development
