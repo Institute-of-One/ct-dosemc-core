@@ -19,40 +19,41 @@ ORCID: 0000-0001-9211-1071
 **Objective.** The volume CT dose index is a scanner output, not a patient dose, and the
 field converts it with size corrections, dose-length-product factors and per-organ
 coefficient libraries. How close such a conversion can get has not been measured against
-transport on the same anatomy. We measure five of them.
+transport on the same anatomy. We measure five.
 
-**Approach.** A GPU Monte-Carlo pipeline computes absorbed organ dose in patient
-anatomy from routine metadata alone. The transport engine is verified against AAPM
-TG-195 Case 4 with a replica-measured uncertainty and a yardstick fixed beforehand. On [[results:manifest.json:metrics.n_scaled]] multi-vendor abdominal CT
-series from a public archive, [[results:manifest.json:metrics.n_points]] organ-series
-pairs across [[results:manifest.json:metrics.n_organs]] organs, we ask how well
-absorbed dose is recovered from an organ-weighted CTDIvol index by conversions of
-increasing richness, each scored under leave-one-patient-out cross-validation.
+**Approach.** A GPU Monte-Carlo pipeline computes absorbed organ dose in patient anatomy
+from routine metadata alone, verified against AAPM TG-195 Case 4 with a replica-measured
+uncertainty and a yardstick fixed beforehand. On
+[[results:manifest.json:metrics.n_scaled]] multi-vendor abdominal CT series from a public
+archive — [[results:manifest.json:metrics.n_points]] organ-series pairs across
+[[results:manifest.json:metrics.n_organs]] organs — five conversions of increasing
+richness are scored under leave-one-patient-out cross-validation.
 
 **Main results.** At the centre volume of interest the engine differs from PENELOPE
 by [[results:manifest.json:metrics.tg195_centre_abs_pct|.3f]] %, or
 [[results:manifest.json:metrics.tg195_centre_n_sigma|.2f]] combined standard
-deviations. A single conversion factor for the cohort recovers absorbed organ
-dose to a median [[results:manifest.json:metrics.ceiling_global_factor_median_pct|.0f]] %.
-One factor per organ does not improve on it
-([[results:manifest.json:metrics.ceiling_per_organ_factor_median_pct|.0f]] %). Adding a
+deviations. A single conversion factor recovers absorbed organ dose to a median
+[[results:manifest.json:metrics.ceiling_global_factor_median_pct|.0f]] %; one factor per
+organ does not improve on it
+([[results:manifest.json:metrics.ceiling_per_organ_factor_median_pct|.0f]] %); a
 scan-length term reaches
-[[results:manifest.json:metrics.ceiling_scan_length_median_pct|.0f]] %, and adding
-either organ identity or patient size reaches a floor of
-[[results:manifest.json:metrics.ceiling_scan_length_and_organ_median_pct|.0f]] % and
-[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %. [[results:manifest.json:metrics.variance_between_patient|.0%]] of the
-variance in the dose-to-index ratio lies between patients;
-[[results:manifest.json:metrics.variance_between_organ|.0%]] lies between organs.
-Monte-Carlo statistical uncertainty is
-[[results:manifest.json:metrics.mc_sigma_median_pct|.3f]] % of the dose at the median,
-so the residual is physical.
+[[results:manifest.json:metrics.ceiling_scan_length_median_pct|.0f]] %, and adding either
+organ identity or patient size to it reaches
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] % either way.
+[[results:manifest.json:metrics.variance_between_patient|.0%]] of the variance in the
+dose-to-index ratio lies between patients and
+[[results:manifest.json:metrics.variance_between_organ|.0%]] between organs, and the
+residual is three orders of magnitude above the Monte-Carlo statistical uncertainty, so it
+is physical.
 
-**Significance.** The information an index withholds is a property of the patient, not of
-the organ, so neither a per-organ coefficient table nor a size correction can supply it. On
-this cohort the best index-based conversion still misses absorbed organ dose by a median
-[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %, and by
-[[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at the
-ninetieth percentile.
+**Significance.** What an index withholds is a property of the patient, not of the organ, so
+no coefficient table or size correction can supply it. Where a median
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] % suffices —
+protocol comparison, registry-scale surveillance — a single factor with a scan-length term
+is what should be used, and a coefficient library adds parameters without accuracy. Where it
+does not, the missing quantity is transport through that patient's own anatomy, computed
+here from the metadata a routine CT already records, with no added exposure and no matched
+phantom.
 
 **Keywords:** computed tomography, organ dose, Monte Carlo, CTDIvol, dose index,
 cross-validation
@@ -531,6 +532,23 @@ dose-to-index ratio is between patients and only
 size, the standard patient-level correction, does not carry it either. The residual is
 more than three orders of magnitude above the Monte-Carlo statistical uncertainty, so it
 is physical: it is the transport that an index does not perform.
+
+What follows for practice is specific. Where a median of
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %, with
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at the
+ninetieth percentile, is adequate — protocol comparison, registry-scale surveillance,
+tracking a department against itself — a single conversion factor with a scan-length term
+is the whole of what an index can offer, and is what should be used. A per-organ
+coefficient library adds parameters and maintenance without adding accuracy, and the
+measurement saying so is cross-validated rather than asserted.
+
+Where that is not adequate — a dose compared against an organ-level threshold, or carried
+into an individual risk estimate — the missing quantity is the transport through that
+patient's own anatomy, which no refinement of the index supplies. The step is a different
+calculation, not a better coefficient, and its barrier is lower than it is usually taken
+to be: every organ dose here was computed from the metadata a routine abdominal CT already
+records, with no added exposure, no phantom matched to the patient, and no input a
+department does not have.
 
 ---
 

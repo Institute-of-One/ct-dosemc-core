@@ -79,6 +79,50 @@ def page_images() -> int:
     return 0
 
 
+#: A page carrying less than this share of the median page is an orphan: a heading, a
+#: stranded reference, a caption cut from its figure. Measured against the median rather than
+#: against a fixed character count, because a figure page is legitimately short and a text
+#: page is not, and the median tracks whatever the layout is.
+THIN_PAGE_SHARE = 0.25
+
+
+def check_pages() -> int:
+    """No page may be almost empty.
+
+    Nothing in this repository looked at the rendered PDF. On 2026-10-21 a paragraph added to
+    the Conclusions pushed the last reference onto a page of its own, 182 characters against a
+    median of about 2,000, and every check passed because they all read the .docx or the
+    markdown. The file the referee opens is this one.
+    """
+    try:
+        import pypdf                                          # noqa: PLC0415
+    except ImportError:
+        print("pypdf is not installed; the pages were not checked")
+        return 0
+
+    lengths = [
+        len((page.extract_text() or "").strip())
+        for page in pypdf.PdfReader(str(PDF)).pages
+    ]
+    if not lengths:
+        print("the PDF has no pages")
+        return 1
+    ordered = sorted(lengths)
+    median = ordered[len(ordered) // 2]
+    floor = median * THIN_PAGE_SHARE
+    thin = [(n, length) for n, length in enumerate(lengths, start=1) if length < floor]
+    for number, length in thin:
+        print(
+            f"  FAIL page {number} carries {length} characters against a median of "
+            f"{median}; it is an orphan, not a page"
+        )
+    if thin:
+        print(f"{len(thin)} near-empty pages; shorten or re-flow the text above them")
+        return 1
+    print(f"{len(lengths)} pages, none under {floor:.0f} characters")
+    return 0
+
+
 def main() -> int:
     if os.name != "nt":
         print("this step drives Word and needs Windows; the .docx is unchanged")
@@ -86,7 +130,10 @@ def main() -> int:
     failed = render()
     if failed:
         return failed
-    return page_images()
+    failed = page_images()
+    if failed:
+        return failed
+    return check_pages()
 
 
 if __name__ == "__main__":
