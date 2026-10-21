@@ -92,6 +92,22 @@ def organ_doses() -> str:
     counts = ", ".join(
         f"{vendor} {payload['n_series_by_vendor'][vendor]}" for vendor in VENDOR_ORDER
     )
+
+    # The uncertainty on each entry, from the frozen record rather than asserted. A table of
+    # doses with no uncertainty beside them was the second thing a referee asked about, and
+    # the two contributions are both measured: how well the Monte Carlo converged, and what
+    # the dose grid costs the organ's mass.
+    metrics = json.loads((FROZEN / "manifest.json").read_text(encoding="utf-8"))["metrics"]
+    resample = json.loads((FROZEN / "resample_cost.json").read_text(encoding="utf-8"))
+    worst_organ = max(
+        resample["by_organ"].items(), key=lambda item: item[1]["median_abs_pct"]
+    )
+    stem, _, side = worst_organ[0].rpartition("_")
+    worst_name = (
+        f"{side} {stem.replace('_', ' ')}" if side in {"left", "right"}
+        else worst_organ[0].replace("_", " ")
+    )
+
     rows.append("")
     rows.append(
         f"**Table 1.** Absorbed organ dose in mGy over the "
@@ -99,7 +115,15 @@ def organ_doses() -> str:
         f"the median and, in parentheses, the number of series in which that organ is "
         f"present; the final column pools every series and adds the interquartile "
         f"range. Series per vendor: {counts}. The cohort is not powered for a vendor "
-        f"comparison and none is claimed."
+        f"comparison and none is claimed. The spread shown is between patients, which is "
+        f"the quantity of interest here and is far larger than the uncertainty on any one "
+        f"entry: the Monte-Carlo statistical uncertainty is "
+        f"{metrics['mc_sigma_median_pct']:.3f} % of the organ dose at the median and "
+        f"{metrics['mc_sigma_max_pct']:.2f} % at worst, and resampling the organ mask to "
+        f"the {resample['dose_grid_mm']:.1f} mm dose grid changes the organ's mass by "
+        f"{resample['by_organ']['liver']['median_abs_pct']:.1f} % at the median for the "
+        f"liver, rising to {worst_organ[1]['median_abs_pct']:.1f} % for the "
+        f"{worst_name}, the smallest organ scored."
     )
     return "\n".join(rows)
 

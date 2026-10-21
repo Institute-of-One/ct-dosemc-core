@@ -49,6 +49,9 @@ CITED: tuple[tuple[str, str], ...] = (
     ("phase2_cohort/ctdi_scale.json", "ctdi_scale.json"),
     ("phase2_cohort/organ_volume_vs_icrp89.json", "organ_volume_vs_icrp89.json"),
     ("phase2_cohort/conversion_ceiling.json", "conversion_ceiling.json"),
+    # The cost of the dose grid, measured per organ. Frozen so the Methods can state the
+    # grid spacing and what resampling the masks costs instead of asserting both.
+    ("phase2_cohort/resample_cost.json", "resample_cost.json"),
 )
 
 #: Named so a reader of the manifest can see why the file is not cited.
@@ -146,6 +149,24 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
         "n_shared": overlap["n_shared"],
         "n_table4_series": table4["n_scaled_series"],
     }
+
+    # The eligibility gate's two defensible numbers, derived rather than typed: the gap the
+    # threshold sits in, and the HU ceiling that defines an out-of-calibration voxel. Both
+    # were prose in the manuscript until a referee asked where the threshold came from, and
+    # prose drifts from the run it describes.
+    eligibility = sources["density_eligibility.json"]["series"]
+    kept = [s["largest_component_cm3"] for s in eligibility if s.get("eligible")]
+    dropped = [s["largest_component_cm3"] for s in eligibility if not s.get("eligible")]
+    if kept and dropped:
+        metrics["density_gate_largest_kept_cm3"] = max(kept)
+        metrics["density_gate_smallest_dropped_cm3"] = min(dropped)
+    ceilings = {
+        s["max_hu_in_body"] for s in eligibility if not s.get("eligible")
+    }
+    if ceilings:
+        # Every excluded series reaches the ceiling by definition of the criterion, so the
+        # smallest of their in-body maxima is the ceiling itself.
+        metrics["density_gate_hu_ceiling"] = min(ceilings)
 
     # The primary endpoint: how close an index-based conversion gets, held out.
     ceiling = sources["conversion_ceiling.json"]

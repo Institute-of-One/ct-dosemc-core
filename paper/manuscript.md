@@ -20,7 +20,7 @@ ORCID: 0000-0001-9211-1071
 the field converts it with size corrections, dose-length-product factors and
 per-organ coefficient libraries. How close such a conversion can get
 has not been measured against transport on the same anatomy. We measure how close five
-of them get, and whether a richer one buys anything.
+of them get, and whether a richer conversion improves on the simplest.
 
 **Approach.** A GPU Monte-Carlo pipeline computes absorbed organ dose in patient
 anatomy from routine metadata alone. The transport engine is verified against AAPM
@@ -42,7 +42,7 @@ scan-length term reaches
 either organ identity or patient size reaches a floor of
 [[results:manifest.json:metrics.ceiling_scan_length_and_organ_median_pct|.0f]] % and
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %. [[results:manifest.json:metrics.variance_between_patient|.0%]] of the
-variance in the index-to-dose ratio lies between patients;
+variance in the dose-to-index ratio lies between patients;
 [[results:manifest.json:metrics.variance_between_organ|.0%]] lies between organs.
 Monte-Carlo statistical uncertainty is
 [[results:manifest.json:metrics.mc_sigma_median_pct|.3f]] % of the dose at the median,
@@ -138,8 +138,23 @@ from the series metadata.
 ### 2.3 Verification against TG-195 Case 4
 
 The engine is verified against Case 4 of AAPM Task Group 195 (Sechopoulos et al 2015), the voxelised
-phantom case with published results from four independent codes. Two properties of
-this verification matter for what follows.
+phantom case with published results from four independent codes.
+
+The scored quantity is the task group's own and is compared in the task group's own units:
+the energy imparted in a volume of interest, normalised per source photon and reported in
+eV per photon, so that it does not depend on the number of histories run. Two volumes are
+scored, both cylinders of
+1 cm diameter and 10 cm length lying along the rotation axis of the phantom: the central
+one centred on that axis, and the peripheral one with its axis 15 cm from it. The
+peripheral volume is scored at every non-overlapping azimuth around that circle and
+averaged, which the task group permits and which also provides a symmetry test — the
+spread across azimuths must agree with the spread across independent seeds, and it is this
+test that caught a defect in the random number stream. The reference values the relative
+differences are taken against are the four codes' published results for the same two
+volumes in that report; PENELOPE's is the one the difference is quoted against, and the
+other three are reported beside it.
+
+Two further properties of this verification matter for what follows.
 
 The yardstick was fixed before any comparison was run. PENELOPE was chosen because it
 shares the photon cross-section database from which our material files are generated,
@@ -173,10 +188,24 @@ tube current the pipeline requires, which accounts for most of the rejections
 
 ### 2.5 Eligibility: a pre-declared density gate
 
-Voxels inside the body contour at or above the top of the density calibration are
-metal, concentrated contrast, or artefact, and are not tissue. A series is excluded
-if its largest connected out-of-calibration component exceeds 1 cm³. The threshold and
-the criterion were declared before the volumes were computed. Of
+A voxel is out of calibration when it lies inside the body contour and its value reaches
+the twelve-bit saturation ceiling of
+[[results:manifest.json:metrics.density_gate_hu_ceiling|.0f]] HU; clipping at the ceiling
+and exceeding it are
+treated identically, so the measure does not depend on how a vendor handles overflow. Such
+voxels are metal, concentrated contrast, or artefact, and are not tissue: a compact
+implant has an atomic number the Schneider conversion cannot represent, and its
+photoelectric cross-section would be misassigned.
+
+A series is excluded if its largest connected out-of-calibration component reaches
+[[results:density_eligibility.json:threshold_cm3|.0f]] cm³. The threshold is not fitted to
+any series: the cohort's largest components fall in two groups, the biggest among the
+eligible series being
+[[results:manifest.json:metrics.density_gate_largest_kept_cm3|.2f]] cm³ and the smallest
+among the excluded ones
+[[results:manifest.json:metrics.density_gate_smallest_dropped_cm3|.2f]] cm³, and the
+threshold sits in that gap (figure 2). It and the criterion were
+declared before the volumes were computed. Of
 [[results:density_eligibility.json:n_assessed]] assessed series,
 [[results:manifest.json:metrics.n_eligible]] are eligible and
 [[results:density_eligibility.json:n_excluded]] are excluded (figure 2). The
@@ -206,20 +235,39 @@ from every analysis that needs one.
 
 ### 2.8 Organ dose
 
-Dose is tallied on an isotropic grid over the scan-covering geometry, with the number
-of longitudinal stations set by the scan length and the nominal collimation, and is
-reported per organ as the mass-weighted mean over the segmented voxels of that organ,
-with its Monte-Carlo statistical uncertainty.
+Dose is tallied on an isotropic grid of
+[[results:resample_cost.json:dose_grid_mm|.1f]] mm over the scan-covering geometry, with
+the number of longitudinal stations set by the scan length and the nominal collimation,
+and is reported per organ as the mass-weighted mean over the segmented voxels of that
+organ, with its Monte-Carlo statistical uncertainty. Histories are set per series so that
+the statistical uncertainty of every reported organ dose stays below a fixed target; the
+uncertainty achieved is reported in section 3.7 rather than the number of histories,
+because it is the quantity the result depends on. Transport is deterministic given the
+recorded random seed.
+
+Masks and densities reach that grid as volume-conserving zooms from the native series
+voxels, and what the zoom costs is measured rather than assumed. Over the
+[[results:resample_cost.json:n_series]] series, organ mass is preserved to within
+[[results:resample_cost.json:by_organ.liver.median_abs_pct|.1f]] % at the median for the
+liver and [[results:resample_cost.json:by_organ.colon.median_abs_pct|.1f]] % for the
+colon. The cost is carried by the smallest organs: the right adrenal gland, a few grams of
+tissue, shifts by [[results:resample_cost.json:by_organ.adrenal_gland_right.median_abs_pct|.1f]] %
+at the median and [[results:resample_cost.json:by_organ.adrenal_gland_right.max_abs_pct|.1f]] %
+in the worst series. The adrenal glands are therefore the organs whose dose is least
+secure here, and they are reported with the rest rather than dropped, because dropping the
+organs a method serves worst would overstate how well the method performs.
 
 ### 2.9 Index-based conversions, and how they are scored
 
-Let $r$ be the ratio of absorbed organ dose to the organ-weighted CTDIvol index for
-one organ in one series. Five conversions are compared, each predicting $r$ and
-therefore predicting the dose from the index:
+Let $r$ be the dose-to-index ratio: absorbed organ dose divided by the organ-weighted
+CTDIvol index, for one organ in one series. It is called the dose-to-index ratio
+throughout, in that order, because that is the order of the division. Five conversions are
+compared, each predicting $r$ and therefore predicting the dose from the index:
 
 1. **a single factor** for the whole cohort;
 2. **one factor per organ**, which is what a per-organ coefficient table offers;
-3. **a scan-length term**, fitted as $\log r = a + b \log n_z$ on the number of
+3. **a scan-length term**, fitted here on this cohort rather than taken from any
+   published formula, as $\log r = a + b \log n_z$ on the number of
    longitudinal stations;
 4. **scan length and a per-organ offset**, which is everything an index can carry;
 5. **scan length and patient size**, with size as the effective diameter derived from
@@ -228,12 +276,14 @@ therefore predicting the dose from the index:
 All are fitted in log ratio, because the quantity is a multiplicative factor spanning
 several fold and its errors are relative.
 
-Each is scored under leave-one-patient-out cross-validation: for each series, the
-conversion is fitted on the other [[results:manifest.json:metrics.n_scaled]] minus one
-series and evaluated on the held-out one. Fitting twelve organ offsets on thirty
-patients and reporting the error on those same thirty is optimistic by construction,
-and thirty is small enough for that to matter. Every error reported below is on a
-patient the fit did not see.
+Each is scored under leave-one-patient-out cross-validation. Every series takes a turn as
+the held-out one: the conversion is re-fitted from scratch on the other
+[[results:manifest.json:metrics.n_scaled]] minus one series, and the error is recorded on
+the series left out — [[results:manifest.json:metrics.n_scaled]] fits per conversion, and
+every organ in the cohort contributing exactly one held-out error. No conversion is ever
+scored on a patient it was fitted on. Fitting twelve organ offsets on thirty patients and
+reporting the error on those same thirty is optimistic by construction, and thirty is
+small enough for that to matter.
 
 ---
 
@@ -266,8 +316,7 @@ Across [[results:manifest.json:metrics.n_points]] organ-series pairs the median
 absorbed organ dose is [[results:manifest.json:metrics.dose_median_mgy|.1f]] mGy, with
 a range of [[results:manifest.json:metrics.dose_min_mgy|.1f]] to
 [[results:manifest.json:metrics.dose_max_mgy|.1f]] mGy. Per-organ values by vendor are
-given in table 1; with six to nine series per vendor the cohort is not
-powered for a vendor comparison and none is offered.
+given in table 1, whose caption states what the table is and is not powered to support.
 
 [[table:organ_doses]]
 
@@ -280,10 +329,11 @@ ratio of dose to index is
 [[results:manifest.json:metrics.ratio_median|.2f]]. That the two differ is not the
 result; how far apart they remain after every available correction is.
 
-### 3.4 The floor on an index-based conversion
+### 3.4 How close an index-based conversion gets
 
-Figure 5a gives the held-out error of each conversion. A single factor for the whole
-cohort recovers absorbed organ dose to a median
+Every error in this section is a held-out error, in the sense of section 2.9: the
+conversion was fitted without the patient it is scored on. Figure 5a gives them. A single
+factor for the whole cohort recovers absorbed organ dose to a median
 [[results:manifest.json:metrics.ceiling_global_factor_median_pct|.0f]] %, with
 [[results:manifest.json:metrics.ceiling_global_factor_p90_pct|.0f]] % at the ninetieth
 percentile.
@@ -319,7 +369,7 @@ inside 20 %. That is the floor: nothing an index carries closes the remaining ga
 
 ### 3.5 The residual is a property of the patient
 
-Figure 5b decomposes the variance of the log index-to-dose ratio.
+Figure 5b decomposes the variance of the log dose-to-index ratio.
 [[results:manifest.json:metrics.variance_between_patient|.0%]] of it lies between
 patients, [[results:manifest.json:metrics.variance_between_organ|.0%]] between organs
 and [[results:manifest.json:metrics.variance_between_vendor|.0%]] between vendors.
@@ -364,7 +414,7 @@ index-based conversion removes is a property of the transport, not of the sampli
 
 Restricting the analysis to the [[results:manifest.json:metrics.n_recorded]] series
 that carry a recorded CTDIvol, rather than a reconstructed one, does not change the
-index-to-dose relationship: the correlation is
+relationship between index and dose: the correlation is
 [[results:manifest.json:metrics.pearson_r_recorded|.2f]] against
 [[results:manifest.json:metrics.pearson_r_all|.2f]], and the median ratio is
 [[results:manifest.json:metrics.y_over_x_median_recorded|.2f]] against
@@ -394,7 +444,7 @@ comparisons survive. It also means an index is a poor instrument for questions a
 patients in absolute milligray, which is exactly what epidemiological and
 risk-estimation uses require, because there the
 [[results:manifest.json:metrics.ratio_patient_fold|.1f]]-fold between-patient span is
-the whole of the signal being estimated.
+itself the quantity being estimated.
 
 The negative result on per-organ coefficients deserves stating carefully. It does not
 say that published coefficient libraries (Lee et al 2011, Lee et al 2015) are wrong; they are computed on
@@ -404,6 +454,24 @@ structured. Cross-validated on this cohort, twelve fitted organ coefficients did
 beat one number — and a table with more coefficients, fitted on more organs, would be
 fitting more finely into the [[results:manifest.json:metrics.variance_between_organ|.0%]]
 of variance that organ identity explains.
+
+*What this adds to what is already known.* That a Monte-Carlo engine can reproduce measured
+dose is established, and real-time patient-specific engines are in use (Sharma et al 2019); so is the
+observation that index-based surrogates disagree with each other and with transport
+(Ria et al 2021). What has not been available is the size of the gap that remains after every
+correction an index can carry, measured on the same anatomy by the same transport, and
+held out. That is the number this paper supplies, and the use for it is immediate: a centre
+deciding whether to adopt a per-organ coefficient table over a single factor now has a
+measured answer, and it is that the table does not repay the effort. A centre that needs organ
+dose to better than a third needs the anatomy, not a better coefficient.
+
+*What this does not establish.* The quantity here is absorbed organ dose, not risk. Which
+surrogate suits which question is a separate matter and has been compared elsewhere across a
+clinical population (Ria et al 2021); a risk statement additionally needs age and sex, which this
+cohort does not carry — the public archive supplies the images and the acquisition metadata,
+not the demographics — and needs a risk model this paper does not use. The result is
+therefore about how well a conversion recovers dose, and says nothing about how well dose
+predicts detriment.
 
 <!-- scope-of-claim -->
 Whether the floor found here is the floor everywhere is not something one cohort can
@@ -459,7 +527,7 @@ median of [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pc
 and no better, held out on patients the conversion has not seen. A per-organ coefficient
 does not improve on a single conversion factor for the whole cohort, because
 [[results:manifest.json:metrics.variance_between_patient|.0%]] of the variance in the
-index-to-dose ratio is between patients and only
+dose-to-index ratio is between patients and only
 [[results:manifest.json:metrics.variance_between_organ|.0%]] is between organs. Patient
 size, the standard patient-level correction, does not carry it either. The residual is
 more than three orders of magnitude above the Monte-Carlo statistical uncertainty, so it
@@ -553,6 +621,10 @@ Poludniowski G, Omar A, Bujila R and Andreo P 2021 Technical Note: SpekPy v2.0 �
 software toolkit for modeling x-ray tube spectra *Med. Phys.* **48** 3630–3637
 [doi:10.1002/mp.14945]
 
+Ria F, Fu W, Hoye J, Segars W P, Kapadia A J and Samei E 2021 Comparison of 12 surrogates
+to characterize CT radiation risk across a clinical population *Eur. Radiol.* **31**
+7022–7030 [doi:10.1007/s00330-021-07753-9]
+
 Salvat F, Fernández-Varea J M and Sempau J 2006 *PENELOPE — a code system for Monte Carlo
 simulation of electron and photon transport* (Issy-les-Moulineaux: NEA-OECD)
 
@@ -568,6 +640,10 @@ Sechopoulos I, Ali E S M, Badal A, Badano A, Boone J M, Kyprianou I S, Mainegra-
 McMillan K L, McNitt-Gray M F, Rogers D W O, Samei E and Turner A C 2015 Monte Carlo
 reference data sets for imaging research: executive summary of the report of AAPM Research
 Committee Task Group 195 *Med. Phys.* **42** 5679–5691 [doi:10.1118/1.4928676]
+
+Sharma S, Kapadia A, Fu W, Abadi E, Segars W P and Samei E 2019 A real-time Monte Carlo
+tool for individualized dose estimations in clinical CT *Phys. Med. Biol.* **64** 215020
+[doi:10.1088/1361-6560/ab467f]
 
 Tian X, Li X, Segars W P, Frush D P and Samei E 2015 Prospective estimation of organ dose
 in CT under tube current modulation *Med. Phys.* **42** 1575–1585 [doi:10.1118/1.4907955]

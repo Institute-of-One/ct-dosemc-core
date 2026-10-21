@@ -1,0 +1,3017 @@
+{
+  "dose_grid_mm": 2.5,
+  "definition": "mass_2p5mm / mass_native per organ; mass = sum(density * occupancy) * voxel_volume; 2.5 mm density and occupancy are order-1 (volume-conserving) zooms of the native density and binary mask. Cost of the dose grid, measured.",
+  "n_series": 32,
+  "by_organ": {
+    "adrenal_gland_left": {
+      "n": 31,
+      "median_ratio": 0.9897,
+      "mean_ratio": 0.9884,
+      "min_ratio": 0.9238,
+      "max_ratio": 1.04,
+      "median_abs_pct": 1.55,
+      "max_abs_pct": 7.62
+    },
+    "adrenal_gland_right": {
+      "n": 31,
+      "median_ratio": 0.9863,
+      "mean_ratio": 0.9843,
+      "min_ratio": 0.835,
+      "max_ratio": 1.0673,
+      "median_abs_pct": 2.66,
+      "max_abs_pct": 16.5
+    },
+    "colon": {
+      "n": 32,
+      "median_ratio": 0.9938,
+      "mean_ratio": 0.9949,
+      "min_ratio": 0.9817,
+      "max_ratio": 1.014,
+      "median_abs_pct": 0.69,
+      "max_abs_pct": 1.83
+    },
+    "gallbladder": {
+      "n": 27,
+      "median_ratio": 0.9916,
+      "mean_ratio": 0.9952,
+      "min_ratio": 0.9651,
+      "max_ratio": 1.0997,
+      "median_abs_pct": 0.96,
+      "max_abs_pct": 9.97
+    },
+    "kidney_left": {
+      "n": 31,
+      "median_ratio": 0.9898,
+      "mean_ratio": 0.9919,
+      "min_ratio": 0.9727,
+      "max_ratio": 1.0287,
+      "median_abs_pct": 1.07,
+      "max_abs_pct": 2.87
+    },
+    "kidney_right": {
+      "n": 32,
+      "median_ratio": 0.9914,
+      "mean_ratio": 0.9898,
+      "min_ratio": 0.9564,
+      "max_ratio": 1.0117,
+      "median_abs_pct": 0.9,
+      "max_abs_pct": 4.36
+    },
+    "liver": {
+      "n": 31,
+      "median_ratio": 0.9919,
+      "mean_ratio": 0.9914,
+      "min_ratio": 0.9821,
+      "max_ratio": 1.0011,
+      "median_abs_pct": 0.81,
+      "max_abs_pct": 1.79
+    },
+    "pancreas": {
+      "n": 31,
+      "median_ratio": 0.9929,
+      "mean_ratio": 0.9902,
+      "min_ratio": 0.9709,
+      "max_ratio": 1.0017,
+      "median_abs_pct": 0.71,
+      "max_abs_pct": 2.91
+    },
+    "small_bowel": {
+      "n": 32,
+      "median_ratio": 0.9933,
+      "mean_ratio": 0.997,
+      "min_ratio": 0.9819,
+      "max_ratio": 1.0986,
+      "median_abs_pct": 0.91,
+      "max_abs_pct": 9.86
+    },
+    "spleen": {
+      "n": 31,
+      "median_ratio": 0.9919,
+      "mean_ratio": 0.9901,
+      "min_ratio": 0.9778,
+      "max_ratio": 1.0002,
+      "median_abs_pct": 0.81,
+      "max_abs_pct": 2.22
+    },
+    "stomach": {
+      "n": 31,
+      "median_ratio": 0.9921,
+      "mean_ratio": 0.9911,
+      "min_ratio": 0.9832,
+      "max_ratio": 0.9998,
+      "median_abs_pct": 0.79,
+      "max_abs_pct": 1.68
+    },
+    "urinary_bladder": {
+      "n": 25,
+      "median_ratio": 0.991,
+      "mean_ratio": 0.9899,
+      "min_ratio": 0.9728,
+      "max_ratio": 0.9985,
+      "median_abs_pct": 0.9,
+      "max_abs_pct": 2.72
+    }
+  },
+  "by_vendor": {
+    "Canon/Toshiba": {
+      "n": 72,
+      "median_ratio": 0.9895,
+      "mean_ratio": 0.9894,
+      "min_ratio": 0.9499,
+      "max_ratio": 1.0673,
+      "median_abs_pct": 1.05,
+      "max_abs_pct": 6.73
+    },
+    "GE": {
+      "n": 92,
+      "median_ratio": 0.9923,
+      "mean_ratio": 0.9873,
+      "min_ratio": 0.835,
+      "max_ratio": 1.0297,
+      "median_abs_pct": 0.81,
+      "max_abs_pct": 16.5
+    },
+    "Philips": {
+      "n": 103,
+      "median_ratio": 0.992,
+      "mean_ratio": 0.995,
+      "min_ratio": 0.9498,
+      "max_ratio": 1.0997,
+      "median_abs_pct": 1.09,
+      "max_abs_pct": 9.97
+    },
+    "Siemens": {
+      "n": 98,
+      "median_ratio": 0.9927,
+      "mean_ratio": 0.9922,
+      "min_ratio": 0.9381,
+      "max_ratio": 1.0447,
+      "median_abs_pct": 0.83,
+      "max_abs_pct": 6.19
+    }
+  },
+  "series": [
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2403.104753627722770752924713208933",
+      "voxel_spacing_mm_zyx": [
+        5.0,
+        0.75,
+        0.75
+      ],
+      "native_shape_zyx": [
+        119,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        238,
+        154,
+        154
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2327.95,
+          "mass_2p5mm_g": 2317.32,
+          "ratio_2p5_over_native": 0.9954,
+          "native_voxels": 775126
+        },
+        "spleen": {
+          "mass_native_g": 316.79,
+          "mass_2p5mm_g": 314.69,
+          "ratio_2p5_over_native": 0.9934,
+          "native_voxels": 102868
+        },
+        "kidney_left": {
+          "mass_native_g": 200.74,
+          "mass_2p5mm_g": 200.06,
+          "ratio_2p5_over_native": 0.9966,
+          "native_voxels": 64468
+        },
+        "kidney_right": {
+          "mass_native_g": 199.95,
+          "mass_2p5mm_g": 198.79,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 64412
+        },
+        "pancreas": {
+          "mass_native_g": 79.22,
+          "mass_2p5mm_g": 78.85,
+          "ratio_2p5_over_native": 0.9953,
+          "native_voxels": 26402
+        },
+        "stomach": {
+          "mass_native_g": 1489.42,
+          "mass_2p5mm_g": 1489.1,
+          "ratio_2p5_over_native": 0.9998,
+          "native_voxels": 522604
+        },
+        "gallbladder": {
+          "mass_native_g": 69.12,
+          "mass_2p5mm_g": 68.97,
+          "ratio_2p5_over_native": 0.9978,
+          "native_voxels": 23932
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.35,
+          "mass_2p5mm_g": 4.02,
+          "ratio_2p5_over_native": 0.9238,
+          "native_voxels": 1472
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 2.2,
+          "mass_2p5mm_g": 2.03,
+          "ratio_2p5_over_native": 0.9229,
+          "native_voxels": 740
+        },
+        "small_bowel": {
+          "mass_native_g": 790.31,
+          "mass_2p5mm_g": 786.88,
+          "ratio_2p5_over_native": 0.9957,
+          "native_voxels": 271364
+        },
+        "colon": {
+          "mass_native_g": 571.57,
+          "mass_2p5mm_g": 576.21,
+          "ratio_2p5_over_native": 1.0081,
+          "native_voxels": 308582
+        },
+        "urinary_bladder": {
+          "mass_native_g": 113.1,
+          "mass_2p5mm_g": 112.93,
+          "ratio_2p5_over_native": 0.9985,
+          "native_voxels": 39200
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.124206625223954387033910217866425393091",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.8203,
+        0.8203
+      ],
+      "native_shape_zyx": [
+        111,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        111,
+        168,
+        168
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2251.71,
+          "mass_2p5mm_g": 2233.42,
+          "ratio_2p5_over_native": 0.9919,
+          "native_voxels": 1243816
+        },
+        "spleen": {
+          "mass_native_g": 502.51,
+          "mass_2p5mm_g": 498.69,
+          "ratio_2p5_over_native": 0.9924,
+          "native_voxels": 276630
+        },
+        "kidney_left": {
+          "mass_native_g": 237.94,
+          "mass_2p5mm_g": 235.22,
+          "ratio_2p5_over_native": 0.9886,
+          "native_voxels": 129207
+        },
+        "kidney_right": {
+          "mass_native_g": 241.85,
+          "mass_2p5mm_g": 239.79,
+          "ratio_2p5_over_native": 0.9915,
+          "native_voxels": 131374
+        },
+        "pancreas": {
+          "mass_native_g": 125.97,
+          "mass_2p5mm_g": 124.98,
+          "ratio_2p5_over_native": 0.9921,
+          "native_voxels": 71320
+        },
+        "stomach": {
+          "mass_native_g": 174.96,
+          "mass_2p5mm_g": 173.82,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 100101
+        },
+        "gallbladder": {
+          "mass_native_g": 60.81,
+          "mass_2p5mm_g": 60.29,
+          "ratio_2p5_over_native": 0.9916,
+          "native_voxels": 34854
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.61,
+          "mass_2p5mm_g": 4.56,
+          "ratio_2p5_over_native": 0.9886,
+          "native_voxels": 2675
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 0.06,
+          "mass_2p5mm_g": 0.05,
+          "ratio_2p5_over_native": 0.835,
+          "native_voxels": 34
+        },
+        "small_bowel": {
+          "mass_native_g": 861.27,
+          "mass_2p5mm_g": 853.37,
+          "ratio_2p5_over_native": 0.9908,
+          "native_voxels": 508377
+        },
+        "colon": {
+          "mass_native_g": 579.71,
+          "mass_2p5mm_g": 574.08,
+          "ratio_2p5_over_native": 0.9903,
+          "native_voxels": 382679
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.102552799280450622384605073116",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.7891,
+        0.7891
+      ],
+      "native_shape_zyx": [
+        199,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        199,
+        162,
+        162
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2310.14,
+          "mass_2p5mm_g": 2301.87,
+          "ratio_2p5_over_native": 0.9964,
+          "native_voxels": 1398409
+        },
+        "spleen": {
+          "mass_native_g": 448.52,
+          "mass_2p5mm_g": 446.46,
+          "ratio_2p5_over_native": 0.9954,
+          "native_voxels": 267963
+        },
+        "kidney_left": {
+          "mass_native_g": 255.71,
+          "mass_2p5mm_g": 254.76,
+          "ratio_2p5_over_native": 0.9963,
+          "native_voxels": 152080
+        },
+        "kidney_right": {
+          "mass_native_g": 260.32,
+          "mass_2p5mm_g": 259.27,
+          "ratio_2p5_over_native": 0.9959,
+          "native_voxels": 154882
+        },
+        "pancreas": {
+          "mass_native_g": 109.06,
+          "mass_2p5mm_g": 108.99,
+          "ratio_2p5_over_native": 0.9993,
+          "native_voxels": 65148
+        },
+        "stomach": {
+          "mass_native_g": 303.76,
+          "mass_2p5mm_g": 302.5,
+          "ratio_2p5_over_native": 0.9958,
+          "native_voxels": 201125
+        },
+        "gallbladder": {
+          "mass_native_g": 10.88,
+          "mass_2p5mm_g": 10.89,
+          "ratio_2p5_over_native": 1.0005,
+          "native_voxels": 6780
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.22,
+          "mass_2p5mm_g": 3.22,
+          "ratio_2p5_over_native": 0.9995,
+          "native_voxels": 1967
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.21,
+          "mass_2p5mm_g": 3.1,
+          "ratio_2p5_over_native": 0.9645,
+          "native_voxels": 1966
+        },
+        "small_bowel": {
+          "mass_native_g": 1639.18,
+          "mass_2p5mm_g": 1632.63,
+          "ratio_2p5_over_native": 0.996,
+          "native_voxels": 945489
+        },
+        "colon": {
+          "mass_native_g": 1037.02,
+          "mass_2p5mm_g": 1033.5,
+          "ratio_2p5_over_native": 0.9966,
+          "native_voxels": 730055
+        },
+        "urinary_bladder": {
+          "mass_native_g": 195.36,
+          "mass_2p5mm_g": 194.36,
+          "ratio_2p5_over_native": 0.9949,
+          "native_voxels": 122925
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.126451157075786057396180437022526798077",
+      "voxel_spacing_mm_zyx": [
+        0.625,
+        0.9766,
+        0.9766
+      ],
+      "native_shape_zyx": [
+        337,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        84,
+        200,
+        200
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2223.24,
+          "mass_2p5mm_g": 2183.4,
+          "ratio_2p5_over_native": 0.9821,
+          "native_voxels": 3553802
+        },
+        "spleen": {
+          "mass_native_g": 375.54,
+          "mass_2p5mm_g": 367.54,
+          "ratio_2p5_over_native": 0.9787,
+          "native_voxels": 604283
+        },
+        "kidney_left": {
+          "mass_native_g": 178.81,
+          "mass_2p5mm_g": 176.89,
+          "ratio_2p5_over_native": 0.9893,
+          "native_voxels": 290586
+        },
+        "kidney_right": {
+          "mass_native_g": 145.4,
+          "mass_2p5mm_g": 144.28,
+          "ratio_2p5_over_native": 0.9923,
+          "native_voxels": 235875
+        },
+        "pancreas": {
+          "mass_native_g": 72.28,
+          "mass_2p5mm_g": 70.17,
+          "ratio_2p5_over_native": 0.9709,
+          "native_voxels": 118190
+        },
+        "stomach": {
+          "mass_native_g": 183.34,
+          "mass_2p5mm_g": 180.62,
+          "ratio_2p5_over_native": 0.9851,
+          "native_voxels": 339100
+        },
+        "gallbladder": {
+          "mass_native_g": 43.22,
+          "mass_2p5mm_g": 42.86,
+          "ratio_2p5_over_native": 0.9917,
+          "native_voxels": 71267
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.65,
+          "mass_2p5mm_g": 4.37,
+          "ratio_2p5_over_native": 0.9399,
+          "native_voxels": 7735
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 4.32,
+          "mass_2p5mm_g": 4.45,
+          "ratio_2p5_over_native": 1.0297,
+          "native_voxels": 7209
+        },
+        "small_bowel": {
+          "mass_native_g": 126.63,
+          "mass_2p5mm_g": 127.4,
+          "ratio_2p5_over_native": 1.0061,
+          "native_voxels": 208840
+        },
+        "colon": {
+          "mass_native_g": 264.74,
+          "mass_2p5mm_g": 263.85,
+          "ratio_2p5_over_native": 0.9966,
+          "native_voxels": 505023
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.14850002370218603822287426909654457044",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.7754,
+        0.7754
+      ],
+      "native_shape_zyx": [
+        201,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        201,
+        159,
+        159
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1653.89,
+          "mass_2p5mm_g": 1644.3,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 1031169
+        },
+        "spleen": {
+          "mass_native_g": 90.34,
+          "mass_2p5mm_g": 89.67,
+          "ratio_2p5_over_native": 0.9926,
+          "native_voxels": 56191
+        },
+        "kidney_left": {
+          "mass_native_g": 158.48,
+          "mass_2p5mm_g": 156.86,
+          "ratio_2p5_over_native": 0.9898,
+          "native_voxels": 94853
+        },
+        "kidney_right": {
+          "mass_native_g": 144.9,
+          "mass_2p5mm_g": 144.09,
+          "ratio_2p5_over_native": 0.9944,
+          "native_voxels": 86984
+        },
+        "pancreas": {
+          "mass_native_g": 88.66,
+          "mass_2p5mm_g": 88.17,
+          "ratio_2p5_over_native": 0.9945,
+          "native_voxels": 57118
+        },
+        "stomach": {
+          "mass_native_g": 383.1,
+          "mass_2p5mm_g": 380.41,
+          "ratio_2p5_over_native": 0.993,
+          "native_voxels": 244490
+        },
+        "gallbladder": {
+          "mass_native_g": 9.2,
+          "mass_2p5mm_g": 8.97,
+          "ratio_2p5_over_native": 0.9754,
+          "native_voxels": 5901
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 5.51,
+          "mass_2p5mm_g": 5.47,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 3513
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 4.34,
+          "mass_2p5mm_g": 4.3,
+          "ratio_2p5_over_native": 0.9915,
+          "native_voxels": 2778
+        },
+        "small_bowel": {
+          "mass_native_g": 1484.53,
+          "mass_2p5mm_g": 1475.84,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 934245
+        },
+        "colon": {
+          "mass_native_g": 696.29,
+          "mass_2p5mm_g": 691.77,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 534449
+        },
+        "urinary_bladder": {
+          "mass_native_g": 160.81,
+          "mass_2p5mm_g": 159.95,
+          "ratio_2p5_over_native": 0.9946,
+          "native_voxels": 81089
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.110412737079958828416643878868827236377",
+      "voxel_spacing_mm_zyx": [
+        1.25,
+        0.7324,
+        0.7324
+      ],
+      "native_shape_zyx": [
+        321,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        160,
+        150,
+        150
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 992.31,
+          "mass_2p5mm_g": 977.69,
+          "ratio_2p5_over_native": 0.9853,
+          "native_voxels": 1351806
+        },
+        "spleen": {
+          "mass_native_g": 71.42,
+          "mass_2p5mm_g": 70.19,
+          "ratio_2p5_over_native": 0.9828,
+          "native_voxels": 97057
+        },
+        "kidney_left": {
+          "mass_native_g": 102.66,
+          "mass_2p5mm_g": 101.0,
+          "ratio_2p5_over_native": 0.9838,
+          "native_voxels": 131795
+        },
+        "kidney_right": {
+          "mass_native_g": 104.0,
+          "mass_2p5mm_g": 102.09,
+          "ratio_2p5_over_native": 0.9816,
+          "native_voxels": 132711
+        },
+        "pancreas": {
+          "mass_native_g": 59.86,
+          "mass_2p5mm_g": 59.3,
+          "ratio_2p5_over_native": 0.9906,
+          "native_voxels": 82196
+        },
+        "stomach": {
+          "mass_native_g": 101.68,
+          "mass_2p5mm_g": 100.13,
+          "ratio_2p5_over_native": 0.9848,
+          "native_voxels": 152892
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.06,
+          "mass_2p5mm_g": 2.98,
+          "ratio_2p5_over_native": 0.9727,
+          "native_voxels": 4284
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 1.9,
+          "mass_2p5mm_g": 1.78,
+          "ratio_2p5_over_native": 0.9391,
+          "native_voxels": 2666
+        },
+        "small_bowel": {
+          "mass_native_g": 475.24,
+          "mass_2p5mm_g": 467.23,
+          "ratio_2p5_over_native": 0.9831,
+          "native_voxels": 637871
+        },
+        "colon": {
+          "mass_native_g": 403.49,
+          "mass_2p5mm_g": 398.83,
+          "ratio_2p5_over_native": 0.9884,
+          "native_voxels": 825375
+        },
+        "urinary_bladder": {
+          "mass_native_g": 17.53,
+          "mass_2p5mm_g": 17.14,
+          "ratio_2p5_over_native": 0.9777,
+          "native_voxels": 25083
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.190738758608436907826741043480210378147",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.7656,
+        0.7656
+      ],
+      "native_shape_zyx": [
+        200,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        200,
+        157,
+        157
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2252.35,
+          "mass_2p5mm_g": 2237.9,
+          "ratio_2p5_over_native": 0.9936,
+          "native_voxels": 1467848
+        },
+        "spleen": {
+          "mass_native_g": 211.32,
+          "mass_2p5mm_g": 210.2,
+          "ratio_2p5_over_native": 0.9947,
+          "native_voxels": 138165
+        },
+        "kidney_left": {
+          "mass_native_g": 159.69,
+          "mass_2p5mm_g": 158.82,
+          "ratio_2p5_over_native": 0.9946,
+          "native_voxels": 103734
+        },
+        "kidney_right": {
+          "mass_native_g": 168.11,
+          "mass_2p5mm_g": 166.67,
+          "ratio_2p5_over_native": 0.9914,
+          "native_voxels": 109016
+        },
+        "pancreas": {
+          "mass_native_g": 91.08,
+          "mass_2p5mm_g": 90.62,
+          "ratio_2p5_over_native": 0.9949,
+          "native_voxels": 59953
+        },
+        "stomach": {
+          "mass_native_g": 331.17,
+          "mass_2p5mm_g": 328.89,
+          "ratio_2p5_over_native": 0.9931,
+          "native_voxels": 235906
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 9.7,
+          "mass_2p5mm_g": 9.6,
+          "ratio_2p5_over_native": 0.9897,
+          "native_voxels": 6452
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 7.44,
+          "mass_2p5mm_g": 7.51,
+          "ratio_2p5_over_native": 1.0098,
+          "native_voxels": 4960
+        },
+        "small_bowel": {
+          "mass_native_g": 1635.69,
+          "mass_2p5mm_g": 1625.9,
+          "ratio_2p5_over_native": 0.994,
+          "native_voxels": 1272579
+        },
+        "colon": {
+          "mass_native_g": 570.17,
+          "mass_2p5mm_g": 567.81,
+          "ratio_2p5_over_native": 0.9959,
+          "native_voxels": 647189
+        },
+        "urinary_bladder": {
+          "mass_native_g": 125.96,
+          "mass_2p5mm_g": 125.4,
+          "ratio_2p5_over_native": 0.9955,
+          "native_voxels": 61345
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.126887613559064617057929801994",
+      "voxel_spacing_mm_zyx": [
+        1.25,
+        0.8633,
+        0.8633
+      ],
+      "native_shape_zyx": [
+        513,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        256,
+        177,
+        177
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1678.68,
+          "mass_2p5mm_g": 1664.43,
+          "ratio_2p5_over_native": 0.9915,
+          "native_voxels": 1713518
+        },
+        "spleen": {
+          "mass_native_g": 350.59,
+          "mass_2p5mm_g": 347.39,
+          "ratio_2p5_over_native": 0.9909,
+          "native_voxels": 357903
+        },
+        "kidney_left": {
+          "mass_native_g": 127.82,
+          "mass_2p5mm_g": 126.25,
+          "ratio_2p5_over_native": 0.9877,
+          "native_voxels": 131053
+        },
+        "kidney_right": {
+          "mass_native_g": 137.69,
+          "mass_2p5mm_g": 135.25,
+          "ratio_2p5_over_native": 0.9823,
+          "native_voxels": 140404
+        },
+        "pancreas": {
+          "mass_native_g": 83.68,
+          "mass_2p5mm_g": 83.13,
+          "ratio_2p5_over_native": 0.9934,
+          "native_voxels": 86470
+        },
+        "stomach": {
+          "mass_native_g": 207.24,
+          "mass_2p5mm_g": 206.62,
+          "ratio_2p5_over_native": 0.997,
+          "native_voxels": 230366
+        },
+        "gallbladder": {
+          "mass_native_g": 19.17,
+          "mass_2p5mm_g": 18.94,
+          "ratio_2p5_over_native": 0.9882,
+          "native_voxels": 20145
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 6.9,
+          "mass_2p5mm_g": 6.76,
+          "ratio_2p5_over_native": 0.9805,
+          "native_voxels": 7355
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 4.11,
+          "mass_2p5mm_g": 3.98,
+          "ratio_2p5_over_native": 0.9683,
+          "native_voxels": 4365
+        },
+        "small_bowel": {
+          "mass_native_g": 1019.32,
+          "mass_2p5mm_g": 1009.12,
+          "ratio_2p5_over_native": 0.99,
+          "native_voxels": 1212121
+        },
+        "colon": {
+          "mass_native_g": 712.91,
+          "mass_2p5mm_g": 704.29,
+          "ratio_2p5_over_native": 0.9879,
+          "native_voxels": 969108
+        },
+        "urinary_bladder": {
+          "mass_native_g": 172.42,
+          "mass_2p5mm_g": 170.87,
+          "ratio_2p5_over_native": 0.991,
+          "native_voxels": 179337
+        }
+      },
+      "vendor": "GE"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.169260120790039889716250759344671861678",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.8281,
+        0.8281
+      ],
+      "native_shape_zyx": [
+        140,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        112,
+        170,
+        170
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 3244.37,
+          "mass_2p5mm_g": 3227.18,
+          "ratio_2p5_over_native": 0.9947,
+          "native_voxels": 2268751
+        },
+        "spleen": {
+          "mass_native_g": 172.9,
+          "mass_2p5mm_g": 172.11,
+          "ratio_2p5_over_native": 0.9954,
+          "native_voxels": 122754
+        },
+        "kidney_left": {
+          "mass_native_g": 232.67,
+          "mass_2p5mm_g": 230.84,
+          "ratio_2p5_over_native": 0.9922,
+          "native_voxels": 165753
+        },
+        "kidney_right": {
+          "mass_native_g": 243.67,
+          "mass_2p5mm_g": 242.25,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 172531
+        },
+        "pancreas": {
+          "mass_native_g": 82.38,
+          "mass_2p5mm_g": 81.83,
+          "ratio_2p5_over_native": 0.9933,
+          "native_voxels": 58107
+        },
+        "stomach": {
+          "mass_native_g": 299.56,
+          "mass_2p5mm_g": 298.01,
+          "ratio_2p5_over_native": 0.9948,
+          "native_voxels": 265896
+        },
+        "gallbladder": {
+          "mass_native_g": 40.52,
+          "mass_2p5mm_g": 40.44,
+          "ratio_2p5_over_native": 0.998,
+          "native_voxels": 28895
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 6.6,
+          "mass_2p5mm_g": 6.39,
+          "ratio_2p5_over_native": 0.9686,
+          "native_voxels": 4753
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 0.76,
+          "mass_2p5mm_g": 0.79,
+          "ratio_2p5_over_native": 1.0447,
+          "native_voxels": 542
+        },
+        "small_bowel": {
+          "mass_native_g": 1041.35,
+          "mass_2p5mm_g": 1038.36,
+          "ratio_2p5_over_native": 0.9971,
+          "native_voxels": 769513
+        },
+        "colon": {
+          "mass_native_g": 587.43,
+          "mass_2p5mm_g": 583.61,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 499536
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.492444591845205280171152909620",
+      "voxel_spacing_mm_zyx": [
+        5.0,
+        0.7812,
+        0.7812
+      ],
+      "native_shape_zyx": [
+        90,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        180,
+        160,
+        160
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2269.74,
+          "mass_2p5mm_g": 2258.78,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 702907
+        },
+        "spleen": {
+          "mass_native_g": 247.51,
+          "mass_2p5mm_g": 245.77,
+          "ratio_2p5_over_native": 0.993,
+          "native_voxels": 76942
+        },
+        "kidney_left": {
+          "mass_native_g": 298.13,
+          "mass_2p5mm_g": 297.42,
+          "ratio_2p5_over_native": 0.9976,
+          "native_voxels": 91946
+        },
+        "kidney_right": {
+          "mass_native_g": 221.68,
+          "mass_2p5mm_g": 221.67,
+          "ratio_2p5_over_native": 1.0,
+          "native_voxels": 69561
+        },
+        "pancreas": {
+          "mass_native_g": 86.03,
+          "mass_2p5mm_g": 85.57,
+          "ratio_2p5_over_native": 0.9946,
+          "native_voxels": 26774
+        },
+        "stomach": {
+          "mass_native_g": 326.27,
+          "mass_2p5mm_g": 325.37,
+          "ratio_2p5_over_native": 0.9972,
+          "native_voxels": 128012
+        },
+        "gallbladder": {
+          "mass_native_g": 26.79,
+          "mass_2p5mm_g": 26.57,
+          "ratio_2p5_over_native": 0.9915,
+          "native_voxels": 8542
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 8.15,
+          "mass_2p5mm_g": 8.27,
+          "ratio_2p5_over_native": 1.0155,
+          "native_voxels": 2566
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 5.43,
+          "mass_2p5mm_g": 5.51,
+          "ratio_2p5_over_native": 1.0147,
+          "native_voxels": 1719
+        },
+        "small_bowel": {
+          "mass_native_g": 1289.14,
+          "mass_2p5mm_g": 1281.24,
+          "ratio_2p5_over_native": 0.9939,
+          "native_voxels": 418189
+        },
+        "colon": {
+          "mass_native_g": 642.82,
+          "mass_2p5mm_g": 642.12,
+          "ratio_2p5_over_native": 0.9989,
+          "native_voxels": 231955
+        },
+        "urinary_bladder": {
+          "mass_native_g": 659.17,
+          "mass_2p5mm_g": 656.26,
+          "ratio_2p5_over_native": 0.9956,
+          "native_voxels": 209875
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.130269400384835727617577152120460443053",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.9766,
+        0.9766
+      ],
+      "native_shape_zyx": [
+        334,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        267,
+        200,
+        200
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1859.46,
+          "mass_2p5mm_g": 1843.7,
+          "ratio_2p5_over_native": 0.9915,
+          "native_voxels": 934707
+        },
+        "spleen": {
+          "mass_native_g": 174.34,
+          "mass_2p5mm_g": 172.78,
+          "ratio_2p5_over_native": 0.991,
+          "native_voxels": 87968
+        },
+        "kidney_left": {
+          "mass_native_g": 166.85,
+          "mass_2p5mm_g": 164.51,
+          "ratio_2p5_over_native": 0.986,
+          "native_voxels": 84528
+        },
+        "kidney_right": {
+          "mass_native_g": 138.16,
+          "mass_2p5mm_g": 137.08,
+          "ratio_2p5_over_native": 0.9922,
+          "native_voxels": 70288
+        },
+        "pancreas": {
+          "mass_native_g": 81.11,
+          "mass_2p5mm_g": 79.83,
+          "ratio_2p5_over_native": 0.9842,
+          "native_voxels": 41073
+        },
+        "stomach": {
+          "mass_native_g": 219.59,
+          "mass_2p5mm_g": 217.95,
+          "ratio_2p5_over_native": 0.9926,
+          "native_voxels": 128258
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 5.08,
+          "mass_2p5mm_g": 5.28,
+          "ratio_2p5_over_native": 1.04,
+          "native_voxels": 2624
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 2.08,
+          "mass_2p5mm_g": 1.98,
+          "ratio_2p5_over_native": 0.9513,
+          "native_voxels": 1072
+        },
+        "small_bowel": {
+          "mass_native_g": 1178.07,
+          "mass_2p5mm_g": 1164.09,
+          "ratio_2p5_over_native": 0.9881,
+          "native_voxels": 568014
+        },
+        "colon": {
+          "mass_native_g": 530.22,
+          "mass_2p5mm_g": 530.94,
+          "ratio_2p5_over_native": 1.0013,
+          "native_voxels": 440856
+        },
+        "urinary_bladder": {
+          "mass_native_g": 344.53,
+          "mass_2p5mm_g": 341.29,
+          "ratio_2p5_over_native": 0.9906,
+          "native_voxels": 173803
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.117047503231020830753317635065264697398",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.6602,
+        0.6602
+      ],
+      "native_shape_zyx": [
+        285,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        228,
+        135,
+        135
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1278.57,
+          "mass_2p5mm_g": 1260.51,
+          "ratio_2p5_over_native": 0.9859,
+          "native_voxels": 1325195
+        },
+        "spleen": {
+          "mass_native_g": 124.91,
+          "mass_2p5mm_g": 123.38,
+          "ratio_2p5_over_native": 0.9878,
+          "native_voxels": 128666
+        },
+        "kidney_left": {
+          "mass_native_g": 125.74,
+          "mass_2p5mm_g": 123.53,
+          "ratio_2p5_over_native": 0.9824,
+          "native_voxels": 125882
+        },
+        "kidney_right": {
+          "mass_native_g": 127.86,
+          "mass_2p5mm_g": 125.43,
+          "ratio_2p5_over_native": 0.981,
+          "native_voxels": 127337
+        },
+        "pancreas": {
+          "mass_native_g": 54.22,
+          "mass_2p5mm_g": 52.95,
+          "ratio_2p5_over_native": 0.9766,
+          "native_voxels": 56838
+        },
+        "stomach": {
+          "mass_native_g": 292.2,
+          "mass_2p5mm_g": 288.28,
+          "ratio_2p5_over_native": 0.9866,
+          "native_voxels": 395517
+        },
+        "gallbladder": {
+          "mass_native_g": 9.34,
+          "mass_2p5mm_g": 9.34,
+          "ratio_2p5_over_native": 0.9999,
+          "native_voxels": 10160
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.07,
+          "mass_2p5mm_g": 3.17,
+          "ratio_2p5_over_native": 1.032,
+          "native_voxels": 3287
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 2.27,
+          "mass_2p5mm_g": 2.26,
+          "ratio_2p5_over_native": 0.9965,
+          "native_voxels": 2426
+        },
+        "small_bowel": {
+          "mass_native_g": 913.9,
+          "mass_2p5mm_g": 897.32,
+          "ratio_2p5_over_native": 0.9819,
+          "native_voxels": 923702
+        },
+        "colon": {
+          "mass_native_g": 560.52,
+          "mass_2p5mm_g": 553.66,
+          "ratio_2p5_over_native": 0.9878,
+          "native_voxels": 768267
+        },
+        "urinary_bladder": {
+          "mass_native_g": 245.42,
+          "mass_2p5mm_g": 241.42,
+          "ratio_2p5_over_native": 0.9837,
+          "native_voxels": 275361
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.139028541272282999207461674394024845879",
+      "voxel_spacing_mm_zyx": [
+        3.0,
+        0.8809,
+        0.8809
+      ],
+      "native_shape_zyx": [
+        162,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        194,
+        180,
+        180
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2236.57,
+          "mass_2p5mm_g": 2207.59,
+          "ratio_2p5_over_native": 0.987,
+          "native_voxels": 909254
+        },
+        "spleen": {
+          "mass_native_g": 287.97,
+          "mass_2p5mm_g": 283.52,
+          "ratio_2p5_over_native": 0.9845,
+          "native_voxels": 114900
+        },
+        "kidney_left": {
+          "mass_native_g": 204.12,
+          "mass_2p5mm_g": 200.44,
+          "ratio_2p5_over_native": 0.982,
+          "native_voxels": 81504
+        },
+        "kidney_right": {
+          "mass_native_g": 232.28,
+          "mass_2p5mm_g": 228.48,
+          "ratio_2p5_over_native": 0.9836,
+          "native_voxels": 92794
+        },
+        "pancreas": {
+          "mass_native_g": 48.35,
+          "mass_2p5mm_g": 47.69,
+          "ratio_2p5_over_native": 0.9862,
+          "native_voxels": 20007
+        },
+        "stomach": {
+          "mass_native_g": 485.91,
+          "mass_2p5mm_g": 480.93,
+          "ratio_2p5_over_native": 0.9898,
+          "native_voxels": 398478
+        },
+        "gallbladder": {
+          "mass_native_g": 5.93,
+          "mass_2p5mm_g": 5.89,
+          "ratio_2p5_over_native": 0.9933,
+          "native_voxels": 2476
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 10.78,
+          "mass_2p5mm_g": 10.48,
+          "ratio_2p5_over_native": 0.9722,
+          "native_voxels": 4422
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 6.51,
+          "mass_2p5mm_g": 6.51,
+          "ratio_2p5_over_native": 1.0014,
+          "native_voxels": 2707
+        },
+        "small_bowel": {
+          "mass_native_g": 1216.74,
+          "mass_2p5mm_g": 1202.54,
+          "ratio_2p5_over_native": 0.9883,
+          "native_voxels": 559703
+        },
+        "colon": {
+          "mass_native_g": 1096.08,
+          "mass_2p5mm_g": 1086.83,
+          "ratio_2p5_over_native": 0.9916,
+          "native_voxels": 714890
+        },
+        "urinary_bladder": {
+          "mass_native_g": 154.32,
+          "mass_2p5mm_g": 151.65,
+          "ratio_2p5_over_native": 0.9827,
+          "native_voxels": 64503
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.12144631656438139661502631773455627610",
+      "voxel_spacing_mm_zyx": [
+        3.0,
+        0.9258,
+        0.9258
+      ],
+      "native_shape_zyx": [
+        41,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        49,
+        190,
+        190
+      ],
+      "organs": {
+        "kidney_right": {
+          "mass_native_g": 0.37,
+          "mass_2p5mm_g": 0.36,
+          "ratio_2p5_over_native": 0.9564,
+          "native_voxels": 144
+        },
+        "small_bowel": {
+          "mass_native_g": 337.62,
+          "mass_2p5mm_g": 334.56,
+          "ratio_2p5_over_native": 0.9909,
+          "native_voxels": 137718
+        },
+        "colon": {
+          "mass_native_g": 391.69,
+          "mass_2p5mm_g": 395.53,
+          "ratio_2p5_over_native": 1.0098,
+          "native_voxels": 205790
+        },
+        "urinary_bladder": {
+          "mass_native_g": 75.1,
+          "mass_2p5mm_g": 73.05,
+          "ratio_2p5_over_native": 0.9728,
+          "native_voxels": 28663
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.124862978740839397384301699389733909446",
+      "voxel_spacing_mm_zyx": [
+        3.0,
+        0.8203,
+        0.8203
+      ],
+      "native_shape_zyx": [
+        164,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        197,
+        168,
+        168
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1566.07,
+          "mass_2p5mm_g": 1556.0,
+          "ratio_2p5_over_native": 0.9936,
+          "native_voxels": 744850
+        },
+        "spleen": {
+          "mass_native_g": 197.33,
+          "mass_2p5mm_g": 195.91,
+          "ratio_2p5_over_native": 0.9928,
+          "native_voxels": 94431
+        },
+        "kidney_left": {
+          "mass_native_g": 227.07,
+          "mass_2p5mm_g": 225.49,
+          "ratio_2p5_over_native": 0.9931,
+          "native_voxels": 109688
+        },
+        "kidney_right": {
+          "mass_native_g": 178.89,
+          "mass_2p5mm_g": 177.97,
+          "ratio_2p5_over_native": 0.9949,
+          "native_voxels": 86134
+        },
+        "pancreas": {
+          "mass_native_g": 96.13,
+          "mass_2p5mm_g": 95.93,
+          "ratio_2p5_over_native": 0.9979,
+          "native_voxels": 46008
+        },
+        "stomach": {
+          "mass_native_g": 265.6,
+          "mass_2p5mm_g": 263.51,
+          "ratio_2p5_over_native": 0.9921,
+          "native_voxels": 149969
+        },
+        "gallbladder": {
+          "mass_native_g": 0.84,
+          "mass_2p5mm_g": 0.81,
+          "ratio_2p5_over_native": 0.9651,
+          "native_voxels": 406
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.97,
+          "mass_2p5mm_g": 4.95,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 2424
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.57,
+          "mass_2p5mm_g": 3.34,
+          "ratio_2p5_over_native": 0.9381,
+          "native_voxels": 1743
+        },
+        "small_bowel": {
+          "mass_native_g": 914.36,
+          "mass_2p5mm_g": 909.67,
+          "ratio_2p5_over_native": 0.9949,
+          "native_voxels": 447883
+        },
+        "colon": {
+          "mass_native_g": 462.75,
+          "mass_2p5mm_g": 459.74,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 234743
+        },
+        "urinary_bladder": {
+          "mass_native_g": 285.89,
+          "mass_2p5mm_g": 283.78,
+          "ratio_2p5_over_native": 0.9926,
+          "native_voxels": 139484
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.120283006789263156233439135960658945231",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.8887,
+        0.8887
+      ],
+      "native_shape_zyx": [
+        267,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        214,
+        182,
+        182
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1999.14,
+          "mass_2p5mm_g": 1984.93,
+          "ratio_2p5_over_native": 0.9929,
+          "native_voxels": 1180011
+        },
+        "spleen": {
+          "mass_native_g": 282.25,
+          "mass_2p5mm_g": 278.91,
+          "ratio_2p5_over_native": 0.9881,
+          "native_voxels": 168828
+        },
+        "kidney_left": {
+          "mass_native_g": 173.39,
+          "mass_2p5mm_g": 172.1,
+          "ratio_2p5_over_native": 0.9926,
+          "native_voxels": 103178
+        },
+        "kidney_right": {
+          "mass_native_g": 191.72,
+          "mass_2p5mm_g": 190.14,
+          "ratio_2p5_over_native": 0.9917,
+          "native_voxels": 113563
+        },
+        "pancreas": {
+          "mass_native_g": 65.67,
+          "mass_2p5mm_g": 64.73,
+          "ratio_2p5_over_native": 0.9857,
+          "native_voxels": 40011
+        },
+        "stomach": {
+          "mass_native_g": 225.59,
+          "mass_2p5mm_g": 224.74,
+          "ratio_2p5_over_native": 0.9962,
+          "native_voxels": 142339
+        },
+        "gallbladder": {
+          "mass_native_g": 48.72,
+          "mass_2p5mm_g": 48.42,
+          "ratio_2p5_over_native": 0.9939,
+          "native_voxels": 30118
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 5.69,
+          "mass_2p5mm_g": 5.77,
+          "ratio_2p5_over_native": 1.0129,
+          "native_voxels": 3492
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 4.04,
+          "mass_2p5mm_g": 4.0,
+          "ratio_2p5_over_native": 0.9893,
+          "native_voxels": 2476
+        },
+        "small_bowel": {
+          "mass_native_g": 1865.73,
+          "mass_2p5mm_g": 1856.74,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 1133543
+        },
+        "colon": {
+          "mass_native_g": 585.77,
+          "mass_2p5mm_g": 583.26,
+          "ratio_2p5_over_native": 0.9957,
+          "native_voxels": 445419
+        },
+        "urinary_bladder": {
+          "mass_native_g": 241.33,
+          "mass_2p5mm_g": 239.74,
+          "ratio_2p5_over_native": 0.9934,
+          "native_voxels": 148060
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.99.1071.24503530203089772620259137946948",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.9766,
+        0.9766
+      ],
+      "native_shape_zyx": [
+        435,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        348,
+        200,
+        200
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1216.03,
+          "mass_2p5mm_g": 1205.25,
+          "ratio_2p5_over_native": 0.9911,
+          "native_voxels": 609423
+        },
+        "spleen": {
+          "mass_native_g": 263.24,
+          "mass_2p5mm_g": 261.1,
+          "ratio_2p5_over_native": 0.9919,
+          "native_voxels": 132420
+        },
+        "kidney_left": {
+          "mass_native_g": 129.66,
+          "mass_2p5mm_g": 129.05,
+          "ratio_2p5_over_native": 0.9953,
+          "native_voxels": 65934
+        },
+        "kidney_right": {
+          "mass_native_g": 135.12,
+          "mass_2p5mm_g": 133.27,
+          "ratio_2p5_over_native": 0.9863,
+          "native_voxels": 68650
+        },
+        "pancreas": {
+          "mass_native_g": 48.94,
+          "mass_2p5mm_g": 48.42,
+          "ratio_2p5_over_native": 0.9895,
+          "native_voxels": 24783
+        },
+        "stomach": {
+          "mass_native_g": 162.61,
+          "mass_2p5mm_g": 160.16,
+          "ratio_2p5_over_native": 0.9849,
+          "native_voxels": 82698
+        },
+        "gallbladder": {
+          "mass_native_g": 30.44,
+          "mass_2p5mm_g": 30.64,
+          "ratio_2p5_over_native": 1.0064,
+          "native_voxels": 15586
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 2.91,
+          "mass_2p5mm_g": 2.98,
+          "ratio_2p5_over_native": 1.0222,
+          "native_voxels": 1502
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 4.59,
+          "mass_2p5mm_g": 4.59,
+          "ratio_2p5_over_native": 1.0,
+          "native_voxels": 2369
+        },
+        "small_bowel": {
+          "mass_native_g": 754.92,
+          "mass_2p5mm_g": 751.62,
+          "ratio_2p5_over_native": 0.9956,
+          "native_voxels": 418968
+        },
+        "colon": {
+          "mass_native_g": 659.94,
+          "mass_2p5mm_g": 656.07,
+          "ratio_2p5_over_native": 0.9941,
+          "native_voxels": 444665
+        },
+        "urinary_bladder": {
+          "mass_native_g": 79.83,
+          "mass_2p5mm_g": 78.77,
+          "ratio_2p5_over_native": 0.9867,
+          "native_voxels": 40733
+        }
+      },
+      "vendor": "Siemens"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.12026969269299422966770921088977968852",
+      "voxel_spacing_mm_zyx": [
+        5.0,
+        0.782,
+        0.782
+      ],
+      "native_shape_zyx": [
+        88,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        176,
+        160,
+        160
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1113.58,
+          "mass_2p5mm_g": 1105.74,
+          "ratio_2p5_over_native": 0.993,
+          "native_voxels": 341683
+        },
+        "spleen": {
+          "mass_native_g": 212.86,
+          "mass_2p5mm_g": 211.88,
+          "ratio_2p5_over_native": 0.9954,
+          "native_voxels": 65219
+        },
+        "kidney_left": {
+          "mass_native_g": 106.96,
+          "mass_2p5mm_g": 105.75,
+          "ratio_2p5_over_native": 0.9887,
+          "native_voxels": 32627
+        },
+        "kidney_right": {
+          "mass_native_g": 118.44,
+          "mass_2p5mm_g": 117.19,
+          "ratio_2p5_over_native": 0.9895,
+          "native_voxels": 36153
+        },
+        "pancreas": {
+          "mass_native_g": 25.4,
+          "mass_2p5mm_g": 25.22,
+          "ratio_2p5_over_native": 0.9929,
+          "native_voxels": 7959
+        },
+        "stomach": {
+          "mass_native_g": 636.94,
+          "mass_2p5mm_g": 633.13,
+          "ratio_2p5_over_native": 0.994,
+          "native_voxels": 206188
+        },
+        "gallbladder": {
+          "mass_native_g": 4.06,
+          "mass_2p5mm_g": 4.07,
+          "ratio_2p5_over_native": 1.0029,
+          "native_voxels": 1282
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.21,
+          "mass_2p5mm_g": 3.12,
+          "ratio_2p5_over_native": 0.973,
+          "native_voxels": 1011
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 2.72,
+          "mass_2p5mm_g": 2.75,
+          "ratio_2p5_over_native": 1.0096,
+          "native_voxels": 860
+        },
+        "small_bowel": {
+          "mass_native_g": 617.53,
+          "mass_2p5mm_g": 613.04,
+          "ratio_2p5_over_native": 0.9927,
+          "native_voxels": 192524
+        },
+        "colon": {
+          "mass_native_g": 512.6,
+          "mass_2p5mm_g": 511.43,
+          "ratio_2p5_over_native": 0.9977,
+          "native_voxels": 205822
+        },
+        "urinary_bladder": {
+          "mass_native_g": 170.77,
+          "mass_2p5mm_g": 170.05,
+          "ratio_2p5_over_native": 0.9958,
+          "native_voxels": 54631
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.29343766386826411185462290976788394151",
+      "voxel_spacing_mm_zyx": [
+        3.0,
+        0.729,
+        0.729
+      ],
+      "native_shape_zyx": [
+        148,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        178,
+        149,
+        149
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2241.44,
+          "mass_2p5mm_g": 2219.99,
+          "ratio_2p5_over_native": 0.9904,
+          "native_voxels": 1344368
+        },
+        "spleen": {
+          "mass_native_g": 351.3,
+          "mass_2p5mm_g": 347.07,
+          "ratio_2p5_over_native": 0.9879,
+          "native_voxels": 212559
+        },
+        "kidney_left": {
+          "mass_native_g": 100.96,
+          "mass_2p5mm_g": 100.75,
+          "ratio_2p5_over_native": 0.9979,
+          "native_voxels": 61292
+        },
+        "kidney_right": {
+          "mass_native_g": 137.79,
+          "mass_2p5mm_g": 137.05,
+          "ratio_2p5_over_native": 0.9947,
+          "native_voxels": 83498
+        },
+        "pancreas": {
+          "mass_native_g": 102.86,
+          "mass_2p5mm_g": 101.8,
+          "ratio_2p5_over_native": 0.9897,
+          "native_voxels": 62123
+        },
+        "stomach": {
+          "mass_native_g": 192.27,
+          "mass_2p5mm_g": 190.1,
+          "ratio_2p5_over_native": 0.9888,
+          "native_voxels": 160833
+        },
+        "gallbladder": {
+          "mass_native_g": 44.45,
+          "mass_2p5mm_g": 44.02,
+          "ratio_2p5_over_native": 0.9904,
+          "native_voxels": 27259
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.0,
+          "mass_2p5mm_g": 4.0,
+          "ratio_2p5_over_native": 1.0004,
+          "native_voxels": 2464
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.24,
+          "mass_2p5mm_g": 3.15,
+          "ratio_2p5_over_native": 0.9712,
+          "native_voxels": 1989
+        },
+        "small_bowel": {
+          "mass_native_g": 636.22,
+          "mass_2p5mm_g": 629.9,
+          "ratio_2p5_over_native": 0.9901,
+          "native_voxels": 459226
+        },
+        "colon": {
+          "mass_native_g": 450.67,
+          "mass_2p5mm_g": 447.62,
+          "ratio_2p5_over_native": 0.9932,
+          "native_voxels": 373885
+        },
+        "urinary_bladder": {
+          "mass_native_g": 135.92,
+          "mass_2p5mm_g": 134.67,
+          "ratio_2p5_over_native": 0.9907,
+          "native_voxels": 83064
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.235815435552836713008925930681449087181",
+      "voxel_spacing_mm_zyx": [
+        2.0,
+        0.919,
+        0.919
+      ],
+      "native_shape_zyx": [
+        268,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        214,
+        188,
+        188
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1949.27,
+          "mass_2p5mm_g": 1926.99,
+          "ratio_2p5_over_native": 0.9886,
+          "native_voxels": 1083281
+        },
+        "spleen": {
+          "mass_native_g": 281.45,
+          "mass_2p5mm_g": 279.62,
+          "ratio_2p5_over_native": 0.9935,
+          "native_voxels": 153089
+        },
+        "kidney_left": {
+          "mass_native_g": 218.16,
+          "mass_2p5mm_g": 215.06,
+          "ratio_2p5_over_native": 0.9858,
+          "native_voxels": 117446
+        },
+        "kidney_right": {
+          "mass_native_g": 223.63,
+          "mass_2p5mm_g": 221.22,
+          "ratio_2p5_over_native": 0.9892,
+          "native_voxels": 120257
+        },
+        "pancreas": {
+          "mass_native_g": 86.41,
+          "mass_2p5mm_g": 85.89,
+          "ratio_2p5_over_native": 0.994,
+          "native_voxels": 47893
+        },
+        "stomach": {
+          "mass_native_g": 354.1,
+          "mass_2p5mm_g": 348.52,
+          "ratio_2p5_over_native": 0.9842,
+          "native_voxels": 212631
+        },
+        "gallbladder": {
+          "mass_native_g": 33.7,
+          "mass_2p5mm_g": 33.27,
+          "ratio_2p5_over_native": 0.9873,
+          "native_voxels": 19247
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.29,
+          "mass_2p5mm_g": 4.32,
+          "ratio_2p5_over_native": 1.0077,
+          "native_voxels": 2411
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.57,
+          "mass_2p5mm_g": 3.81,
+          "ratio_2p5_over_native": 1.0673,
+          "native_voxels": 2012
+        },
+        "small_bowel": {
+          "mass_native_g": 1651.04,
+          "mass_2p5mm_g": 1629.97,
+          "ratio_2p5_over_native": 0.9872,
+          "native_voxels": 937950
+        },
+        "colon": {
+          "mass_native_g": 1015.63,
+          "mass_2p5mm_g": 1001.18,
+          "ratio_2p5_over_native": 0.9858,
+          "native_voxels": 618135
+        },
+        "urinary_bladder": {
+          "mass_native_g": 227.54,
+          "mass_2p5mm_g": 224.96,
+          "ratio_2p5_over_native": 0.9887,
+          "native_voxels": 130930
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1.35060909971867492262237150543126705979",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.934,
+        0.934
+      ],
+      "native_shape_zyx": [
+        290,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        290,
+        191,
+        191
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 3981.49,
+          "mass_2p5mm_g": 3953.85,
+          "ratio_2p5_over_native": 0.9931,
+          "native_voxels": 1787213
+        },
+        "spleen": {
+          "mass_native_g": 403.94,
+          "mass_2p5mm_g": 394.95,
+          "ratio_2p5_over_native": 0.9778,
+          "native_voxels": 177720
+        },
+        "kidney_left": {
+          "mass_native_g": 223.09,
+          "mass_2p5mm_g": 219.2,
+          "ratio_2p5_over_native": 0.9826,
+          "native_voxels": 99389
+        },
+        "kidney_right": {
+          "mass_native_g": 228.22,
+          "mass_2p5mm_g": 225.95,
+          "ratio_2p5_over_native": 0.9901,
+          "native_voxels": 101672
+        },
+        "pancreas": {
+          "mass_native_g": 135.75,
+          "mass_2p5mm_g": 134.83,
+          "ratio_2p5_over_native": 0.9932,
+          "native_voxels": 60759
+        },
+        "stomach": {
+          "mass_native_g": 329.95,
+          "mass_2p5mm_g": 326.97,
+          "ratio_2p5_over_native": 0.991,
+          "native_voxels": 162629
+        },
+        "gallbladder": {
+          "mass_native_g": 26.12,
+          "mass_2p5mm_g": 25.55,
+          "ratio_2p5_over_native": 0.9782,
+          "native_voxels": 11770
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 6.94,
+          "mass_2p5mm_g": 6.92,
+          "ratio_2p5_over_native": 0.9977,
+          "native_voxels": 3175
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 6.54,
+          "mass_2p5mm_g": 6.31,
+          "ratio_2p5_over_native": 0.964,
+          "native_voxels": 3001
+        },
+        "small_bowel": {
+          "mass_native_g": 1690.59,
+          "mass_2p5mm_g": 1673.84,
+          "ratio_2p5_over_native": 0.9901,
+          "native_voxels": 781538
+        },
+        "colon": {
+          "mass_native_g": 798.28,
+          "mass_2p5mm_g": 789.4,
+          "ratio_2p5_over_native": 0.9889,
+          "native_voxels": 421698
+        },
+        "urinary_bladder": {
+          "mass_native_g": 152.8,
+          "mass_2p5mm_g": 152.08,
+          "ratio_2p5_over_native": 0.9953,
+          "native_voxels": 69212
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.1078.3273.178159594418154823809776931651",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.772,
+        0.772
+      ],
+      "native_shape_zyx": [
+        194,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        194,
+        158,
+        158
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2344.31,
+          "mass_2p5mm_g": 2319.8,
+          "ratio_2p5_over_native": 0.9895,
+          "native_voxels": 1471725
+        },
+        "spleen": {
+          "mass_native_g": 349.06,
+          "mass_2p5mm_g": 345.41,
+          "ratio_2p5_over_native": 0.9895,
+          "native_voxels": 219079
+        },
+        "kidney_left": {
+          "mass_native_g": 187.05,
+          "mass_2p5mm_g": 184.85,
+          "ratio_2p5_over_native": 0.9882,
+          "native_voxels": 115876
+        },
+        "kidney_right": {
+          "mass_native_g": 187.88,
+          "mass_2p5mm_g": 186.12,
+          "ratio_2p5_over_native": 0.9906,
+          "native_voxels": 116530
+        },
+        "pancreas": {
+          "mass_native_g": 62.28,
+          "mass_2p5mm_g": 61.56,
+          "ratio_2p5_over_native": 0.9885,
+          "native_voxels": 40014
+        },
+        "stomach": {
+          "mass_native_g": 699.85,
+          "mass_2p5mm_g": 692.72,
+          "ratio_2p5_over_native": 0.9898,
+          "native_voxels": 654709
+        },
+        "gallbladder": {
+          "mass_native_g": 101.4,
+          "mass_2p5mm_g": 100.38,
+          "ratio_2p5_over_native": 0.99,
+          "native_voxels": 66295
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 8.58,
+          "mass_2p5mm_g": 8.44,
+          "ratio_2p5_over_native": 0.9827,
+          "native_voxels": 5557
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 6.91,
+          "mass_2p5mm_g": 6.78,
+          "ratio_2p5_over_native": 0.9815,
+          "native_voxels": 4475
+        },
+        "small_bowel": {
+          "mass_native_g": 1310.87,
+          "mass_2p5mm_g": 1297.78,
+          "ratio_2p5_over_native": 0.99,
+          "native_voxels": 842405
+        },
+        "colon": {
+          "mass_native_g": 761.5,
+          "mass_2p5mm_g": 754.07,
+          "ratio_2p5_over_native": 0.9902,
+          "native_voxels": 587272
+        },
+        "urinary_bladder": {
+          "mass_native_g": 353.83,
+          "mass_2p5mm_g": 349.65,
+          "ratio_2p5_over_native": 0.9882,
+          "native_voxels": 231337
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2099.3754.178917260616042842392917847989",
+      "voxel_spacing_mm_zyx": [
+        0.8,
+        0.683,
+        0.683
+      ],
+      "native_shape_zyx": [
+        501,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        160,
+        140,
+        140
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1173.82,
+          "mass_2p5mm_g": 1156.0,
+          "ratio_2p5_over_native": 0.9848,
+          "native_voxels": 2941698
+        },
+        "spleen": {
+          "mass_native_g": 57.96,
+          "mass_2p5mm_g": 56.83,
+          "ratio_2p5_over_native": 0.9805,
+          "native_voxels": 137003
+        },
+        "kidney_left": {
+          "mass_native_g": 142.64,
+          "mass_2p5mm_g": 141.16,
+          "ratio_2p5_over_native": 0.9896,
+          "native_voxels": 343503
+        },
+        "kidney_right": {
+          "mass_native_g": 114.18,
+          "mass_2p5mm_g": 112.32,
+          "ratio_2p5_over_native": 0.9837,
+          "native_voxels": 276402
+        },
+        "pancreas": {
+          "mass_native_g": 62.54,
+          "mass_2p5mm_g": 61.38,
+          "ratio_2p5_over_native": 0.9814,
+          "native_voxels": 153707
+        },
+        "stomach": {
+          "mass_native_g": 231.47,
+          "mass_2p5mm_g": 227.57,
+          "ratio_2p5_over_native": 0.9832,
+          "native_voxels": 609997
+        },
+        "gallbladder": {
+          "mass_native_g": 24.32,
+          "mass_2p5mm_g": 23.98,
+          "ratio_2p5_over_native": 0.9858,
+          "native_voxels": 63424
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.63,
+          "mass_2p5mm_g": 3.55,
+          "ratio_2p5_over_native": 0.9798,
+          "native_voxels": 9209
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 2.76,
+          "mass_2p5mm_g": 2.62,
+          "ratio_2p5_over_native": 0.9499,
+          "native_voxels": 7002
+        },
+        "small_bowel": {
+          "mass_native_g": 709.4,
+          "mass_2p5mm_g": 696.75,
+          "ratio_2p5_over_native": 0.9822,
+          "native_voxels": 1976606
+        },
+        "colon": {
+          "mass_native_g": 360.29,
+          "mass_2p5mm_g": 353.71,
+          "ratio_2p5_over_native": 0.9817,
+          "native_voxels": 2618491
+        },
+        "urinary_bladder": {
+          "mass_native_g": 59.82,
+          "mass_2p5mm_g": 58.78,
+          "ratio_2p5_over_native": 0.9827,
+          "native_voxels": 154479
+        }
+      },
+      "vendor": "Canon/Toshiba"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.122681232740719558092171043097976012159",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.7793,
+        0.7793
+      ],
+      "native_shape_zyx": [
+        121,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        121,
+        160,
+        160
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2372.37,
+          "mass_2p5mm_g": 2364.1,
+          "ratio_2p5_over_native": 0.9965,
+          "native_voxels": 1499171
+        },
+        "spleen": {
+          "mass_native_g": 354.85,
+          "mass_2p5mm_g": 353.13,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 221650
+        },
+        "kidney_left": {
+          "mass_native_g": 219.73,
+          "mass_2p5mm_g": 218.9,
+          "ratio_2p5_over_native": 0.9962,
+          "native_voxels": 137076
+        },
+        "kidney_right": {
+          "mass_native_g": 227.42,
+          "mass_2p5mm_g": 226.54,
+          "ratio_2p5_over_native": 0.9961,
+          "native_voxels": 141856
+        },
+        "pancreas": {
+          "mass_native_g": 120.67,
+          "mass_2p5mm_g": 120.01,
+          "ratio_2p5_over_native": 0.9946,
+          "native_voxels": 75578
+        },
+        "stomach": {
+          "mass_native_g": 242.74,
+          "mass_2p5mm_g": 241.87,
+          "ratio_2p5_over_native": 0.9964,
+          "native_voxels": 173904
+        },
+        "gallbladder": {
+          "mass_native_g": 27.58,
+          "mass_2p5mm_g": 27.39,
+          "ratio_2p5_over_native": 0.9929,
+          "native_voxels": 17723
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.51,
+          "mass_2p5mm_g": 3.46,
+          "ratio_2p5_over_native": 0.987,
+          "native_voxels": 2234
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 6.96,
+          "mass_2p5mm_g": 6.87,
+          "ratio_2p5_over_native": 0.986,
+          "native_voxels": 4511
+        },
+        "small_bowel": {
+          "mass_native_g": 630.04,
+          "mass_2p5mm_g": 627.88,
+          "ratio_2p5_over_native": 0.9966,
+          "native_voxels": 405634
+        },
+        "colon": {
+          "mass_native_g": 366.9,
+          "mass_2p5mm_g": 364.76,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 269044
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.6919.4624.105596304219458852186973583847",
+      "voxel_spacing_mm_zyx": [
+        3.0,
+        0.6836,
+        0.6836
+      ],
+      "native_shape_zyx": [
+        124,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        149,
+        140,
+        140
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2314.4,
+          "mass_2p5mm_g": 2295.87,
+          "ratio_2p5_over_native": 0.992,
+          "native_voxels": 1557100
+        },
+        "spleen": {
+          "mass_native_g": 155.69,
+          "mass_2p5mm_g": 154.44,
+          "ratio_2p5_over_native": 0.992,
+          "native_voxels": 105123
+        },
+        "kidney_left": {
+          "mass_native_g": 224.28,
+          "mass_2p5mm_g": 222.72,
+          "ratio_2p5_over_native": 0.9931,
+          "native_voxels": 147376
+        },
+        "kidney_right": {
+          "mass_native_g": 227.06,
+          "mass_2p5mm_g": 226.12,
+          "ratio_2p5_over_native": 0.9958,
+          "native_voxels": 149411
+        },
+        "pancreas": {
+          "mass_native_g": 106.09,
+          "mass_2p5mm_g": 105.95,
+          "ratio_2p5_over_native": 0.9987,
+          "native_voxels": 72355
+        },
+        "stomach": {
+          "mass_native_g": 796.9,
+          "mass_2p5mm_g": 788.86,
+          "ratio_2p5_over_native": 0.9899,
+          "native_voxels": 571785
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 5.31,
+          "mass_2p5mm_g": 5.11,
+          "ratio_2p5_over_native": 0.9622,
+          "native_voxels": 3707
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 5.8,
+          "mass_2p5mm_g": 5.73,
+          "ratio_2p5_over_native": 0.9891,
+          "native_voxels": 4050
+        },
+        "small_bowel": {
+          "mass_native_g": 1164.72,
+          "mass_2p5mm_g": 1154.13,
+          "ratio_2p5_over_native": 0.9909,
+          "native_voxels": 833897
+        },
+        "colon": {
+          "mass_native_g": 757.77,
+          "mass_2p5mm_g": 754.14,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 676514
+        },
+        "urinary_bladder": {
+          "mass_native_g": 61.15,
+          "mass_2p5mm_g": 60.66,
+          "ratio_2p5_over_native": 0.9921,
+          "native_voxels": 39465
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.94531563816741245873445833243538669934",
+      "voxel_spacing_mm_zyx": [
+        0.75,
+        0.6426,
+        0.6426
+      ],
+      "native_shape_zyx": [
+        385,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        116,
+        132,
+        132
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1038.56,
+          "mass_2p5mm_g": 1039.66,
+          "ratio_2p5_over_native": 1.0011,
+          "native_voxels": 3125696
+        },
+        "spleen": {
+          "mass_native_g": 341.89,
+          "mass_2p5mm_g": 341.98,
+          "ratio_2p5_over_native": 1.0002,
+          "native_voxels": 1019021
+        },
+        "kidney_left": {
+          "mass_native_g": 27.41,
+          "mass_2p5mm_g": 28.2,
+          "ratio_2p5_over_native": 1.0287,
+          "native_voxels": 81882
+        },
+        "kidney_right": {
+          "mass_native_g": 46.44,
+          "mass_2p5mm_g": 45.92,
+          "ratio_2p5_over_native": 0.9889,
+          "native_voxels": 138610
+        },
+        "pancreas": {
+          "mass_native_g": 26.43,
+          "mass_2p5mm_g": 26.48,
+          "ratio_2p5_over_native": 1.0017,
+          "native_voxels": 80846
+        },
+        "stomach": {
+          "mass_native_g": 125.97,
+          "mass_2p5mm_g": 125.31,
+          "ratio_2p5_over_native": 0.9948,
+          "native_voxels": 381167
+        },
+        "gallbladder": {
+          "mass_native_g": 0.85,
+          "mass_2p5mm_g": 0.93,
+          "ratio_2p5_over_native": 1.0997,
+          "native_voxels": 2688
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 3.33,
+          "mass_2p5mm_g": 3.17,
+          "ratio_2p5_over_native": 0.9498,
+          "native_voxels": 10142
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 1.04,
+          "mass_2p5mm_g": 1.1,
+          "ratio_2p5_over_native": 1.0588,
+          "native_voxels": 3165
+        },
+        "small_bowel": {
+          "mass_native_g": 2.1,
+          "mass_2p5mm_g": 2.31,
+          "ratio_2p5_over_native": 1.0986,
+          "native_voxels": 6436
+        },
+        "colon": {
+          "mass_native_g": 71.27,
+          "mass_2p5mm_g": 72.26,
+          "ratio_2p5_over_native": 1.014,
+          "native_voxels": 317682
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.35849535652939153577452390867555563110",
+      "voxel_spacing_mm_zyx": [
+        0.75,
+        0.8652,
+        0.8652
+      ],
+      "native_shape_zyx": [
+        461,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        138,
+        177,
+        177
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1581.51,
+          "mass_2p5mm_g": 1557.67,
+          "ratio_2p5_over_native": 0.9849,
+          "native_voxels": 2608282
+        },
+        "spleen": {
+          "mass_native_g": 459.95,
+          "mass_2p5mm_g": 453.13,
+          "ratio_2p5_over_native": 0.9852,
+          "native_voxels": 759398
+        },
+        "kidney_left": {
+          "mass_native_g": 154.5,
+          "mass_2p5mm_g": 153.78,
+          "ratio_2p5_over_native": 0.9953,
+          "native_voxels": 250820
+        },
+        "kidney_right": {
+          "mass_native_g": 133.22,
+          "mass_2p5mm_g": 132.11,
+          "ratio_2p5_over_native": 0.9917,
+          "native_voxels": 216360
+        },
+        "pancreas": {
+          "mass_native_g": 93.42,
+          "mass_2p5mm_g": 91.85,
+          "ratio_2p5_over_native": 0.9833,
+          "native_voxels": 155700
+        },
+        "stomach": {
+          "mass_native_g": 121.5,
+          "mass_2p5mm_g": 119.53,
+          "ratio_2p5_over_native": 0.9838,
+          "native_voxels": 216820
+        },
+        "gallbladder": {
+          "mass_native_g": 9.2,
+          "mass_2p5mm_g": 9.06,
+          "ratio_2p5_over_native": 0.9847,
+          "native_voxels": 15806
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 2.93,
+          "mass_2p5mm_g": 2.83,
+          "ratio_2p5_over_native": 0.9639,
+          "native_voxels": 4914
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.15,
+          "mass_2p5mm_g": 3.19,
+          "ratio_2p5_over_native": 1.0144,
+          "native_voxels": 5400
+        },
+        "small_bowel": {
+          "mass_native_g": 34.16,
+          "mass_2p5mm_g": 34.73,
+          "ratio_2p5_over_native": 1.0166,
+          "native_voxels": 66058
+        },
+        "colon": {
+          "mass_native_g": 84.23,
+          "mass_2p5mm_g": 83.63,
+          "ratio_2p5_over_native": 0.993,
+          "native_voxels": 152050
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.13789879393431026461197285453898279533",
+      "voxel_spacing_mm_zyx": [
+        0.75,
+        0.7988,
+        0.7988
+      ],
+      "native_shape_zyx": [
+        489,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        147,
+        164,
+        164
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1594.55,
+          "mass_2p5mm_g": 1590.05,
+          "ratio_2p5_over_native": 0.9972,
+          "native_voxels": 3115014
+        },
+        "spleen": {
+          "mass_native_g": 255.03,
+          "mass_2p5mm_g": 253.51,
+          "ratio_2p5_over_native": 0.994,
+          "native_voxels": 500379
+        },
+        "kidney_left": {
+          "mass_native_g": 75.25,
+          "mass_2p5mm_g": 76.7,
+          "ratio_2p5_over_native": 1.0193,
+          "native_voxels": 145320
+        },
+        "kidney_right": {
+          "mass_native_g": 89.13,
+          "mass_2p5mm_g": 90.17,
+          "ratio_2p5_over_native": 1.0117,
+          "native_voxels": 172174
+        },
+        "pancreas": {
+          "mass_native_g": 83.57,
+          "mass_2p5mm_g": 83.13,
+          "ratio_2p5_over_native": 0.9948,
+          "native_voxels": 166310
+        },
+        "stomach": {
+          "mass_native_g": 215.0,
+          "mass_2p5mm_g": 213.73,
+          "ratio_2p5_over_native": 0.9941,
+          "native_voxels": 500815
+        },
+        "gallbladder": {
+          "mass_native_g": 28.77,
+          "mass_2p5mm_g": 29.33,
+          "ratio_2p5_over_native": 1.0193,
+          "native_voxels": 58800
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 6.63,
+          "mass_2p5mm_g": 6.57,
+          "ratio_2p5_over_native": 0.9908,
+          "native_voxels": 13432
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 5.05,
+          "mass_2p5mm_g": 4.92,
+          "ratio_2p5_over_native": 0.9734,
+          "native_voxels": 10291
+        },
+        "small_bowel": {
+          "mass_native_g": 87.29,
+          "mass_2p5mm_g": 89.54,
+          "ratio_2p5_over_native": 1.0258,
+          "native_voxels": 175084
+        },
+        "colon": {
+          "mass_native_g": 157.17,
+          "mass_2p5mm_g": 159.2,
+          "ratio_2p5_over_native": 1.0129,
+          "native_voxels": 503446
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2857.3159.203983181868287072753321424140",
+      "voxel_spacing_mm_zyx": [
+        2.5,
+        0.9297,
+        0.9297
+      ],
+      "native_shape_zyx": [
+        290,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        290,
+        190,
+        190
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 2940.45,
+          "mass_2p5mm_g": 2907.08,
+          "ratio_2p5_over_native": 0.9887,
+          "native_voxels": 1289272
+        },
+        "spleen": {
+          "mass_native_g": 367.94,
+          "mass_2p5mm_g": 363.36,
+          "ratio_2p5_over_native": 0.9876,
+          "native_voxels": 159684
+        },
+        "kidney_left": {
+          "mass_native_g": 343.03,
+          "mass_2p5mm_g": 333.66,
+          "ratio_2p5_over_native": 0.9727,
+          "native_voxels": 146824
+        },
+        "kidney_right": {
+          "mass_native_g": 290.62,
+          "mass_2p5mm_g": 282.77,
+          "ratio_2p5_over_native": 0.973,
+          "native_voxels": 124316
+        },
+        "pancreas": {
+          "mass_native_g": 59.63,
+          "mass_2p5mm_g": 58.15,
+          "ratio_2p5_over_native": 0.9751,
+          "native_voxels": 26128
+        },
+        "stomach": {
+          "mass_native_g": 333.58,
+          "mass_2p5mm_g": 328.44,
+          "ratio_2p5_over_native": 0.9846,
+          "native_voxels": 376834
+        },
+        "gallbladder": {
+          "mass_native_g": 21.98,
+          "mass_2p5mm_g": 21.53,
+          "ratio_2p5_over_native": 0.9795,
+          "native_voxels": 9910
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 10.78,
+          "mass_2p5mm_g": 10.65,
+          "ratio_2p5_over_native": 0.9883,
+          "native_voxels": 4759
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 7.9,
+          "mass_2p5mm_g": 8.04,
+          "ratio_2p5_over_native": 1.0182,
+          "native_voxels": 3523
+        },
+        "small_bowel": {
+          "mass_native_g": 1749.25,
+          "mass_2p5mm_g": 1738.57,
+          "ratio_2p5_over_native": 0.9939,
+          "native_voxels": 837722
+        },
+        "colon": {
+          "mass_native_g": 1186.32,
+          "mass_2p5mm_g": 1180.65,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 680336
+        },
+        "urinary_bladder": {
+          "mass_native_g": 137.17,
+          "mass_2p5mm_g": 136.38,
+          "ratio_2p5_over_native": 0.9942,
+          "native_voxels": 62105
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.119554862381870875314127355939",
+      "voxel_spacing_mm_zyx": [
+        1.0,
+        0.6445,
+        0.6445
+      ],
+      "native_shape_zyx": [
+        660,
+        768,
+        768
+      ],
+      "resampled_shape_zyx": [
+        264,
+        198,
+        198
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1330.78,
+          "mass_2p5mm_g": 1318.01,
+          "ratio_2p5_over_native": 0.9904,
+          "native_voxels": 2923753
+        },
+        "spleen": {
+          "mass_native_g": 180.83,
+          "mass_2p5mm_g": 179.25,
+          "ratio_2p5_over_native": 0.9913,
+          "native_voxels": 398742
+        },
+        "kidney_left": {
+          "mass_native_g": 180.1,
+          "mass_2p5mm_g": 178.14,
+          "ratio_2p5_over_native": 0.9891,
+          "native_voxels": 385946
+        },
+        "kidney_right": {
+          "mass_native_g": 162.18,
+          "mass_2p5mm_g": 160.22,
+          "ratio_2p5_over_native": 0.9879,
+          "native_voxels": 347219
+        },
+        "pancreas": {
+          "mass_native_g": 59.96,
+          "mass_2p5mm_g": 59.13,
+          "ratio_2p5_over_native": 0.9861,
+          "native_voxels": 134018
+        },
+        "stomach": {
+          "mass_native_g": 1009.06,
+          "mass_2p5mm_g": 998.7,
+          "ratio_2p5_over_native": 0.9897,
+          "native_voxels": 2539885
+        },
+        "gallbladder": {
+          "mass_native_g": 10.86,
+          "mass_2p5mm_g": 10.88,
+          "ratio_2p5_over_native": 1.0013,
+          "native_voxels": 25117
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 2.02,
+          "mass_2p5mm_g": 2.03,
+          "ratio_2p5_over_native": 1.0046,
+          "native_voxels": 4613
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.14,
+          "mass_2p5mm_g": 3.09,
+          "ratio_2p5_over_native": 0.9863,
+          "native_voxels": 7161
+        },
+        "small_bowel": {
+          "mass_native_g": 861.28,
+          "mass_2p5mm_g": 853.9,
+          "ratio_2p5_over_native": 0.9914,
+          "native_voxels": 1992888
+        },
+        "colon": {
+          "mass_native_g": 672.25,
+          "mass_2p5mm_g": 663.78,
+          "ratio_2p5_over_native": 0.9874,
+          "native_voxels": 1985460
+        },
+        "urinary_bladder": {
+          "mass_native_g": 333.04,
+          "mass_2p5mm_g": 329.94,
+          "ratio_2p5_over_native": 0.9907,
+          "native_voxels": 785485
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.3320.3273.114542284322103737687268266165",
+      "voxel_spacing_mm_zyx": [
+        1.5,
+        0.7812,
+        0.7812
+      ],
+      "native_shape_zyx": [
+        309,
+        512,
+        512
+      ],
+      "resampled_shape_zyx": [
+        185,
+        160,
+        160
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1787.69,
+          "mass_2p5mm_g": 1762.38,
+          "ratio_2p5_over_native": 0.9858,
+          "native_voxels": 1874974
+        },
+        "spleen": {
+          "mass_native_g": 117.95,
+          "mass_2p5mm_g": 116.14,
+          "ratio_2p5_over_native": 0.9846,
+          "native_voxels": 124663
+        },
+        "kidney_left": {
+          "mass_native_g": 179.79,
+          "mass_2p5mm_g": 176.93,
+          "ratio_2p5_over_native": 0.9841,
+          "native_voxels": 191302
+        },
+        "kidney_right": {
+          "mass_native_g": 161.62,
+          "mass_2p5mm_g": 159.95,
+          "ratio_2p5_over_native": 0.9897,
+          "native_voxels": 171782
+        },
+        "pancreas": {
+          "mass_native_g": 112.84,
+          "mass_2p5mm_g": 111.23,
+          "ratio_2p5_over_native": 0.9857,
+          "native_voxels": 119469
+        },
+        "stomach": {
+          "mass_native_g": 206.7,
+          "mass_2p5mm_g": 203.73,
+          "ratio_2p5_over_native": 0.9857,
+          "native_voxels": 233450
+        },
+        "gallbladder": {
+          "mass_native_g": 56.09,
+          "mass_2p5mm_g": 55.31,
+          "ratio_2p5_over_native": 0.986,
+          "native_voxels": 59508
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 13.29,
+          "mass_2p5mm_g": 13.18,
+          "ratio_2p5_over_native": 0.992,
+          "native_voxels": 14372
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 6.05,
+          "mass_2p5mm_g": 5.89,
+          "ratio_2p5_over_native": 0.9733,
+          "native_voxels": 6568
+        },
+        "small_bowel": {
+          "mass_native_g": 1131.25,
+          "mass_2p5mm_g": 1115.84,
+          "ratio_2p5_over_native": 0.9864,
+          "native_voxels": 1160264
+        },
+        "colon": {
+          "mass_native_g": 457.23,
+          "mass_2p5mm_g": 452.2,
+          "ratio_2p5_over_native": 0.989,
+          "native_voxels": 599503
+        },
+        "urinary_bladder": {
+          "mass_native_g": 48.02,
+          "mass_2p5mm_g": 47.38,
+          "ratio_2p5_over_native": 0.9867,
+          "native_voxels": 52255
+        }
+      },
+      "vendor": "Philips"
+    },
+    {
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.2932.1975.256749960592074016578641330855",
+      "voxel_spacing_mm_zyx": [
+        1.0,
+        0.6497,
+        0.6497
+      ],
+      "native_shape_zyx": [
+        714,
+        768,
+        768
+      ],
+      "resampled_shape_zyx": [
+        286,
+        200,
+        200
+      ],
+      "organs": {
+        "liver": {
+          "mass_native_g": 1805.93,
+          "mass_2p5mm_g": 1797.33,
+          "ratio_2p5_over_native": 0.9952,
+          "native_voxels": 4002819
+        },
+        "spleen": {
+          "mass_native_g": 159.62,
+          "mass_2p5mm_g": 158.48,
+          "ratio_2p5_over_native": 0.9928,
+          "native_voxels": 343486
+        },
+        "kidney_left": {
+          "mass_native_g": 183.6,
+          "mass_2p5mm_g": 181.91,
+          "ratio_2p5_over_native": 0.9908,
+          "native_voxels": 386524
+        },
+        "kidney_right": {
+          "mass_native_g": 163.39,
+          "mass_2p5mm_g": 162.67,
+          "ratio_2p5_over_native": 0.9956,
+          "native_voxels": 343867
+        },
+        "pancreas": {
+          "mass_native_g": 85.07,
+          "mass_2p5mm_g": 84.78,
+          "ratio_2p5_over_native": 0.9966,
+          "native_voxels": 184198
+        },
+        "stomach": {
+          "mass_native_g": 744.14,
+          "mass_2p5mm_g": 742.69,
+          "ratio_2p5_over_native": 0.998,
+          "native_voxels": 1871867
+        },
+        "gallbladder": {
+          "mass_native_g": 16.11,
+          "mass_2p5mm_g": 15.76,
+          "ratio_2p5_over_native": 0.9785,
+          "native_voxels": 36615
+        },
+        "adrenal_gland_left": {
+          "mass_native_g": 4.32,
+          "mass_2p5mm_g": 4.38,
+          "ratio_2p5_over_native": 1.013,
+          "native_voxels": 9520
+        },
+        "adrenal_gland_right": {
+          "mass_native_g": 3.09,
+          "mass_2p5mm_g": 3.01,
+          "ratio_2p5_over_native": 0.9739,
+          "native_voxels": 6801
+        },
+        "small_bowel": {
+          "mass_native_g": 801.39,
+          "mass_2p5mm_g": 796.82,
+          "ratio_2p5_over_native": 0.9943,
+          "native_voxels": 1856311
+        },
+        "colon": {
+          "mass_native_g": 693.1,
+          "mass_2p5mm_g": 690.01,
+          "ratio_2p5_over_native": 0.9956,
+          "native_voxels": 1604375
+        },
+        "urinary_bladder": {
+          "mass_native_g": 266.93,
+          "mass_2p5mm_g": 265.1,
+          "ratio_2p5_over_native": 0.9931,
+          "native_voxels": 615582
+        }
+      },
+      "vendor": "Philips"
+    }
+  ]
+}

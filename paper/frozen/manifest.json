@@ -11,6 +11,7 @@
   "metal_distribution.json",
   "organ_volume_vs_icrp89.json",
   "phase1a_close.json",
+  "resample_cost.json",
   "table4_organ_doses.json"
  ],
  "excluded": {
@@ -39,6 +40,9 @@
   "n_iorn006": 40,
   "n_shared": 40,
   "n_table4_series": 30,
+  "density_gate_largest_kept_cm3": 0.9101,
+  "density_gate_smallest_dropped_cm3": 2.065,
+  "density_gate_hu_ceiling": 3071.0,
   "ceiling_global_factor_median": 0.3089333032866175,
   "ceiling_global_factor_p90": 0.7491309884643413,
   "ceiling_global_factor_within20": 0.3538011695906433,
