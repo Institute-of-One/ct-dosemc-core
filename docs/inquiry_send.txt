@@ -1,4 +1,4 @@
-Subject: Pre-submission inquiry - Paper (not Note): the accuracy limit of index-based organ dose in abdominal CT
+Subject: Pre-submission inquiry - Paper (not Note): what limits index-based organ dose in abdominal CT
 
 --- everything below this line is the message body ---
 
@@ -6,7 +6,7 @@ Dear Editor,
 
 I would like to ask whether the following study is appropriate as a Paper, rather than a Note, for the Journal of Radiological Protection, and whether its subject sits within the journal's scope.
 
-Title. Per-organ coefficients do not improve on a single conversion factor: a cross-validated bound on index-based organ dose in abdominal CT.
+Title. Between-patient variation sets the limit on index-based organ dose in abdominal CT: a cross-validated bound on five conversions.
 
 Question. Organ dose is routinely estimated from the volume CT dose index by a conversion - a single factor, a size correction, a dose-length-product factor, or a per-organ coefficient library. How close such a conversion can get to the dose that transport actually deposits, in a real patient rather than a reference phantom, has not been measured on the same anatomy. This study measures it.
 

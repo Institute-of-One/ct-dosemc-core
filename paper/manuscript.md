@@ -4,7 +4,7 @@ at build time. A marker that cannot be resolved is a build error, and a test fai
 if a frozen metric appears here as a typed literal. Do not type numbers.
 -->
 
-# Per-organ coefficients do not improve on a single conversion factor: a cross-validated bound on index-based organ dose in abdominal CT
+# Between-patient variation sets the limit on index-based organ dose in abdominal CT: a cross-validated bound on five conversions
 
 **Shuji Yamamoto**
 
