@@ -3,8 +3,8 @@
     python paper/prove_figure_checks.py
 
 A check that has only ever run on one manuscript cannot be told apart from a check that
-returns success. These three were written on 2026-10-21 from referee 2's report on
-PMB-122419, so each injection below is a defect that actually reached a referee:
+returns success. These were written on 2026-10-21, and each injection below is a defect
+that actually reached a submitted manuscript:
 
 * figure 6 cited in the Results before figures 4 and 5 are mentioned at all;
 * figure 6 copied from the pipeline's ``figure5_vendor.png``, which left "Figure 5" drawn
@@ -12,7 +12,8 @@ PMB-122419, so each injection below is a defect that actually reached a referee:
 * figure 4 shipped with its legend off the canvas, its caption repeated inside the image
   and this programme's internal identifiers on its axes -- none of which any check in
   presubmission_check.py can see, which is why the third gate asks whether a person
-  opened the file rather than trying to judge it.
+  opened the file rather than trying to judge it;
+* a title claiming a floor over every index-based conversion while five were evaluated.
 
 Nothing here touches paper/figures/ or the ledger; the sources dictionary and the errors
 list are swapped out around each case and put back.
@@ -92,7 +93,7 @@ def main() -> int:
             print(f"          {message}")
 
     print("citation order")
-    case("figure 6 named before figures 4 and 5 (PMB-122419 as submitted)",
+    case("figure 6 named before figures 4 and 5, as submitted",
          expect_caught=True,
          run=lambda: gate.check_figures_are_first_cited_in_order(OUT_OF_ORDER))
     case("figures 1, 2, 3 named in order",

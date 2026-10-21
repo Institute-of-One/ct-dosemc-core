@@ -319,7 +319,7 @@ def check_figures(built: str) -> None:
 
 #: Words that turn a measurement into a statement about everything of its kind. The list is
 #: short on purpose: these are the words that appeared in the title and abstract of
-#: PMB-122419, not every word that could ever overreach.
+#: this manuscript's title and abstract, not every word that could ever overreach.
 _BOUNDING_WORDS = (
     "floor", "ceiling", "irreducible", "fundamental limit", "cannot be improved",
     "no better than", "any index", "all index",
@@ -333,12 +333,12 @@ _SCOPE_MARKER = "<!-- scope-of-claim -->"
 def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
     """A paper that claims a limit must say, in the text, what the limit is over.
 
-    This is referee 2's general comment 5 on PMB-122419, and it is the comment that decided
-    the paper: "What evidence demonstrates that the reported 13% error represents an
-    irreducible physical limit rather than a limitation of the evaluated prediction
-    models?" The study cross-validated five conversions that it chose. That bounds those
-    five. The title said "a measured floor on index-based organ dose estimation", which is
-    a statement about every index-based conversion there is or could be.
+    The question this exists for is: a limit on what? This study cross-validates five
+    conversions that it chose, which bounds those five. A title of the form "a measured
+    floor on index-based organ dose estimation" is a statement about every index-based
+    conversion there is or could be, and the distance between the two is not something a
+    reader should have to work out for themselves. Peer review will ask, and it is a much
+    cheaper question to answer before submission than after.
 
     Whether a given sentence justifies a given claim is not computable and this check does
     not pretend otherwise. What it does is refuse to let the question go unasked: if a
@@ -356,9 +356,9 @@ def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
         fail(
             f"the title or abstract claims a bound ({', '.join(found)}) and no paragraph "
             f"is marked {_SCOPE_MARKER}. Say in the text what the bound was measured over "
-            f"-- which conversions, which cohort -- or narrow the claim to it. PMB-122419 "
-            f"was rejected on exactly this: five conversions were cross-validated and the "
-            f"title spoke for all of them"
+            f"-- which conversions, which cohort -- or narrow the claim to it. A bound is "
+            f"over the things that were varied, and a title that speaks for more than that "
+            f"is a claim the measurement does not carry"
         )
         return
 
@@ -382,9 +382,9 @@ def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
 def check_figures_are_first_cited_in_order(built: str) -> None:
     """Figure n must be first named before figure n+1.
 
-    PMB-122419's referee 2 found this: the Results cite "table 1 and figure 6" before
-    figure 4 and figure 5 are mentioned at all, so a reader meets figure 6 first and the
-    numbering serves the order the figures were made rather than the order they are read.
+    This manuscript did it: the Results cited "table 1 and figure 6" before figure 4 and
+    figure 5 were mentioned at all, so a reader met figure 6 first and the numbering served
+    the order the figures were made rather than the order they are read.
     ``check_figures`` above requires every figure to be named somewhere and captioned once,
     which this manuscript satisfied, and says nothing about the order -- a check can be
     green and a reader still lost.
@@ -409,11 +409,11 @@ def check_figures_are_first_cited_in_order(built: str) -> None:
 def check_no_figure_is_renumbered_on_the_way_in(built: str) -> None:
     """A figure copied from the pipeline keeps the number drawn into its pixels.
 
-    ``collect_figures`` renames the file; it cannot repaint the image. PMB-122419 shipped
-    figure 6 with "Figure 5  Scan-covering organ dose by vendor" drawn across the top of
-    it, because the pipeline that produced it called it figure 5 and the copy into
-    paper/figures/ changed only the filename. The referee saw one number above the image
-    and a different one in the caption below and asked which was right.
+    ``collect_figures`` renames the file; it cannot repaint the image. This manuscript
+    went out with figure 6 carrying "Figure 5  Scan-covering organ dose by vendor" drawn
+    across the top of it, because the pipeline that produced it called it figure 5 and the
+    copy into paper/figures/ changed only the filename. A reader sees one number above the
+    image and a different one in the caption below, and has no way to tell which is right.
 
     There is no OCR here, and installing one to read a number we already know would be the
     wrong fix. The source filename carries the number the drawing code used, and a
@@ -436,10 +436,10 @@ def check_every_figure_image_has_been_looked_at() -> None:
     """Each image must be recorded as seen, by its hash, since it last changed.
 
     This is the one check here that does not describe a defect; it describes how three of
-    them escaped. Figure 4 of PMB-122419 reached the referees with its legend running off
-    the left edge of the canvas, a paragraph of the caption repeated inside the image, and
-    "IORN-006" and "IORN-007" -- this programme's own internal identifiers -- printed on
-    its axes. No check in this file could have seen any of that, and no check ever will:
+    them escaped. Figure 4 went out with its legend running off the left edge of the
+    canvas, a paragraph of the caption repeated inside the image, and "IORN-006" and
+    "IORN-007" -- this programme's own internal identifiers -- printed on its axes.
+    No check in this file could have seen any of that, and no check ever will:
     they are visible, not computable. What is computable is whether anybody opened the
     file after it last changed.
 

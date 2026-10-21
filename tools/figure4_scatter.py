@@ -42,9 +42,9 @@ _EDGE = {
 
 #: What the legend says, as against what ``FIGURE4_MARKERS[kind]["label"]`` says.
 #:
-#: The long labels are prose and belong in the caption, where PMB-122419's referee 2 found
-#: them anyway -- printed a second time inside the image. Drawn into a legend they ran off
-#: the left edge of the canvas and were cut mid-word, because matplotlib places a legend
+#: The long labels are prose and belong in the caption, which was already carrying them --
+#: they were printed a second time inside the image. Drawn into a legend they ran off the
+#: left edge of the canvas and were cut mid-word, because matplotlib places a legend
 #: inside the axes and will not shrink the text to fit. They also name IORN-004, which is
 #: this programme's own numbering and means nothing to a reader of the journal.
 _LEGEND_LABEL = {
@@ -158,9 +158,9 @@ def draw_scatter(points: list[dict[str, Any]], path: Path, *, caption: str) -> P
             "Pass doses once G0–G5 close, or use --legend-only."
         )
     # The caption is the journal's to print under the figure. It used to be drawn into the
-    # image as well, where referee 2 of PMB-122419 found it and asked for its removal; it is
-    # still accepted as an argument so the caller's contract does not change, and it is still
-    # what the manuscript places, but it is no longer painted on top of the data.
+    # image as well, so every reader saw it twice in two wordings; it is still accepted as an
+    # argument so the caller's contract does not change, and it is still what the manuscript
+    # places, but it is no longer painted on top of the data.
     del caption
 
     fig, ax = plt.subplots(figsize=(5.2, 5.2))

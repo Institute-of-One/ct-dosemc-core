@@ -201,12 +201,12 @@ def draw_vendor_figure(table: dict[str, Any], path: Path) -> Path:
     # No title drawn into the image. This file is copied into paper/figures/ as figure 6, and
     # the title said "Figure 5" because that is what this pipeline calls it -- so the
     # manuscript printed Figure 5 above the image and Figure 6 in the caption below, which is
-    # what referee 2 of PMB-122419 asked about. Renaming a file does not repaint it. The
+    # what a reader has no way to resolve. Renaming a file does not repaint it. The
     # caption belongs to the manuscript; the image carries no number at all.
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     # bbox_inches="tight" so the legend below the axes is inside the canvas rather than
-    # hanging off it, which is how figure 4's legend reached the referees cut mid-word.
+    # hanging off it, which is how figure 4's legend went out cut mid-word.
     fig.savefig(path, dpi=200, bbox_inches="tight", pad_inches=0.04)
     plt.close(fig)
     return path
