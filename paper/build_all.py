@@ -57,6 +57,12 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("fill the journal's submission checklist", ["paper/fill_checklist.py"], True),
     ("build the cover letter, the novel points and the kit",
      ["paper/build_submission.py"], True),
+    # The pages are the last thing between a defect and the reviewer, and the
+    # only thing that sees a word broken in two or a heading stranded at a
+    # page foot. This does not look at them; it notices when a page has
+    # changed since somebody did.
+    ("check every page is as it was when it was looked at",
+     ["paper/check_visual_review.py"], True),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 

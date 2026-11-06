@@ -1,0 +1,42 @@
+{
+  "_what_this_is": [
+    "The author's record of having opened every page of the rendered",
+    "manuscript. The digests are of the page images, because a rebuild that",
+    "changes nothing produces a different .docx and a different PDF every",
+    "time while the page images come back byte-identical: a ledger pinning",
+    "the documents would be permanently red and would say nothing about what",
+    "the reader sees."
+  ],
+  "reviewed_on": "2026-11-07",
+  "looked_at_by": "Claude Opus 5, working for the author",
+  "author_approved_on": null,
+  "note": "All 26 pages of the Radiological Physics and Technology submission opened. Defects found and fixed in this pass: Table 1 headings printed as 'Canon/Tos'+'hiba', 'Gallbladde'+'r' and 'Siemen'+'s'; the page before the table two-thirds empty; '88%' and '6%' against '31 %' elsewhere; 'the median ratio is 2.17 against 2.17'; two lines of the last reference stranded alone on page 29. Checked on every page: figure placement and caption, table integrity, no heading alone at a page foot, line numbers continuous from the title page, double spacing, and the first mention of figures 1 to 6 in numeric order. The author's own approval is recorded as not given.",
+  "pages": {
+    "manuscript_p01.png": "a30ed19d05c6f15900803ee6be86a5457b02be9ee9492accc16c55b67bc87f5f",
+    "manuscript_p02.png": "b9435cdb131e88019722207a702e7997dbbc4fe1976e4a773d3d5df3ee16f029",
+    "manuscript_p03.png": "631bad9a38e3057c01cd4a122356c25f52a65f4b66599149dd4aead9d5ee613c",
+    "manuscript_p04.png": "209601f42d86c061f70484c0bd0ec0ad008f219b382e28435317b44e22fa5db2",
+    "manuscript_p05.png": "753eb0a39469e480bb7895d96b32bfd81c763d353e82457991c8d83841440451",
+    "manuscript_p06.png": "b79d46dfe5dd1e7938c43cab6823364025d4a3b25fa0d72707215b67dec00abf",
+    "manuscript_p07.png": "30489309199416e85aab088557b0263d016c6b5579c4225c3e5759541e4dcdf5",
+    "manuscript_p08.png": "6300a405e3034f72f0ec899bacb011358514afe213db577074ac627df06d3f5b",
+    "manuscript_p09.png": "3c5cab136e9373d507d6143bf69335c93756e6da4f73ffc8a9808f96aa737fb6",
+    "manuscript_p10.png": "93a45774a3f8d3c8c80de4c1bb1b05e6bd963e1b7d10dd0f1919d1066614725f",
+    "manuscript_p11.png": "71675f29f7c48929d2bde5665b6872955f3ba1fa739e0cc54dc0b098bd90df0a",
+    "manuscript_p12.png": "df52a541259e814704386279294a10ec2a8171aae5ca931c01841d5cf4a84fd1",
+    "manuscript_p13.png": "76707613f2d5e38ea9c4a114524a4b5ba3d5ba4e1f686a2f0189aa9210717d21",
+    "manuscript_p14.png": "49246b0a52f1828de4be3b34cd68005af6c93b45837a9c6bf406fc610d72bbf4",
+    "manuscript_p15.png": "9d306352ec2b599714b47240712417facef683fe4a746b80529f821dd3deb23c",
+    "manuscript_p16.png": "5467cd957af130114f193968a49ed30a5e4b43b2badfb97a2e02d82aac90177f",
+    "manuscript_p17.png": "163251b91e4d6da15a0f8d173eca4428b57c644223d2b188df2df441af872c36",
+    "manuscript_p18.png": "527ae71bb298e11dfa30053e51e95bf7359e00b3704daa41dbe91824e7b65d56",
+    "manuscript_p19.png": "a107fec5713248cce04514bb7acea7fcfd1b49beb67a1a4a0ece743ccf49fdb1",
+    "manuscript_p20.png": "776603745b299452965bb16549789ffe9bc92664200ec249281b354310a5f166",
+    "manuscript_p21.png": "515c94624f66b455eba346a0c10dc35d731dc954d797ed2ff15cdf89c86d2e64",
+    "manuscript_p22.png": "d4c15f1f059d4ced097993fe306fe01b928e043f2be07650bc483205d28f33a6",
+    "manuscript_p23.png": "b2d069f036d966b44282d8f872da1469beec6aee259fcd3ada368f19ef7d3f9b",
+    "manuscript_p24.png": "70748a74bda550c1ab52fe38311802bb6268d1683a6e0895cdb6c5a5769c5805",
+    "manuscript_p25.png": "6bf4bd88470264fdd6ce0be5db1b7b6a72edb5e43b1bb6341e8ddf43ee482930",
+    "manuscript_p26.png": "533fcc51f1d622cb245c731a79166e1c39fe1a1c5a5b7cb12aa609e0211b00d0"
+  }
+}
