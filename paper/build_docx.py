@@ -351,6 +351,45 @@ def shrink_tables(path: Path) -> Path:
     return path
 
 
+def set_reference_list(path: Path) -> Path:
+    """Keep each reference entry whole, and set the list single-spaced.
+
+    Two separate defects, one fix. Word splits a numbered reference across a
+    page break like any other paragraph: the last entry here left two lines
+    alone on a page of their own, 98 characters against a median of 1409. And a
+    double-spaced bibliography is neither what the journal's own template shows
+    nor what the double-spacing requirement is for -- the space is there for a
+    reviewer to write between the lines of the argument, not between the volume
+    number and the DOI.
+
+    Everything after the References heading is the list, so the two properties
+    are set on every paragraph from there to the end.
+    """
+    import docx                                               # noqa: PLC0415
+    from docx.shared import Pt                                # noqa: PLC0415
+
+    document = docx.Document(str(path))
+    in_references = False
+    touched = 0
+    for paragraph in document.paragraphs:
+        if paragraph.style.name.startswith("Heading"):
+            in_references = paragraph.text.strip().lower() == "references"
+            continue
+        if not in_references or not paragraph.text.strip():
+            continue
+        paragraph.paragraph_format.keep_together = True       # w:keepLines
+        paragraph.paragraph_format.line_spacing = 1.0
+        paragraph.paragraph_format.space_after = Pt(6)
+        touched += 1
+    if not touched:
+        raise SystemExit(
+            "no reference paragraphs were found after the References heading; the "
+            "list would keep its page-splitting and its double spacing silently"
+        )
+    document.save(str(path))
+    return path
+
+
 def bind_headings_to_text(path: Path) -> Path:
     """Keep every heading on the page as the text it introduces.
 
@@ -426,6 +465,7 @@ def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> i
     keep_tables_whole(output)
     shrink_tables(output)
     bind_headings_to_text(output)
+    set_reference_list(output)
     plain_headings(output)
     # The furniture first, then the layout: single_column_double_spaced rebuilds
     # the sectPr and has to find the footer reference and line numbering already

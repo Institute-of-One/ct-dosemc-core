@@ -52,24 +52,23 @@ cross-validation
 
 ## 1. Introduction
 
-The volume CT dose index is a property of the scanner and a standard phantom, not of
-the patient in it, and saying so has been necessary often enough to have its own
-paper [[cite:mccollough2011]]. It is nonetheless the number every scanner reports, the number archived in
-dose-monitoring systems, and therefore the number from which patient dose is
+The volume CT dose index is a property of the scanner and a standard phantom, not of the
+patient in it, and saying so has been necessary often enough to have its own paper
+[[cite:mccollough2011]]. It is nonetheless the number every scanner reports, the number
+archived in dose-monitoring systems, and therefore the number from which patient dose is
 estimated in practice [[cite:mccollough2008]].
 
-The field has three established ways of getting from that index to something closer
-to a dose. Size-specific dose estimates rescale CTDIvol by the patient's attenuating
-size [[cite:boone2011]], with water-equivalent diameter as the size that matters [[cite:mccollough2014]]. Dose-length
-product is converted to effective dose by protocol-specific factors [[cite:deak2010]]. And organ
-dose is estimated from libraries of per-organ coefficients, computed once by Monte
-Carlo on reference phantoms and looked up thereafter [[cite:lee2011,lee2015]], including under tube
-current modulation [[cite:tian2015]].
-
-All three are conversions from an index, and each replaces transport through this
-patient's anatomy with a coefficient obtained from someone else's. The question asked here
-is not whether such a conversion is exact — it is not, and no one claims it is — but how
-close it can get, and what the irreducible part is made of.
+The field has three established ways of getting from that index to something closer to a
+dose. Size-specific dose estimates rescale CTDIvol by the patient's attenuating size
+[[cite:boone2011]], with water-equivalent diameter as the size that matters
+[[cite:mccollough2014]]. Dose-length product is converted to effective dose by
+protocol-specific factors [[cite:deak2010]]. And organ dose is estimated from libraries of
+per-organ coefficients, computed once by Monte Carlo on reference phantoms and looked up
+thereafter [[cite:lee2011,lee2015]], including under tube current modulation
+[[cite:tian2015]]. All three replace transport through this patient's anatomy with a
+coefficient obtained from someone else's. The question asked here is not whether such a
+conversion is exact — it is not, and no one claims it is — but how close it can get, and
+what the irreducible part is made of.
 
 That question needs absorbed organ dose on the same anatomy as the index. A companion
 study reports an organ-weighted CTDIvol index: CTDIvol multiplied by the tube-current mean
@@ -77,19 +76,18 @@ over each segmented organ relative to the scan mean [[cite:yamamoto2026tomograph
 an index, and a good one — organ-specific, and carrying the longitudinal modulation — but
 it does not transport photons. Against it I place absorbed dose in milligray, computed by
 Monte Carlo through each patient's own segmented, density-mapped anatomy, with every dose
-coefficient computed rather than looked up. I then fit conversions of increasing richness
+coefficient computed rather than looked up, then fit conversions of increasing richness
 from the index to the dose and score each on patients the fit has not seen. The result is
 a floor, and a decomposition of what sits beneath it.
 
-Three things are not claimed. An index and an absorbed dose are not the same quantity, and
-no one holds that they are. No novelty is claimed for GPU Monte-Carlo photon transport
+Two things are not claimed. No novelty is claimed for GPU Monte-Carlo photon transport
 [[cite:badal2009]], spectrum modelling [[cite:bujila2020,poludniowski2021]], HU-to-density
 calibration [[cite:schneider1996,schneider2000]] or deep-learning organ segmentation
 [[cite:wasserthal2023]]; each is used as published. And a scan-length term is not a
 discovery: CTDIvol is defined per rotation and carries no length, while dose-length
-product is the standard quantity that does. The term is included so that the comparison is
-not against a straw man, and its fitted slope is reported so that a reader can judge how
-much of it is accumulation.
+product is the standard quantity that does. It is included so that the comparison is not
+against a straw man, and its fitted slope is reported so that a reader can judge how much
+of it is accumulation.
 
 ## 2. Materials and methods
 
@@ -122,12 +120,11 @@ from the series metadata.
 
 ### 2.3 Verification against TG-195 Case 4
 
-The engine is verified against Case 4 of AAPM Task Group 195 [[cite:sechopoulos2015]], the voxelised
-phantom case with published results from four independent codes.
-
-The scored quantity and its units are the task group's own: the energy imparted in a
-volume of interest, normalised per source photon, so that it does not depend on the number
-of histories run. Two volumes are scored, both cylinders of 1 cm diameter and 10 cm length
+The engine is verified against Case 4 of AAPM Task Group 195 [[cite:sechopoulos2015]], the
+voxelised phantom case with published results from four independent codes. The scored
+quantity and its units are the task group's own: the energy imparted in a volume of
+interest, normalised per source photon, so that it does not depend on the number of
+histories run. Two volumes are scored, both cylinders of 1 cm diameter and 10 cm length
 along the rotation axis — one centred on it, one with its axis 15 cm from it. The
 peripheral volume is scored at every non-overlapping azimuth and averaged, which the task
 group permits and which also gives a symmetry test: the spread across azimuths must agree
@@ -137,13 +134,13 @@ number stream.
 Three properties of this verification matter for what follows. The yardstick was fixed
 before any comparison was run: PENELOPE was chosen because it shares the photon
 cross-section database the material files here are generated from, not because it agreed
-best, and the published results of the other three codes are reported beside it so that
-the choice is visible. The uncertainty is measured rather than assumed — ten independent
-replicas of the anchor configuration give a sample standard deviation, whose standard
-error is combined with the reported reference uncertainty — and agreement is reported with
-that uncertainty rather than converted into a pass against a threshold of my own choosing.
-The phantom length term was measured, not bounded: a 40 cm phantom is indistinguishable
-from a 160 cm phantom at these volumes of interest.
+best, and the other three codes are reported beside it so that the choice is visible. The
+uncertainty is measured rather than assumed — ten replicas of the anchor configuration
+give a sample standard deviation, whose standard error is combined with the reported
+reference uncertainty — and agreement is reported with that uncertainty rather than
+converted into a pass against a threshold of my own choosing. The phantom length term was
+measured, not bounded: a 40 cm phantom is indistinguishable from a 160 cm phantom at these
+volumes of interest.
 
 ### 2.4 Cohort selection
 
@@ -222,9 +219,9 @@ liver and [[results:resample_cost.json:by_organ.colon.median_abs_pct|.1f]] % for
 colon. The cost is carried by the smallest organs: the right adrenal gland, a few grams of
 tissue, shifts by [[results:resample_cost.json:by_organ.adrenal_gland_right.median_abs_pct|.1f]] %
 at the median and [[results:resample_cost.json:by_organ.adrenal_gland_right.max_abs_pct|.1f]] %
-in the worst series. The adrenal glands are therefore the organs whose dose is least
-secure here. They are reported with the rest rather than dropped: dropping the organs a
-method serves worst would overstate how well the method performs.
+at worst, so the adrenal glands are the organs whose dose is least secure here. They are
+reported with the rest: dropping the organs a method serves worst would overstate how well
+it performs.
 
 ### 2.9 Index-based conversions, and how they are scored
 
@@ -244,13 +241,13 @@ $r$ and therefore predicting the dose from the index:
 All are fitted in log ratio, because the quantity is a multiplicative factor spanning
 several fold and its errors are relative.
 
-Each is scored under leave-one-patient-out cross-validation. Every series takes a turn as
-the held-out one: the conversion is re-fitted from scratch on the other series and the
-error is recorded on the series left out — [[results:manifest.json:metrics.n_scaled]] fits
-per conversion, with every organ in the cohort contributing exactly one held-out error, and
-no conversion ever scored on a patient it was fitted on. Fitting twelve organ offsets on
-thirty patients and reporting the error on those same thirty is optimistic by
-construction, and thirty is small enough for that to matter.
+Each is scored under leave-one-patient-out cross-validation: every series takes a turn as
+the held-out one, the conversion is re-fitted from scratch on the others, and the error is
+recorded on the series left out — [[results:manifest.json:metrics.n_scaled]] fits per
+conversion, every organ contributing exactly one held-out error, and no conversion ever
+scored on a patient it was fitted on. Fitting twelve organ offsets on twenty-nine patients
+and reporting the error on those same patients is optimistic by construction, and thirty
+is small enough for that to matter.
 
 ## 3. Results
 
@@ -455,16 +452,14 @@ how well dose predicts detriment.
 
 <!-- scope-of-claim -->
 Whether the floor found here is the floor everywhere is not something one cohort can
-settle, and it is not something five conversions can settle either. The bound is over
-the five conversions scored in section 2.9 — a single cohort factor, one factor per
-organ, a scan-length term, and that term combined with either the organ or the patient's
-size — each cross-validated on this cohort. It is a floor on those, on abdominal CT, on
-twelve abdominal organs, in a cohort selected for having per-slice tube current recorded.
-It is not a proof that no index-based conversion can do better: a richer predictor, given
-more of the patient than an index carries, is not excluded by anything measured here. What
-is more likely to generalise is the structure of the residual rather than its size — an
-index conditions on the scanner and the protocol, and the transport it omits is a function
-of the patient.
+settle, and it is not something five conversions can settle either. The bound is over the
+five conversions scored in section 2.9, each cross-validated on this cohort: a floor on
+those, on abdominal CT, on twelve abdominal organs, in a cohort selected for having
+per-slice tube current recorded. It is not a proof that no index-based conversion can do
+better — a richer predictor, given more of the patient than an index carries, is not
+excluded by anything measured here. What is more likely to generalise is the structure of
+the residual rather than its size: an index conditions on the scanner and the protocol,
+and the transport it omits is a function of the patient.
 
 ### 4.6 Limitations
 
@@ -474,14 +469,14 @@ to nine per vendor: adequate for the patient-level question, which has
 vendor-level one, which would have four. No vendor claim is made; Table 1 and Fig. 6 are
 descriptive.
 
-There is no ground-truth absorbed dose in a patient. The engine is verified against a
-published reference phantom case [[cite:sechopoulos2015]] with a measured uncertainty and
-the patient doses inherit that verification, but they are not independently measured. The
-verification supports the transport; it cannot support the segmentation, the HU-to-density
-mapping, or the source model as applied to a particular scanner. Organ boundaries come
-from an automatic segmentation [[cite:wasserthal2023]] applied uniformly; its errors
-propagate into both the index and the dose, since both are computed over the same masks,
-and would tend to reduce rather than inflate the difference between them.
+There is no ground-truth absorbed dose in a patient. The patient doses inherit the
+verification against a published reference phantom case [[cite:sechopoulos2015]] but are
+not independently measured, and that verification supports the transport, not the
+segmentation, the HU-to-density mapping or the source model as applied to a particular
+scanner. Organ boundaries come from an automatic segmentation [[cite:wasserthal2023]]
+applied uniformly; its errors propagate into both the index and the dose, since both are
+computed over the same masks, and would tend to reduce rather than inflate the difference
+between them.
 
 The eligibility gate excludes series with more than 1 cm³ of out-of-calibration material,
 so patients with implants are under-represented and the floor reported here is a floor for
@@ -498,28 +493,25 @@ outside the scope of the metadata used.
 Absorbed organ dose in CT can be recovered from an organ-weighted CTDIvol index to a
 median of [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %
 and no better, held out on patients the conversion has not seen. A per-organ coefficient
-does not improve on a single conversion factor for the whole cohort, because
+does not improve on a single factor, because
 [[results:manifest.json:metrics.variance_between_patient|.0%]] of the variance in the
 dose-to-index ratio is between patients and only
-[[results:manifest.json:metrics.variance_between_organ|.0%]] is between organs. Patient
-size, the standard patient-level correction, does not carry it either. The residual is
-more than three orders of magnitude above the Monte-Carlo statistical uncertainty, so it
-is physical: it is the transport that an index does not perform.
+[[results:manifest.json:metrics.variance_between_organ|.0%]] between organs. Patient size,
+the standard patient-level correction, does not carry it either. The residual is more than
+three orders of magnitude above the Monte-Carlo statistical uncertainty, so it is
+physical: it is the transport an index does not perform.
 
 Two things follow for practice. Where a median of
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %, with
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at the
 ninetieth percentile, is adequate — protocol comparison, registry-scale surveillance,
-tracking a department against itself — a single factor with a scan-length term is the
-whole of what an index can offer and is what should be used; a per-organ coefficient
-library adds parameters and maintenance without adding accuracy.
-
-Where that is not adequate — a dose compared against an organ-level threshold, or carried
-into an individual risk estimate — the missing quantity is transport through the patient's
-own anatomy, which no refinement of the index supplies. That step is a different
-calculation, not a better coefficient, and its barrier is lower than usually supposed:
-every organ dose here was computed from the metadata a routine abdominal CT already
-records, with no added exposure and no phantom matched to the patient.
+tracking a department against itself — a single factor with a scan-length term is what
+should be used, and a coefficient library adds parameters without accuracy. Where it is
+not adequate, the missing quantity is transport through the patient's own anatomy, which
+no refinement of the index supplies. That step is a different calculation, not a better
+coefficient, and its barrier is lower than usually supposed: every organ dose here was
+computed from the metadata a routine abdominal CT already records, with no added exposure
+and no phantom matched to the patient.
 
 ## Acknowledgments
 
@@ -528,39 +520,31 @@ published work this pipeline is assembled from.
 
 ## Declarations
 
-**Funding.** This research received no external funding.
+**Funding.** None.
 
 **Conflict of interest.** The author is Representative Director of LISIT Co., Ltd., which
-funds Institute of One. The author has no other competing interest to declare regarding
-the research, authorship or publication of this work.
+funds Institute of One. No other competing interest is declared.
 
-**Ethics approval.** Ethics approval was waived. The study uses only de-identified images
-and acquisition metadata already placed in the public domain by their depositing
-institutions [[cite:clark2013,moawad2023]]; no patient was recruited, no additional
-exposure was delivered, and no identifiable data were accessed.
+**Ethics approval.** Waived. The study uses only de-identified images and acquisition
+metadata already in the public domain [[cite:clark2013,moawad2023]]; no patient was
+recruited, no additional exposure was delivered and no identifiable data were accessed.
+Consent for the deposited images was obtained by the depositing institutions.
 
-**Informed consent.** Not applicable. Consent for the deposited images was obtained by the
-depositing institutions under the terms of the public archive.
+**Data availability.** The frozen result tables and the commands that regenerate every
+figure are openly available at https://doi.org/10.5281/zenodo.23537665 under the MIT
+licence. No imaging is redistributed: the collection, Series Instance UID, licence and
+retrieval date of every series are recorded there, so any reader can re-fetch them. Every
+number in this paper is resolved at build time from a machine-readable result file, and
+the build fails if one cannot be traced.
 
-**Data availability.** The results, the frozen result tables and the commands that
-regenerate every figure are openly available at https://doi.org/10.5281/zenodo.23537665,
-under the MIT licence. No imaging is redistributed: the collection, Series Instance UID,
-licence and retrieval date of every series are recorded there, so that each series can be
-re-fetched from the public archive by any reader. Every number in this paper is resolved at
-build time from a machine-readable result file produced by that code, and the build fails
-if a number cannot be traced to one.
+**Code availability.** The same archive; development continues at
+https://github.com/Institute-of-One/ct-dosemc-core.
 
-**Code availability.** The software is the same archive, under the MIT licence;
-development continues at https://github.com/Institute-of-One/ct-dosemc-core.
-
-**Use of generative artificial intelligence.** A generative artificial intelligence
-assistant (Claude Opus 5, Anthropic) was used as a tool in developing the software, in
-preparing figures from result files already computed, and in language editing of this
-manuscript. It was not used to generate, impute or select any reported value. The study
-design, the dosimetry, and all scientific judgements, interpretations and conclusions are
-the author's, who takes full responsibility for the content of this paper.
-
-**Prior presentation.** No part of this work has been presented or published elsewhere.
+**Use of generative artificial intelligence.** An assistant (Claude Opus 5, Anthropic) was
+used in developing the software, in preparing figures from result files already computed,
+and in language editing. It was not used to generate, impute or select any reported value.
+The study design, the dosimetry and all scientific judgements are the author's, who takes
+full responsibility for this paper.
 
 ## References
 

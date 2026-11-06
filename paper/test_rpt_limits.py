@@ -131,7 +131,7 @@ class TheWellFormedCasePasses(unittest.TestCase):
         self.assertEqual(measured["references"], 1)
         self.assertEqual(measured["figures and tables"], 2)
         self.assertGreater(measured["abstract words"], 10)
-        self.assertGreater(measured["body words"], 10)
+        self.assertGreater(measured["text words"], 10)
         self.assertTrue(any("keywords: 4" in note for note in notes))
 
 
@@ -224,9 +224,9 @@ class CatchesABoundWithNoStatedScope(unittest.TestCase):
 
 class CountsAgainstTheLimits(unittest.TestCase):
     def test_a_body_over_the_limit(self):
-        damaged = damage("Some introduction.", "word " * (limits.LIMITS["body words"] + 10))
+        damaged = damage("Some introduction.", "word " * (limits.LIMITS["text words"] + 10))
         measured, _, _ = check(damaged)
-        self.assertGreater(measured["body words"], limits.LIMITS["body words"])
+        self.assertGreater(measured["text words"], limits.LIMITS["text words"])
 
     def test_an_abstract_over_the_limit(self):
         damaged = damage("A short abstract that says what was done and what came of it, with no citation and\n"
@@ -249,6 +249,42 @@ class CountsAgainstTheLimits(unittest.TestCase):
 
     def test_headings_and_table_rows_are_not_prose(self):
         self.assertEqual(limits.words("## 3. Results\n\n| a | b |\n| - | - |\n\none two"), 2)
+
+    def test_a_whole_caption_paragraph_is_excluded_not_just_its_first_line(self):
+        # Figures and tables are outside the journal's count, and a caption is
+        # part of its figure or table. Stripping only the line the label sits on
+        # left a hundred and ten words of Table 1's caption in the total.
+        text = ("one two three\n\n"
+                "**Table 1.** A caption that runs\n"
+                "onto a second line and then\n"
+                "a third.\n\n"
+                "four five\n")
+        self.assertEqual(limits.words(text), 5)
+
+    def test_a_figure_caption_paragraph_is_excluded(self):
+        text = "one\n\n**Figure 5.** A caption\nover two lines.\n\ntwo three\n"
+        self.assertEqual(limits.words(text), 3)
+
+    def test_the_count_is_the_journals_own_definition(self):
+        # "Text words (main text, acknowledgments, declarations, and
+        # appendices)", from the checklist the journal distributes. Counting the
+        # numbered sections alone read 3996 of 4000 on a manuscript the journal
+        # would have measured at 4313.
+        text = (
+            "# T\n\n## Abstract\n\nabstract words here\n\n"
+            "**Keywords:** a, b, c, d\n\n"
+            "## 1. Introduction\n\nintro words\n\n"
+            "## 5. Conclusions\n\nconclusion words\n\n"
+            "## Acknowledgments\n\nacknowledgment words\n\n"
+            "## Declarations\n\n**Funding.** declaration words\n\n"
+            "## References\n\n1. A reference that is not counted at all.\n"
+        )
+        counted = limits.counted_text(text)
+        for inside in ("intro words", "conclusion words", "acknowledgment words",
+                       "declaration words"):
+            self.assertIn(inside, counted)
+        for outside in ("abstract words here", "A reference that is not counted"):
+            self.assertNotIn(outside, counted)
 
 
 class TheRealManuscriptPasses(unittest.TestCase):

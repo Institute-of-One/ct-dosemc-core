@@ -36,7 +36,9 @@ BUILT = PAPER / "build" / "manuscript.md"
 
 #: Research Article, from the submission guidelines read on 2026-11-07.
 LIMITS = {
-    "body words": 4000,
+    # "Text words (main text, acknowledgments, declarations, and appendices)",
+    # as the journal's own submission checklist names and bounds it.
+    "text words": 4000,
     "abstract words": 250,
     "references": 50,
     "figures and tables": 14,
@@ -84,7 +86,11 @@ def prose(text: str) -> str:
     text = re.sub(r"<!--.*?-->", " ", text, flags=re.S)
     text = re.sub(r"(?m)^\s*\|.*$", " ", text)            # table rows
     text = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", text)     # placed images
-    text = re.sub(r"(?m)^\*\*Figure \d+\.\*\*.*$", " ", text)  # figure captions
+    # A caption is a paragraph, not a line. Stripping only the line the label
+    # sits on left most of every caption in the count, and left the whole of
+    # Table 1's -- a hundred and ten words. Figures and tables are outside the
+    # journal's text count, and a caption is part of its figure or table.
+    text = re.sub(r"(?ms)^\*\*(?:Figure|Table) \d+\.\*\*.*?(?=\n\s*\n|\Z)", " ", text)
     text = re.sub(r"(?m)^#{1,6}\s+.*$", " ", text)        # headings
     text = re.sub(r"(?m)^\s*-{3,}\s*$", " ", text)        # horizontal rules
     return text
@@ -103,19 +109,28 @@ def words(text: str) -> int:
     return len(prose(text).split())
 
 
-def numbered_body(text: str) -> str:
-    """Everything from the first numbered section to the back matter.
+def counted_text(text: str) -> str:
+    """What the journal counts as "text", in its own words.
 
-    Counting each numbered section's own body misses every subsection: a
+    The submission checklist the journal distributes defines the quantity it
+    limits to 4000 words as "Text words (main text, acknowledgments,
+    declarations, and appendices)". Only the abstract, the figures and tables
+    and the references are outside it.
+
+    That is not what this check measured first. It counted the numbered sections
+    alone and reported 3996 of 4000, while the journal's own definition made the
+    same manuscript 4313. A limit measured two ways is not a limit, and when the
+    two readings differ the journal's is the one that counts.
+
+    (Counting each numbered section's own body is wrong in a third way, and was
+    the first version of this: it misses every subsection, because a
     ``## 2. Materials and methods`` whose next line is ``### 2.1`` has almost no
-    body of its own, and the first version of this check reported 712 words for
-    a manuscript of four thousand.
+    body of its own. That reading made the manuscript 712 words.)
     """
     start = re.search(r"(?m)^##\s+1\.\s", text)
     if not start:
         return ""
-    end = re.search(r"(?m)^##\s+(?:Acknowledgments?|Declarations|References)\b",
-                    text[start.start():])
+    end = re.search(r"(?m)^##\s+References\b", text[start.start():])
     stop = start.start() + end.start() if end else len(text)
     return text[start.start():stop]
 
@@ -186,9 +201,9 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
         if f"**{wanted}.**" not in declarations:
             problems.append(f"the Declarations section makes no {wanted!r} declaration")
 
-    body_words = words(numbered_body(text))
+    body_words = words(counted_text(text))
     if not body_words:
-        problems.append("no numbered body was found to count")
+        problems.append("no numbered text was found to count")
 
     reference_section = next((body for level, heading, body in found
                               if heading == "References"), "")
@@ -200,7 +215,7 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
     tables = set(re.findall(r"(?i)\bTable\s+(\d+)", text))
 
     measured = {
-        "body words": body_words,
+        "text words": body_words,
         "abstract words": words(abstract_prose),
         "references": references,
         "figures and tables": len(figures) + len(tables),

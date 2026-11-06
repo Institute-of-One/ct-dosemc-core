@@ -196,8 +196,15 @@ def number_citations(source: str, references: list[dict[str, Any]]) -> str:
     return REFERENCES_MARKER.sub(lambda _: listing, numbered)
 
 
-def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
-    """Substitute every marker in ``source`` with its value from ``frozen``."""
+def render(source: str, frozen: Path = DEFAULT_FROZEN, *, cite: bool = True) -> str:
+    """Substitute every marker in ``source`` with its value from ``frozen``.
+
+    ``cite=False`` resolves the result markers and leaves citations alone. The
+    cover letter and the novel scientific points are built by the same renderer,
+    so that a number in a letter comes from the same frozen file as the number in
+    the paper; they cite nothing, and numbering citations over them would report
+    every reference as uncited.
+    """
     cache: dict[str, Any] = {}
     problems: list[str] = []
 
@@ -260,6 +267,9 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
         raise ResolutionError(
             "the manuscript cites values that cannot be resolved:\n  " + "\n  ".join(problems)
         )
+
+    if not cite:
+        return rendered
 
     reference_file = frozen / "references.json"
     if not reference_file.exists():
