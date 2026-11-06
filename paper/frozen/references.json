@@ -1,0 +1,179 @@
+{
+  "references": [
+    {
+      "key": "mccollough2011",
+      "doi": "10.1148/radiol.11101800",
+      "entry": "McCollough CH, Leng S, Yu L, Cody DD, Boone JM, McNitt-Gray MF. CT dose index and patient dose: they are not the same thing. Radiology. 2011;259(2):311–316. https://doi.org/10.1148/radiol.11101800.",
+      "year": 2011,
+      "literal": false
+    },
+    {
+      "key": "mccollough2008",
+      "doi": "10.37206/97",
+      "entry": "McCollough C, Cody D, Edyvean S, Geise R, Gould B, Keat N, et al. The Measurement, Reporting, and Management of Radiation Dose in CT. AAPM; 2008. AAPM Report 96. https://doi.org/10.37206/97.",
+      "year": 2008,
+      "literal": false
+    },
+    {
+      "key": "boone2011",
+      "doi": "10.37206/143",
+      "entry": "Boone J, Strauss K, Cody D, McCollough C, McNitt-Gray M, Toth T, et al. Size-Specific Dose Estimates (SSDE) in Pediatric and Adult Body CT Examinations. AAPM; 2011. AAPM Report 204. https://doi.org/10.37206/143.",
+      "year": 2011,
+      "literal": false
+    },
+    {
+      "key": "mccollough2014",
+      "doi": "10.37206/146",
+      "entry": "McCollough C, Bakalyar D, Bostani M, Brady S, Boedeker K, Boone J, et al. Use of Water Equivalent Diameter for Calculating Patient Size and Size-Specific Dose Estimates (SSDE) in CT. AAPM; 2014. AAPM Report 220. https://doi.org/10.37206/146.",
+      "year": 2014,
+      "literal": false
+    },
+    {
+      "key": "deak2010",
+      "doi": "10.1148/radiol.10100047",
+      "entry": "Deak PD, Smal Y, Kalender WA. Multisection CT Protocols: Sex- and Age-specific Conversion Factors Used to Determine Effective Dose from Dose-Length Product. Radiology. 2010;257(1):158–166. https://doi.org/10.1148/radiol.10100047.",
+      "year": 2010,
+      "literal": false
+    },
+    {
+      "key": "lee2011",
+      "doi": "10.1118/1.3544658",
+      "entry": "Lee C, Kim KP, Long D, Fisher R, Tien C, Simon SL, et al. Organ doses for reference adult male and female undergoing computed tomography estimated by Monte Carlo simulations. Medical Physics. 2011;38(3):1196–1206. https://doi.org/10.1118/1.3544658.",
+      "year": 2011,
+      "literal": false
+    },
+    {
+      "key": "lee2015",
+      "doi": "10.1088/0952-4746/35/4/891",
+      "entry": "Lee C, Kim KP, Bolch WE, Moroz BE, Folio L. NCICT: a computational solution to estimate organ doses for pediatric and adult patients undergoing CT scans. Journal of Radiological Protection. 2015;35(4):891–909. https://doi.org/10.1088/0952-4746/35/4/891.",
+      "year": 2015,
+      "literal": false
+    },
+    {
+      "key": "tian2015",
+      "doi": "10.1118/1.4907955",
+      "entry": "Tian X, Li X, Segars WP, Frush DP, Samei E. Prospective estimation of organ dose in CT under tube current modulation. Medical Physics. 2015;42(4):1575–1585. https://doi.org/10.1118/1.4907955.",
+      "year": 2015,
+      "literal": false
+    },
+    {
+      "key": "yamamoto2026tomography",
+      "doi": "10.3390/tomography12090125",
+      "entry": "Yamamoto S. Anatomy-Weighted CTDIvol from Routine CT Metadata: A Patient-Specific, Multi-Vendor Study Using Deep-Learning Segmentation. Tomography. 2026;12(9):125. https://doi.org/10.3390/tomography12090125.",
+      "year": 2026,
+      "literal": false
+    },
+    {
+      "key": "badal2009",
+      "doi": "10.1118/1.3231824",
+      "entry": "Badal A, Badano A. Accelerating Monte Carlo simulations of photon transport in a voxelized geometry using a massively parallel graphics processing unit. Medical Physics. 2009;36(11):4878–4880. https://doi.org/10.1118/1.3231824.",
+      "year": 2009,
+      "literal": false
+    },
+    {
+      "key": "bujila2020",
+      "doi": "10.1016/j.ejmp.2020.04.026",
+      "entry": "Bujila R, Omar A, Poludniowski G. A validation of SpekPy: A software toolkit for modelling X-ray tube spectra. Physica Medica. 2020;75:44–54. https://doi.org/10.1016/j.ejmp.2020.04.026.",
+      "year": 2020,
+      "literal": false
+    },
+    {
+      "key": "poludniowski2021",
+      "doi": "10.1002/mp.14945",
+      "entry": "Poludniowski G, Omar A, Bujila R, Andreo P. Technical Note: SpekPy v2.0—a software toolkit for modeling x-ray tube spectra. Medical Physics. 2021;48(7):3630–3637. https://doi.org/10.1002/mp.14945.",
+      "year": 2021,
+      "literal": false
+    },
+    {
+      "key": "schneider1996",
+      "doi": "10.1088/0031-9155/41/1/009",
+      "entry": "Schneider U, Pedroni E, Lomax A. The calibration of CT Hounsfield units for radiotherapy treatment planning. Physics in Medicine and Biology. 1996;41(1):111–124. https://doi.org/10.1088/0031-9155/41/1/009.",
+      "year": 1996,
+      "literal": false
+    },
+    {
+      "key": "schneider2000",
+      "doi": "10.1088/0031-9155/45/2/314",
+      "entry": "Schneider W, Bortfeld T, Schlegel W. Correlation between CT numbers and tissue parameters needed for Monte Carlo simulations of clinical dose distributions. Physics in Medicine and Biology. 2000;45(2):459–478. https://doi.org/10.1088/0031-9155/45/2/314.",
+      "year": 2000,
+      "literal": false
+    },
+    {
+      "key": "wasserthal2023",
+      "doi": "10.1148/ryai.230024",
+      "entry": "Wasserthal J, Breit HC, Meyer MT, Pradella M, Hinck D, Sauter AW, et al. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiology: Artificial Intelligence. 2023;5(5):e230024. https://doi.org/10.1148/ryai.230024.",
+      "year": 2023,
+      "literal": false
+    },
+    {
+      "key": "salvat2006",
+      "doi": null,
+      "entry": "Salvat F, Fernández-Varea JM, Sempau J. PENELOPE — a code system for Monte Carlo simulation of electron and photon transport. Issy-les-Moulineaux: NEA-OECD; 2006.",
+      "year": null,
+      "literal": true
+    },
+    {
+      "key": "turner2009",
+      "doi": "10.1118/1.3117683",
+      "entry": "Turner AC, Zhang D, Kim HJ, DeMarco JJ, Cagnon CH, Angel E, et al. A method to generate equivalent energy spectra and filtration models based on measurement for multidetector CT Monte Carlo dosimetry simulations. Medical Physics. 2009;36(6):2154–2164. https://doi.org/10.1118/1.3117683.",
+      "year": 2009,
+      "literal": false
+    },
+    {
+      "key": "yang2019",
+      "doi": "10.1016/j.dib.2019.104261",
+      "entry": "Yang K, Ruan C, Li X, Liu B. Data of CT bow tie filter profiles from three modern CT scanners. Data in Brief. 2019;25:104261. https://doi.org/10.1016/j.dib.2019.104261.",
+      "year": 2019,
+      "literal": false
+    },
+    {
+      "key": "sechopoulos2015",
+      "doi": "10.1118/1.4928676",
+      "entry": "Sechopoulos I, Ali ESM, Badal A, Badano A, Boone JM, Kyprianou IS, et al. Monte Carlo reference data sets for imaging research: Executive summary of the report of AAPM Research Committee Task Group 195. Medical Physics. 2015;42(10):5679–5691. https://doi.org/10.1118/1.4928676.",
+      "year": 2015,
+      "literal": false
+    },
+    {
+      "key": "clark2013",
+      "doi": "10.1007/s10278-013-9622-7",
+      "entry": "Clark K, Vendt B, Smith K, Freymann J, Kirby J, Koppel P, et al. The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository. Journal of Digital Imaging. 2013;26(6):1045–1057. https://doi.org/10.1007/s10278-013-9622-7.",
+      "year": 2013,
+      "literal": false
+    },
+    {
+      "key": "moawad2023",
+      "doi": "10.1038/s41597-023-01928-3",
+      "entry": "Moawad AW, Morshid A, Khalaf AM, Elmohr MM, Hazle JD, Fuentes D, et al. Multimodality annotated hepatocellular carcinoma data set including pre- and post-TACE with imaging segmentation. Scientific Data. 2023;10(1):33. https://doi.org/10.1038/s41597-023-01928-3.",
+      "year": 2023,
+      "literal": false
+    },
+    {
+      "key": "yamamoto2026ctdose",
+      "doi": "10.5281/zenodo.21636719",
+      "entry": "Yamamoto S. ctdose-core: open, auditable CT dose surveillance from DICOM, with a physics reconstruction when the dose attributes are missing [software]. Version 0.1.1. Zenodo; 2026. https://doi.org/10.5281/zenodo.21636719.",
+      "year": 2026,
+      "literal": false
+    },
+    {
+      "key": "sharma2019",
+      "doi": "10.1088/1361-6560/ab467f",
+      "entry": "Sharma S, Kapadia A, Fu W, Abadi E, Segars WP, Samei E. A real-time Monte Carlo tool for individualized dose estimations in clinical CT. Physics in Medicine & Biology. 2019;64(21):215020. https://doi.org/10.1088/1361-6560/ab467f.",
+      "year": 2019,
+      "literal": false
+    },
+    {
+      "key": "ria2021",
+      "doi": "10.1007/s00330-021-07753-9",
+      "entry": "Ria F, Fu W, Hoye J, Segars WP, Kapadia AJ, Samei E. Comparison of 12 surrogates to characterize CT radiation risk across a clinical population. European Radiology. 2021;31(9):7022–7030. https://doi.org/10.1007/s00330-021-07753-9.",
+      "year": 2021,
+      "literal": false
+    },
+    {
+      "key": "fujibuchi2026",
+      "doi": "10.1007/s12194-026-01148-5",
+      "entry": "Fujibuchi T, Han D, Anam C. Inter-software variability in CT organ-dose calculation under identical scan conditions: implications for users and dose evaluation in the Japanese population. Radiological Physics and Technology. 2026;19(4):1787–1801. https://doi.org/10.1007/s12194-026-01148-5.",
+      "year": 2026,
+      "literal": false
+    }
+  ]
+}

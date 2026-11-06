@@ -1,0 +1,183 @@
+{
+  "_comment": [
+    "Every reference this manuscript cites, keyed by the name used in the prose as",
+    "[[cite:key]]. The rendered entry is generated from the registered metadata at",
+    "doi.org, never typed here: a reference list typed by hand is a list nobody",
+    "resolved. The numbering is not here either -- build_manuscript.py assigns it",
+    "from the order of first appearance, so moving a paragraph cannot leave a",
+    "citation pointing at the wrong entry.",
+    "",
+    "'title' is the title as the author's own reference list carried it, before any",
+    "of this was generated. references.py fails when the registered record no",
+    "longer agrees with it. That is the whole value of the field: copying the",
+    "registered title in here would verify nothing. It is required for every",
+    "reference, so that no title reaches the page without having been compared",
+    "against something a person wrote.",
+    "",
+    "On the first run this caught one: Crossref registers Radiology 2011;259(2) as",
+    "'They AreNotthe Same Thing', having lost the spaces around the italicised",
+    "word. See reference_overrides.json.",
+    "",
+    "An entry with 'literal' instead of 'doi' is not registered anywhere: the reason",
+    "is recorded with it, because an unresolvable reference is otherwise",
+    "indistinguishable from one nobody checked."
+  ],
+  "references": [
+    {
+      "key": "mccollough2011",
+      "doi": "10.1148/radiol.11101800",
+      "title": "CT dose index and patient dose: they are not the same thing",
+      "year": 2011
+    },
+    {
+      "key": "mccollough2008",
+      "doi": "10.37206/97",
+      "title": "The Measurement, Reporting, and Management of Radiation Dose in CT",
+      "year": 2008,
+      "series": "AAPM Report 96"
+    },
+    {
+      "key": "boone2011",
+      "doi": "10.37206/143",
+      "title": "Size-Specific Dose Estimates (SSDE) in Pediatric and Adult Body CT Examinations",
+      "year": 2011,
+      "series": "AAPM Report 204"
+    },
+    {
+      "key": "mccollough2014",
+      "doi": "10.37206/146",
+      "title": "Use of Water Equivalent Diameter for Calculating Patient Size and Size-Specific Dose Estimates (SSDE) in CT",
+      "year": 2014,
+      "series": "AAPM Report 220"
+    },
+    {
+      "key": "deak2010",
+      "doi": "10.1148/radiol.10100047",
+      "title": "Multisection CT protocols: sex- and age-specific conversion factors used to determine effective dose from dose-length product",
+      "year": 2010
+    },
+    {
+      "key": "lee2011",
+      "doi": "10.1118/1.3544658",
+      "title": "Organ doses for reference adult male and female undergoing computed tomography estimated by Monte Carlo simulations",
+      "year": 2011
+    },
+    {
+      "key": "lee2015",
+      "doi": "10.1088/0952-4746/35/4/891",
+      "title": "NCICT: a computational solution to estimate organ doses for pediatric and adult patients undergoing CT scans",
+      "year": 2015
+    },
+    {
+      "key": "tian2015",
+      "doi": "10.1118/1.4907955",
+      "title": "Prospective estimation of organ dose in CT under tube current modulation",
+      "year": 2015
+    },
+    {
+      "key": "yamamoto2026tomography",
+      "doi": "10.3390/tomography12090125",
+      "title": "Anatomy-Weighted CTDIvol from Routine CT Metadata: A Patient-Specific, Multi-Vendor Study Using Deep-Learning Segmentation",
+      "year": 2026,
+      "note": "The companion study. It was cited as a Zenodo software record until 2026-11-07; it has been peer-reviewed and published in Tomography since 30 August 2026 (PMID 42784263), so the paper is what a reader should be sent to."
+    },
+    {
+      "key": "badal2009",
+      "doi": "10.1118/1.3231824",
+      "title": "Accelerating Monte Carlo simulations of photon transport in a voxelized geometry using a massively parallel Graphics Processing Unit",
+      "year": 2009
+    },
+    {
+      "key": "bujila2020",
+      "doi": "10.1016/j.ejmp.2020.04.026",
+      "title": "A validation of SpekPy: a software toolkit for modelling X-ray tube spectra",
+      "year": 2020
+    },
+    {
+      "key": "poludniowski2021",
+      "doi": "10.1002/mp.14945",
+      "title": "Technical Note: SpekPy v2.0 — a software toolkit for modeling x-ray tube spectra",
+      "year": 2021
+    },
+    {
+      "key": "schneider1996",
+      "doi": "10.1088/0031-9155/41/1/009",
+      "title": "The calibration of CT Hounsfield units for radiotherapy treatment planning",
+      "year": 1996
+    },
+    {
+      "key": "schneider2000",
+      "doi": "10.1088/0031-9155/45/2/314",
+      "title": "Correlation between CT numbers and tissue parameters needed for Monte Carlo simulations of clinical dose distributions",
+      "year": 2000
+    },
+    {
+      "key": "wasserthal2023",
+      "doi": "10.1148/ryai.230024",
+      "title": "TotalSegmentator: robust segmentation of 104 anatomic structures in CT images",
+      "year": 2023
+    },
+    {
+      "key": "salvat2006",
+      "literal": "Salvat F, Fernández-Varea JM, Sempau J. PENELOPE — a code system for Monte Carlo simulation of electron and photon transport. Issy-les-Moulineaux: NEA-OECD; 2006.",
+      "reason": "A NEA-OECD workshop report with no registered DOI. Checked at doi.org and at Crossref by title on 2026-11-07; neither carries it. The photon cross-section database this work generates its material files from is the one distributed with this report, so the reference is the primary source and cannot be replaced by a later paper."
+    },
+    {
+      "key": "turner2009",
+      "doi": "10.1118/1.3117683",
+      "title": "A method to generate equivalent energy spectra and filtration models based on measurement for multidetector CT Monte Carlo dosimetry simulations",
+      "year": 2009
+    },
+    {
+      "key": "yang2019",
+      "doi": "10.1016/j.dib.2019.104261",
+      "title": "Data of CT bow tie filter profiles from three modern CT scanners",
+      "year": 2019,
+      "note": "Licensed CC BY 4.0; the licence is stated in the figure caption that uses the profiles, not here."
+    },
+    {
+      "key": "sechopoulos2015",
+      "doi": "10.1118/1.4928676",
+      "title": "Monte Carlo reference data sets for imaging research: executive summary of the report of AAPM Research Committee Task Group 195",
+      "year": 2015
+    },
+    {
+      "key": "clark2013",
+      "doi": "10.1007/s10278-013-9622-7",
+      "title": "The Cancer Imaging Archive (TCIA): maintaining and operating a public information repository",
+      "year": 2013
+    },
+    {
+      "key": "moawad2023",
+      "doi": "10.1038/s41597-023-01928-3",
+      "title": "Multimodality annotated hepatocellular carcinoma data set including pre- and post-TACE with imaging segmentation",
+      "year": 2023
+    },
+    {
+      "key": "yamamoto2026ctdose",
+      "doi": "10.5281/zenodo.21636719",
+      "title": "ctdose-core: open, auditable CT dose surveillance from DICOM, with a physics reconstruction when the dose attributes are missing",
+      "year": 2026,
+      "note": "Software, not a paper. The manuscript reporting it is under review at JACMP as 2026-10019A and is deliberately not cited: an unpublished manuscript is not a reference a reader can follow."
+    },
+    {
+      "key": "sharma2019",
+      "doi": "10.1088/1361-6560/ab467f",
+      "title": "A real-time Monte Carlo tool for individualized dose estimations in clinical CT",
+      "year": 2019
+    },
+    {
+      "key": "ria2021",
+      "doi": "10.1007/s00330-021-07753-9",
+      "title": "Comparison of 12 surrogates to characterize CT radiation risk across a clinical population",
+      "year": 2021
+    },
+    {
+      "key": "fujibuchi2026",
+      "doi": "10.1007/s12194-026-01148-5",
+      "title": "Inter-software variability in CT organ-dose calculation under identical scan conditions: implications for users and dose evaluation in the Japanese population",
+      "year": 2026,
+      "note": "Added 2026-11-07. The nearest published work to this one: it measures how far three organ-dose packages disagree under identical scan conditions and attributes the spread to phantom anatomy and size rather than to inaccuracy. That is the same mechanism this paper bounds from the other side, so it is the comparator the Discussion needs."
+    }
+  ]
+}

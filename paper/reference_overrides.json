@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "Corrections to registered metadata, keyed by DOI. Each one records the value",
+    "that is registered now, and the value to print instead. references.py refuses",
+    "to apply an override whose 'registered' value no longer matches, so when a",
+    "publisher corrects a record this file fails loudly instead of printing a",
+    "correction that has become wrong.",
+    "",
+    "Nothing belongs here that cleaning handles on its own. HTML entities and",
+    "inline markup are an encoding and are removed mechanically. This file is for",
+    "registrations that are wrong: a title beginning mid-word, an author whose",
+    "whole name sits in the family field, a journal name registered incorrectly.",
+    "",
+    "Each entry must also carry 'source': where the correct value was read.",
+    "",
+    "Shape:",
+    "  \"10.xxxx/yyyy\": {",
+    "    \"source\": \"the publisher's own article page, read 2026-11-07\",",
+    "    \"title\": {\"registered\": \"aLow-dose ...\", \"display\": \"Low-dose ...\"},",
+    "    \"container\": {\"registered\": \"...\", \"display\": \"...\"},",
+    "    \"authors\": \"Zhou W, Wang Y, et al\"",
+    "  }",
+    "",
+    "One entry on 2026-11-07, found by the seed comparison on the first run."
+  ],
+  "10.1148/radiol.11101800": {
+    "source": "PubMed PMID 21502387 (MEDLINE record for Radiology 2011;259(2):311-6), read 2026-11-07. The manuscript's own reference list, written before any of this, carries the same title.",
+    "reason": "The registered title has lost two spaces around the word that the published title sets in italics: Crossref carries 'They AreNotthe Same Thing'. Printing the registered string would put a non-word in the reference list of a paper whose subject is that very distinction.",
+    "title": {
+      "registered": "CT Dose Index and Patient Dose: They AreNotthe Same Thing",
+      "display": "CT dose index and patient dose: they are not the same thing"
+    }
+  }
+}
