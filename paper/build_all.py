@@ -31,7 +31,14 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("freeze the results the paper cites", ["paper/freeze.py"], False),
     ("draw figures 1-3", ["paper/make_figures.py"], False),
     ("collect every figure and its caption", ["paper/collect_figures.py"], False),
-    ("resolve the manuscript's numbers", ["paper/build_manuscript.py"], True),
+    # The reference list is an artefact like any other: it is generated from the
+    # metadata registered at doi.org, and without a step here it is whatever was
+    # resolved by hand last. --check rather than a rewrite, so that a silent
+    # change in a registered record stops the build instead of being absorbed
+    # into it.
+    ("check every reference still resolves", ["paper/references.py", "--check"], True),
+    ("resolve the manuscript's numbers and citations", ["paper/build_manuscript.py"], True),
+    ("measure against the journal's limits", ["paper/check_rpt_limits.py"], True),
     ("render the manuscript to Word", ["paper/build_docx.py"], True),
     # The PDF is the file the portal receives, so it is an artefact and needs a step. It did
     # not have one, and the PDF sitting in paper/build/ was six weeks older than the .docx

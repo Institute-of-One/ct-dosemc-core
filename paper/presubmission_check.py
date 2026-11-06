@@ -238,61 +238,65 @@ def check_author_block(built: str) -> None:
         )
 
 
-def check_code_is_reachable(built: str) -> None:
-    """IOP's data availability statement: the heading, the placement, the wording, a DOI.
+def _declaration(built: str, label: str) -> str | None:
+    """The text of one labelled declaration, or None if it is not there.
 
-    IOP Publishing has required a data availability statement in every article since 2022.
-    It must sit under the heading 'Data availability', after the acknowledgements, and use
-    one of the publisher's template forms. The locator matters as much as the wording: a
-    companion paper was submitted saying the software was "in this repository" and naming
-    no repository, and nothing else in the package carried a URL either. "this repository"
-    is neither a URL nor a DOI.
+    Radiological Physics and Technology puts the statements IOP puts under their
+    own headings into a single Declarations section, each one opening with a bold
+    label: **Funding.**, **Conflict of interest.**, **Data availability.** and so
+    on, in the form the editor-in-chief's preparation guide prints.
     """
     section = re.search(
-        r"^##\s*Data availability[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
+        r"^##\s*Declarations\s*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
     )
     if section is None:
+        return None
+    found = re.search(
+        rf"\*\*{re.escape(label)}\.\*\*(.*?)(?=\n\s*\n\*\*|\Z)",
+        section.group(1), flags=re.S,
+    )
+    return " ".join(found.group(1).split()) if found else None
+
+
+def check_code_is_reachable(built: str) -> None:
+    """The data availability declaration must name an archive a reader can fetch.
+
+    A companion paper was submitted saying the software was "in this repository"
+    and naming no repository, and nothing else in the package carried a URL
+    either. "this repository" is neither a URL nor a DOI.
+
+    A bare repository URL is not enough either. A repository moves, and the
+    version a reader clones is not the version the results came from; the DOI is
+    what pins the archive the paper was computed from.
+    """
+    if re.search(r"^##\s*Declarations\s*$", built, flags=re.M) is None:
         fail(
-            "the manuscript has no 'Data availability' section; IOP requires one, under "
-            "that heading, in every article"
+            "the manuscript has no Declarations section; the journal requires one, "
+            "before the references, carrying the statements below"
         )
         return
-    text = " ".join(section.group(1).split())
 
-    headings = re.findall(r"^##\s*(.+?)\s*$", built, flags=re.M)
-    names = [h.lower() for h in headings]
-    if (
-        "acknowledgements" in names
-        and "data availability" in names
-        and names.index("data availability") < names.index("acknowledgements")
-    ):
-        fail("'Data availability' must come after 'Acknowledgements', as IOP asks")
-
-    # One of IOP's template openings, quoted from the publisher's data policy.
-    templates = (
-        "The data that support the findings of this study are openly available",
-        "The data that support the findings of this study will be openly available",
-        "The data that support the findings of this study are available upon reasonable",
-        "All data that support the findings of this study are included within the article",
-        "No new data were created or analysed in this study",
-    )
-    if not any(t.lower() in text.lower() for t in templates):
-        fail(
-            "the data availability statement does not open with one of IOP's template "
-            "forms, which the publisher's data policy requires"
-        )
+    text = _declaration(built, "Data availability")
+    if text is None:
+        fail("the Declarations section makes no **Data availability.** statement")
+        return
 
     if not re.search(r"https?://|doi\.org|doi:", text):
         fail(
-            "the data availability statement names no URL or DOI: a reviewer cannot reach "
-            "the software from the manuscript"
+            "the data availability statement names no URL or DOI: a reader cannot reach "
+            "the archive from the manuscript"
         )
     elif not re.search(r"10\.\d{4,9}/\S+", text):
         fail(
             "the data availability statement carries a URL but no DOI. A repository URL "
-            "is not an archive: it moves, and the version a reviewer fetches is not the "
+            "is not an archive: it moves, and the version a reader fetches is not the "
             "version the results came from"
         )
+
+    for label in ("Funding", "Conflict of interest", "Ethics approval",
+                  "Code availability"):
+        if _declaration(built, label) is None:
+            fail(f"the Declarations section makes no **{label}.** statement")
 
 
 # ----------------------------------------------------------------------- figures
@@ -732,93 +736,102 @@ def check_every_figure_image_has_been_looked_at() -> None:
 # -------------------------------------------------------------------- references
 
 
-def check_references(source: str) -> None:
-    """Harvard: every citation resolves, every entry is cited, alphabetical, traceable.
+def check_references(built: str) -> None:
+    """Vancouver: numbered in order of first appearance, every number resolving.
 
-    Physics in Medicine & Biology requires the Harvard alphabetical style exclusively, so
-    this checks author-year rather than the numbering it used to check. Markers are
-    stripped before citations are counted: a marker path may index a list --
-    ``...range[0]`` -- which a numbered-citation scan read as a citation of reference
-    zero, and which an author-year scan would ignore anyway.
+    Radiological Physics and Technology follows the National Library of Medicine
+    style, so this checks numbering rather than the author-year it checked for
+    PMB.
+
+    It reads the *built* manuscript, not the source. The source carries a single
+    [[references]] marker and the numbers do not exist in it at all: a gate that
+    reads the source would report an empty bibliography forever, which is what
+    the Harvard version of this check did on the first run after the conversion.
     """
-    prose = re.sub(r"\[\[results:.+?\]\]", "", _strip_comments(source), flags=re.S)
-    body, _, tail = prose.rpartition("## References")
+    body, _, tail = built.rpartition("## References")
     if not body:
         fail("the manuscript has no '## References' section")
         return
 
-    if re.search(r"(?<![\w.])\[\d+(?:\s*,\s*\d+)*\]", body):
-        fail(
-            "a numbered citation is still in the body; PMB requires Harvard "
-            "(alphabetical) references exclusively"
-        )
-
-    # An entry begins at the left margin with a surname and initials, and carries a year.
-    entries = [entry.strip() for entry in re.split(r"\n\s*\n", tail.strip()) if entry.strip()]
-    listed: list[tuple[str, str]] = []
+    entries = [
+        entry.strip()
+        for entry in re.split(r"\n\s*\n", tail.strip())
+        if entry.strip()
+    ]
+    numbered: dict[int, str] = {}
     for entry in entries:
-        match = re.match(
-            r"([A-Z][A-Za-z\u00C0-\u024F'\-]+)\b.*?\b((?:19|20)\d{2}[ab]?)\b",
-            " ".join(entry.split()),
-        )
+        match = re.match(r"(\d+)\.\s+(\S.*)", " ".join(entry.split()))
         if match is None:
-            fail(f"a reference entry has no leading surname and year: {entry[:70]!r}")
+            fail(f"a reference entry is not numbered: {entry[:70]!r}")
             continue
-        listed.append((match.group(1), match.group(2)))
-    if not listed:
+        number = int(match.group(1))
+        if number in numbered:
+            fail(f"reference {number} is listed twice")
+        numbered[number] = match.group(2)
+
+    if not numbered:
         fail("the reference list is empty")
         return
 
-    surnames = [surname for surname, _ in listed]
-    if surnames != sorted(surnames, key=str.casefold):
-        out_of_order = [
-            f"{b} after {a}"
-            # strict=False on purpose: the tail is one shorter, which is the point
-            for a, b in zip(surnames, surnames[1:], strict=False)
-            if b.casefold() < a.casefold()
-        ]
-        fail(f"the reference list is not in alphabetical order: {out_of_order}")
+    expected = list(range(1, len(numbered) + 1))
+    if sorted(numbered) != expected:
+        fail(
+            f"the reference numbers are {sorted(numbered)}, not {expected[0]}.."
+            f"{expected[-1]}"
+        )
 
-    # Every (surname, year) in the list must be cited, and every citation must resolve.
-    flat = " ".join(body.split())
-    uncited = [
-        f"{surname} {year}"
-        for surname, year in listed
-        # The year may sit in its own brackets, as in "Turner *et al* (2009)", so the
-        # span between the surname and the year has to be allowed to contain them.
-        if not re.search(rf"\b{re.escape(surname)}\b.{{0,40}}?{re.escape(year)}", flat)
-    ]
+    # Citations, as the journal writes them: [9] or [11, 12].
+    cited: list[int] = []
+    for group in re.findall(r"(?<![\w.])\[(\d+(?:\s*,\s*\d+)*)\]", body):
+        for part in group.split(","):
+            number = int(part)
+            if number not in cited:
+                cited.append(number)
+
+    if not cited:
+        fail("the body cites no reference by number, but the list is not empty")
+        return
+
+    dangling = sorted(number for number in cited if number not in numbered)
+    if dangling:
+        fail(f"cited but not listed: {dangling}")
+
+    uncited = sorted(number for number in numbered if number not in cited)
     if uncited:
         fail(f"listed but never cited: {uncited}")
 
-    years = {year for _, year in listed}
-    cited_years = set(re.findall(r"\b((?:19|20)\d{2}[ab]?)\b", flat))
-    dangling = sorted(
-        y for y in cited_years - years if re.search(rf"\({{0,1}}[A-Z][^()]*{y}\)", flat)
-    )
-    if dangling:
-        warn(f"a year appears in a citation but in no reference entry: {dangling}")
+    # The journal numbers in order of first appearance. build_manuscript.py
+    # assigns the numbers from the prose, so this cannot drift -- which is
+    # exactly why it is worth asserting: if it ever does, the numbering has
+    # stopped coming from the prose and every citation is suspect.
+    if cited != sorted(cited):
+        out_of_order = [
+            f"{b} before {a}"
+            for a, b in zip(cited, cited[1:], strict=False)
+            if b < a
+        ]
+        fail(f"references are not numbered in order of first citation: {out_of_order}")
 
     # A reference must be traceable. A DOI is the usual way; a report or a
-    # standard often has none, and for those the issuing body and place stand in.
-    # What is not acceptable is an entry a reader cannot follow to anything, which
-    # is the shape a fabricated reference takes.
+    # standard sometimes has none, and for those the issuing body and place stand
+    # in. What is not acceptable is an entry a reader cannot follow to anything,
+    # which is the shape a fabricated reference takes.
     untraceable = [
-        entry.split(" 20")[0][:48]
-        for entry in entries
-        if "doi" not in entry.lower() and "(" not in entry
+        f"[{number}] {text[:48]}"
+        for number, text in sorted(numbered.items())
+        if "doi.org" not in text.lower() and ";" not in text
     ]
     if untraceable:
         warn(
-            f"reference(s) with neither a DOI nor a publisher and place, so a "
-            f"reader cannot follow them: {untraceable}"
+            f"reference(s) with neither a DOI nor a publisher and date, so a reader "
+            f"cannot follow them: {untraceable}"
         )
 
     words = len(re.findall(r"\b\w+\b", body))
-    density = len(listed) / max(words, 1) * 1000
+    density = len(numbered) / max(words, 1) * 1000
     if density < 2.0:
         warn(
-            f"{len(listed)} references over {words} words is {density:.1f} per 1000; "
+            f"{len(numbered)} references over {words} words is {density:.1f} per 1000; "
             f"a thin bibliography reads as a Note whatever the work behind it"
         )
 
@@ -918,25 +931,27 @@ def check_generative_ai_is_declared(built: str) -> None:
     """
     if not re.search(r"generative artificial intelligence|generative AI", built, re.I):
         fail(
-            "no generative-AI declaration; IOP requires the model, its version and how "
-            "it was used, disclosed in the Acknowledgements"
+            "no generative-AI declaration; the model, its version and how it was used "
+            "must be disclosed, and this journal takes declarations in the Declarations "
+            "section"
         )
         return
-    section = re.search(
-        r"^##\s*Acknowledge?ments[^\n]*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
-    )
-    if section is None or not re.search(
-        r"generative artificial intelligence|generative AI", section.group(1), re.I
-    ):
+    # The label carries the phrase, so the statement is found by its label and
+    # not by searching its body for the phrase again: a declaration reading
+    # "An assistant (Claude Opus 5, Anthropic) was used as a tool" under the
+    # right label is a declaration, and the first version of this check rejected
+    # exactly that.
+    text = _declaration(built, "Use of generative artificial intelligence")
+    if text is None:
         fail(
-            "the generative-AI declaration is not in the Acknowledgements, which is "
-            "where IOP's policy puts it"
+            "the generative-AI declaration is not a labelled statement in the "
+            "Declarations section, which is where this journal takes declarations"
         )
         return
-    if not re.search(r"\(([^)]*,\s*[^)]*)\)", section.group(1)):
+    if not re.search(r"\(([^)]*,\s*[^)]*)\)", text):
         warn(
             "the generative-AI declaration names no model and vendor in brackets; "
-            "IOP asks for the model and version"
+            "the model and its version are what has to be disclosed"
         )
 
 
@@ -973,7 +988,7 @@ def main(argv: list[str] | None = None) -> int:
             check_every_figure_image_has_been_looked_at()
             check_docx_furniture()
             check_inquiry(built)
-        check_references(source)
+        check_references(built)
 
     for message in warnings:
         print(f"  warn  {message}")
