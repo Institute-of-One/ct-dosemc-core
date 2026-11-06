@@ -51,6 +51,12 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("check the portal's stamp will not land on a figure",
      ["paper/check_figure_headroom.py"], False),
     ("check the version and both DOIs agree", ["paper/check_release_metadata.py"], True),
+    # The journal requires its checklist with every submission and sends an
+    # incomplete one back. Every quantity on it is measured by the step above,
+    # so it is filled from that rather than typed into a form nobody rechecks.
+    ("fill the journal's submission checklist", ["paper/fill_checklist.py"], True),
+    ("build the cover letter, the novel points and the kit",
+     ["paper/build_submission.py"], True),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 

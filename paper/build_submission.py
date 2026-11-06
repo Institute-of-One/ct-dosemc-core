@@ -66,7 +66,9 @@ UPLOADS = (
     ("build/figures/Figure_5.png", "F", "Figure 5"),
     ("build/figures/Figure_6.png", "F", "Figure 6"),
     ("build/cover_letter.docx", "S", "Cover Letter"),
-    ("submission/12194_RPT Submission Checklist_2025.xlsx", "S",
+    # The filled copy in build/, not the blank template in submission/. The
+    # template is kept as downloaded and never written to.
+    ("build/12194_RPT Submission Checklist_2025.xlsx", "S",
      "Supplementary Material (only for review)"),
 )
 
