@@ -58,6 +58,18 @@ _COMMENT = re.compile(r"(<!--.*?-->)", re.S)
 #: ``paper/tables.py``, so that no cell in it is ever typed by hand.
 TABLE_MARKER = re.compile(r"\[\[table:([A-Za-z0-9_]+)\]\]")
 
+#: ``[[cite:badal2009]]`` or ``[[cite:lee2011,lee2015]]`` -> ``[10]``, ``[6, 7]``.
+#: The journal numbers references in order of first appearance, and that order is
+#: a property of the prose, not of any list: numbering by hand means a moved
+#: paragraph leaves a citation pointing at the wrong entry, silently, because
+#: every number is still a plausible number.
+CITE_MARKER = re.compile(r"\[\[cite:([A-Za-z0-9_]+(?:\s*,\s*[A-Za-z0-9_]+)*)\]\]")
+
+#: ``[[references]]`` -> the numbered list, in the order the prose created.
+REFERENCES_MARKER = re.compile(r"\[\[references\]\]")
+
+DEFAULT_REFERENCES = DEFAULT_FROZEN / "references.json"
+
 #: Unicode superscripts, for the exponent of ``|sciN``.
 _SUPERSCRIPT = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
 
@@ -130,6 +142,60 @@ def resolve(payload: Any, path: str) -> Any:
     return current
 
 
+def number_citations(source: str, references: list[dict[str, Any]]) -> str:
+    """Replace every ``[[cite:...]]`` with its number and ``[[references]]`` with the list.
+
+    Numbers come from the order of first appearance in the prose. A key the
+    reference list does not have, and a reference the prose never cites, are both
+    errors: the first prints an empty bracket, the second pads the list with an
+    entry no reader is sent to, and neither is visible in a finished document.
+    """
+    by_key = {ref["key"]: ref for ref in references}
+    order: list[str] = []
+    problems: list[str] = []
+
+    def number(key: str) -> int:
+        if key not in order:
+            order.append(key)
+        return order.index(key) + 1
+
+    def substitute(match: re.Match[str]) -> str:
+        keys = [key.strip() for key in match.group(1).split(",")]
+        unknown = [key for key in keys if key not in by_key]
+        if unknown:
+            problems.append(
+                f"[[cite:{match.group(1)}]] names {unknown}, which reference_seed.json "
+                f"does not define"
+            )
+            return match.group(0)
+        return "[" + ", ".join(str(number(key)) for key in keys) + "]"
+
+    pieces = _COMMENT.split(source)
+    numbered = "".join(
+        piece if _COMMENT.fullmatch(piece) else CITE_MARKER.sub(substitute, piece)
+        for piece in pieces
+    )
+
+    uncited = [ref["key"] for ref in references if ref["key"] not in order]
+    if uncited:
+        problems.append(
+            f"these references are never cited, so they would be listed for nobody: "
+            f"{uncited}"
+        )
+    if problems:
+        raise ResolutionError("citations cannot be numbered:\n  " + "\n  ".join(problems))
+
+    listing = "\n\n".join(
+        f"{index}. {by_key[key]['entry']}" for index, key in enumerate(order, 1)
+    )
+    if not REFERENCES_MARKER.search(numbered):
+        raise ResolutionError(
+            "the manuscript cites references but has no [[references]] marker, so the "
+            "numbers would point at nothing"
+        )
+    return REFERENCES_MARKER.sub(lambda _: listing, numbered)
+
+
 def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
     """Substitute every marker in ``source`` with its value from ``frozen``."""
     cache: dict[str, Any] = {}
@@ -184,7 +250,15 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
         raise ResolutionError(
             "the manuscript cites values that cannot be resolved:\n  " + "\n  ".join(problems)
         )
-    return rendered
+
+    reference_file = frozen / "references.json"
+    if not reference_file.exists():
+        raise ResolutionError(
+            f"{reference_file} is missing; run paper/references.py to resolve the "
+            f"reference list before building the manuscript"
+        )
+    references = json.loads(reference_file.read_text(encoding="utf-8"))["references"]
+    return number_citations(rendered, references)
 
 
 def build(
