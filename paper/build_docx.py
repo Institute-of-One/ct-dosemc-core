@@ -161,9 +161,95 @@ _LINE_NUMBERING = '<w:lnNumType w:countBy="1" w:restart="continuous" w:distance=
 
 #: Whether this paper's .docx carries its own line numbers. False for PMB: ScholarOne
 #: numbers the lines of the proof it builds from the upload, and a manuscript that
-#: brings its own ends up with two sets that do not agree. Set True for a journal that
-#: requires them, Medical Physics among them.
-LINE_NUMBERS = False
+#: brings its own ends up with two sets that do not agree. True for Radiological
+#: Physics and Technology, whose guidelines require "all lines ... numbered
+#: consecutively from the title page through the manuscript" and whose Editorial
+#: Manager does not add them, and for Medical Physics.
+LINE_NUMBERS = True
+
+#: A4, because the author and the journal are both in Japan and the reviewers will
+#: print it. Twentieths of a point.
+_PAGE_WIDTH, _PAGE_HEIGHT = 11906, 16838
+
+#: Wide margins, which the guidelines ask for: 1 inch top and bottom, 1.25 inches
+#: left and right. The line numbers sit 0.25 inches into the left margin, so the
+#: wider side margins are what keeps them clear of the text.
+_MARGIN_TOP = _MARGIN_BOTTOM = 1440
+_MARGIN_LEFT = _MARGIN_RIGHT = 1800
+
+#: Double spacing, which the guidelines ask for. ``line`` is twentieths of a point
+#: and 480 is two 12-point lines; ``auto`` keeps it proportional if a run is larger.
+_DOUBLE_SPACED = '<w:spacing w:after="200" w:line="480" w:lineRule="auto"/>'
+
+
+def single_column_double_spaced(path: Path) -> Path:
+    """Set the page size, the wide margins and double line spacing.
+
+    Pandoc writes a ``sectPr`` with no page size and no margins at all, leaving
+    both to whatever Word defaults to on the machine that opens the file. A
+    manuscript whose layout depends on the reader's copy of Word is a manuscript
+    whose compliance with "single-column, double-spaced" cannot be checked.
+
+    The order of children inside ``sectPr`` is fixed by the schema --
+    ``footerReference``, ``footnotePr``, ``pgSz``, ``pgMar``, ``lnNumType`` -- and
+    Word rejects the part outright when they are out of order, so the element is
+    rebuilt rather than patched in pieces.
+    """
+    with zipfile.ZipFile(path) as archive:
+        names = archive.namelist()
+        contents = {name: archive.read(name) for name in names}
+
+    document = contents["word/document.xml"].decode("utf-8")
+    match = re.search(r"<w:sectPr\b[^>]*>(.*?)</w:sectPr>", document, re.S)
+    if not match:
+        raise SystemExit("no sectPr in the converted document; pandoc changed its output")
+    inside = match.group(1)
+
+    def take(element: str) -> str:
+        found = re.search(rf"<w:{element}\b(?:[^>]*/>|.*?</w:{element}>)", inside, re.S)
+        return found.group(0) if found else ""
+
+    page = (
+        f'<w:pgSz w:w="{_PAGE_WIDTH}" w:h="{_PAGE_HEIGHT}"/>'
+        f'<w:pgMar w:top="{_MARGIN_TOP}" w:right="{_MARGIN_RIGHT}" '
+        f'w:bottom="{_MARGIN_BOTTOM}" w:left="{_MARGIN_LEFT}" '
+        'w:header="720" w:footer="720" w:gutter="0"/>'
+    )
+    rebuilt = (
+        "<w:sectPr>"
+        + take("footerReference")
+        + take("footnotePr")
+        + page
+        + take("lnNumType")
+        + '<w:cols w:space="720"/>'   # one column, stated rather than defaulted
+        + "</w:sectPr>"
+    )
+    document = document[: match.start()] + rebuilt + document[match.end():]
+    contents["word/document.xml"] = document.encode("utf-8")
+
+    # The spacing has to be read out of docDefaults, not looked for anywhere in
+    # styles.xml: named styles carry w:line of their own, so a test for the
+    # string in the whole file is satisfied by a document that is still single
+    # spaced. The first version of this patch did exactly that and changed
+    # nothing, and the .docx it wrote looked finished.
+    styles = contents["word/styles.xml"].decode("utf-8")
+    defaults = re.search(r"<w:pPrDefault>.*?</w:pPrDefault>", styles, re.S)
+    if not defaults:
+        raise SystemExit("pandoc wrote no pPrDefault; double spacing cannot be set here")
+    if "w:line=" not in defaults.group(0):
+        patched = f"<w:pPrDefault><w:pPr>{_DOUBLE_SPACED}</w:pPr></w:pPrDefault>"
+        styles = styles[: defaults.start()] + patched + styles[defaults.end():]
+        again = re.search(r"<w:pPrDefault>.*?</w:pPrDefault>", styles, re.S)
+        if not again or 'w:line="480"' not in again.group(0):
+            raise SystemExit("could not set double spacing in docDefaults")
+        contents["word/styles.xml"] = styles.encode("utf-8")
+
+    temporary = path.with_suffix(".docx.tmp")
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name in names:
+            archive.writestr(name, contents[name])
+    shutil.move(str(temporary), str(path))
+    return path
 
 
 def number_pages_and_lines(path: Path, line_numbers: bool = LINE_NUMBERS) -> Path:
@@ -224,6 +310,73 @@ def number_pages_and_lines(path: Path, line_numbers: bool = LINE_NUMBERS) -> Pat
     return path
 
 
+#: Tables are set smaller than the body. At the body size a row of
+#: "value [low, high] (n)" does not fit the text block, and Word breaks a line
+#: inside a number; a companion paper printed an interval whose lower bound read
+#: as positive because the minus sign ended a line. Half-points.
+_TABLE_FONT_HALF_POINTS = 20
+
+
+def shrink_tables(path: Path) -> Path:
+    """Set the table text one size down, and single-spaced.
+
+    Double spacing inside a table doubles its height for no gain -- the rows are
+    already separated by rules -- and it is what pushed this manuscript's one
+    table over a page boundary and left the page before it two-thirds empty.
+    """
+    with zipfile.ZipFile(path) as archive:
+        names = archive.namelist()
+        contents = {name: archive.read(name) for name in names}
+
+    document = contents["word/document.xml"].decode("utf-8")
+    tables = re.findall(r"<w:tbl>.*?</w:tbl>", document, re.S)
+    if not tables:
+        print("  note: no tables in the document")
+        return path
+
+    size = (f'<w:sz w:val="{_TABLE_FONT_HALF_POINTS}"/>'
+            f'<w:szCs w:val="{_TABLE_FONT_HALF_POINTS}"/>')
+    single = '<w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/>'
+    for table in tables:
+        shrunk = _set_property(table, "w:r", "w:rPr", size)
+        shrunk = _set_property(shrunk, "w:p", "w:pPr", single)
+        document = document.replace(table, shrunk, 1)
+    contents["word/document.xml"] = document.encode("utf-8")
+
+    temporary = path.with_suffix(".docx.tmp")
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name in names:
+            archive.writestr(name, contents[name])
+    shutil.move(str(temporary), str(path))
+    return path
+
+
+def bind_headings_to_text(path: Path) -> Path:
+    """Keep every heading on the page as the text it introduces.
+
+    Word breaks a heading from its body unless the paragraph carries
+    ``keepNext``, and pandoc does not set it. A heading alone at the foot of a
+    page is invisible to every check that reads the .docx or the markdown,
+    because it is not a property of either: it is where the text happened to
+    fall. A companion manuscript reached its referees with two.
+    """
+    import docx                                               # noqa: PLC0415
+
+    document = docx.Document(str(path))
+    bound = 0
+    for paragraph in document.paragraphs:
+        if paragraph.style.name.startswith(("Heading", "Title", "Subtitle")):
+            paragraph.paragraph_format.keep_with_next = True
+            bound += 1
+    if not bound:
+        raise SystemExit(
+            "no headings were found to bind to their text; pandoc's style names have "
+            "changed and every heading would be free to strand at a page foot"
+        )
+    document.save(str(path))
+    return path
+
+
 def plain_headings(path: Path) -> Path:
     """Make every heading black.
 
@@ -271,8 +424,14 @@ def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> i
         extra_args=["--resource-path", str(PAPER)],
     )
     keep_tables_whole(output)
+    shrink_tables(output)
+    bind_headings_to_text(output)
     plain_headings(output)
+    # The furniture first, then the layout: single_column_double_spaced rebuilds
+    # the sectPr and has to find the footer reference and line numbering already
+    # in it to carry them over in schema order.
     number_pages_and_lines(output, line_numbers=line_numbers)
+    single_column_double_spaced(output)
     print(f"wrote {output} ({output.stat().st_size // 1024} KB)")
     return 0
 

@@ -40,8 +40,8 @@ way. [[results:manifest.json:metrics.variance_between_patient|.0%]] of the varia
 dose-to-index ratio lay between patients and
 [[results:manifest.json:metrics.variance_between_organ|.0%]] between organs, and the
 residual was three orders of magnitude above the Monte-Carlo statistical uncertainty, so
-it is physical. What an index withholds is therefore patient-specific, not organ-specific,
-and no coefficient table or size correction can supply it. Where a median
+it is physical. What an index withholds is therefore patient-specific, and no coefficient
+table or size correction can supply it. Where a median
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] % suffices, a
 single factor with a scan-length term should be used; where it does not, the missing
 quantity is transport through the patient's own anatomy, computed here from routine CT
@@ -104,9 +104,9 @@ capacity patch records the bound, its new value and why it was needed. Two were 
 here: the Schneider tissue groups at 140 kVp exceed the upstream limits on Compton shells
 and on Rayleigh energy bins.
 
-Material cross-sections are generated locally from the photon subset of the PENELOPE
-2006 database [[cite:salvat2006]] rather than transcribed, so that no coefficient table is
-redistributed and each material file carries the digest of the data it came from.
+Material cross-sections are generated from the photon subset of the PENELOPE 2006 database
+[[cite:salvat2006]] rather than transcribed, so no coefficient table is redistributed and
+each material file carries the digest of the data it came from.
 
 ### 2.2 Source model
 
@@ -183,11 +183,11 @@ were computed. Of [[results:density_eligibility.json:n_assessed]] assessed serie
 
 ### 2.6 Segmentation, density and materials
 
-Organ boundaries come from TotalSegmentator [[cite:wasserthal2023]] run at inference on each series, so
-that no manual contour enters the pipeline and the same procedure applies to every
-vendor. Hounsfield units are mapped to mass density and to Schneider tissue groups
-[[cite:schneider1996,schneider2000]]; voxels above the top calibration breakpoint are held at its density and
-counted, and it is that count the eligibility gate reads.
+Organ boundaries come from TotalSegmentator [[cite:wasserthal2023]] run at inference on
+each series, so that no manual contour enters the pipeline and the same procedure applies
+to every vendor. Hounsfield units are mapped to mass density and to Schneider tissue
+groups [[cite:schneider1996,schneider2000]]; voxels above the top calibration breakpoint
+are held at its density and counted, and that count is what the eligibility gate reads.
 
 ### 2.7 CTDIvol normalisation
 
@@ -265,10 +265,9 @@ choice of yardstick auditable. The phantom length term is measured and null.
 
 ### 3.2 Cohort
 
-[[results:cohort_overlap.json:selection_funnel.index_rows]] index rows reduce
-to [[results:cohort_overlap.json:selection_funnel.kept]] series through the
-funnel of Fig. 1, of which
-[[results:cohort_overlap.json:selection_funnel.probed]] were probed and
+[[results:cohort_overlap.json:selection_funnel.index_rows]] index rows reduce to
+[[results:cohort_overlap.json:selection_funnel.kept]] series through the funnel of Fig. 1,
+of which [[results:cohort_overlap.json:selection_funnel.probed]] were probed and
 [[results:cohort_overlap.json:selection_funnel.n_probe_rejected]] rejected. The
 density gate leaves [[results:manifest.json:metrics.n_eligible]] eligible series
 (Fig. 2), and [[results:manifest.json:metrics.n_scaled]] of those carry a CTDIvol
@@ -378,9 +377,9 @@ that carry a recorded CTDIvol, rather than a reconstructed one, does not change 
 relationship between index and dose: the correlation is
 [[results:manifest.json:metrics.pearson_r_recorded|.2f]] against
 [[results:manifest.json:metrics.pearson_r_all|.2f]], and the median ratio is
-[[results:manifest.json:metrics.y_over_x_median_recorded|.2f]] against
-[[results:manifest.json:metrics.y_over_x_median|.2f]]. No additional Monte Carlo was
-run for this check.
+[[results:manifest.json:metrics.y_over_x_median_recorded|.3f]] against
+[[results:manifest.json:metrics.y_over_x_median|.3f]]. No additional Monte Carlo was run
+for this check.
 
 Absorbed organ doses by vendor are described in Fig. 6. With six to nine series per vendor
 the cohort is not powered for a vendor comparison and none is made; the figure and Table 1
@@ -390,9 +389,9 @@ show the spread the cohort contains.
 
 ### 4.1 A quantitative limit on a class of methods
 
-Every conversion from a dose index to an organ dose — whether by a size correction, a
-length factor or a coefficient table — is estimating a patient-level quantity from
-measurements that do not contain it. On this cohort the best such conversion misses
+Every conversion from a dose index to an organ dose — by a size correction, a length
+factor or a coefficient table — estimates a patient-level quantity from measurements that
+do not contain it. On this cohort the best such conversion misses
 absorbed organ dose by a median of
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] % and by
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_p90_pct|.0f]] % at the
@@ -446,11 +445,11 @@ single factor now has a measured answer, and it is that the table does not repay
 effort.
 
 The quantity here is absorbed organ dose, not risk. A risk statement additionally needs
-age and sex, which this cohort does not carry — the public archive supplies the images and
-the acquisition metadata, not the demographics — and needs a risk model this paper does
-not use. Which surrogate suits which risk question has been compared elsewhere across a
-clinical population [[cite:ria2021]]. This result is about how well a conversion recovers
-dose, and says nothing about how well dose predicts detriment.
+age and sex, which this cohort does not carry — the public archive supplies images and
+acquisition metadata, not demographics — and a risk model this paper does not use. Which
+surrogate suits which risk question has been compared elsewhere across a clinical
+population [[cite:ria2021]]. This result is about how well a conversion recovers dose, not
+how well dose predicts detriment.
 
 ### 4.5 Scope of the bound
 

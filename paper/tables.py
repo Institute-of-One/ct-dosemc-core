@@ -49,6 +49,67 @@ ORGAN_LABEL = {
 
 VENDOR_ORDER = ("GE", "Siemens", "Canon/Toshiba", "Philips")
 
+#: What the column heading says, where the key is longer than the column.
+#: "Canon/Toshiba" printed as "Canon/Tos" on one line and "hiba" on the next,
+#: with the first half floating above the header rule. The caption names the
+#: manufacturer in full, so nothing is lost by shortening the heading.
+VENDOR_HEADING = {"Canon/Toshiba": "Canon"}
+
+#: Relative column widths, as the number of dashes pandoc reads from the
+#: separator row of a pipe table. Equal dashes give equal columns, and seven
+#: equal columns in this text block are about ten characters wide: "Gallbladder"
+#: printed as "Gallbladde" and "r". The organ names and the pooled column with
+#: its interquartile range need the room; a median and a count do not.
+#: Derived from what each column has to hold, not guessed: the organ names need
+#: "Gallbladder", the vendor columns need the heading "Siemens" (their data is
+#: shorter), and the pooled column needs "27.5 [16.2, 33.9] (29)" to stay on one
+#: line. check_column_widths below refuses the build if any of that stops being
+#: true.
+COLUMN_WEIGHTS = {"Organ": 19, "All series": 28}
+DEFAULT_COLUMN_WEIGHT = 13
+
+#: The text block the table has to fit, in inches: the page less the margins
+#: build_docx.py sets. Kept here because the width check below is meaningless
+#: without it, and a check against the wrong page is worse than no check.
+TEXT_BLOCK_INCHES = (11906 - 2 * 1800) / 1440
+
+#: A generous upper bound on the width of one character at the table's 10 pt,
+#: in inches. Calibri averages about 0.065 in at that size and its widest
+#: lower-case letters reach 0.085; the bound is deliberately the wide end,
+#: because the cost of a column half a character too wide is nothing and the
+#: cost of one half a character too narrow is a word broken in two.
+CHARACTER_INCHES = 0.085
+
+#: Word's default cell padding, both sides, in inches.
+CELL_PADDING_INCHES = 0.16
+
+
+def check_column_widths(header: list[str], rows: list[list[str]]) -> list[str]:
+    """Columns too narrow for their longest unbreakable word.
+
+    Word breaks a word in half rather than overflow a cell: "Canon/Toshiba"
+    printed as "Canon/Tos" and "hiba", "Gallbladder" as "Gallbladde" and "r",
+    "Siemens" as "Siemen" and "s". None of that is visible in the markdown, in
+    the .docx paragraph text, or in the extracted PDF text -- only in the
+    rendered page. This is the arithmetic that predicts it, so that the build
+    refuses before anyone has to notice it by eye.
+    """
+    weights = [COLUMN_WEIGHTS.get(name, DEFAULT_COLUMN_WEIGHT) for name in header]
+    total = sum(weights)
+    problems = []
+    for index, name in enumerate(header):
+        inches = weights[index] / total * TEXT_BLOCK_INCHES - CELL_PADDING_INCHES
+        cells = [name, *(row[index] for row in rows if index < len(row))]
+        longest = max((max(cell.split(), key=len, default="") for cell in cells),
+                      key=len, default="")
+        needed = len(longest) * CHARACTER_INCHES
+        if needed > inches:
+            problems.append(
+                f"column {name!r} is {inches:.2f} in wide but must hold {longest!r}, "
+                f"which needs about {needed:.2f} in: Word will break it in two"
+            )
+    return problems
+
 #: U+2212. An ASCII hyphen lets Word break a line directly after it, and a bound
 #: that begins the next line loses its sign.
 MINUS = "−"
@@ -67,12 +128,16 @@ def organ_doses() -> str:
     payload = json.loads((FROZEN / "table4_organ_doses.json").read_text(encoding="utf-8"))
     by_organ = {entry["organ"]: entry for entry in payload["organs"]}
 
-    header = ["Organ", *VENDOR_ORDER, "All series"]
+    header = ["Organ", *(VENDOR_HEADING.get(v, v) for v in VENDOR_ORDER), "All series"]
+    separator = "|" + "".join(
+        "-" * COLUMN_WEIGHTS.get(name, DEFAULT_COLUMN_WEIGHT) + "|" for name in header
+    )
     rows = [
         "| " + " | ".join(header) + " |",
-        "|" + "---|" * len(header),
+        separator,
     ]
 
+    body: list[list[str]] = []
     for organ in ORGAN_ORDER:
         entry = by_organ.get(organ)
         if entry is None:
@@ -88,6 +153,15 @@ def organ_doses() -> str:
             f"({pooled['n']})"
         )
         rows.append("| " + " | ".join(cells) + " |")
+        body.append(cells)
+
+    problems = check_column_widths(header, body)
+    if problems:
+        raise SystemExit(
+            "Table 1 cannot be laid out without breaking a word:\n  - "
+            + "\n  - ".join(problems)
+            + "\nWiden the column in COLUMN_WEIGHTS, or shorten what it holds."
+        )
 
     counts = ", ".join(
         f"{vendor} {payload['n_series_by_vendor'][vendor]}" for vendor in VENDOR_ORDER

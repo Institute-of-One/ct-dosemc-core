@@ -217,7 +217,17 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN) -> str:
         try:
             if spec and re.fullmatch(r"sci\d+", spec):
                 return scientific(value, int(spec[3:]))
-            return format(value, spec) if spec else str(value)
+            if not spec:
+                return str(value)
+            formatted = format(value, spec)
+            # SI puts a space before the sign, and the manuscript writes "31 %"
+            # wherever the number is formatted as a plain float. Python's own
+            # per-cent format writes "88%", so the same document carried both
+            # forms. The space is a non-breaking one: a per-cent sign that wraps
+            # to the next line on its own is worse than either.
+            if spec.endswith("%") and formatted.endswith("%"):
+                return formatted[:-1] + " %"
+            return formatted
         except (TypeError, ValueError) as exc:
             problems.append(f"{path!r}: cannot format {value!r} as {spec!r} ({exc})")
             return match.group(0)

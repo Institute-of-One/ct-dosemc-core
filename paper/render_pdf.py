@@ -24,6 +24,7 @@ from its caption, a table broken across a boundary -- are invisible in the sourc
 from __future__ import annotations
 
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -66,8 +67,9 @@ def page_images() -> int:
     try:
         import pypdfium2 as pdfium
     except ImportError:
-        print("pypdfium2 is not installed; page images were not written")
-        return 0
+        print("pypdfium2 is not installed, so no page images were written. The visual "
+              "review is a required step, not an optional one: install pypdfium2.")
+        return 1
     PAGES.mkdir(parents=True, exist_ok=True)
     for old in PAGES.glob("manuscript_p*.png"):
         old.unlink()
@@ -97,8 +99,10 @@ def check_pages() -> int:
     try:
         import pypdf                                          # noqa: PLC0415
     except ImportError:
-        print("pypdf is not installed; the pages were not checked")
-        return 0
+        print("pypdf is not installed, so the pages were not checked. A check that "
+              "passes when its dependency is absent is a check that cannot fail: "
+              "install pypdf.")
+        return 1
 
     lengths = [
         len((page.extract_text() or "").strip())
@@ -123,6 +127,98 @@ def check_pages() -> int:
     return 0
 
 
+def _headings() -> set[str]:
+    """The manuscript's own heading texts, normalised for comparison.
+
+    Matching a *pattern* for a heading does not work: "2. one factor per organ"
+    is a list item and "220. https://doi.org/..." is a reference, and the first
+    version of this check reported both as stranded headings. The manuscript
+    knows exactly what its headings are, so they are read from it.
+    """
+    source = (PAPER / "build" / "manuscript.md").read_text(encoding="utf-8")
+    return {
+        " ".join(heading.split()).lower()
+        for heading in re.findall(r"(?m)^#{1,6}\s+(.*)$", source)
+    }
+
+
+def _normalise(line: str) -> str:
+    """A rendered line, with the margin line number Word prints at its left removed.
+
+    Only the leading number. Stripping a trailing one as well truncated the
+    heading "2.3 Verification against TG-195 Case 4" to "... Case", so that
+    heading could never have matched and its stranding could never have been
+    reported. The trailing form is handled where the comparison is made, by
+    trying both, which cannot lose a heading that ends in a number.
+    """
+    line = re.sub(r"^\s*\d+\s+", "", line)
+    return " ".join(line.split()).lower()
+
+
+def _candidates(line: str) -> tuple[str, ...]:
+    """The forms a rendered heading line can take, for comparison.
+
+    pypdf puts the margin line number sometimes before the text and sometimes
+    after it, so both are offered. A heading that genuinely ends in a number is
+    matched by the first form; a heading followed by its line number, by the
+    second.
+    """
+    normalised = _normalise(line)
+    without_trailing = re.sub(r"\s+\d+$", "", normalised)
+    return (normalised,) if without_trailing == normalised else (normalised,
+                                                                without_trailing)
+
+
+def stranded_pages(pages: list[str], headings: set[str]) -> list[tuple[int, str]]:
+    """``(page number, heading)`` for every page whose last line is a heading.
+
+    Separated from the PDF so that it can be tested on page text directly.
+    """
+    found = []
+    for number, text in enumerate(pages, start=1):
+        lines = [line for line in (line.strip() for line in text.splitlines()) if line]
+        if not lines:
+            continue
+        for candidate in _candidates(lines[-1]):
+            if candidate in headings:
+                found.append((number, candidate))
+                break
+    return found
+
+
+def check_page_endings() -> int:
+    """No page may end on a heading.
+
+    Word strands a heading at the foot of a page whenever the paragraph has no
+    ``keepNext``, and nothing that reads the .docx or the markdown can see it:
+    where the text falls is a property of the rendered page and of nothing else.
+    A companion manuscript reached its referees with sections 2.6 and 3.2 alone
+    at the bottom of a page. build_docx.py binds the headings; this is the check
+    that the binding worked on the file the referee opens.
+    """
+    try:
+        import pypdf                                          # noqa: PLC0415
+    except ImportError:
+        print("pypdf is not installed, so the page endings were not checked: "
+              "install pypdf.")
+        return 1
+
+    headings = _headings()
+    if not headings:
+        print("no headings found in the built manuscript; nothing was checked")
+        return 1
+
+    pages = [page.extract_text() or "" for page in pypdf.PdfReader(str(PDF)).pages]
+    stranded = stranded_pages(pages, headings)
+    for number, line in stranded:
+        print(f"  FAIL page {number} ends on the heading {line[:60]!r}")
+    if stranded:
+        print(f"{len(stranded)} heading(s) stranded at a page foot")
+        return 1
+    print("no page ends on a heading")
+    return 0
+
+
 def main() -> int:
     if os.name != "nt":
         print("this step drives Word and needs Windows; the .docx is unchanged")
@@ -133,7 +229,10 @@ def main() -> int:
     failed = page_images()
     if failed:
         return failed
-    return check_pages()
+    failed = check_pages()
+    if failed:
+        return failed
+    return check_page_endings()
 
 
 if __name__ == "__main__":
