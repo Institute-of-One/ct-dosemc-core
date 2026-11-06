@@ -44,6 +44,12 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     # not have one, and the PDF sitting in paper/build/ was six weeks older than the .docx
     # beside it when this was noticed.
     ("render the Word file to the submission PDF", ["paper/render_pdf.py"], True),
+    # The figures are separate uploads and are in none of the files above, so
+    # without these two steps nothing in this repository ever looks at the
+    # artwork the reviewer is actually sent.
+    ("write the figure files the portal is sent", ["paper/make_submission_figures.py"], False),
+    ("check the portal's stamp will not land on a figure",
+     ["paper/check_figure_headroom.py"], False),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 
