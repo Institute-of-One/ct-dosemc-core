@@ -50,6 +50,7 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("write the figure files the portal is sent", ["paper/make_submission_figures.py"], False),
     ("check the portal's stamp will not land on a figure",
      ["paper/check_figure_headroom.py"], False),
+    ("check the version and both DOIs agree", ["paper/check_release_metadata.py"], True),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 
