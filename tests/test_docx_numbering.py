@@ -80,9 +80,11 @@ def test_the_pmb_default_omits_line_numbers_but_keeps_page_numbers(
 
 def test_the_shipped_default_is_the_one_this_journal_needs() -> None:
     """A switch nobody reads is a switch that drifts back."""
-    assert build_docx.LINE_NUMBERS is False, (
-        "this repository submits to PMB; set True only for a journal that requires "
-        "line numbers in the manuscript itself, Medical Physics among them"
+    assert build_docx.LINE_NUMBERS is True, (
+        "this repository submits to Radiological Physics and Technology, whose "
+        "submission checklist asks for continuous line numbers in the manuscript "
+        "itself; set False only for a journal whose portal numbers the lines for "
+        "the reviewer, IOP's among them"
     )
 
 

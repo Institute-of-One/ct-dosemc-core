@@ -73,15 +73,22 @@ def test_a_data_and_code_section_without_a_locator_is_caught() -> None:
     assert check.errors
 
 
-def test_a_data_availability_section_with_a_doi_passes() -> None:
-    """IOP mandates the heading 'Data availability'. '## Data and code' is not it,
-    which is why this test failed silently from the day the checker was moved to
-    the publisher's wording and the test was left on the old heading."""
+def test_a_data_availability_declaration_with_a_doi_passes() -> None:
+    """Springer puts the statement inside Declarations, under its own bold label.
+
+    IOP wanted it as a section heading of its own, and this test kept that shape
+    for a day after the checker moved to the Springer one -- long enough to fail
+    on every run and be read as noise.
+    """
     built = (
-        "## Acknowledgements\n\nThanks.\n\n"
-        "## Data availability\n\nThe data that support the findings of this study "
-        "are openly available at the following URL/DOI: "
-        "https://doi.org/10.5281/zenodo.22233153.\n"
+        "## Acknowledgments\n\nThanks.\n\n"
+        "## Declarations\n\n"
+        "**Funding.** None.\n\n"
+        "**Conflict of interest.** None.\n\n"
+        "**Ethics approval.** Waived.\n\n"
+        "**Data availability.** The frozen result tables are openly available at "
+        "https://doi.org/10.5281/zenodo.22233153 under the MIT licence.\n\n"
+        "**Code availability.** The same archive.\n"
     )
     check.check_code_is_reachable(built)
     assert not check.errors
@@ -92,59 +99,76 @@ def test_a_missing_data_and_code_section_is_caught() -> None:
     assert check.errors
 
 
-def test_references_out_of_alphabetical_order_are_caught() -> None:
-    """Harvard orders by surname, not by first citation.
+#: A minimal built manuscript in the journal's style: numbered citations in the
+#: body, a numbered list under "## References". check_references reads the built
+#: document, never the source, because the source carries one [[references]]
+#: marker and no numbers at all.
+def _built(body: str, *entries: str) -> str:
+    listed = "\n\n".join(entries)
+    return f"{body}\n\n## References\n\n{listed}\n"
 
-    These four tests injected numbered-citation defects into an author-year checker
-    from the day check_references was rewritten for PMB, and had failed ever since.
-    That is worse than having no tests: a permanently red suite stops being read, and
-    nothing then established that the Harvard checks caught anything at all.
+
+def test_references_out_of_citation_order_are_caught() -> None:
+    """Vancouver numbers by first appearance in the prose, not by surname.
+
+    These five tests injected author-year defects into a checker that had been
+    rewritten for numbered references, and failed on every run from the day the
+    submission moved from IOP to Springer. That is worse than having no tests: a
+    permanently red suite stops being read, and nothing then established that the
+    numbered checks caught anything at all.
     """
-    source = (
-        "Body cites Zeta (2020) and Alpha (2019).\n\n## References\n\n"
-        "Zeta B 2020 A later work doi:10/b\n\n"
-        "Alpha A 2019 An earlier work doi:10/a\n"
-    )
-    check.check_references(source)
-    assert any("not in alphabetical order" in message for message in check.errors)
+    check.check_references(_built(
+        "Body cites [2] and then [1].",
+        "1. Alpha A. An earlier work. J. 2019;1:1. https://doi.org/10.0000/a.",
+        "2. Zeta B. A later work. J. 2020;2:2. https://doi.org/10.0000/b.",
+    ))
+    assert any("not numbered in order of first citation" in message
+               for message in check.errors)
 
 
 def test_an_uncited_reference_is_caught() -> None:
-    source = (
-        "Body cites Alpha (2019).\n\n## References\n\n"
-        "Alpha A 2019 A cited work doi:10/a\n\n"
-        "Orphan O 2021 Never mentioned doi:10/b\n"
-    )
-    check.check_references(source)
-    assert any("never cited" in message for message in check.errors)
+    check.check_references(_built(
+        "Body cites [1].",
+        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+        "2. Orphan O. Never mentioned. J. 2021;3:3. https://doi.org/10.0000/b.",
+    ))
+    assert any("listed but never cited" in message for message in check.errors)
 
 
-def test_a_surviving_numbered_citation_is_caught() -> None:
-    """PMB takes Harvard exclusively, so a surviving [1] is itself the defect."""
-    source = (
-        "Body cites [1] and Alpha (2019).\n\n## References\n\nAlpha A 2019 A cited work doi:10/a\n"
-    )
-    check.check_references(source)
-    assert any("numbered citation" in message for message in check.errors)
+def test_a_citation_with_no_entry_is_caught() -> None:
+    check.check_references(_built(
+        "Body cites [1] and [2].",
+        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+    ))
+    assert any("cited but not listed" in message for message in check.errors)
+
+
+def test_a_gap_in_the_numbering_is_caught() -> None:
+    check.check_references(_built(
+        "Body cites [1] and [3].",
+        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+        "3. Gamma C. A third work. J. 2021;3:3. https://doi.org/10.0000/c.",
+    ))
+    assert any("the reference numbers are" in message for message in check.errors)
 
 
 def test_a_reference_a_reader_cannot_follow_warns() -> None:
-    """Neither a DOI nor an issuing body and year is the shape of a fabrication."""
-    source = (
-        "Body cites Alpha (2019).\n\n## References\n\n"
-        "Alpha A 2019 A book with no identifier at all\n"
-    )
-    check.check_references(source)
+    """Neither a DOI nor a publisher and year is the shape of a fabrication."""
+    check.check_references(_built(
+        "Body cites [1].",
+        "1. Alpha A. A book with no identifier at all",
+    ))
     assert any("cannot follow" in message for message in check.warnings)
 
 
-def test_a_report_with_an_issuing_body_and_year_is_traceable() -> None:
-    """PENELOPE and the AAPM reports have no DOI and are not thereby suspect."""
-    source = (
-        "Body cites [1].\n\n## References\n"
-        "1. F. Salvat, *PENELOPE* (NEA-OECD, Issy-les-Moulineaux, 2006).\n"
-    )
-    check.check_references(source)
+def test_a_report_with_a_publisher_and_year_is_traceable() -> None:
+    """PENELOPE has no registered DOI and is not thereby suspect."""
+    check.check_references(_built(
+        "Body cites [1].",
+        "1. Salvat F, Fernandez-Varea JM, Sempau J. PENELOPE - a code system for "
+        "Monte Carlo simulation of electron and photon transport. "
+        "Issy-les-Moulineaux: NEA-OECD; 2006.",
+    ))
     assert not any("cannot follow" in message for message in check.warnings)
 
 
