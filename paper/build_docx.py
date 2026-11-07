@@ -177,18 +177,25 @@ _LINE_NUMBERING = '<w:lnNumType w:countBy="1" w:restart="continuous" w:distance=
 #: numbers the lines of the proof it builds from the upload, and a manuscript that
 #: brings its own ends up with two sets that do not agree.
 #:
-#: False for Radiological Physics and Technology too, which is not what this said
-#: before. The guidelines do require "all lines ... numbered consecutively from the
-#: title page through the manuscript", and this read that as an instruction to the
-#: author; it is satisfied by the portal. RPT's Editorial Manager numbers the proof
-#: it builds, so the upload's own numbers print beside them in a second column, and
-#: the two disagree from the first page because the portal counts the title page it
-#: inserts. Observed on the built proof, 2026-11-07, by the author. The requirement
-#: is met either way, and only one of the two ways produces one column.
+#: True for Radiological Physics and Technology. Two columns do appear on the proof
+#: and they are not interchangeable, which is the part that was got wrong on
+#: 2026-11-07, when this was set to False on the reading that the portal satisfies
+#: the requirement. Measured on the proof of RPTE-S-26-00853, every page:
 #:
-#: Medical Physics is the case that still needs True: it returns a submission that
-#: arrives without them.
-LINE_NUMBERS = False
+#:   x = 20 pt, 10 pt type, 1 to 65 on every page       Editorial Manager's own
+#:   x = 50 pt, 12 pt type, 21-44, 45-63, 132-149, ...  this manuscript's
+#:
+#: The portal's column restarts at 1 on each page: it counts the lines of its own
+#: rendering. The journal asks for "all lines ... numbered consecutively from the
+#: title page through the manuscript", and the editor-in-chief's preparation guide
+#: (arXiv:2403.02888) lists "a single-column double-spaced line-numbered text" among
+#: the files the author collects. Per-page numbering is not consecutive through the
+#: manuscript, so the portal does not satisfy the requirement and cannot: the only
+#: column a referee can cite across pages is this one. The doubling is the portal's
+#: furniture and is not ours to remove.
+#:
+#: Medical Physics also needs True: it returns a submission that arrives without them.
+LINE_NUMBERS = True
 
 #: A4, because the author and the journal are both in Japan and the reviewers will
 #: print it. Twentieths of a point.
@@ -412,6 +419,52 @@ def set_reference_list(path: Path) -> Path:
     return path
 
 
+#: A caption is set this many half-points, against 24 for the body. Two points is
+#: enough to see at a glance and small enough that the caption stays comfortable to
+#: read, which matters here: Figure 1's runs to fourteen lines.
+_CAPTION_FONT_HALF_POINTS = 20
+
+#: A caption paragraph: the run-in label the build puts at its head.
+_CAPTION = re.compile(r"^(Figure|Table)\s+\d+\.")
+
+
+def set_captions_apart(path: Path) -> Path:
+    """Set every caption smaller than the body, so a reader can see where it ends.
+
+    The only thing separating a caption from the text around it was the bold label
+    at its head. Everything after that label -- font, size, leading -- was the body
+    text's, so on a page where the caption runs to a dozen lines there is nothing
+    to say where it stops and the argument starts again. The author read the proof
+    and could not tell. Neither the journal's guidelines nor the editor-in-chief's
+    preparation guide says anything about caption type, so this is a legibility
+    choice and not a requirement: two points down, which is the size the tables are
+    already set in, and the leading left alone because the journal asks for the text
+    double-spaced and a caption is part of the text.
+
+    The label keeps its bold. That is bold doing its one job -- a run-in heading --
+    and the size change is what carries the rest of the distinction.
+    """
+    import docx  # noqa: PLC0415
+
+    document = docx.Document(str(path))
+    size = docx.shared.Pt(_CAPTION_FONT_HALF_POINTS / 2)
+    captions = 0
+    for paragraph in document.paragraphs:
+        if not _CAPTION.match(paragraph.text.strip()):
+            continue
+        for run in paragraph.runs:
+            run.font.size = size
+        captions += 1
+    if not captions:
+        raise SystemExit(
+            "no captions were found to set apart; the run-in label the build writes "
+            "has changed and every caption would read as body text"
+        )
+    document.save(str(path))
+    print(f"  {captions} caption(s) set at {_CAPTION_FONT_HALF_POINTS / 2:g} pt")
+    return path
+
+
 def bind_headings_to_text(path: Path) -> Path:
     """Keep every heading on the page as the text it introduces.
 
@@ -485,6 +538,9 @@ def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> i
     )
     keep_tables_whole(output)
     shrink_tables(output)
+    # After shrink_tables, which sets every run inside a table: a table caption is
+    # a paragraph outside the table and is not touched by it.
+    set_captions_apart(output)
     bind_headings_to_text(output)
     set_reference_list(output)
     plain_headings(output)

@@ -81,23 +81,28 @@ def test_the_pmb_default_omits_line_numbers_but_keeps_page_numbers(
 def test_the_shipped_default_is_the_one_this_journal_needs() -> None:
     """A switch nobody reads is a switch that drifts back.
 
-    This asserted True until 2026-11-07, on the reading that Radiological Physics
-    and Technology asks the author for continuous line numbers. The guidelines do
-    ask for them; what settled it was the proof. Editorial Manager builds a PDF
-    from the upload and numbers every typographic line of it in the left margin,
-    counting from the title page it inserts, so a manuscript that brings its own
-    arrives with two columns that disagree from the first page -- our line 20
-    stood beside its line 59 on page 4 of RPTE-S-26-00853. The requirement is met
-    either way, and only one of the two ways produces one column.
+    It drifted on 2026-11-07. The author reported two columns of line numbers on
+    the portal's proof, and this was set to False on the reading that the portal
+    satisfies the journal's requirement. It does not. Measured on every page of
+    the proof of RPTE-S-26-00853:
 
-    So the switch now says False for this journal too, and Medical Physics is the
-    case that still needs True: it returns a submission that arrives without them.
+        x = 20 pt, 10 pt type, 1 to 65 on every page       the portal's own
+        x = 50 pt, 12 pt type, 21-44, 45-63, 132-149, ...  this manuscript's
+
+    The portal's column restarts at 1 on each page. The journal asks for "all
+    lines ... numbered consecutively from the title page through the manuscript",
+    which per-page numbering is not, so the only column that meets the requirement
+    -- and the only one a referee can cite across pages -- is the manuscript's own.
+
+    The lesson is the one in the runbook's section 6: where our reading and the
+    journal's instruction disagree, the instruction is right and the reading is
+    the thing to re-examine.
     """
-    assert build_docx.LINE_NUMBERS is False, (
-        "Radiological Physics and Technology's Editorial Manager numbers the proof "
-        "it builds from the upload; a manuscript that carries its own arrives with "
-        "two disagreeing columns. Set True only for a journal that numbers nothing "
-        "and returns a submission without them, Medical Physics among them"
+    assert build_docx.LINE_NUMBERS is True, (
+        "Radiological Physics and Technology requires lines numbered consecutively "
+        "from the title page through the manuscript; Editorial Manager's own column "
+        "restarts on every page and does not satisfy it. Set False only for a portal "
+        "whose numbering is itself consecutive, IOP's ScholarOne among them"
     )
 
 

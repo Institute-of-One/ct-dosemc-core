@@ -895,6 +895,54 @@ def check_references(built: str) -> None:
 # ------------------------------------------------------------------------- .docx
 
 
+def check_runbook_was_read() -> None:
+    """The runbook must have been read, at the version on disk.
+
+    Its section 11 opens by telling the reader to read sections 2 and 11 before
+    starting on a manuscript, and AGENTS.md says it again. Both are instructions,
+    and on 2026-11-07 both were skipped, with the result the runbook predicts: a
+    negative number breaking across a line was reported as a new discovery when
+    section 3.4 already gives it and its fix, and the line-number switch was set
+    the wrong way round without reading the journal's own guidelines.
+
+    An instruction nobody can fail is not a gate. This one can be failed. The
+    ledger pins the runbook's sha256, so a runbook that has been extended since
+    it was read -- which is what happens every time a new defect is written into
+    it -- reads as unread, which is the right answer.
+
+    The runbook is deliberately outside any public repository, so a clone will not
+    have it. That is a note, not a failure: it is not a defect in the release.
+    """
+    sys.path.insert(0, str(PAPER))
+    import record_runbook_read as runbook  # noqa: PLC0415
+
+    if not runbook.RUNBOOK.is_file():
+        print(
+            f"  note  {runbook.RUNBOOK.name} is not on this machine, so whether it "
+            f"was read is decided where it is"
+        )
+        return
+    if not runbook.LEDGER.is_file():
+        fail(
+            f"no record that {runbook.RUNBOOK.name} was read; read sections "
+            f"{', '.join(runbook.REQUIRED_SECTIONS)} and run "
+            f"paper/record_runbook_read.py"
+        )
+        return
+
+    ledger = json.loads(runbook.LEDGER.read_text(encoding="utf-8"))
+    if ledger.get("sha256") != runbook.digest(runbook.RUNBOOK):
+        fail(
+            f"{runbook.RUNBOOK.name} has changed since it was read on "
+            f"{ledger.get('read_on')}; read it again and re-record. A runbook grows "
+            f"a section every time this programme loses a round, and the new section "
+            f"is the one that has not been read"
+        )
+    missing = set(runbook.REQUIRED_SECTIONS) - set(ledger.get("sections", []))
+    if missing:
+        fail(f"the runbook ledger does not record section(s) {sorted(missing)} as read")
+
+
 def check_uploads() -> None:
     """The files in the staging folder must be the files the build just wrote.
 
@@ -1105,6 +1153,7 @@ def main(argv: list[str] | None = None) -> int:
             check_no_figure_is_renumbered_on_the_way_in(built)
             check_every_figure_image_has_been_looked_at()
             check_docx_furniture()
+            check_runbook_was_read()
             check_uploads()
             check_inquiry(built)
             check_the_cited_release_exists()
