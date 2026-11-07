@@ -134,7 +134,13 @@ class TheRealUploadFilesPass(unittest.TestCase):
         paths = sorted(headroom.UPLOADED.glob("Figure_*.png"))
         if not paths:
             self.skipTest("run paper/make_submission_figures.py first")
-        self.assertEqual(len(paths), 6)
+        # Resolved from the figure table, not typed. A typed six went on passing
+        # when the manuscript had seven figures, which is the shape of defect this
+        # whole file exists to catch: it would have checked six of the seven
+        # images the portal receives and called that every one.
+        import collect_figures  # noqa: PLC0415
+
+        self.assertEqual(len(paths), len(collect_figures.FIGURE_SOURCES))
         self.assertEqual(headroom.check(paths), [])
 
 

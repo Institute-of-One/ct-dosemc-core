@@ -59,6 +59,19 @@ def _figure_block(number: int, caption: str) -> str:
     return f"![]({path.as_posix()})\n\n**Figure {number}.** {caption}\n"
 
 
+#: A cross-reference that Word is allowed to break across a line. "Fig." at the
+#: end of one line and "1" at the start of the next reads as a sentence ending in
+#: an abbreviation, and the reader has to go back. The markdown keeps an ordinary
+#: space so that the word count and every gate reading it are unaffected; the
+#: binding is applied here, on the way into the document.
+_BREAKABLE_REFERENCE = re.compile(r"\b(Fig\.|Figure|Table|Section|section)\s+(\d)")
+
+
+def bind_cross_references(text: str) -> str:
+    """Hold "Fig. 1" together, so neither half is stranded at a line end."""
+    return _BREAKABLE_REFERENCE.sub("\\1\u00a0\\2", text)
+
+
 def assemble(built: str) -> str:
     """The built prose, each figure placed after the paragraph that first names it."""
     captions = collect_figures.captions()
@@ -456,7 +469,7 @@ def build(output: Path = DEFAULT_OUTPUT, line_numbers: bool = LINE_NUMBERS) -> i
 
     output.parent.mkdir(parents=True, exist_ok=True)
     pypandoc.convert_text(
-        assemble(rendered),
+        bind_cross_references(assemble(rendered)),
         to="docx",
         format="markdown+implicit_figures",
         outputfile=str(output),
