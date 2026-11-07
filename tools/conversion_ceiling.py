@@ -26,8 +26,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import random
 import statistics
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +36,11 @@ REPO = Path(__file__).resolve().parents[1]
 COHORT = REPO / "results" / "phase2_cohort"
 PATIENT = REPO / "results" / "phase2_patient"
 DEFAULT_OUT = COHORT / "conversion_ceiling.json"
+
+#: Resampling for the model comparisons. Fixed, because a confidence interval that
+#: moves between runs cannot be quoted in a manuscript.
+BOOTSTRAP_DRAWS = 10000
+BOOTSTRAP_SEED = 20261107
 
 
 class Point(dict):
@@ -201,26 +207,78 @@ MODELS: dict[str, tuple[str, Model]] = {
 }
 
 
-def _score(points: Sequence[Point], model: Model) -> dict[str, Any]:
-    """Leave-one-patient-out. Every error is on a patient the fit never saw."""
-    errors: list[float] = []
+# ---------------------------------------------------------------- the error
+#
+# The quantity every number in this section reports: how far the conversion's
+# estimate of absorbed organ dose falls from the Monte-Carlo dose, as a fraction
+# of the Monte-Carlo dose. The reference goes in the denominator.
+#
+# This was the other way round until 2026-11-07, dividing by the model's own
+# prediction, and it is not a cosmetic difference. For a ratio x the two measures
+# are |x - 1| and |1/x - 1|, so a conversion that errs low and one that errs high
+# are weighted differently, and the ranking of two models can and here does move:
+# the per-organ table was reported as slightly worse than one factor and is
+# slightly better when the reference is in the denominator. The manuscript's own
+# verification figure already used the reference as the denominator, so the paper
+# was carrying two conventions at once. This is the one it says it uses -- "recovers
+# absorbed organ dose to within x %" is a statement about the reference -- and the
+# one TG-195 comparisons and dose-estimation papers use.
+#
+# Because the index-to-dose ratio is the dose divided by a quantity both sides
+# share, the relative error on the ratio is the relative error on the dose.
+
+
+def _relative_error(measured: float, predicted: float) -> float:
+    """|estimate - reference| / reference."""
+    return abs(predicted / measured - 1.0)
+
+
+def _inverted_relative_error(measured: float, predicted: float) -> float:
+    """The superseded measure, kept so the change above can be audited."""
+    return abs(measured / predicted - 1.0)
+
+
+def _held_out(points: Sequence[Point], model: Model) -> tuple[dict[str, list[float]], list[float]]:
+    """Leave-one-patient-out errors, both ways, from one pass of folds.
+
+    Returns the errors grouped by the patient they were scored on, and the pooled
+    errors under the superseded measure. Grouped rather than pooled because the
+    comparisons below resample patients: the organs of one patient share that
+    patient's conversion factor, which is the finding of section 3.5, so they are
+    not independent draws.
+
+    One pass, not two. Fitting every fold a second time to compute the second
+    measure would double the work and -- the reason it is written this way -- would
+    make ``_score`` fit each patient twice, which is indistinguishable from a
+    cross-validation defect to any test that counts folds.
+    """
+    grouped: dict[str, list[float]] = {}
+    inverted: list[float] = []
     for uid in sorted({p["uid"] for p in points}):
         train = [p for p in points if p["uid"] != uid]
         test = [p for p in points if p["uid"] == uid]
         predict = model(train)
+        errors: list[float] = []
         for point in test:
-            errors.append(abs(point["ratio"] / predict(point) - 1.0))
-    errors.sort()
+            predicted = predict(point)
+            errors.append(_relative_error(point["ratio"], predicted))
+            inverted.append(_inverted_relative_error(point["ratio"], predicted))
+        grouped[uid] = errors
+    return grouped, inverted
+
+
+def _distribution(errors: Iterable[float]) -> dict[str, Any]:
+    ordered = sorted(errors)
 
     def quantile(fraction: float) -> float:
-        return errors[min(int(fraction * len(errors)), len(errors) - 1)]
+        return ordered[min(int(fraction * len(ordered)), len(ordered) - 1)]
 
     return {
-        "n_points": len(errors),
+        "n_points": len(ordered),
         "median_absolute_relative_error": quantile(0.5),
         "p90_absolute_relative_error": quantile(0.9),
-        "max_absolute_relative_error": errors[-1],
-        "within_20_percent": sum(1 for e in errors if e <= 0.20) / len(errors),
+        "max_absolute_relative_error": ordered[-1],
+        "within_20_percent": sum(1 for e in ordered if e <= 0.20) / len(ordered),
         "quantiles": {
             "p10": quantile(0.10),
             "p25": quantile(0.25),
@@ -231,25 +289,168 @@ def _score(points: Sequence[Point], model: Model) -> dict[str, Any]:
     }
 
 
-def _variance_decomposition(points: Sequence[Point]) -> dict[str, Any]:
-    """Where the index-to-dose factor varies: between patients, organs, vendors."""
-    log_ratio = [math.log(p["ratio"]) for p in points]
-    grand = statistics.fmean(log_ratio)
-    total = statistics.pvariance(log_ratio)
+def _score(points: Sequence[Point], model: Model) -> dict[str, Any]:
+    """Leave-one-patient-out. Every error is on a patient the fit never saw."""
+    by_patient, inverted = _held_out(points, model)
+    scored = _distribution(e for errors in by_patient.values() for e in errors)
+    scored["error_definition"] = (
+        "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose"
+    )
 
-    shares: dict[str, Any] = {"total_variance_of_log_ratio": total}
-    for key in ("uid", "organ", "vendor"):
+    # The superseded measure, on the same held-out predictions, so that a reader
+    # can see what the choice of denominator is worth here.
+    scored["prediction_in_denominator"] = {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        **{key: value for key, value in _distribution(inverted).items() if key != "n_points"},
+    }
+    return scored
+
+
+def _compare(points: Sequence[Point], baseline: str, other: str) -> dict[str, Any]:
+    """Is the difference between two models resolved by thirty patients?
+
+    Two medians a percentage point or two apart are not a result on their own, and
+    the paper's practical recommendation turns on one such pair. Resampling is over
+    patients for the reason given in ``_held_out_errors``; the paired sign test asks
+    the same question without assuming anything about the shape.
+    """
+    base, _ = _held_out(points, MODELS[baseline][1])
+    test, _ = _held_out(points, MODELS[other][1])
+    uids = sorted(base)
+
+    def median_over(groups: dict[str, list[float]], draw: Sequence[str]) -> float:
+        return statistics.median([e for uid in draw for e in groups[uid]])
+
+    observed = median_over(test, uids) - median_over(base, uids)
+
+    rng = random.Random(BOOTSTRAP_SEED)
+    differences = sorted(
+        median_over(test, draw) - median_over(base, draw)
+        for draw in ([rng.choice(uids) for _ in uids] for _ in range(BOOTSTRAP_DRAWS))
+    )
+    low = differences[int(0.025 * len(differences))]
+    high = differences[int(0.975 * len(differences))]
+
+    wins = sum(1 for uid in uids if statistics.median(test[uid]) < statistics.median(base[uid]))
+    n = len(uids)
+    tail = min(wins, n - wins)
+    p_value = sum(math.comb(n, k) for k in range(tail + 1)) * 2 / 2**n
+
+    return {
+        "baseline": baseline,
+        "model": other,
+        "median_difference": observed,
+        "ci95_patient_bootstrap": [low, high],
+        "bootstrap_draws": BOOTSTRAP_DRAWS,
+        "bootstrap_seed": BOOTSTRAP_SEED,
+        "patients_where_model_is_better": wins,
+        "n_patients": n,
+        "sign_test_p": min(p_value, 1.0),
+        "resolved": not (low < 0.0 < high),
+    }
+
+
+def _additive_fit(points: Sequence[Point], keys: Sequence[str]) -> float:
+    """Residual sum of squares of an additive model in the named factors.
+
+    The layout is one observation per patient-organ cell with cells missing, so the
+    patient and organ sums of squares are not orthogonal and cannot simply be added.
+    Alternating least squares fits the additive model itself; what it leaves is the
+    part neither factor explains.
+    """
+    ys = [math.log(p["ratio"]) for p in points]
+    grand = statistics.fmean(ys)
+    effects: list[dict[str, float]] = [{} for _ in keys]
+
+    for _ in range(500):
+        moved = 0.0
+        for axis, key in enumerate(keys):
+            groups: dict[str, list[float]] = {}
+            for index, point in enumerate(points):
+                other = sum(
+                    effects[a].get(point[keys[a]], 0.0) for a in range(len(keys)) if a != axis
+                )
+                groups.setdefault(point[key], []).append(ys[index] - grand - other)
+            for level, residuals in groups.items():
+                new = statistics.fmean(residuals)
+                moved = max(moved, abs(new - effects[axis].get(level, 0.0)))
+                effects[axis][level] = new
+        if moved < 1e-12:
+            break
+
+    return sum(
+        (ys[index] - grand - sum(effects[a].get(point[keys[a]], 0.0) for a in range(len(keys))))
+        ** 2
+        for index, point in enumerate(points)
+    )
+
+
+def _variance_decomposition(points: Sequence[Point]) -> dict[str, Any]:
+    """Where the index-to-dose factor varies: between patients and between organs.
+
+    This used to measure patient, organ and vendor each against the grand mean and
+    report the three shares side by side, which reads as a partition and is not one.
+    Two things were wrong with that. Vendor is a property of the series and every
+    patient here contributed one series, so vendor is nested inside patient and its
+    share is a part of the patient share, not an addition to it. And the patient and
+    organ shares overlap, because eighteen of the three hundred and sixty cells are
+    empty; they summed to within a few per cent of one only by coincidence.
+
+    What is reported instead: each factor's own share, the share the additive model
+    in both explains, the overlap between them as a number, and the residual. Those
+    last three do partition the total.
+    """
+    ys = [math.log(p["ratio"]) for p in points]
+    grand = statistics.fmean(ys)
+    total_ss = sum((y - grand) ** 2 for y in ys)
+
+    def marginal_ss(key: str) -> tuple[float, int]:
         groups: dict[str, list[float]] = {}
-        for point in points:
-            groups.setdefault(point[key], []).append(math.log(point["ratio"]))
+        for index, point in enumerate(points):
+            groups.setdefault(point[key], []).append(ys[index])
         between = sum(
             len(values) * (statistics.fmean(values) - grand) ** 2 for values in groups.values()
-        ) / len(points)
-        shares[f"between_{key}_share"] = between / total
-        shares[f"n_{key}"] = len(groups)
-    shares["between_patient_share"] = shares.pop("between_uid_share")
-    shares["n_patients"] = shares.pop("n_uid")
-    return shares
+        )
+        return between, len(groups)
+
+    patient_ss, n_patients = marginal_ss("uid")
+    organ_ss, n_organs = marginal_ss("organ")
+    vendor_ss, n_vendors = marginal_ss("vendor")
+
+    additive_ss = total_ss - _additive_fit(points, ("uid", "organ"))
+
+    vendors_per_patient = {}
+    for point in points:
+        vendors_per_patient.setdefault(point["uid"], set()).add(point["vendor"])
+    n_mixed = sum(1 for vendors in vendors_per_patient.values() if len(vendors) > 1)
+
+    return {
+        "what": (
+            "variance of the log dose-to-index ratio, by factor. The patient and "
+            "organ shares overlap; the additive, overlap and residual shares below "
+            "are the ones that sum to one."
+        ),
+        "total_variance_of_log_ratio": total_ss / len(points),
+        "between_patient_share": patient_ss / total_ss,
+        "between_organ_share": organ_ss / total_ss,
+        "n_patients": n_patients,
+        "n_organ": n_organs,
+        "additive_patient_and_organ_share": additive_ss / total_ss,
+        "patient_organ_overlap_share": (patient_ss + organ_ss - additive_ss) / total_ss,
+        "residual_share": 1.0 - additive_ss / total_ss,
+        "vendor": {
+            "nested_in_patient": n_mixed == 0,
+            "n_patients_with_more_than_one_vendor": n_mixed,
+            "n_vendor": n_vendors,
+            "share_of_total": vendor_ss / total_ss,
+            "share_of_between_patient": vendor_ss / patient_ss,
+            "note": (
+                "every patient contributed one series and therefore one vendor, so "
+                "this is a contrast within the between-patient variation and is "
+                "contained in it, not additional to it"
+            ),
+        },
+    }
 
 
 def _pearson(xs: Sequence[float], ys: Sequence[float]) -> float:
@@ -280,11 +481,20 @@ def analyse() -> dict[str, Any]:
         [math.log(p["ratio"]) for p in points],
     )
 
-    within_patient = []
+    # Two different quantities, and the manuscript printed the first while
+    # describing the second. A geometric standard deviation is a spread; it does
+    # not bound anything. The widest separation inside a patient is what a sentence
+    # of the form "every one of that patient's organs to within x" is claiming, so
+    # measure that too -- it is larger, and it holds for no patient at the value
+    # the geometric standard deviation suggests.
+    within_patient_gsd = []
+    within_patient_fold = []
     for uid in patients:
-        logs = [math.log(p["ratio"]) for p in points if p["uid"] == uid]
-        if len(logs) >= 4:
-            within_patient.append(math.exp(statistics.stdev(logs)))
+        ratios = [p["ratio"] for p in points if p["uid"] == uid]
+        if len(ratios) >= 4:
+            within_patient_gsd.append(math.exp(statistics.stdev([math.log(r) for r in ratios])))
+            within_patient_fold.append(max(ratios) / min(ratios))
+    within_patient_fold.sort()
 
     sigmas = [p["relative_sigma"] for p in points if p["relative_sigma"] is not None]
 
@@ -298,7 +508,10 @@ def analyse() -> dict[str, Any]:
             "per-rotation index and carries no length by construction; DLP is the "
             "standard quantity that does. The length term is included because a "
             "conversion that omitted it would be a straw man, and the fitted slope "
-            "is reported so a reader can see how close to proportional it is."
+            "is reported so a reader can see how close to proportional it is. Not a "
+            "statement about index-based conversion in general either: five models "
+            "were fitted and cross-validated here, and the numbers bound those five "
+            "on this cohort."
         ),
         "n_points": len(points),
         "n_patients": len(patients),
@@ -311,7 +524,13 @@ def analyse() -> dict[str, Any]:
             "patient_median_min": min(patient_ratio.values()),
             "patient_median_max": max(patient_ratio.values()),
             "patient_fold_span": max(patient_ratio.values()) / min(patient_ratio.values()),
-            "within_patient_spread_median_fold": statistics.median(within_patient),
+            "within_patient_geometric_sd_median": statistics.median(within_patient_gsd),
+            "within_patient_fold_median": statistics.median(within_patient_fold),
+            "within_patient_fold_p90": within_patient_fold[
+                min(int(0.9 * len(within_patient_fold)), len(within_patient_fold) - 1)
+            ],
+            "within_patient_fold_max": within_patient_fold[-1],
+            "n_patients_scored_for_fold": len(within_patient_fold),
         },
         "variance": _variance_decomposition(points),
         "length_dependence": {
@@ -342,10 +561,26 @@ def analyse() -> dict[str, Any]:
             "n": len(sigmas),
             "median": statistics.median(sigmas),
             "max": max(sigmas),
+            "what_it_bounds": (
+                "the sampling uncertainty of this engine's own estimate, and nothing "
+                "else. It does not bound the source model, the CTDIvol normalisation, "
+                "the HU-to-material conversion, the segmentation, or the choice of "
+                "conversion model, so a residual far above it is not thereby shown "
+                "to be a property of the transport"
+            ),
         },
         "models": {
             name: {"description": description, **_score(points, model)}
             for name, (description, model) in MODELS.items()
+        },
+        # Both baselines a claim in the paper rests on: whether a richer model beats
+        # one number at all, and whether anything beats a scan-length term once that
+        # term is in. Section 3.6's statement about patient size is the second kind.
+        "model_comparisons": {
+            f"{name}_vs_{baseline}": _compare(points, baseline, name)
+            for baseline in ("global_factor", "scan_length")
+            for name in MODELS
+            if name != baseline and not (baseline == "scan_length" and name == "global_factor")
         },
     }
 

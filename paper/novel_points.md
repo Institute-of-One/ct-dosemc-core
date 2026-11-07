@@ -9,7 +9,7 @@ of the *resolved* line, because "[[results:...]]" is not what anyone counts.
 -->
 
 - Measures how close an index can get to organ dose, against transport on the same anatomy
-- A per-organ coefficient table does not beat one factor, cross-validated on held-out patients
+- Thirty patients do not separate a per-organ coefficient table from one factor, held out
 - [[results:manifest.json:metrics.variance_between_patient|.0%]] of the dose-to-index variance is between patients, [[results:manifest.json:metrics.variance_between_organ|.0%]] between organs
-- The residual sits three orders of magnitude above the Monte-Carlo uncertainty, so it is physical
+- The residual sits three orders of magnitude above the Monte-Carlo sampling uncertainty
 - Organ dose from routine CT metadata alone: no added exposure, no phantom matched to the patient

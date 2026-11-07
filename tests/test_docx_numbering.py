@@ -79,12 +79,25 @@ def test_the_pmb_default_omits_line_numbers_but_keeps_page_numbers(
 
 
 def test_the_shipped_default_is_the_one_this_journal_needs() -> None:
-    """A switch nobody reads is a switch that drifts back."""
-    assert build_docx.LINE_NUMBERS is True, (
-        "this repository submits to Radiological Physics and Technology, whose "
-        "submission checklist asks for continuous line numbers in the manuscript "
-        "itself; set False only for a journal whose portal numbers the lines for "
-        "the reviewer, IOP's among them"
+    """A switch nobody reads is a switch that drifts back.
+
+    This asserted True until 2026-11-07, on the reading that Radiological Physics
+    and Technology asks the author for continuous line numbers. The guidelines do
+    ask for them; what settled it was the proof. Editorial Manager builds a PDF
+    from the upload and numbers every typographic line of it in the left margin,
+    counting from the title page it inserts, so a manuscript that brings its own
+    arrives with two columns that disagree from the first page -- our line 20
+    stood beside its line 59 on page 4 of RPTE-S-26-00853. The requirement is met
+    either way, and only one of the two ways produces one column.
+
+    So the switch now says False for this journal too, and Medical Physics is the
+    case that still needs True: it returns a submission that arrives without them.
+    """
+    assert build_docx.LINE_NUMBERS is False, (
+        "Radiological Physics and Technology's Editorial Manager numbers the proof "
+        "it builds from the upload; a manuscript that carries its own arrives with "
+        "two disagreeing columns. Set True only for a journal that numbers nothing "
+        "and returns a submission without them, Medical Physics among them"
     )
 
 

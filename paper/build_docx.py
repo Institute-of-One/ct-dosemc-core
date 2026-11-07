@@ -175,11 +175,20 @@ _LINE_NUMBERING = '<w:lnNumType w:countBy="1" w:restart="continuous" w:distance=
 
 #: Whether this paper's .docx carries its own line numbers. False for PMB: ScholarOne
 #: numbers the lines of the proof it builds from the upload, and a manuscript that
-#: brings its own ends up with two sets that do not agree. True for Radiological
-#: Physics and Technology, whose guidelines require "all lines ... numbered
-#: consecutively from the title page through the manuscript" and whose Editorial
-#: Manager does not add them, and for Medical Physics.
-LINE_NUMBERS = True
+#: brings its own ends up with two sets that do not agree.
+#:
+#: False for Radiological Physics and Technology too, which is not what this said
+#: before. The guidelines do require "all lines ... numbered consecutively from the
+#: title page through the manuscript", and this read that as an instruction to the
+#: author; it is satisfied by the portal. RPT's Editorial Manager numbers the proof
+#: it builds, so the upload's own numbers print beside them in a second column, and
+#: the two disagree from the first page because the portal counts the title page it
+#: inserts. Observed on the built proof, 2026-11-07, by the author. The requirement
+#: is met either way, and only one of the two ways produces one column.
+#:
+#: Medical Physics is the case that still needs True: it returns a submission that
+#: arrives without them.
+LINE_NUMBERS = False
 
 #: A4, because the author and the journal are both in Japan and the reviewers will
 #: print it. Twentieths of a point.

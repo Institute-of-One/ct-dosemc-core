@@ -224,6 +224,13 @@ def render(source: str, frozen: Path = DEFAULT_FROZEN, *, cite: bool = True) -> 
             if not spec:
                 return str(value)
             formatted = format(value, spec)
+            # A negative number must carry a minus sign, not a hyphen. Two reasons,
+            # and the second is the one that was found on the page: a hyphen is
+            # typographically wrong for a sign, and Word may break a line after it.
+            # On page 18 of the manuscript rendered 2026-11-07, "r = -0.30" printed
+            # as "r = -" at the end of one line and "0.30" at the start of the next.
+            # U+2212 is not a break opportunity.
+            formatted = formatted.replace("-", "−")
             # SI puts a space before the sign, and the manuscript writes "31 %"
             # wherever the number is formatted as a plain float. Python's own
             # per-cent format writes "88%", so the same document carried both

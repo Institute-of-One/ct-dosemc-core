@@ -190,16 +190,48 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
             "ratio_patient_min": ceiling["ratio"]["patient_median_min"],
             "ratio_patient_max": ceiling["ratio"]["patient_median_max"],
             "ratio_patient_fold": ceiling["ratio"]["patient_fold_span"],
-            "ratio_within_patient_fold": ceiling["ratio"]["within_patient_spread_median_fold"],
+            # Two quantities, not one. The geometric standard deviation is the spread
+            # of a patient's organ factors; the fold is the widest separation among
+            # them. A sentence of the form "all of that patient's organs to within x"
+            # is claiming the second, and the manuscript quoted the first until
+            # 2026-11-07, when the two were found to differ by half again.
+            "ratio_within_patient_gsd": ceiling["ratio"]["within_patient_geometric_sd_median"],
+            "ratio_within_patient_fold": ceiling["ratio"]["within_patient_fold_median"],
+            "ratio_within_patient_fold_p90": ceiling["ratio"]["within_patient_fold_p90"],
+            "ratio_within_patient_fold_max": ceiling["ratio"]["within_patient_fold_max"],
             "variance_between_patient": ceiling["variance"]["between_patient_share"],
             "variance_between_organ": ceiling["variance"]["between_organ_share"],
-            "variance_between_vendor": ceiling["variance"]["between_vendor_share"],
+            # Vendor is nested in patient -- one series, and therefore one scanner,
+            # per patient -- so this share is contained in the between-patient share
+            # and must not be printed beside it as a third component.
+            "variance_vendor_of_patient": ceiling["variance"]["vendor"]["share_of_between_patient"],
+            "variance_additive_patient_organ": ceiling["variance"][
+                "additive_patient_and_organ_share"
+            ],
+            "variance_residual": ceiling["variance"]["residual_share"],
             "length_slope": ceiling["length_dependence"]["slope"],
             "size_pearson_r": ceiling["size_dependence"]["pearson_r_log"],
             "mc_sigma_median": ceiling["monte_carlo_noise_floor"]["median"],
             "mc_sigma_max": ceiling["monte_carlo_noise_floor"]["max"],
         }
     )
+
+    # Whether a difference between two conversions is resolved by thirty patients.
+    # Two medians a point or two apart were being reported as a direction, in both
+    # the results and the recommendation; the interval is what decides that.
+    for name, comparison in ceiling["model_comparisons"].items():
+        low, high = comparison["ci95_patient_bootstrap"]
+        metrics[f"compare_{name}_diff_pp"] = comparison["median_difference"] * 100.0
+        # The same number with the sign a reader expects when prose says "gains":
+        # positive when the richer conversion has the smaller error. A sentence that
+        # has to write a minus sign to say something improved invites a typed one.
+        metrics[f"compare_{name}_gain_pp"] = -comparison["median_difference"] * 100.0
+        metrics[f"compare_{name}_ci_low_pp"] = low * 100.0
+        metrics[f"compare_{name}_ci_high_pp"] = high * 100.0
+        metrics[f"compare_{name}_sign_p"] = comparison["sign_test_p"]
+        metrics[f"compare_{name}_better_for"] = comparison["patients_where_model_is_better"]
+        metrics[f"compare_{name}_resolved"] = comparison["resolved"]
+
     # Percent forms, so prose never multiplies by a hundred by hand.
     for name in list(metrics):
         if name.startswith("ceiling_") or name.startswith("mc_sigma"):

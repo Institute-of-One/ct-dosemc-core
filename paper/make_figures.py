@@ -595,23 +595,41 @@ def figure6_conversion_ceiling() -> Path:
     left.set_title("(a) What an index can reach", fontsize=PANEL, loc="left")
     left.tick_params(labelsize=TICK)
 
+    # This panel drew patients, organs and vendors as three bars of one whole. They
+    # are not: every patient here contributed one series and therefore one scanner,
+    # so the vendor bar was a slice of the patient bar standing beside it, and the
+    # three read as a decomposition summing to 98 % by coincidence. The vendor share
+    # is now drawn inside the patient variation it belongs to, and the pair that does
+    # partition the total -- the additive model in patient and organ, and what it
+    # leaves -- is drawn as a separate group below the rule.
     variance = ceiling["variance"]
+    vendor = variance["vendor"]
     shares = [
-        ("Between patients", variance["between_patient_share"]),
-        ("Between organs", variance["between_organ_share"]),
-        ("Between vendors", variance["between_vendor_share"]),
+        ("Between patients", variance["between_patient_share"], "#4C72B0", False),
+        ("(of which, vendor)", vendor["share_of_total"], "#9AB3D4", True),
+        ("Between organs", variance["between_organ_share"], "#B0B0B0", False),
+        (
+            "Patient and organ, fitted",
+            variance["additive_patient_and_organ_share"],
+            "#6E6E6E",
+            False,
+        ),
+        ("Residual", variance["residual_share"], "#C9C9C9", False),
     ]
     share_positions = list(range(len(shares)))
     right.barh(
         share_positions,
-        [share * 100 for _, share in shares],
-        color=["#4C72B0", "#B0B0B0", "#B0B0B0"],
-        height=0.55,
+        [share * 100 for _, share, _, _ in shares],
+        color=[colour for _, _, colour, _ in shares],
+        height=[0.34 if nested else 0.55 for _, _, _, nested in shares],
     )
-    for position, (_, share) in zip(share_positions, shares, strict=True):
+    for position, (_, share, _, _) in zip(share_positions, shares, strict=True):
         right.text(share * 100 + 2.0, position, f"{share:.0%}", va="center", fontsize=ANNOT)
+    # The rule separates the marginal shares, which overlap, from the two that sum
+    # to one. Without it a reader would add all five.
+    right.axhline(2.5, color="#9AA7B4", linewidth=0.8, linestyle="-")
     right.set_yticks(share_positions)
-    right.set_yticklabels([label for label, _ in shares], fontsize=TICK)
+    right.set_yticklabels([label for label, _, _, _ in shares], fontsize=TICK)
     right.set_ylim(len(shares) - 0.5, -0.5)
     right.set_xlim(0, 108)
     right.set_xlabel("Share of the variance in log ratio (%)", fontsize=LABEL)

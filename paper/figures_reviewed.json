@@ -51,10 +51,10 @@
       "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
     "figure6_conversion_ceiling.png": {
-      "sha256": "c2975be296dd47bf5049be2e692bac4573435bb1c27b2775437b6ada66107e53",
-      "reviewed": "2026-10-21",
+      "sha256": "a4aa300e0f4cfd20e3ac76b711b42c031f811b0475fb7ad37f54e497cc796652",
+      "reviewed": "2026-11-07",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Two panels, (a) held-out error per conversion and (b) variance share. Row labels, value labels and the 20 % guide all legible and inside the canvas; no figure number inside the image. Separately, the caption in paper/README.md carries a result sentence that belongs in Results or Discussion; that is the caption, not this image.",
+      "note": "Redrawn 2026-11-07, both panels. (a) now scores the error against the Monte-Carlo dose rather than against the model's own prediction, so the first two rows read 29 % and 28 % and the per-organ row is the shorter of the two; the ordering of the five rows is unchanged below them. (b) used to draw patients, organs and vendors as three bars of one whole, which they are not: every patient here contributed one series and therefore one scanner, so the vendor bar was a slice of the patient bar standing beside it. It now has five bars in two groups separated by a rule -- above it the marginal shares with the vendor bar drawn thinner, lighter and labelled '(of which, vendor)' directly under 'Between patients'; below it 'Patient and organ, fitted' at 94 % and 'Residual' at 6 %, the pair that sums to one. Looked at: every row label is inside the canvas and none collides with a bar or its value label; the 4 % vendor bar is short but its label is clear of the axis; the rule at y = 2.5 sits in the gap between 'Between organs' and 'Patient and organ, fitted' and touches no bar; the 94 % bar does not run past the axis; both panel titles and both axis titles are present; no figure number and no caption text is drawn inside the image. The two panels keep the same widths and the figure is 6.50 x 3.40 in, inside the text block.",
       "renamed_from": "figure5_conversion_ceiling.png",
       "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },

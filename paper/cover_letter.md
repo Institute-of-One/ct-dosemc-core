@@ -24,23 +24,31 @@ Three findings are, I believe, of direct interest to this journal's readers. A
 single conversion factor recovers absorbed organ dose to a median
 [[results:manifest.json:metrics.ceiling_global_factor_median_pct|.0f]] %, and one
 factor per organ — the form in which published coefficient libraries are used —
-does not improve on it. The best conversion an index can carry reaches
-[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %
-and no further.
+is not separable from it on this cohort: the difference in median error is
+[[results:manifest.json:metrics.compare_per_organ_factor_vs_global_factor_diff_pp|+.1f]]
+points with a 95 % interval of
+[[results:manifest.json:metrics.compare_per_organ_factor_vs_global_factor_ci_low_pp|+.1f]]
+to
+[[results:manifest.json:metrics.compare_per_organ_factor_vs_global_factor_ci_high_pp|+.1f]].
+The best of the five reaches
+[[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] %.
 [[results:manifest.json:metrics.variance_between_patient|.0%]] of the variance in
 the dose-to-index ratio lies between patients against
 [[results:manifest.json:metrics.variance_between_organ|.0%]] between organs, so
-what an index withholds is patient-specific rather than organ-specific, and no
-coefficient table can supply it. The residual is three orders of magnitude above
-the Monte-Carlo statistical uncertainty, so it is physical.
+what an index withholds is patient-specific rather than organ-specific, and
+neither the per-organ table nor the size correction scored here supplies it. The
+residual is three orders of magnitude above the Monte-Carlo sampling uncertainty,
+so sampling does not account for it.
 
 A reader is left with something to act on rather than a negative result. Where a
 median of
 [[results:manifest.json:metrics.ceiling_scan_length_and_size_median_pct|.0f]] % is
 adequate — protocol comparison, registry-scale surveillance, a department
-tracking itself — a single factor with a scan-length term is the whole of what an
-index can offer and is what should be used; a coefficient library adds parameters
-and maintenance without adding accuracy. Where it is not adequate, the missing
+tracking itself — the conversion to use is a scan-length term with a per-organ or
+patient-size offset, which is where that number comes from; a coefficient library
+without a length term adds twelve parameters to reach
+[[results:manifest.json:metrics.ceiling_per_organ_factor_median_pct|.0f]] %. Where
+it is not adequate, the missing
 quantity is transport through that patient's own anatomy, computed here from the
 metadata a routine abdominal CT already records, with no added exposure and no
 phantom matched to the patient.

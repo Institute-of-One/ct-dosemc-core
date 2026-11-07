@@ -901,14 +901,24 @@ def check_inquiry(built: str) -> None:
     carried the title from two framings earlier. An editor reading it would have
     been told about a different manuscript.
 
-    A letter that has been sent is a record and is not rewritten to match a manuscript that
-    moved afterwards: the one sent to PMB on 2026-08-23 is kept at
-    ``docs/pmb_inquiry_sent_<date>.txt`` and is not read here. This path is the inquiry for
-    the venue the paper is going to next, and its absence is a warning rather than a failure
-    because not every venue is asked first.
+    A letter addressed to a venue that is finished with the paper is a record and is not
+    rewritten to match a manuscript that moved afterwards: the one to PMB is kept at
+    ``docs/pmb_inquiry_sent_2026-08-23.txt`` and the one to the Journal of Radiological
+    Protection, which withdrew the submission without review, at
+    ``docs/jrp_inquiry_2026-10-21.txt``. Neither is read here. This path is the inquiry for
+    the venue the paper is going to next, and its absence is a note rather than a warning
+    because not every venue is asked first -- Radiological Physics and Technology was not.
+
+    A note and not a warning because ``--strict`` makes every warning fatal, and a paper
+    submitted without an inquiry would then fail its own build for the rest of its life.
+    The gate here is that a drafted inquiry must be true, not that one must exist.
     """
     if not INQUIRY.exists():
-        warn(f"no pre-submission inquiry drafted at {INQUIRY.relative_to(REPO)}")
+        print(
+            f"  note  no pre-submission inquiry drafted at {INQUIRY.relative_to(REPO)}; "
+            f"this venue was not asked first, and the letters to the venues that were "
+            f"are kept under their own names"
+        )
         return
     letter = INQUIRY.read_text(encoding="utf-8")
 
@@ -958,7 +968,8 @@ def check_docx_furniture() -> None:
     if carries and not build_docx.LINE_NUMBERS:
         fail(
             "the .docx carries line numbering while build_docx.LINE_NUMBERS is False; "
-            "PMB's submission system numbers the proof itself and the two sets disagree"
+            "this journal's submission system numbers the proof itself, and the upload's "
+            "own numbers print beside them in a second, disagreeing column"
         )
     if build_docx.LINE_NUMBERS and not carries:
         fail("the .docx carries no line numbering, and this journal requires it")

@@ -1,6 +1,6 @@
 {
   "what": "How close an index-based conversion can get to absorbed organ dose, scored under leave-one-patient-out cross-validation.",
-  "not": "Not a claim that a scan-length term is a discovery. CTDIvol is a per-rotation index and carries no length by construction; DLP is the standard quantity that does. The length term is included because a conversion that omitted it would be a straw man, and the fitted slope is reported so a reader can see how close to proportional it is.",
+  "not": "Not a claim that a scan-length term is a discovery. CTDIvol is a per-rotation index and carries no length by construction; DLP is the standard quantity that does. The length term is included because a conversion that omitted it would be a straw man, and the fitted slope is reported so a reader can see how close to proportional it is. Not a statement about index-based conversion in general either: five models were fitted and cross-validated here, and the numbers bound those five on this cohort.",
   "n_points": 342,
   "n_patients": 30,
   "n_organs": 12,
@@ -12,16 +12,30 @@
     "patient_median_min": 0.878251180985238,
     "patient_median_max": 4.793738285188768,
     "patient_fold_span": 5.4582770726377685,
-    "within_patient_spread_median_fold": 1.1750479824419178
+    "within_patient_geometric_sd_median": 1.1750479824419178,
+    "within_patient_fold_median": 1.6437128032429245,
+    "within_patient_fold_p90": 1.9568850138388736,
+    "within_patient_fold_max": 2.058138227574563,
+    "n_patients_scored_for_fold": 30
   },
   "variance": {
+    "what": "variance of the log dose-to-index ratio, by factor. The patient and organ shares overlap; the additive, overlap and residual shares below are the ones that sum to one.",
     "total_variance_of_log_ratio": 0.19938501655335575,
-    "between_organ_share": 0.06024235268195146,
-    "n_organ": 12,
-    "between_vendor_share": 0.03737644892001289,
-    "n_vendor": 4,
     "between_patient_share": 0.8788791363000218,
-    "n_patients": 30
+    "between_organ_share": 0.06024235268195147,
+    "n_patients": 30,
+    "n_organ": 12,
+    "additive_patient_and_organ_share": 0.9443995770107491,
+    "patient_organ_overlap_share": -0.0052780880287757416,
+    "residual_share": 0.05560042298925094,
+    "vendor": {
+      "nested_in_patient": true,
+      "n_patients_with_more_than_one_vendor": 0,
+      "n_vendor": 4,
+      "share_of_total": 0.03737644892001289,
+      "share_of_between_patient": 0.04252740493688741,
+      "note": "every patient contributed one series and therefore one vendor, so this is a contrast within the between-patient variation and is contained in it, not additional to it"
+    }
   },
   "length_dependence": {
     "fit": "log(ratio) = intercept + slope * log(n_z_stations)",
@@ -41,83 +55,266 @@
     "what": "per-organ Monte-Carlo statistical uncertainty, relative",
     "n": 342,
     "median": 0.00011680978825022976,
-    "max": 0.008265347066086103
+    "max": 0.008265347066086103,
+    "what_it_bounds": "the sampling uncertainty of this engine's own estimate, and nothing else. It does not bound the source model, the CTDIvol normalisation, the HU-to-material conversion, the segmentation, or the choice of conversion model, so a residual far above it is not thereby shown to be a property of the transport"
   },
   "models": {
     "global_factor": {
       "description": "a single conversion factor for the cohort",
       "n_points": 342,
-      "median_absolute_relative_error": 0.3089333032866175,
-      "p90_absolute_relative_error": 0.7491309884643413,
-      "max_absolute_relative_error": 1.7101242511262598,
-      "within_20_percent": 0.3538011695906433,
+      "median_absolute_relative_error": 0.29397326284200054,
+      "p90_absolute_relative_error": 1.0317857346929178,
+      "max_absolute_relative_error": 2.324665192301313,
+      "within_20_percent": 0.3713450292397661,
       "quantiles": {
-        "p10": 0.06846828528198112,
-        "p25": 0.15259672914525346,
-        "p50": 0.3089333032866175,
-        "p75": 0.5179476987531809,
-        "p90": 0.7491309884643413
+        "p10": 0.06408078388953908,
+        "p25": 0.14090907760213855,
+        "p50": 0.29397326284200054,
+        "p75": 0.554080344433372,
+        "p90": 1.0317857346929178
+      },
+      "error_definition": "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose",
+      "prediction_in_denominator": {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        "median_absolute_relative_error": 0.3089333032866175,
+        "p90_absolute_relative_error": 0.7491309884643413,
+        "max_absolute_relative_error": 1.7101242511262598,
+        "within_20_percent": 0.3538011695906433,
+        "quantiles": {
+          "p10": 0.06846828528198112,
+          "p25": 0.15259672914525346,
+          "p50": 0.3089333032866175,
+          "p75": 0.5179476987531809,
+          "p90": 0.7491309884643413
+        }
       }
     },
     "per_organ_factor": {
       "description": "one factor per organ, as a coefficient table offers",
       "n_points": 342,
-      "median_absolute_relative_error": 0.32387586895256026,
-      "p90_absolute_relative_error": 0.6824575625350842,
-      "max_absolute_relative_error": 1.8231707798565044,
-      "within_20_percent": 0.3713450292397661,
+      "median_absolute_relative_error": 0.2776419254264959,
+      "p90_absolute_relative_error": 0.9437133283986112,
+      "max_absolute_relative_error": 2.51255400346027,
+      "within_20_percent": 0.391812865497076,
       "quantiles": {
-        "p10": 0.05318925086935411,
-        "p25": 0.10778868034120648,
-        "p50": 0.32387586895256026,
-        "p75": 0.4916190618844367,
-        "p90": 0.6824575625350842
+        "p10": 0.051736349734983644,
+        "p25": 0.1034796938300162,
+        "p50": 0.2776419254264959,
+        "p75": 0.5234978394328512,
+        "p90": 0.9437133283986112
+      },
+      "error_definition": "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose",
+      "prediction_in_denominator": {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        "median_absolute_relative_error": 0.32387586895256026,
+        "p90_absolute_relative_error": 0.6824575625350842,
+        "max_absolute_relative_error": 1.8231707798565044,
+        "within_20_percent": 0.3713450292397661,
+        "quantiles": {
+          "p10": 0.05318925086935411,
+          "p25": 0.10778868034120648,
+          "p50": 0.32387586895256026,
+          "p75": 0.4916190618844367,
+          "p90": 0.6824575625350842
+        }
       }
     },
     "scan_length": {
       "description": "a scan-length term alone",
       "n_points": 342,
-      "median_absolute_relative_error": 0.161995889553455,
-      "p90_absolute_relative_error": 0.39402230302828256,
-      "max_absolute_relative_error": 2.051895444790006,
-      "within_20_percent": 0.6257309941520468,
+      "median_absolute_relative_error": 0.15591924048379813,
+      "p90_absolute_relative_error": 0.43520866675729963,
+      "max_absolute_relative_error": 0.7518383018553854,
+      "within_20_percent": 0.6052631578947368,
       "quantiles": {
-        "p10": 0.03042012265854066,
-        "p25": 0.08382016914436996,
-        "p50": 0.161995889553455,
-        "p75": 0.2813143964987408,
-        "p90": 0.39402230302828256
+        "p10": 0.030944296937149174,
+        "p25": 0.08025900431050725,
+        "p50": 0.15591924048379813,
+        "p75": 0.2685567049767936,
+        "p90": 0.43520866675729963
+      },
+      "error_definition": "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose",
+      "prediction_in_denominator": {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        "median_absolute_relative_error": 0.161995889553455,
+        "p90_absolute_relative_error": 0.39402230302828256,
+        "max_absolute_relative_error": 2.051895444790006,
+        "within_20_percent": 0.6257309941520468,
+        "quantiles": {
+          "p10": 0.03042012265854066,
+          "p25": 0.08382016914436996,
+          "p50": 0.161995889553455,
+          "p75": 0.2813143964987408,
+          "p90": 0.39402230302828256
+        }
       }
     },
     "scan_length_and_organ": {
       "description": "a scan-length term and a per-organ offset: everything an index carries",
       "n_points": 342,
-      "median_absolute_relative_error": 0.13243328544919442,
-      "p90_absolute_relative_error": 0.35466440538252564,
-      "max_absolute_relative_error": 1.8623172012183833,
-      "within_20_percent": 0.6842105263157895,
+      "median_absolute_relative_error": 0.13402764436091352,
+      "p90_absolute_relative_error": 0.3570337644820314,
+      "max_absolute_relative_error": 0.8820061900329998,
+      "within_20_percent": 0.672514619883041,
       "quantiles": {
-        "p10": 0.016674210962288938,
-        "p25": 0.06360000813206557,
-        "p50": 0.13243328544919442,
-        "p75": 0.22441669016578492,
-        "p90": 0.35466440538252564
+        "p10": 0.01660758045823907,
+        "p25": 0.06128616334357573,
+        "p50": 0.13402764436091352,
+        "p75": 0.23014967680320586,
+        "p90": 0.3570337644820314
+      },
+      "error_definition": "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose",
+      "prediction_in_denominator": {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        "median_absolute_relative_error": 0.13243328544919442,
+        "p90_absolute_relative_error": 0.35466440538252564,
+        "max_absolute_relative_error": 1.8623172012183833,
+        "within_20_percent": 0.6842105263157895,
+        "quantiles": {
+          "p10": 0.016674210962288938,
+          "p25": 0.06360000813206557,
+          "p50": 0.13243328544919442,
+          "p75": 0.22441669016578492,
+          "p90": 0.35466440538252564
+        }
       }
     },
     "scan_length_and_size": {
       "description": "a scan-length term and patient effective diameter",
       "n_points": 342,
-      "median_absolute_relative_error": 0.1295925108695728,
-      "p90_absolute_relative_error": 0.31764085201935177,
-      "max_absolute_relative_error": 1.9494182100745556,
-      "within_20_percent": 0.7192982456140351,
+      "median_absolute_relative_error": 0.1301026688839786,
+      "p90_absolute_relative_error": 0.3549173801813035,
+      "max_absolute_relative_error": 1.264995496279513,
+      "within_20_percent": 0.7222222222222222,
       "quantiles": {
-        "p10": 0.021554502313174906,
-        "p25": 0.062365627203294416,
-        "p50": 0.1295925108695728,
-        "p75": 0.212690228268259,
-        "p90": 0.31764085201935177
+        "p10": 0.02202933363598958,
+        "p25": 0.06044459118715473,
+        "p50": 0.1301026688839786,
+        "p75": 0.20455090491295636,
+        "p90": 0.3549173801813035
+      },
+      "error_definition": "|estimated organ dose - Monte-Carlo organ dose| / Monte-Carlo organ dose",
+      "prediction_in_denominator": {
+        "what": "the superseded measure, |reference / estimate - 1|, for audit only",
+        "median_absolute_relative_error": 0.1295925108695728,
+        "p90_absolute_relative_error": 0.31764085201935177,
+        "max_absolute_relative_error": 1.9494182100745556,
+        "within_20_percent": 0.7192982456140351,
+        "quantiles": {
+          "p10": 0.021554502313174906,
+          "p25": 0.062365627203294416,
+          "p50": 0.1295925108695728,
+          "p75": 0.212690228268259,
+          "p90": 0.31764085201935177
+        }
       }
+    }
+  },
+  "model_comparisons": {
+    "per_organ_factor_vs_global_factor": {
+      "baseline": "global_factor",
+      "model": "per_organ_factor",
+      "median_difference": -0.014221410833888115,
+      "ci95_patient_bootstrap": [
+        -0.04937564168351827,
+        0.024844238099997973
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 18,
+      "n_patients": 30,
+      "sign_test_p": 0.361594608053565,
+      "resolved": false
+    },
+    "scan_length_vs_global_factor": {
+      "baseline": "global_factor",
+      "model": "scan_length",
+      "median_difference": -0.13463966393346566,
+      "ci95_patient_bootstrap": [
+        -0.23294878370023592,
+        -0.049039626809998516
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 23,
+      "n_patients": 30,
+      "sign_test_p": 0.005222879350185394,
+      "resolved": true
+    },
+    "scan_length_and_organ_vs_global_factor": {
+      "baseline": "global_factor",
+      "model": "scan_length_and_organ",
+      "median_difference": -0.15694365914218145,
+      "ci95_patient_bootstrap": [
+        -0.2580393705213183,
+        -0.0708179424800523
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 26,
+      "n_patients": 30,
+      "sign_test_p": 5.947612226009369e-05,
+      "resolved": true
+    },
+    "scan_length_and_size_vs_global_factor": {
+      "baseline": "global_factor",
+      "model": "scan_length_and_size",
+      "median_difference": -0.16005806274416845,
+      "ci95_patient_bootstrap": [
+        -0.259639952656044,
+        -0.07247580890052052
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 26,
+      "n_patients": 30,
+      "sign_test_p": 5.947612226009369e-05,
+      "resolved": true
+    },
+    "per_organ_factor_vs_scan_length": {
+      "baseline": "scan_length",
+      "model": "per_organ_factor",
+      "median_difference": 0.12041825309957754,
+      "ci95_patient_bootstrap": [
+        0.0065192667533101045,
+        0.2361636383225163
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 9,
+      "n_patients": 30,
+      "sign_test_p": 0.04277394525706768,
+      "resolved": true
+    },
+    "scan_length_and_organ_vs_scan_length": {
+      "baseline": "scan_length",
+      "model": "scan_length_and_organ",
+      "median_difference": -0.022303995208715788,
+      "ci95_patient_bootstrap": [
+        -0.0481472642019346,
+        -4.49345137416568e-05
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 21,
+      "n_patients": 30,
+      "sign_test_p": 0.04277394525706768,
+      "resolved": true
+    },
+    "scan_length_and_size_vs_scan_length": {
+      "baseline": "scan_length",
+      "model": "scan_length_and_size",
+      "median_difference": -0.02541839881070279,
+      "ci95_patient_bootstrap": [
+        -0.05763299161837743,
+        -0.007826037951845999
+      ],
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20261107,
+      "patients_where_model_is_better": 21,
+      "n_patients": 30,
+      "sign_test_p": 0.04277394525706768,
+      "resolved": true
     }
   }
 }
