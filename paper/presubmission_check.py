@@ -764,10 +764,14 @@ def check_every_figure_image_has_been_looked_at() -> None:
                 f"{entry.get('reviewed')}"
             )
             if elsewhere:
-                warn(
-                    f"{message}, but the figures were reviewed in {elsewhere} and this "
-                    f"is not that environment, so the digest was never going to match. "
-                    f"This says nothing about the figure"
+                # Printed, not reported. --strict makes every warning fatal, which
+                # is what it is for, so a warning that every non-recording machine
+                # is guaranteed to raise would simply make --strict unusable
+                # anywhere else -- and a flag that cannot be run is not a gate.
+                print(
+                    f"  note  figure {number} ({name}) was reviewed in {elsewhere}, "
+                    f"and this is not that environment, so its digest was never going "
+                    f"to match. Whether it has been looked at is decided there"
                 )
             else:
                 fail(
