@@ -16,15 +16,19 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      # The extras, not a hand-written list beside them. CI used to name
+      # pypandoc_binary and pillow itself, so the [paper] extra was never
+      # installed and never tested: python-docx was missing from it for weeks
+      # and the only thing that noticed was a reader's fresh checkout.
+      #
+      # pypandoc_binary carries the pandoc executable, so the .docx tests run
+      # here rather than skipping. Page and line numbering exist only in the
+      # artefact that reaches an editor, and a companion submission was returned
+      # before peer review for the want of them.
       - name: Install the package and its dev tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
-          # pypandoc_binary carries the pandoc executable, so the .docx tests run
-          # here rather than skipping. Page and line numbering exist only in the
-          # artefact that reaches an editor, and a companion submission was
-          # returned before peer review for the want of them.
-          python -m pip install pypandoc_binary pillow
+          python -m pip install -e ".[dev,paper]"
 
       - name: Pytest
         run: pytest -q

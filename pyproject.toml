@@ -68,7 +68,19 @@ dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff==0.16.6", "matplotlib>=3.7"]
 # with it; a reader should not have to install pandoc separately to rebuild the
 # manuscript. Pillow is imported by paper/presubmission_check.py to measure the
 # figures, and matplotlib by paper/make_figures.py.
-paper = ["matplotlib>=3.7", "pypandoc_binary>=1.13", "pillow>=10.0"]
+# python-docx, openpyxl and pypdf were found the same way, and later: CI did not
+# install this extra at all -- it named pypandoc_binary and pillow by hand -- so
+# a reader following the README hit ModuleNotFoundError at a step CI had never
+# reached. CI now installs ".[dev,paper]", which is the only way this list is
+# ever tested.
+paper = [
+    "matplotlib>=3.7",
+    "pypandoc_binary>=1.13",
+    "pillow>=10.0",
+    "python-docx>=1.1",
+    "openpyxl>=3.1",
+    "pypdf>=4.0",
+]
 # tools/build_bowtie_profiles.py reads the published bowtie spreadsheet.
 bowtie = ["openpyxl>=3.1"]
 
