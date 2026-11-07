@@ -18,6 +18,7 @@ the check at the end says so rather than reporting success over a gap.
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -27,6 +28,18 @@ REPO = PAPER.parent
 SOURCE = PAPER / "manuscript.md"
 
 #: (description, command, needs the manuscript prose)
+#: Steps that drive Word through COM. They cannot run anywhere but Windows, and
+#: a Linux runner must say so rather than either failing (which reports a defect
+#: that does not exist) or passing (which reports a check that did not happen).
+#: Everything downstream of the PDF is here too: the page images are made from
+#: it, and a page ledger with no pages to compare is not a comparison.
+WINDOWS_ONLY = frozenset(
+    {
+        "render the Word file to the submission PDF",
+        "check every page is as it was when it was looked at",
+    }
+)
+
 STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("freeze the results the paper cites", ["paper/freeze.py"], False),
     ("draw figures 1-4 and 6", ["paper/make_figures.py"], False),
@@ -77,9 +90,14 @@ def main(argv: list[str] | None = None) -> int:
     if not have_prose:
         print(f"note: {SOURCE.name} does not exist yet; its steps are skipped\n")
 
+    skipped: list[str] = []
     for description, command, needs_prose in STEPS:
         if needs_prose and not have_prose:
             print(f"\n=== {description}  [skipped: no manuscript]")
+            continue
+        if description in WINDOWS_ONLY and os.name != "nt":
+            print(f"\n=== {description}  [skipped: drives Word, which needs Windows]")
+            skipped.append(description)
             continue
         print(f"\n=== {description}")
         result = subprocess.run([sys.executable, *command], cwd=REPO, check=False, text=True)
@@ -89,6 +107,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if not have_prose:
         print("\nevidence and figures rebuilt; the manuscript is not written")
+        return 0
+    if skipped:
+        # Never "every artefact": the submission is prepared on Windows, and a
+        # run that could not open the PDF has not seen the pages a reader sees.
+        print(f"\nrebuilt and checked, except for {len(skipped)} step(s) this platform cannot run:")
+        for description in skipped:
+            print(f"  - {description}")
+        print("run paper/build_all.py on Windows before submitting.")
         return 0
     print("\nevery artefact rebuilt and checked")
     return 0
