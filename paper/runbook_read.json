@@ -1,12 +1,12 @@
 {
   "_why": "The submission runbook was read before this manuscript was worked on. paper/presubmission_check.py fails while the runbook on disk has a different sha256 from the one recorded here, which covers both never having read it and its having changed since. The runbook is not public and none of its content is stored here.",
   "runbook": "IoO_Submission_Runbook.md",
-  "sha256": "7424ff8487945b768973b46f6b1f2b8158f5ac8ea9ebe964bae2d63e329cf143",
+  "sha256": "cd0c299109aa49b0c39789f5f64439f8e56e111055221249cea1c12a59cfff35",
   "sections": [
     "2",
     "11"
   ],
-  "read_on": "2026-11-07",
+  "read_on": "2026-11-08",
   "by": "Claude Opus 5, on the author's instruction",
-  "note": "Re-read after section 3.4.2 was corrected: setting captions two points below the body was not enough, because the leading stays the body's and the eye follows the line pitch. The caption text after the label is italic as well."
+  "note": "Re-read after section 8.2 gained the Editorial Manager two-identifier note written from this submission."
 }
