@@ -441,8 +441,18 @@ def set_captions_apart(path: Path) -> Path:
     already set in, and the leading left alone because the journal asks for the text
     double-spaced and a caption is part of the text.
 
-    The label keeps its bold. That is bold doing its one job -- a run-in heading --
-    and the size change is what carries the rest of the distinction.
+    The label keeps its bold and stays roman. That is bold doing its one job, a
+    run-in heading.
+
+    Two points alone was not enough, which the author said after reading the page
+    and which is visible once pointed at: the leading is the body's, so the block
+    keeps the body's rhythm and the eye follows that rather than the glyph size.
+    The caption text after the label is set italic as well. A whole paragraph in
+    italic is a different texture at a glance and does not depend on comparing
+    sizes across a page break. It does not collide with the rule that italic marks
+    a defined term -- that rule is about a word inside running prose, and no
+    caption here carries an italic run of its own, which is checked below rather
+    than assumed.
     """
     import docx  # noqa: PLC0415
 
@@ -452,8 +462,17 @@ def set_captions_apart(path: Path) -> Path:
     for paragraph in document.paragraphs:
         if not _CAPTION.match(paragraph.text.strip()):
             continue
+        if any(run.italic for run in paragraph.runs):
+            raise SystemExit(
+                f"a caption already carries an italic run, which setting the whole "
+                f"caption italic would hide: {paragraph.text.strip()[:60]!r}"
+            )
         for run in paragraph.runs:
             run.font.size = size
+            # The run-in label is the bold one and stays roman; everything after it
+            # is the caption proper.
+            if not run.bold:
+                run.font.italic = True
         captions += 1
     if not captions:
         raise SystemExit(

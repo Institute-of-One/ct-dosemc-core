@@ -1,12 +1,12 @@
 {
   "_why": "The submission runbook was read before this manuscript was worked on. paper/presubmission_check.py fails while the runbook on disk has a different sha256 from the one recorded here, which covers both never having read it and its having changed since. The runbook is not public and none of its content is stored here.",
   "runbook": "IoO_Submission_Runbook.md",
-  "sha256": "934fc52367138803638637bfbbfae0800ea5d9405a5aeb1ceaf26377e2072213",
+  "sha256": "7424ff8487945b768973b46f6b1f2b8158f5ac8ea9ebe964bae2d63e329cf143",
   "sections": [
     "2",
     "11"
   ],
   "read_on": "2026-11-07",
   "by": "Claude Opus 5, on the author's instruction",
-  "note": "Read sections 2 and 11 on 2026-11-07 after the author pointed out that the same classes of defect keep recurring because the runbook is skipped. Reading it reversed one decision taken earlier the same day (the line-number switch, now section 2.4.1) and identified one defect as a rediscovery rather than a finding (the hyphen breaking a negative number across a line, section 3.4). Two sections were added as a result: 2.4.1 and 3.4.2."
+  "note": "Re-read after section 3.4.2 was corrected: setting captions two points below the body was not enough, because the leading stays the body's and the eye follows the line pitch. The caption text after the label is italic as well."
 }
