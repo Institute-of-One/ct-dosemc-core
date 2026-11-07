@@ -736,6 +736,23 @@ def check_every_figure_image_has_been_looked_at() -> None:
 # -------------------------------------------------------------------- references
 
 
+def check_the_cited_release_exists() -> None:
+    """The archive the paper's DOI points at must be the one this tree describes.
+
+    This is the last thing run before "ready to submit" is printed, and until now
+    it did not ask. ``build_all.py`` runs the release gate earlier and stops there,
+    so a full build was safe -- but this file run on its own printed "ready to
+    submit" over a manuscript citing the archive of a previous version. A gate that
+    refuses elsewhere does not make this one's verdict true, and in this programme a
+    checker that declined to run has already left a later gate green on a stale
+    reference list.
+    """
+    import check_release_metadata  # noqa: PLC0415
+
+    for problem in check_release_metadata.check():
+        fail(problem)
+
+
 def check_references(built: str) -> None:
     """Vancouver: numbered in order of first appearance, every number resolving.
 
@@ -988,6 +1005,7 @@ def main(argv: list[str] | None = None) -> int:
             check_every_figure_image_has_been_looked_at()
             check_docx_furniture()
             check_inquiry(built)
+            check_the_cited_release_exists()
         check_references(built)
 
     for message in warnings:

@@ -46,14 +46,16 @@ keywords:
   - TG-195
   - cross-validation
 license: MIT
-version: 0.2.1
+version: 0.2.2
 # Zenodo takes this as the record's publication date and a DOI cannot be
 # re-dated afterwards, so it is the day the tag is cut, not the day work began.
-date-released: "2026-10-22"
+date-released: "2026-11-07"
 # The *concept* DOI, which resolves to the latest version: that is what a
 # citation of the project as a whole should point at, and it is what the README
 # badge carries. A result cites the version DOI of the release it was produced
-# with, and the manuscript cites 10.5281/zenodo.23537665 for v0.2.1.
+# with, and the manuscript cites the version DOI of v0.2.2, which is the
+# release that first carries the cross-section Figure 1 is drawn from and the
+# code that draws it. v0.2.1 (10.5281/zenodo.23537665) cannot redraw Figure 1.
 doi: 10.5281/zenodo.22233152
 references:
   - type: article
