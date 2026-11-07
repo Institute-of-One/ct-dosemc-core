@@ -1,4 +1,9 @@
-"""Figure 4: IORN-006 organ index (x) vs IORN-007 absorbed dose (y).
+"""Figure 5: IORN-006 organ index (x) vs IORN-007 absorbed dose (y).
+
+The image this draws is **Figure 5** of the manuscript. The script's own name
+is historical: it was Figure 4 before Figure 1 was added, and the number lives
+in paper/collect_figures.py, not in any file name. The image it writes is
+called index_vs_dose_scatter.png for that reason.
 
 The y-axis is gated until G0–G5 close. The marker mapping is not: it is fixed
 here so a low-confidence reconstruction cannot land on the same symbol as a
@@ -30,8 +35,12 @@ from extract_iorn006_index import (  # noqa: E402
 )
 
 DEFAULT_INDEX = REPO / "results" / "phase2_cohort" / "iorn006_organ_index.json"
-DEFAULT_OUT = REPO / "results" / "phase2_cohort" / "figure4_scatter.png"
-DEFAULT_LEGEND = REPO / "results" / "phase2_cohort" / "figure4_legend.png"
+# Number-free, because a figure's number belongs to the manuscript and not to
+# the file: this image was figure 4 and is now figure 5, and a source called
+# "figure4_*" renamed into "figure5_*" is how a companion paper shipped one
+# figure under two numbers.
+DEFAULT_OUT = REPO / "results" / "phase2_cohort" / "index_vs_dose_scatter.png"
+DEFAULT_LEGEND = REPO / "results" / "phase2_cohort" / "index_vs_dose_legend.png"
 
 # Same colour for both reconstructed classes so hollow vs filled is the signal.
 _EDGE = {

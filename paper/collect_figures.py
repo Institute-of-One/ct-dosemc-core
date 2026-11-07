@@ -3,10 +3,16 @@
     python paper/collect_figures.py
     python paper/collect_figures.py --check
 
-Figures 1-3 are drawn by ``paper/make_figures.py`` from ``paper/frozen/``.
-Figures 4 and 5 fall out of the production pipeline and live under ``results/``;
+Figures 1-4 and 6 are drawn by ``paper/make_figures.py`` from ``paper/frozen/``.
+Figures 5 and 7 fall out of the production pipeline and live under ``results/``;
 they are copied here so that every image the manuscript places sits in one
 directory and can be shipped as one set.
+
+A source file never carries a figure number: the number belongs to the
+manuscript, and this table is the only place it is decided. The frozen result
+files are the exception and keep the names they were written under --
+``figure4_doses.json`` feeds what is now Figure 5 -- because renaming them
+would break the freeze manifest and every number already traced through it.
 
 Captions are read from the table in ``paper/README.md`` and are written there once.
 A caption that also exists as image alt text prints twice in the converted
@@ -30,12 +36,13 @@ RESULTS = REPO / "results"
 #: ``number -> (filename in paper/figures/, where it comes from)``. A source of
 #: ``None`` means the figure is drawn into paper/figures/ directly by make_figures.
 FIGURE_SOURCES: dict[int, tuple[str, str | None]] = {
-    1: ("figure1_selection_funnel.png", None),
-    2: ("figure2_density_gate.png", None),
-    3: ("figure3_tg195_case4.png", None),
-    4: ("figure4_scatter.png", "phase2_cohort/figure4_scatter.png"),
-    5: ("figure5_conversion_ceiling.png", None),
-    6: ("figure6_vendor.png", "phase2_cohort/vendor_organ_dose.png"),
+    1: ("figure1_ladder.png", None),
+    2: ("figure2_selection_funnel.png", None),
+    3: ("figure3_density_gate.png", None),
+    4: ("figure4_tg195_case4.png", None),
+    5: ("figure5_scatter.png", "phase2_cohort/index_vs_dose_scatter.png"),
+    6: ("figure6_conversion_ceiling.png", None),
+    7: ("figure7_vendor.png", "phase2_cohort/vendor_organ_dose.png"),
 }
 
 _CAPTION_ROW = re.compile(r"^\|\s*Fig\s*(\d+)\s*\|\s*(.+?)\s*\|\s*$", re.M)

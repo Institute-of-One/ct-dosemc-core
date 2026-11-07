@@ -52,6 +52,17 @@ CITED: tuple[tuple[str, str], ...] = (
     # The cost of the dose grid, measured per organ. Frozen so the Methods can state the
     # grid spacing and what resampling the masks costs instead of asserting both.
     ("phase2_cohort/resample_cost.json", "resample_cost.json"),
+    # Figure 1: the three numbers per organ, the selection and slice rules, and the
+    # provenance and licence of the one cross-section the figure publishes.
+    ("phase2_cohort/figure1_ladder.json", "figure1_ladder.json"),
+)
+
+#: Frozen like CITED, but not JSON, so compared by bytes rather than parsed. The
+#: only member is Figure 1's cross-section: without it the archive cannot redraw
+#: its own first figure, and a release that cannot redraw a figure the paper
+#: prints has happened in this programme before.
+CITED_BINARY: tuple[tuple[str, str], ...] = (
+    ("phase2_cohort/figure1_ladder.npz", "figure1_ladder.npz"),
 )
 
 #: Named so a reader of the manifest can see why the file is not cited.
@@ -210,7 +221,7 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
 
 
 def freeze(check_only: bool = False) -> int:
-    missing = [src for src, _ in CITED if not (RESULTS / src).exists()]
+    missing = [src for src, _ in CITED + CITED_BINARY if not (RESULTS / src).exists()]
     if missing:
         print("results the manuscript cites are missing:")
         for src in missing:
@@ -232,6 +243,10 @@ def freeze(check_only: bool = False) -> int:
             frozen = FROZEN / name
             if not frozen.exists() or _load(frozen) != sources[name]:
                 stale.append(name)
+        for source, name in CITED_BINARY:
+            frozen = FROZEN / name
+            if not frozen.exists() or frozen.read_bytes() != (RESULTS / source).read_bytes():
+                stale.append(name)
         current = FROZEN / "manifest.json"
         if not current.exists() or _load(current) != manifest:
             stale.append("manifest.json")
@@ -240,16 +255,16 @@ def freeze(check_only: bool = False) -> int:
             for name in stale:
                 print(f"  {name}")
             return 1
-        print(f"freeze current: {len(CITED)} files, {len(manifest['metrics'])} metrics")
+        print(f"freeze current: {len(CITED) + len(CITED_BINARY)} files, {len(manifest['metrics'])} metrics")
         return 0
 
     FROZEN.mkdir(parents=True, exist_ok=True)
-    for src, name in CITED:
+    for src, name in CITED + CITED_BINARY:
         shutil.copy2(RESULTS / src, FROZEN / name)
     (FROZEN / "manifest.json").write_text(
         json.dumps(manifest, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
     )
-    print(f"froze {len(CITED)} files and derived {len(manifest['metrics'])} metrics")
+    print(f"froze {len(CITED) + len(CITED_BINARY)} files and derived {len(manifest['metrics'])} metrics")
     return 0
 
 

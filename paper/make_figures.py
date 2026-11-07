@@ -1,11 +1,17 @@
-"""Draw Figures 1-3 and 5 from ``paper/frozen/``, at the size they print.
+"""Draw Figures 1-4 and 6 from ``paper/frozen/``, at the size they print.
 
     python paper/make_figures.py
 
-Figures 4 and 6 are drawn by ``tools/figure4_scatter.py`` and
-``tools/collect_phase2_results.py`` from the production runs. Figure 5 is the
+Figures 5 and 7 are drawn by ``tools/figure4_scatter.py`` and
+``tools/collect_phase2_results.py`` from the production runs. Figure 6 is the
 primary endpoint and is drawn here, as are the three the manuscript declared
 and that had no drawing code at all.
+
+The frozen result files keep the names they were written under -- ``figure4_doses``
+and ``figure4_stats`` feed what is now Figure 5. Renaming them would break the
+freeze manifest and every number already traced through it, so the offset is left
+alone and said out loud here instead. The figure number lives in one place: the
+``FIGURE_SOURCES`` table in ``collect_figures.py``.
 
 Nothing here is decorative. Each choice below answers a defect that reached a
 built manuscript in a companion paper:
@@ -29,8 +35,10 @@ import json
 from pathlib import Path
 
 import matplotlib
+import numpy as np
 
 matplotlib.use("Agg")
+import matplotlib.patheffects  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
@@ -81,7 +89,173 @@ def _save(fig: plt.Figure, name: str) -> Path:
     return path
 
 
-def figure1_selection_funnel() -> Path:
+#: The window every panel of Figure 1 is displayed in: a standard abdomen
+#: setting, level 40 HU and width 400 HU. One window for all three panels, stated
+#: in the caption, so that a difference between panels is a difference in the
+#: quantity painted on the organs and never in how the greyscale was stretched.
+ABDOMEN_WINDOW_HU = (40.0, 400.0)
+
+#: An organ region gets its name printed only if it is at least this many voxels
+#: on the section. Below it the text is wider than the organ and lands on its
+#: neighbour; the adrenal glands are a few dozen voxels across.
+NAME_ORGAN_ABOVE_VOXELS = 900
+
+
+def _short_licence(licence: str) -> str:
+    """"Creative Commons Attribution 4.0 International License" -> "CC BY 4.0".
+
+    Derived rather than typed: the cohort holds both 3.0 and 4.0 collections, the
+    series is chosen by a rule that can select either, and a credit printed into
+    the artwork naming the wrong version is a licence breach that no gate reading
+    the manuscript could see.
+    """
+    import re
+
+    match = re.search(r"Creative Commons Attribution (\d+\.\d+)", licence)
+    if not match:
+        raise ValueError(
+            f"cannot abbreviate the licence {licence!r} for the figure credit; "
+            "the credit is printed into the image and must not be guessed"
+        )
+    return f"CC BY {match.group(1)}"
+
+
+def figure1_ladder() -> Path:
+    """What each level of the calculation knows about the patient, on one patient.
+
+    Three panels on one axial section: the index the scanner reports, that index
+    weighted by the patient's own organs, and absorbed dose transported through
+    them. Panels (b) and (c) share one colour scale in mGy, because the point is
+    that they sit at different levels -- the organ weighting moves the number by a
+    few per cent while transport roughly doubles it, and a scale per panel would
+    hide exactly that.
+    """
+    meta = _load("figure1_ladder.json")
+    with np.load(FROZEN / "figure1_ladder.npz", allow_pickle=True) as data:
+        hu = data["hu"]
+        labels = data["labels"]
+        names = [str(n) for n in data["label_names"]]
+
+    organs = meta["organs"]
+    index = {o: v["organ_weighted_ctdivol_mgy"] for o, v in organs.items()}
+    dose = {o: v["absorbed_dose_mgy"] for o, v in organs.items()}
+    ctdivol = meta["series"]["ctdivol_mgy"]
+
+    level, width = ABDOMEN_WINDOW_HU
+    grey = dict(cmap="gray", vmin=level - width / 2, vmax=level + width / 2,
+                interpolation="nearest")
+    # Nearest-neighbour throughout. The organ overlay is already in the pixels of
+    # the panel, so a kernel that overshoots -- lanczos, bicubic -- puts the
+    # complement of the overlay colour along every organ boundary, in a figure
+    # where colour carries the quantity.
+
+    values = list(index.values()) + list(dose.values())
+    vmin, vmax = min(values), max(values)
+    cmap = matplotlib.colormaps["viridis"]
+
+    def painted(per_organ: dict[str, float]) -> np.ndarray:
+        """The section with each organ's value in it, masked outside the organs."""
+        out = np.full(labels.shape, np.nan, dtype=float)
+        for number, name in enumerate(names, start=1):
+            if name in per_organ:
+                out[labels == number] = per_organ[name]
+        return np.ma.masked_invalid(out)
+
+    rows, columns = hu.shape
+    panel_width = 2.0
+    panel_height = panel_width * rows / columns
+    fig = plt.figure(figsize=(6.5, panel_height + 0.78))
+    gridspec = fig.add_gridspec(
+        2, 3, height_ratios=[panel_height, 0.10], hspace=0.14, wspace=0.06,
+        left=0.012, right=0.988, top=0.93, bottom=0.14,
+    )
+    axes = [fig.add_subplot(gridspec[0, column]) for column in range(3)]
+
+    titles = (
+        "(a) the index the scanner reports",
+        "(b) + the patient's own organs",
+        "(c) + transport through them",
+    )
+    for axis, title in zip(axes, titles):
+        axis.imshow(hu, **grey)
+        axis.set_xticks([])
+        axis.set_yticks([])
+        for spine in axis.spines.values():
+            spine.set_visible(False)
+        axis.set_title(title, fontsize=PANEL - 1, pad=4)
+
+    axes[0].text(
+        0.5, 0.045, f"CTDIvol {ctdivol:.1f} mGy\nfor the whole examination",
+        transform=axes[0].transAxes, ha="center", va="bottom", fontsize=ANNOT,
+        color="white",
+        bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55,
+                  edgecolor="none"),
+    )
+
+    for axis, per_organ in ((axes[1], index), (axes[2], dose)):
+        image = axis.imshow(painted(per_organ), cmap=cmap, vmin=vmin, vmax=vmax,
+                            interpolation="nearest", alpha=0.92)
+        low, high = min(per_organ.values()), max(per_organ.values())
+        axis.text(
+            0.5, 0.045, f"{low:.0f}–{high:.0f} mGy across the organs",
+            transform=axis.transAxes, ha="center", va="bottom", fontsize=ANNOT,
+            color="white",
+            bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55,
+                      edgecolor="none"),
+        )
+
+    # Organ names go on (b) alone, where the geometry first enters. Repeating them
+    # on (c) would double the ink for nothing: it is the same section.
+    for number, name in enumerate(names, start=1):
+        if name not in index:
+            continue
+        where = labels == number
+        if int(where.sum()) < NAME_ORGAN_ABOVE_VOXELS:
+            continue
+        y, x = (float(c.mean()) for c in np.nonzero(where))
+        axes[1].text(
+            x, y, name.replace("_", " "), fontsize=ANNOT - 0.5, ha="center",
+            va="center", color="white",
+            path_effects=[
+                matplotlib.patheffects.withStroke(linewidth=1.6, foreground="black")
+            ],
+        )
+
+    # The attribution travels in the pixels, not only in the caption. A figure
+    # gets separated from its caption -- lifted into a talk, a review, a press
+    # item -- and the licence this section is published under requires the credit
+    # wherever it goes.
+    source = meta["source"]
+    attribution_axis = fig.add_subplot(gridspec[1, 0])
+    attribution_axis.axis("off")
+    attribution_axis.text(
+        0.5, 0.75,
+        f"{source['collection']} (TCIA), {_short_licence(source['licence'])}\n"
+        f"{meta['acquisition']['model_name']}, {meta['acquisition']['kvp']:.0f} kVp",
+        transform=attribution_axis.transAxes, ha="center", va="top",
+        fontsize=ANNOT - 0.5, color="0.35", linespacing=1.4,
+    )
+
+    bar_axis = fig.add_subplot(gridspec[1, 1:])
+    bar = fig.colorbar(image, cax=bar_axis, orientation="horizontal")
+    bar.set_label("mGy, one value per organ", fontsize=LABEL - 1, labelpad=2)
+    bar.ax.tick_params(labelsize=TICK - 1)
+    bar.outline.set_linewidth(0.5)
+
+    # The titles carry what each step adds; these mark that it is one sequence
+    # read left to right. The wording is not repeated here: an arrow that also
+    # explains itself needs room the gap between panels does not have.
+    for left, right in ((0, 1), (1, 2)):
+        boxes = axes[left].get_position(), axes[right].get_position()
+        fig.text(
+            (boxes[0].x1 + boxes[1].x0) / 2, (boxes[0].y0 + boxes[0].y1) / 2,
+            "→", ha="center", va="center", fontsize=PANEL + 2, color="0.25",
+        )
+
+    return _save(fig, "figure1_ladder.png")
+
+
+def figure2_selection_funnel() -> Path:
     """How 47 181 index rows became the 40 series that were probed and kept."""
     funnel = _load("cohort_overlap.json")["selection_funnel"]
 
@@ -153,10 +327,10 @@ def figure1_selection_funnel() -> Path:
         axis.spines["right"].set_visible(False)
 
     fig.tight_layout()
-    return _save(fig, "figure1_selection_funnel.png")
+    return _save(fig, "figure2_selection_funnel.png")
 
 
-def figure2_density_gate() -> Path:
+def figure3_density_gate() -> Path:
     """The pre-declared density gate, with every assessed series shown."""
     eligibility = _load("density_eligibility.json")
     threshold = eligibility["threshold_cm3"]
@@ -264,10 +438,10 @@ def figure2_density_gate() -> Path:
     ax.spines["right"].set_visible(False)
 
     fig.tight_layout()
-    return _save(fig, "figure2_density_gate.png")
+    return _save(fig, "figure3_density_gate.png")
 
 
-def figure3_tg195() -> Path:
+def figure4_tg195() -> Path:
     """Case 4 against all four published codes, not only the chosen yardstick."""
     criterion_b = _load("phase1a_close.json")["criterion_b"]
     vois = criterion_b["vois"]
@@ -325,10 +499,10 @@ def figure3_tg195() -> Path:
         color="#31597A",
     )
     fig.tight_layout()
-    return _save(fig, "figure3_tg195_case4.png")
+    return _save(fig, "figure4_tg195_case4.png")
 
 
-def figure5_conversion_ceiling() -> Path:
+def figure6_conversion_ceiling() -> Path:
     """The primary endpoint: how close an index-based conversion gets, held out."""
     ceiling = _load("conversion_ceiling.json")
     models = ceiling["models"]
@@ -419,15 +593,16 @@ def figure5_conversion_ceiling() -> Path:
         axis.spines["right"].set_visible(False)
 
     fig.tight_layout()
-    return _save(fig, "figure5_conversion_ceiling.png")
+    return _save(fig, "figure6_conversion_ceiling.png")
 
 
 def main() -> int:
-    print("drawing figures 1-3 into paper/figures/")
-    figure1_selection_funnel()
-    figure2_density_gate()
-    figure3_tg195()
-    figure5_conversion_ceiling()
+    print("drawing figures 1-4 and 6 into paper/figures/")
+    figure1_ladder()
+    figure2_selection_funnel()
+    figure3_density_gate()
+    figure4_tg195()
+    figure6_conversion_ceiling()
     return 0
 
 

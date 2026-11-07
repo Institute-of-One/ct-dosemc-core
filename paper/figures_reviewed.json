@@ -3,41 +3,59 @@
   "_entry": "filename -> {sha256, reviewed (ISO date), by, note}. Record what was seen, not that it was opened. An image with a known defect does not belong here: leave it out and let the gate stay red until it is redrawn.",
   "_hashes_are_environment_specific": "A PNG's bytes depend on the matplotlib and freetype that drew it, so regenerating the figures in a different environment changes every hash here even when nothing about the figures changed. Verified on 2026-10-21: a clean archive in a fresh virtual environment redrew all four generated figures to different digests. That is the intended behaviour of this ledger locally -- a library upgrade is a reason to look again -- but it means a reader who installs the archive and redraws the figures will see this check fail, and that is not a defect in the release. The data availability statement promises the frozen result tables and the commands that regenerate the figures, not that an author's review ledger still matches.",
   "figures": {
-    "figure1_selection_funnel.png": {
+    "figure1_ladder.png": {
+      "sha256": "0df31c2c66d660f9c438f8bc7dcf148bf1cf1a057443b5167c6b77146923733a",
+      "reviewed": "2026-11-07",
+      "by": "Claude Opus 5, on the author's instruction",
+      "note": "New. Three panels on one axial abdominal section: (a) the recorded CTDIvol over the whole examination, (b) the organ-weighted index painted on ten segmented organs, (c) absorbed organ dose on the same organs, (b) and (c) sharing one colour scale and one colourbar. Looked at: the two overlays have identical geometry, as they must, and differ only in colour; (b) reads almost uniform and (c) does not, which is the result the paper reports and not a drawing fault; organ names are printed on (b) alone and none of the five overlaps another or leaves the panel; the arrows sit in the gaps and touch nothing; the colourbar spans (b) and (c) only, which is correct because (a) carries no per-organ value; the credit line and acquisition sit under (a) in the space the colourbar leaves; no figure number and no caption text is drawn inside the image; nearest-neighbour throughout, so no interpolation colour appears at an organ boundary. Redrawn with the organ names and the credit line at 7 pt, because 6 pt is below what a journal accepts and below what paper/make_figures.py's own docstring promises; looked at again at that size and every label is legible and none has moved onto a neighbour. 6.50 x 2.40 in, inside the text block."
+    },
+    "figure2_selection_funnel.png": {
       "sha256": "2c5223dc3115492d499c03eac44d2e6ef1bd4082b5efeb0bdf76f2fa96dfe23d",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Two panels, (a) selection funnel on a log axis and (b) rejection reasons. Labels do not collide, counts are readable, both axis titles present, nothing clipped, no text drawn over the plot area, no figure number inside the image."
+      "note": "Two panels, (a) selection funnel on a log axis and (b) rejection reasons. Labels do not collide, counts are readable, both axis titles present, nothing clipped, no text drawn over the plot area, no figure number inside the image.",
+      "renamed_from": "figure1_selection_funnel.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
-    "figure2_density_gate.png": {
+    "figure3_density_gate.png": {
       "sha256": "59af02199de6808b0a0a2230f55f09a4514c947e22557b4c45a8cff802e47e70",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Single panel, log y. Legend sits in the empty top left and covers no marker; the pre-declared 1 cm3 gate is drawn and labelled; the annotation about 14 series plotted at zero points at the right cluster. Nothing clipped, no figure number inside the image."
+      "note": "Single panel, log y. Legend sits in the empty top left and covers no marker; the pre-declared 1 cm3 gate is drawn and labelled; the annotation about 14 series plotted at zero points at the right cluster. Nothing clipped, no figure number inside the image.",
+      "renamed_from": "figure2_density_gate.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
-    "figure3_tg195_case4.png": {
+    "figure4_tg195_case4.png": {
       "sha256": "1a77ac3e5f6061ac2c123b8b1e2d6fc98b5fc9386f62d0a28df6ccc1c10f85ab",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Two panels, Centre and Perimeter VOI, shared y, error bars within the axes, the sigma_comb band drawn and labelled. The drawing is sound. Separately: the scored quantity, its units and normalisation, the VOI dimensions and locations, and the reference values behind the relative differences are not stated anywhere a reader can find them. That is missing prose, not a defect in this image."
+      "note": "Two panels, Centre and Perimeter VOI, shared y, error bars within the axes, the sigma_comb band drawn and labelled. The drawing is sound. Separately: the scored quantity, its units and normalisation, the VOI dimensions and locations, and the reference values behind the relative differences are not stated anywhere a reader can find them. That is missing prose, not a defect in this image.",
+      "renamed_from": "figure3_tg195_case4.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
-    "figure4_scatter.png": {
+    "figure5_scatter.png": {
       "sha256": "6df28a55658dc8b0b1d7cc9277b36cc1cd3f34d17d36116a744a7f643ce9f715",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Redrawn. Legend moved below the axes, three entries on three rows, all inside the canvas and none cut; the long marker descriptions stay in the caption where they belong. Axis titles are now 'Organ-weighted CTDIvol (mGy)' and 'Absorbed organ dose (mGy)' -- the IORN-006 and IORN-007 identifiers are gone. The paragraph that used to be painted along the bottom of the image is gone; the caption carries it once. 342 points, filled circles, filled squares and open squares all distinguishable."
+      "note": "Redrawn. Legend moved below the axes, three entries on three rows, all inside the canvas and none cut; the long marker descriptions stay in the caption where they belong. Axis titles are now 'Organ-weighted CTDIvol (mGy)' and 'Absorbed organ dose (mGy)' -- the IORN-006 and IORN-007 identifiers are gone. The paragraph that used to be painted along the bottom of the image is gone; the caption carries it once. 342 points, filled circles, filled squares and open squares all distinguishable.",
+      "renamed_from": "figure4_scatter.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
-    "figure5_conversion_ceiling.png": {
+    "figure6_conversion_ceiling.png": {
       "sha256": "c2975be296dd47bf5049be2e692bac4573435bb1c27b2775437b6ada66107e53",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Two panels, (a) held-out error per conversion and (b) variance share. Row labels, value labels and the 20 % guide all legible and inside the canvas; no figure number inside the image. Separately, the caption in paper/README.md carries a result sentence that belongs in Results or Discussion; that is the caption, not this image."
+      "note": "Two panels, (a) held-out error per conversion and (b) variance share. Row labels, value labels and the 20 % guide all legible and inside the canvas; no figure number inside the image. Separately, the caption in paper/README.md carries a result sentence that belongs in Results or Discussion; that is the caption, not this image.",
+      "renamed_from": "figure5_conversion_ceiling.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     },
-    "figure6_vendor.png": {
+    "figure7_vendor.png": {
       "sha256": "1815f2266bf42ff5dd840031c66ab17e75351cd5ffd36086c04c91127632039e",
       "reviewed": "2026-10-21",
       "by": "Claude Opus 5, on the author's instruction",
-      "note": "Redrawn. No title inside the image at all, so nothing contradicts the caption's number; the source file is renamed vendor_organ_dose.png so the pipeline no longer numbers its own figures. Legend moved below the axes in one row of four, where it cannot meet the tallest bar of the last organ group -- inside the axes it came close enough that deciding needed a magnified crop. All twelve organ labels legible at 35 degrees, nothing clipped."
+      "note": "Redrawn. No title inside the image at all, so nothing contradicts the caption's number; the source file is renamed vendor_organ_dose.png so the pipeline no longer numbers its own figures. Legend moved below the axes in one row of four, where it cannot meet the tallest bar of the last organ group -- inside the axes it came close enough that deciding needed a magnified crop. All twelve organ labels legible at 35 degrees, nothing clipped.",
+      "renamed_from": "figure6_vendor.png",
+      "renamed_note": "Renumbered when Figure 1 was added. Byte-identical to the image reviewed on the date above; only the file name changed."
     }
   },
   "_what_was_wrong_before": {

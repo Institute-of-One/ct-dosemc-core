@@ -29,8 +29,13 @@ SOURCE = PAPER / "manuscript.md"
 #: (description, command, needs the manuscript prose)
 STEPS: tuple[tuple[str, list[str], bool], ...] = (
     ("freeze the results the paper cites", ["paper/freeze.py"], False),
-    ("draw figures 1-3", ["paper/make_figures.py"], False),
+    ("draw figures 1-4 and 6", ["paper/make_figures.py"], False),
     ("collect every figure and its caption", ["paper/collect_figures.py"], False),
+    # Captions are outside both the marker resolver and the typed-number gate, so
+    # Figure 1's -- which prints thirteen measured quantities -- is compared with
+    # the frozen results here or nowhere.
+    ("check Figure 1's caption against the results",
+     ["paper/check_figure1_caption.py"], False),
     # The reference list is an artefact like any other: it is generated from the
     # metadata registered at doi.org, and without a step here it is whatever was
     # resolved by hand last. --check rather than a rewrite, so that a silent

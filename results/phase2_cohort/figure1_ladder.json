@@ -1,0 +1,162 @@
+{
+  "what": "Figure 1: what each level of the calculation knows about the patient, on one series. Panel (a) the CTDIvol the scanner recorded; (b) that index weighted by each segmented organ's share of the tube current; (c) absorbed dose transported through the same anatomy.",
+  "not": "Not a dose distribution: the paper's endpoint is the dose in an organ, so panels (b) and (c) paint one value per organ and no voxel-level dose map is shown or implied. Not a redistribution of the collection.",
+  "selection": {
+    "rule": "Among the series carrying a CTDIvol recorded by the scanner, the one whose median dose-to-index ratio is closest to the cohort median of those medians.",
+    "n_series_considered": 30,
+    "n_with_recorded_ctdivol": 23,
+    "cohort_median_of_series_medians": 2.1879697708644668,
+    "chosen_median_ratio": 2.1938843815231763
+  },
+  "series": {
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.3320.3273.114542284322103737687268266165",
+    "vendor": "Philips",
+    "ctdivol_mgy": 17.94107142857143,
+    "ctdivol_origin": "recorded",
+    "median_ratio": 2.1938843815231763,
+    "n_organs_scored": 12
+  },
+  "acquisition": {
+    "manufacturer": "Philips",
+    "model_name": "Brilliance 16",
+    "kvp": 120.0,
+    "slice_thickness_mm": 2.0
+  },
+  "slice": {
+    "rule": "The axial slice carrying the most of the organs scored; among ties, the one where they cover the most area.",
+    "z_index": 239,
+    "n_slices": 309,
+    "n_organs_on_slice": 10,
+    "n_slices_tied": 11,
+    "crop_rows": [
+      98,
+      512
+    ],
+    "crop_cols": [
+      0,
+      512
+    ],
+    "pixel_spacing_mm": [
+      0.78125,
+      0.78125
+    ],
+    "body_threshold_hu": -300.0
+  },
+  "source": {
+    "collection": "CPTAC-PDA",
+    "collection_uri": "https://doi.org/10.7937/K9/TCIA.2018.SC20FO18",
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.3320.3273.114542284322103737687268266165",
+    "licence": "Creative Commons Attribution 4.0 International License",
+    "licence_uri": "https://creativecommons.org/licenses/by/4.0/",
+    "retrieved_utc": "2026-08-11T14:20:15+00:00",
+    "what_is_published": "one axial cross-section of this series, and the organ labels on it"
+  },
+  "label_names": [
+    "adrenal_gland_left",
+    "adrenal_gland_right",
+    "colon",
+    "gallbladder",
+    "kidney_left",
+    "kidney_right",
+    "liver",
+    "pancreas",
+    "small_bowel",
+    "spleen",
+    "stomach",
+    "urinary_bladder"
+  ],
+  "organs": {
+    "adrenal_gland_left": {
+      "organ_weighted_ctdivol_mgy": 20.046,
+      "absorbed_dose_mgy": 37.25047197837812,
+      "ratio": 1.8582496247819078,
+      "relative_weight": 1.1173
+    },
+    "adrenal_gland_right": {
+      "organ_weighted_ctdivol_mgy": 20.036,
+      "absorbed_dose_mgy": 33.32595511636386,
+      "ratio": 1.663303808962061,
+      "relative_weight": 1.1168
+    },
+    "colon": {
+      "organ_weighted_ctdivol_mgy": 17.902,
+      "absorbed_dose_mgy": 41.083779807471416,
+      "ratio": 2.2949268130639826,
+      "relative_weight": 0.9978
+    },
+    "gallbladder": {
+      "organ_weighted_ctdivol_mgy": 19.569,
+      "absorbed_dose_mgy": 43.88102191880131,
+      "ratio": 2.242374261270444,
+      "relative_weight": 1.0907
+    },
+    "kidney_left": {
+      "organ_weighted_ctdivol_mgy": 19.439,
+      "absorbed_dose_mgy": 47.494746361668824,
+      "ratio": 2.443271071643028,
+      "relative_weight": 1.0835
+    },
+    "kidney_right": {
+      "organ_weighted_ctdivol_mgy": 19.23,
+      "absorbed_dose_mgy": 43.86916681327056,
+      "ratio": 2.2812879258071015,
+      "relative_weight": 1.0718
+    },
+    "liver": {
+      "organ_weighted_ctdivol_mgy": 20.048,
+      "absorbed_dose_mgy": 43.010868971603415,
+      "ratio": 2.145394501775909,
+      "relative_weight": 1.1174
+    },
+    "pancreas": {
+      "organ_weighted_ctdivol_mgy": 19.834,
+      "absorbed_dose_mgy": 40.121808159373295,
+      "ratio": 2.022880314579676,
+      "relative_weight": 1.1055
+    },
+    "small_bowel": {
+      "organ_weighted_ctdivol_mgy": 18.051,
+      "absorbed_dose_mgy": 49.23884035091033,
+      "ratio": 2.7277624702736873,
+      "relative_weight": 1.0061
+    },
+    "stomach": {
+      "organ_weighted_ctdivol_mgy": 20.243,
+      "absorbed_dose_mgy": 40.827965972826455,
+      "ratio": 2.016893048106825,
+      "relative_weight": 1.1283
+    }
+  },
+  "lineage": {
+    "panel_a": {
+      "quantity": "CTDIvol recorded in the series header, in mGy",
+      "knows_about_the_patient": "nothing beyond the acquisition settings"
+    },
+    "panel_b": {
+      "quantity": "organ-weighted CTDIvol, in mGy",
+      "knows_about_the_patient": "the geometry of each segmented organ",
+      "from": {
+        "project": "ctsegdose-core (IORN-006)",
+        "endpoint": "organ-specific weighted CTDIvol index (not absorbed dose)",
+        "formula": "CTDIvol_o = CTDIvol * w_o;  w_o = mean_{z in organ} I(z) / mean_z I(z)",
+        "release": "v0.1.1",
+        "git_commit": "46edee6423ddc19b47efae180d8edf527299d066",
+        "git_commit_short": "46edee6",
+        "working_tree_dirty": false,
+        "zenodo_version_doi": "10.5281/zenodo.21817307",
+        "zenodo_concept_doi": "10.5281/zenodo.21817234",
+        "derived_from_iorn004_zenodo_doi": "10.5281/zenodo.21636082",
+        "repository": "https://github.com/Institute-of-One/ctsegdose-core.git",
+        "source_file": "results/organ_dose_1.5mm.json",
+        "source_read": "git show 46edee6423ddc19b47efae180d8edf527299d066:results/organ_dose_1.5mm.json",
+        "source_sha256": "b6de753933ee15c7ef4e3e572fd8a2aed5f048de30b9145a75b62b795aff2fcf",
+        "release_tag_commit": "46edee6423ddc19b47efae180d8edf527299d066",
+        "note": "Read from the published v0.1.1 object, not from the sister working tree. A reviewer who fetches Zenodo 10.5281/zenodo.21817307 and runs this tool against that checkout gets the same 006 bytes. Imaging is not copied. Values needed for the 007 scatter (w_o and, where 006 defined it, CTDIvol_o) are copied; the rest of the sister results file is not."
+      }
+    },
+    "panel_c": {
+      "quantity": "absorbed organ dose, in mGy",
+      "knows_about_the_patient": "the same geometry, with photons transported through it"
+    }
+  }
+}

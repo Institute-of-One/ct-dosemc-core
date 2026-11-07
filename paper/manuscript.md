@@ -78,7 +78,8 @@ it does not transport photons. Against it I place absorbed dose in milligray, co
 Monte Carlo through each patient's own segmented, density-mapped anatomy, with every dose
 coefficient computed rather than looked up, then fit conversions of increasing richness
 from the index to the dose and score each on patients the fit has not seen. The result is
-a floor, and a decomposition of what sits beneath it.
+a floor, and a decomposition of what sits beneath it. Figure 1 shows the three levels on
+one patient.
 
 Two things are not claimed. No novelty is claimed for GPU Monte-Carlo photon transport
 [[cite:badal2009]], spectrum modelling [[cite:bujila2020,poludniowski2021]], HU-to-density
@@ -146,15 +147,16 @@ volumes of interest.
 
 Series were selected from a public archive [[cite:clark2013,moawad2023]] by a recorded
 funnel running from the collection index to the series carried forward, with every
-exclusion counted and named (Fig. 1). The selection is re-derivable: the criteria are in
+exclusion counted and named (Fig. 2). The selection is re-derivable: the criteria are in
 code, and the surviving Series Instance UIDs, their collection and their licence are
-recorded so that any series can be re-fetched. No imaging is redistributed.
+recorded so that any series can be re-fetched. Apart from the one section in Fig. 1, no
+imaging is redistributed.
 
 A metadata screen removes series that are not diagnostic reconstructed abdominal images or
 that carry too few or too many slices; one series per patient is kept; the remainder are
 probed in vendor-balanced order until ten series per vendor are accepted. The probe reads
 the header and rejects a series lacking the per-slice tube current the pipeline requires,
-which accounts for most rejections (Fig. 1b).
+which accounts for most rejections (Fig. 2b).
 
 ### 2.5 Eligibility: a pre-declared density gate
 
@@ -173,7 +175,7 @@ eligible series being
 [[results:manifest.json:metrics.density_gate_largest_kept_cm3|.2f]] cm³ and the smallest
 among the excluded ones
 [[results:manifest.json:metrics.density_gate_smallest_dropped_cm3|.2f]] cm³, and the
-threshold sits in that gap (Fig. 2). It and the criterion were declared before the volumes
+threshold sits in that gap (Fig. 3). It and the criterion were declared before the volumes
 were computed. Of [[results:density_eligibility.json:n_assessed]] assessed series,
 [[results:manifest.json:metrics.n_eligible]] are eligible and
 [[results:density_eligibility.json:n_excluded]] are excluded.
@@ -256,18 +258,18 @@ is small enough for that to matter.
 At the centre volume of interest the engine differs from PENELOPE by
 [[results:manifest.json:metrics.tg195_centre_abs_pct|.3f]] %, which is
 [[results:manifest.json:metrics.tg195_centre_n_sigma|.2f]] combined standard
-deviations (Fig. 3). The difference from the other three published codes is larger and in
+deviations (Fig. 4). The difference from the other three published codes is larger and in
 the same direction at the centre, and smaller at the perimeter; showing all four makes the
 choice of yardstick auditable. The phantom length term is measured and null.
 
 ### 3.2 Cohort
 
 [[results:cohort_overlap.json:selection_funnel.index_rows]] index rows reduce to
-[[results:cohort_overlap.json:selection_funnel.kept]] series through the funnel of Fig. 1,
+[[results:cohort_overlap.json:selection_funnel.kept]] series through the funnel of Fig. 2,
 of which [[results:cohort_overlap.json:selection_funnel.probed]] were probed and
 [[results:cohort_overlap.json:selection_funnel.n_probe_rejected]] rejected. The
 density gate leaves [[results:manifest.json:metrics.n_eligible]] eligible series
-(Fig. 2), and [[results:manifest.json:metrics.n_scaled]] of those carry a CTDIvol
+(Fig. 3), and [[results:manifest.json:metrics.n_scaled]] of those carry a CTDIvol
 and enter the analysis.
 
 ### 3.3 Absorbed organ doses
@@ -280,7 +282,7 @@ given in Table 1.
 
 [[table:organ_doses]]
 
-Plotted against the organ-weighted index on the same anatomy (Fig. 4), the two are
+Plotted against the organ-weighted index on the same anatomy (Fig. 5), the two are
 correlated — Pearson $r$ = [[results:manifest.json:metrics.pearson_r_all|.2f]] over all
 [[results:manifest.json:metrics.n_scaled]] series and
 [[results:manifest.json:metrics.pearson_r_recorded|.2f]] over the
@@ -291,7 +293,7 @@ differ is not the result; how far apart they remain after every available correc
 ### 3.4 How close an index-based conversion gets
 
 Every error in this section is a held-out error, in the sense of section 2.9: the
-conversion was fitted without the patient it is scored on. Figure 5a gives them. A single
+conversion was fitted without the patient it is scored on. Figure 6a gives them. A single
 factor for the whole cohort recovers absorbed organ dose to a median
 [[results:manifest.json:metrics.ceiling_global_factor_median_pct|.0f]] %, with
 [[results:manifest.json:metrics.ceiling_global_factor_p90_pct|.0f]] % at the ninetieth
@@ -328,7 +330,7 @@ inside 20 %. That is the floor: nothing an index carries closes the remaining ga
 
 ### 3.5 The residual is a property of the patient
 
-Figure 5b decomposes the variance of the log dose-to-index ratio.
+Figure 6b decomposes the variance of the log dose-to-index ratio.
 [[results:manifest.json:metrics.variance_between_patient|.0%]] of it lies between
 patients, [[results:manifest.json:metrics.variance_between_organ|.0%]] between organs
 and [[results:manifest.json:metrics.variance_between_vendor|.0%]] between vendors.
@@ -378,7 +380,7 @@ relationship between index and dose: the correlation is
 [[results:manifest.json:metrics.y_over_x_median|.3f]]. No additional Monte Carlo was run
 for this check.
 
-Absorbed organ doses by vendor are described in Fig. 6. With six to nine series per vendor
+Absorbed organ doses by vendor are described in Fig. 7. With six to nine series per vendor
 the cohort is not powered for a vendor comparison and none is made; the figure and Table 1
 show the spread the cohort contains.
 
@@ -466,7 +468,7 @@ and the transport it omits is a function of the patient.
 The cohort is [[results:manifest.json:metrics.n_scaled]] series across four vendors, six
 to nine per vendor: adequate for the patient-level question, which has
 [[results:manifest.json:metrics.n_scaled]] independent units, and inadequate for a
-vendor-level one, which would have four. No vendor claim is made; Table 1 and Fig. 6 are
+vendor-level one, which would have four. No vendor claim is made; Table 1 and Fig. 7 are
 descriptive.
 
 There is no ground-truth absorbed dose in a patient. The patient doses inherit the
@@ -532,8 +534,9 @@ Consent for the deposited images was obtained by the depositing institutions.
 
 **Data availability.** The frozen result tables and the commands that regenerate every
 figure are openly available at https://doi.org/10.5281/zenodo.23537665 under the MIT
-licence. No imaging is redistributed: the collection, Series Instance UID, licence and
-retrieval date of every series are recorded there, so any reader can re-fetch them. Every
+licence, together with the cross-section Fig. 1 is drawn from. No other imaging is
+redistributed: the collection, Series Instance UID, licence and retrieval date of every
+series are recorded there, so any reader can re-fetch them. Every
 number in this paper is resolved at build time from a machine-readable result file, and
 the build fails if one cannot be traced.
 
