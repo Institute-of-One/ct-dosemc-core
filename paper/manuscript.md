@@ -527,10 +527,11 @@ published work this pipeline is assembled from.
 **Conflict of interest.** The author is Representative Director of LISIT Co., Ltd., which
 funds Institute of One. No other competing interest is declared.
 
-**Ethics approval.** Waived. The study uses only de-identified images and acquisition
-metadata already in the public domain [[cite:clark2013,moawad2023]]; no patient was
-recruited, no additional exposure was delivered and no identifiable data were accessed.
-Consent for the deposited images was obtained by the depositing institutions.
+**Ethics approval.** Waived; the study follows the Declaration of Helsinki and uses only
+de-identified images and acquisition metadata already in the public domain
+[[cite:clark2013,moawad2023]]; no patient was recruited, no additional exposure was
+delivered and no identifiable data were accessed. Consent for the deposited images was
+obtained by the depositing institutions, which hold the documentation.
 
 **Data availability.** The frozen result tables and the commands that regenerate every
 figure are openly available at https://doi.org/10.5281/zenodo.24029358 under the MIT
