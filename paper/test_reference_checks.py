@@ -123,7 +123,9 @@ class CleansWhatIsOnlyEncoding(unittest.TestCase):
 
     def test_italics_left_in_a_title(self):
         record = json.loads(json.dumps(GOOD_RECORD))
-        record["title"] = "Prospective estimation of <i>organ dose</i> in CT under tube current modulation"
+        record["title"] = (
+            "Prospective estimation of <i>organ dose</i> in CT under tube current modulation"
+        )
         entry, _, printed = render(record)
         self.assertNotIn("<i>", entry)
         self.assertEqual(
@@ -156,20 +158,28 @@ class HonoursAndPolicesOverrides(unittest.TestCase):
 
     def record(self, title):
         return {
-            "type": "journal-article", "title": title, "container-title": "Radiology",
-            "volume": "259", "issue": "2", "page": "311-316",
+            "type": "journal-article",
+            "title": title,
+            "container-title": "Radiology",
+            "volume": "259",
+            "issue": "2",
+            "page": "311-316",
             "issued": {"date-parts": [[2011, 4, 18]]},
             "author": [{"family": "McCollough", "given": "Cynthia H."}],
             "DOI": "10.1148/radiol.11101800",
         }
 
     def override(self):
-        return {"10.1148/radiol.11101800":
-                {"title": {"registered": self.REGISTERED, "display": self.CORRECT}}}
+        return {
+            "10.1148/radiol.11101800": {
+                "title": {"registered": self.REGISTERED, "display": self.CORRECT}
+            }
+        }
 
     def test_the_override_applies_while_the_record_is_still_wrong(self):
         entry, _, printed = references.render(
-            self.record(self.REGISTERED), self.override(), "10.1148/radiol.11101800")
+            self.record(self.REGISTERED), self.override(), "10.1148/radiol.11101800"
+        )
         self.assertEqual(printed, self.CORRECT)
         self.assertIn(self.CORRECT, entry)
 
@@ -177,8 +187,7 @@ class HonoursAndPolicesOverrides(unittest.TestCase):
         # The defect this guards against is printing a correction nobody checked
         # again. If Radiology repairs the spaces, this must stop, not continue.
         with self.assertRaises(references.ReferenceError) as caught:
-            references.render(self.record(self.CORRECT), self.override(),
-                              "10.1148/radiol.11101800")
+            references.render(self.record(self.CORRECT), self.override(), "10.1148/radiol.11101800")
         self.assertIn("no longer matches", str(caught.exception))
 
 
@@ -200,11 +209,16 @@ class PolicesTheSeed(unittest.TestCase):
 
     def run_resolve(self, references_list, overrides=None, record=None, fetch=None):
         seed, over = self.write(references_list, overrides)
-        stub = {"side_effect": fetch} if fetch else {
-            "return_value": record or json.loads(json.dumps(GOOD_RECORD))}
-        with mock.patch.object(references, "SEED", seed), \
-             mock.patch.object(references, "OVERRIDES", over), \
-             mock.patch.object(references, "fetch", **stub):
+        stub = (
+            {"side_effect": fetch}
+            if fetch
+            else {"return_value": record or json.loads(json.dumps(GOOD_RECORD))}
+        )
+        with (
+            mock.patch.object(references, "SEED", seed),
+            mock.patch.object(references, "OVERRIDES", over),
+            mock.patch.object(references, "fetch", **stub),
+        ):
             return references.resolve()
 
     def test_the_good_seed_resolves(self):
@@ -240,16 +254,23 @@ class PolicesTheSeed(unittest.TestCase):
         self.assertIn("why it has no DOI", str(caught.exception))
 
     def test_a_literal_reference_with_a_reason_is_allowed(self):
-        out = self.run_resolve([{"key": "salvat2006",
-                                 "literal": "Salvat F. PENELOPE. NEA-OECD; 2006.",
-                                 "reason": "No DOI is registered; checked at doi.org."}])
+        out = self.run_resolve(
+            [
+                {
+                    "key": "salvat2006",
+                    "literal": "Salvat F. PENELOPE. NEA-OECD; 2006.",
+                    "reason": "No DOI is registered; checked at doi.org.",
+                }
+            ]
+        )
         self.assertEqual(out[0]["doi"], None)
         self.assertTrue(out[0]["literal"])
 
     def test_an_unresolvable_doi_is_refused(self):
         with self.assertRaises(SystemExit):
-            self.run_resolve([dict(SEED_ENTRY)],
-                             fetch=references.ReferenceError("doi.org returned HTTP 404"))
+            self.run_resolve(
+                [dict(SEED_ENTRY)], fetch=references.ReferenceError("doi.org returned HTTP 404")
+            )
 
 
 class TheRealSeedIsIntact(unittest.TestCase):
@@ -258,8 +279,8 @@ class TheRealSeedIsIntact(unittest.TestCase):
     def setUp(self):
         self.seed = json.loads(references.SEED.read_text(encoding="utf-8"))["references"]
         self.overrides = {
-            k: v for k, v in
-            json.loads(references.OVERRIDES.read_text(encoding="utf-8")).items()
+            k: v
+            for k, v in json.loads(references.OVERRIDES.read_text(encoding="utf-8")).items()
             if not k.startswith("_")
         }
 
@@ -278,8 +299,9 @@ class TheRealSeedIsIntact(unittest.TestCase):
     def test_every_override_records_its_source_and_reason(self):
         for doi, fix in self.overrides.items():
             with self.subTest(doi=doi):
-                self.assertTrue(fix.get("source"), "an override must say where the "
-                                                   "correct value was read")
+                self.assertTrue(
+                    fix.get("source"), "an override must say where the correct value was read"
+                )
                 self.assertTrue(fix.get("reason"))
 
 

@@ -179,15 +179,12 @@ def number_citations(source: str, references: list[dict[str, Any]]) -> str:
     uncited = [ref["key"] for ref in references if ref["key"] not in order]
     if uncited:
         problems.append(
-            f"these references are never cited, so they would be listed for nobody: "
-            f"{uncited}"
+            f"these references are never cited, so they would be listed for nobody: {uncited}"
         )
     if problems:
         raise ResolutionError("citations cannot be numbered:\n  " + "\n  ".join(problems))
 
-    listing = "\n\n".join(
-        f"{index}. {by_key[key]['entry']}" for index, key in enumerate(order, 1)
-    )
+    listing = "\n\n".join(f"{index}. {by_key[key]['entry']}" for index, key in enumerate(order, 1))
     if not REFERENCES_MARKER.search(numbered):
         raise ResolutionError(
             "the manuscript cites references but has no [[references]] marker, so the "

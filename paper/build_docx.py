@@ -25,6 +25,7 @@ writes "the third paragraph of section 2.7" instead, and they cost nothing.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import re
 import shutil
 import sys
@@ -234,10 +235,10 @@ def single_column_double_spaced(path: Path) -> Path:
         + take("footnotePr")
         + page
         + take("lnNumType")
-        + '<w:cols w:space="720"/>'   # one column, stated rather than defaulted
+        + '<w:cols w:space="720"/>'  # one column, stated rather than defaulted
         + "</w:sectPr>"
     )
-    document = document[: match.start()] + rebuilt + document[match.end():]
+    document = document[: match.start()] + rebuilt + document[match.end() :]
     contents["word/document.xml"] = document.encode("utf-8")
 
     # The spacing has to be read out of docDefaults, not looked for anywhere in
@@ -251,7 +252,7 @@ def single_column_double_spaced(path: Path) -> Path:
         raise SystemExit("pandoc wrote no pPrDefault; double spacing cannot be set here")
     if "w:line=" not in defaults.group(0):
         patched = f"<w:pPrDefault><w:pPr>{_DOUBLE_SPACED}</w:pPr></w:pPrDefault>"
-        styles = styles[: defaults.start()] + patched + styles[defaults.end():]
+        styles = styles[: defaults.start()] + patched + styles[defaults.end() :]
         again = re.search(r"<w:pPrDefault>.*?</w:pPrDefault>", styles, re.S)
         if not again or 'w:line="480"' not in again.group(0):
             raise SystemExit("could not set double spacing in docDefaults")
@@ -347,8 +348,7 @@ def shrink_tables(path: Path) -> Path:
         print("  note: no tables in the document")
         return path
 
-    size = (f'<w:sz w:val="{_TABLE_FONT_HALF_POINTS}"/>'
-            f'<w:szCs w:val="{_TABLE_FONT_HALF_POINTS}"/>')
+    size = f'<w:sz w:val="{_TABLE_FONT_HALF_POINTS}"/><w:szCs w:val="{_TABLE_FONT_HALF_POINTS}"/>'
     single = '<w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/>'
     for table in tables:
         shrunk = _set_property(table, "w:r", "w:rPr", size)
@@ -378,8 +378,8 @@ def set_reference_list(path: Path) -> Path:
     Everything after the References heading is the list, so the two properties
     are set on every paragraph from there to the end.
     """
-    import docx                                               # noqa: PLC0415
-    from docx.shared import Pt                                # noqa: PLC0415
+    import docx  # noqa: PLC0415
+    from docx.shared import Pt  # noqa: PLC0415
 
     document = docx.Document(str(path))
     in_references = False
@@ -390,7 +390,7 @@ def set_reference_list(path: Path) -> Path:
             continue
         if not in_references or not paragraph.text.strip():
             continue
-        paragraph.paragraph_format.keep_together = True       # w:keepLines
+        paragraph.paragraph_format.keep_together = True  # w:keepLines
         paragraph.paragraph_format.line_spacing = 1.0
         paragraph.paragraph_format.space_after = Pt(6)
         touched += 1
@@ -412,7 +412,7 @@ def bind_headings_to_text(path: Path) -> Path:
     because it is not a property of either: it is where the text happened to
     fall. A companion manuscript reached its referees with two.
     """
-    import docx                                               # noqa: PLC0415
+    import docx  # noqa: PLC0415
 
     document = docx.Document(str(path))
     bound = 0
@@ -438,17 +438,16 @@ def plain_headings(path: Path) -> Path:
     touched: the journal typesets its own, and a manuscript that arrives over-formatted is no
     better than one that arrives blue.
     """
-    import docx                                               # noqa: PLC0415
-    from docx.shared import RGBColor                          # noqa: PLC0415
+    import docx  # noqa: PLC0415
+    from docx.shared import RGBColor  # noqa: PLC0415
 
     document = docx.Document(str(path))
     black = RGBColor(0, 0, 0)
     for style in document.styles:
         if style.name.startswith(("Heading", "Title", "Subtitle")):
-            try:
+            # Some built-in styles carry no font colour object at all.
+            with contextlib.suppress(AttributeError):
                 style.font.color.rgb = black
-            except AttributeError:
-                pass
     for paragraph in document.paragraphs:
         if paragraph.style.name.startswith(("Heading", "Title", "Subtitle")):
             for run in paragraph.runs:

@@ -151,9 +151,10 @@ def inspect(title: str, doi: str) -> None:
             f"{doi}: the registered title begins {title[:12]!r}, which looks like a "
             f"stray leading character; correct it in reference_overrides.json"
         )
-    if "<" in title or "&" in title and ";" in title[:  len(title)]:
-        if re.search(r"<[a-zA-Z/]|&[a-zA-Z#][a-zA-Z0-9]*;", title):
-            raise ReferenceError(f"{doi}: markup survived cleaning in {title!r}")
+    if ("<" in title or ("&" in title and ";" in title)) and re.search(
+        r"<[a-zA-Z/]|&[a-zA-Z#][a-zA-Z0-9]*;", title
+    ):
+        raise ReferenceError(f"{doi}: markup survived cleaning in {title!r}")
 
 
 def fetch(doi: str) -> dict[str, Any]:
@@ -175,8 +176,9 @@ def page_range(record: dict[str, Any]) -> str:
     return pages.replace("-", "–")
 
 
-def render(record: dict[str, Any], overrides: dict[str, Any], doi: str,
-           item: dict[str, Any] | None = None) -> tuple[str, int, str]:
+def render(
+    record: dict[str, Any], overrides: dict[str, Any], doi: str, item: dict[str, Any] | None = None
+) -> tuple[str, int, str]:
     """One reference as the journal prints it, its year, and the title printed.
 
     The printed title is returned so that the caller can compare it with the
@@ -284,8 +286,15 @@ def resolve() -> list[dict[str, Any]]:
             if not item.get("reason"):
                 failures.append(f"{key}: a literal reference must record why it has no DOI")
                 continue
-            out.append({"key": key, "doi": None, "entry": clean(item["literal"]),
-                        "year": None, "literal": True})
+            out.append(
+                {
+                    "key": key,
+                    "doi": None,
+                    "entry": clean(item["literal"]),
+                    "year": None,
+                    "literal": True,
+                }
+            )
             print(f"LITERAL  {key}  (no registered DOI: {item['reason'][:60]}...)")
             continue
 
@@ -316,17 +325,18 @@ def resolve() -> list[dict[str, Any]]:
         print(f"RESOLVED {key}  {entry[:96]}")
 
     if failures:
-        raise SystemExit(
-            "\n%d reference(s) could not be used:\n  - %s"
-            % (len(failures), "\n  - ".join(failures))
-        )
+        joined = "\n  - ".join(failures)
+        raise SystemExit(f"\n{len(failures)} reference(s) could not be used:\n  - {joined}")
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true",
-                        help="resolve and compare with the frozen list; write nothing")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="resolve and compare with the frozen list; write nothing",
+    )
     args = parser.parse_args(argv)
 
     resolved = resolve()
@@ -344,8 +354,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     FROZEN.parent.mkdir(parents=True, exist_ok=True)
-    FROZEN.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-                      encoding="utf-8", newline="\n")
+    FROZEN.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(f"\n{len(resolved)} references written to {FROZEN}")
     return 0
 

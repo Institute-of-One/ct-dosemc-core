@@ -34,8 +34,7 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     # Captions are outside both the marker resolver and the typed-number gate, so
     # Figure 1's -- which prints thirteen measured quantities -- is compared with
     # the frozen results here or nowhere.
-    ("check Figure 1's caption against the results",
-     ["paper/check_figure1_caption.py"], False),
+    ("check Figure 1's caption against the results", ["paper/check_figure1_caption.py"], False),
     # The reference list is an artefact like any other: it is generated from the
     # metadata registered at doi.org, and without a step here it is whatever was
     # resolved by hand last. --check rather than a rewrite, so that a silent
@@ -53,21 +52,22 @@ STEPS: tuple[tuple[str, list[str], bool], ...] = (
     # without these two steps nothing in this repository ever looks at the
     # artwork the reviewer is actually sent.
     ("write the figure files the portal is sent", ["paper/make_submission_figures.py"], False),
-    ("check the portal's stamp will not land on a figure",
-     ["paper/check_figure_headroom.py"], False),
+    (
+        "check the portal's stamp will not land on a figure",
+        ["paper/check_figure_headroom.py"],
+        False,
+    ),
     ("check the version and both DOIs agree", ["paper/check_release_metadata.py"], True),
     # The journal requires its checklist with every submission and sends an
     # incomplete one back. Every quantity on it is measured by the step above,
     # so it is filled from that rather than typed into a form nobody rechecks.
     ("fill the journal's submission checklist", ["paper/fill_checklist.py"], True),
-    ("build the cover letter, the novel points and the kit",
-     ["paper/build_submission.py"], True),
+    ("build the cover letter, the novel points and the kit", ["paper/build_submission.py"], True),
     # The pages are the last thing between a defect and the reviewer, and the
     # only thing that sees a word broken in two or a heading stranded at a
     # page foot. This does not look at them; it notices when a page has
     # changed since somebody did.
-    ("check every page is as it was when it was looked at",
-     ["paper/check_visual_review.py"], True),
+    ("check every page is as it was when it was looked at", ["paper/check_visual_review.py"], True),
     ("check everything", ["paper/presubmission_check.py", "--strict"], False),
 )
 

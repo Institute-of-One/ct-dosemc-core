@@ -28,7 +28,8 @@ import collect_figures  # noqa: E402
 
 def shipped() -> str:
     numbers = [
-        number for number, (name, _) in collect_figures.FIGURE_SOURCES.items()
+        number
+        for number, (name, _) in collect_figures.FIGURE_SOURCES.items()
         if name == gate.FIGURE_NAME
     ]
     return collect_figures.captions()[numbers[0]]
@@ -74,31 +75,27 @@ class RefusesAWrongNumber(unittest.TestCase):
             self.skipTest("the figure 1 results have not been frozen")
 
     def test_a_stale_ctdivol(self):
-        self.assertEqual(gate.check(damage("examination: 17.9 mGy",
-                                           "examination: 16.1 mGy")), 1)
+        self.assertEqual(gate.check(damage("examination: 17.9 mGy", "examination: 16.1 mGy")), 1)
 
     def test_a_wrong_index_range(self):
-        self.assertEqual(gate.check(damage("study: 18–20 mGy",
-                                           "study: 18–24 mGy")), 1)
+        self.assertEqual(gate.check(damage("study: 18–20 mGy", "study: 18–24 mGy")), 1)
 
     def test_a_wrong_dose_range(self):
-        self.assertEqual(gate.check(damage("anatomy: 33–49 mGy",
-                                           "anatomy: 31–49 mGy")), 1)
+        self.assertEqual(gate.check(damage("anatomy: 33–49 mGy", "anatomy: 31–49 mGy")), 1)
 
     def test_a_wrong_held_out_error(self):
         self.assertEqual(gate.check(damage("a median of 13 %", "a median of 11 %")), 1)
 
     def test_a_wrong_count_of_eligible_series(self):
-        self.assertEqual(gate.check(damage("one of the 23 carrying",
-                                           "one of the 30 carrying")), 1)
+        self.assertEqual(gate.check(damage("one of the 23 carrying", "one of the 30 carrying")), 1)
 
     def test_a_wrong_selection_ratio(self):
-        self.assertEqual(gate.check(damage("(2.194 against 2.188)",
-                                           "(2.170 against 2.188)")), 1)
+        self.assertEqual(gate.check(damage("(2.194 against 2.188)", "(2.170 against 2.188)")), 1)
 
     def test_a_wrong_organ_count_on_the_section(self):
-        self.assertEqual(gate.check(damage("organs scored, ten of twelve",
-                                           "organs scored, eleven of twelve")), 1)
+        self.assertEqual(
+            gate.check(damage("organs scored, ten of twelve", "organs scored, eleven of twelve")), 1
+        )
 
     def test_a_wrong_slice_number(self):
         self.assertEqual(gate.check(damage("slice 239 of 309", "slice 241 of 309")), 1)
@@ -118,8 +115,7 @@ class RefusesAMisconfiguredFigure(unittest.TestCase):
 
     def test_the_figure_is_not_registered(self):
         collect_figures.FIGURE_SOURCES = {
-            number: value for number, value in self._sources.items()
-            if value[0] != gate.FIGURE_NAME
+            number: value for number, value in self._sources.items() if value[0] != gate.FIGURE_NAME
         }
         self.assertEqual(gate.check(), 1)
 

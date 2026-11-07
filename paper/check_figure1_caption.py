@@ -66,8 +66,18 @@ def _integer(caption: str, pattern: str) -> int | None:
 
 
 WORD_NUMBERS = {
-    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
-    "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10,
+    "eleven": 11,
+    "twelve": 12,
 }
 
 
@@ -128,8 +138,14 @@ def printed(caption: str) -> dict[str, float | None]:
 #: How many decimals the caption prints each quantity to. The comparison is made
 #: at that precision: 17.94 printed as 17.9 is correct, 17.8 is not.
 DECIMALS = {
-    "ctdivol": 1, "index_low": 0, "index_high": 0, "dose_low": 0, "dose_high": 0,
-    "best_median_error_percent": 0, "chosen_median_ratio": 3, "cohort_median_ratio": 3,
+    "ctdivol": 1,
+    "index_low": 0,
+    "index_high": 0,
+    "dose_low": 0,
+    "dose_high": 0,
+    "best_median_error_percent": 0,
+    "chosen_median_ratio": 3,
+    "cohort_median_ratio": 3,
 }
 
 
@@ -139,7 +155,8 @@ def check(caption: str | None = None) -> int:
         return 1
     if caption is None:
         numbers = {
-            number for number, (name, _) in collect_figures.FIGURE_SOURCES.items()
+            number
+            for number, (name, _) in collect_figures.FIGURE_SOURCES.items()
             if name == FIGURE_NAME
         }
         if len(numbers) != 1:
@@ -165,8 +182,7 @@ def check(caption: str | None = None) -> int:
                 problems.append(f"{name}: caption says {int(found)}, results say {int(value)}")
         elif round(found, decimals) != round(value, decimals):
             problems.append(
-                f"{name}: caption says {found:.{decimals}f}, "
-                f"results say {value:.{decimals}f}"
+                f"{name}: caption says {found:.{decimals}f}, results say {value:.{decimals}f}"
             )
 
     if problems:

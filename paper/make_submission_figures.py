@@ -47,6 +47,7 @@ OUTPUT = PAPER / "build" / "figures"
 #: down, which is 0.33 in. A third line would reach 0.47 in.
 STAMP_HEADROOM_INCHES = 0.5
 
+
 #: What the uploaded file is called. The submission system shows the file name
 #: in its list, and "figure5_conversion_ceiling.png" tells an editor nothing that
 #: "Figure_5.png" does not.
@@ -66,8 +67,11 @@ def pad(source: Path, destination: Path, inches: float = STAMP_HEADROOM_INCHES) 
             f"A figure saved without dpi is a figure whose printed size is unknown."
         )
     added = int(round(float(dpi[1]) * inches))
-    padded = Image.new(image.mode, (image.width, image.height + added),
-                       "white" if image.mode != "RGBA" else (255, 255, 255, 255))
+    padded = Image.new(
+        image.mode,
+        (image.width, image.height + added),
+        "white" if image.mode != "RGBA" else (255, 255, 255, 255),
+    )
     padded.paste(image, (0, added))
     destination.parent.mkdir(parents=True, exist_ok=True)
     padded.save(destination, dpi=dpi)

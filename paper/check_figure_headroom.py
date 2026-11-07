@@ -76,8 +76,7 @@ def check(paths: list[Path]) -> list[str]:
             continue
         band = blank_band_inches(path)
         mark = "ok  " if band >= REQUIRED_INCHES else "FAIL"
-        print(f"  {mark} {path.name}: {band:.2f} in blank above the artwork "
-              f"({band * 72:.0f} pt)")
+        print(f"  {mark} {path.name}: {band:.2f} in blank above the artwork ({band * 72:.0f} pt)")
         if band < REQUIRED_INCHES:
             problems.append(
                 f"{path.name} leaves only {band:.2f} in ({band * 72:.0f} pt) above the "
@@ -94,8 +93,7 @@ def main(argv: list[str] | None = None) -> int:
 
     paths = args.files or sorted(UPLOADED.glob("Figure_*.png"))
     if not paths:
-        print(f"no uploaded figures in {UPLOADED}; "
-              f"run paper/make_submission_figures.py first")
+        print(f"no uploaded figures in {UPLOADED}; run paper/make_submission_figures.py first")
         return 1
 
     print(f"headroom for the portal's figure label ({REQUIRED_INCHES:.2f} in required):")

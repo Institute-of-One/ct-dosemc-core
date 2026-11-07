@@ -24,8 +24,8 @@ from pathlib import Path
 PAPER = Path(__file__).resolve().parent
 sys.path.insert(0, str(PAPER))
 
-import collect_figures                                       # noqa: E402
-import presubmission_check as gate                           # noqa: E402
+import collect_figures  # noqa: E402
+import presubmission_check as gate  # noqa: E402
 
 
 class GateCase(unittest.TestCase):
@@ -109,8 +109,7 @@ class FigureCitationOrder(GateCase):
         # Only the second number of the first citation is out of place, so the message has
         # to name it. Reading one number per citation makes figure 7 invisible and clean.
         gate.check_figures_are_first_cited_in_order(
-            "Values are in figures 1 and 7. Then figure 2, figure 3, figure 4, figure 5, "
-            "figure 6."
+            "Values are in figures 1 and 7. Then figure 2, figure 3, figure 4, figure 5, figure 6."
         )
         self.assertCaught("figure 7 first named inside a list, before figure 6")
         self.assertTrue(
@@ -216,9 +215,7 @@ class FigureCitationOrder(GateCase):
         self.assertCaught("figure 6 named after a panel range, before figures 2 to 5")
 
     def test_a_panel_range_is_still_one_figure(self) -> None:
-        gate.check_figures_are_first_cited_in_order(
-            "See figures 1a-c. Then figure 2, figure 3."
-        )
+        gate.check_figures_are_first_cited_in_order("See figures 1a-c. Then figure 2, figure 3.")
         self.assertClean("'figures 1a-c', which is three panels of figure 1")
 
     def test_a_panel_letter_is_not_a_different_figure(self) -> None:
@@ -637,9 +634,7 @@ class BoundingClaimDeclaresItsScope(GateCase):
             f"{gate._SCOPE_MARKER}\nThe bound is over the five conversions evaluated here. "
             "It is not a claim about index-based conversion in general.\n\n"
         )
-        built = (
-            self.TITLED + "The bound is over the five conversions evaluated here.\n"
-        )
+        built = self.TITLED + "The bound is over the five conversions evaluated here.\n"
         gate.check_a_bounding_claim_declares_its_scope(source, built)
         self.assertCaught("a scope paragraph whose second sentence never reached the build")
 

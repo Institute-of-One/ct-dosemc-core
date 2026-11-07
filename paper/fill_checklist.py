@@ -52,14 +52,20 @@ QUANTITIES = {
 PROPOSITIONS = {
     20: (True, ""),
     21: (True, ""),
-    22: (True, "A4, 1.25 in side margins, double line spacing, continuous line "
-               "numbers from the title page."),
+    22: (
+        True,
+        "A4, 1.25 in side margins, double line spacing, continuous line "
+        "numbers from the title page.",
+    ),
     23: (True, "Original work. The submission history is given in the cover letter."),
     24: (True, ""),
-    25: (True, "No published figure is reproduced. Figure 3 plots published numerical "
-               "results from the cited task-group report, and the bowtie profiles used "
-               "as model input are published measurements (CC BY 4.0), cited in the "
-               "text."),
+    25: (
+        True,
+        "No published figure is reproduced. Figure 3 plots published numerical "
+        "results from the cited task-group report, and the bowtie profiles used "
+        "as model input are published measurements (CC BY 4.0), cited in the "
+        "text.",
+    ),
     26: (True, "Sole author; there are no coauthors to confirm."),
     27: (False, "Not applicable: this is a new submission to this journal."),
 }
@@ -69,18 +75,15 @@ def fill(template: Path = TEMPLATE, output: Path = OUTPUT) -> int:
     import openpyxl  # noqa: PLC0415
 
     if not template.is_file():
-        print(f"{template} is missing; download it from the journal's submission "
-              f"guidelines page")
+        print(f"{template} is missing; download it from the journal's submission guidelines page")
         return 1
     if not BUILT.is_file():
         print(f"{BUILT} is missing; run paper/build_manuscript.py")
         return 1
 
-    measured, notes, problems = check_rpt_limits.measure(
-        BUILT.read_text(encoding="utf-8"))
+    measured, notes, problems = check_rpt_limits.measure(BUILT.read_text(encoding="utf-8"))
     if problems:
-        print("the manuscript does not pass its own limits check, so no checklist "
-              "is written:")
+        print("the manuscript does not pass its own limits check, so no checklist is written:")
         for problem in problems:
             print("  - " + problem)
         return 1
@@ -94,8 +97,10 @@ def fill(template: Path = TEMPLATE, output: Path = OUTPUT) -> int:
     sheet["C4"] = datetime.date.today().isoformat()
     sheet["C5"] = AUTHOR
     sheet["C8"] = "New"
-    sheet["D8"] = ("New to this journal. The manuscript was previously submitted "
-                   "elsewhere; the history is given in the cover letter.")
+    sheet["D8"] = (
+        "New to this journal. The manuscript was previously submitted "
+        "elsewhere; the history is given in the cover letter."
+    )
     sheet["C9"] = "Research Article"
 
     for row, key in QUANTITIES.items():
@@ -117,8 +122,10 @@ def fill(template: Path = TEMPLATE, output: Path = OUTPUT) -> int:
         print(f"  {key:<20} {measured[key]:>5}   (sheet row {row}, min {minimum})")
     print(f"  {'keywords':<20} {keyword_count:>5}")
     answered = sum(1 for answer, _ in PROPOSITIONS.values() if answer)
-    print(f"  {answered} of {len(PROPOSITIONS)} propositions confirmed; "
-          f"{len(PROPOSITIONS) - answered} marked not applicable with a comment")
+    print(
+        f"  {answered} of {len(PROPOSITIONS)} propositions confirmed; "
+        f"{len(PROPOSITIONS) - answered} marked not applicable with a comment"
+    )
     return 0
 
 

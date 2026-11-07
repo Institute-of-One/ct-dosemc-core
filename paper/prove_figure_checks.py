@@ -31,8 +31,8 @@ from pathlib import Path
 PAPER = Path(__file__).resolve().parent
 sys.path.insert(0, str(PAPER))
 
-import collect_figures                                       # noqa: E402
-import presubmission_check as gate                           # noqa: E402
+import collect_figures  # noqa: E402
+import presubmission_check as gate  # noqa: E402
 
 
 @contextlib.contextmanager
@@ -93,26 +93,36 @@ def main() -> int:
             print(f"          {message}")
 
     print("citation order")
-    case("figure 6 named before figures 4 and 5, as submitted",
-         expect_caught=True,
-         run=lambda: gate.check_figures_are_first_cited_in_order(OUT_OF_ORDER))
-    case("figures 1, 2, 3 named in order",
-         expect_caught=False,
-         run=lambda: gate.check_figures_are_first_cited_in_order(IN_ORDER))
+    case(
+        "figure 6 named before figures 4 and 5, as submitted",
+        expect_caught=True,
+        run=lambda: gate.check_figures_are_first_cited_in_order(OUT_OF_ORDER),
+    )
+    case(
+        "figures 1, 2, 3 named in order",
+        expect_caught=False,
+        run=lambda: gate.check_figures_are_first_cited_in_order(IN_ORDER),
+    )
 
     print("\nrenumbered on the way in")
     with sources({6: ("figure6_vendor.png", "phase2_cohort/figure5_vendor.png")}):
-        case("figure 6 copied from a file the pipeline drew as figure 5",
-             expect_caught=True,
-             run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""))
+        case(
+            "figure 6 copied from a file the pipeline drew as figure 5",
+            expect_caught=True,
+            run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""),
+        )
     with sources({6: ("figure6_vendor.png", "phase2_cohort/figure6_vendor.png")}):
-        case("figure 6 copied from a file drawn as figure 6",
-             expect_caught=False,
-             run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""))
+        case(
+            "figure 6 copied from a file drawn as figure 6",
+            expect_caught=False,
+            run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""),
+        )
     with sources({5: ("figure5_conversion_ceiling.png", None)}):
-        case("a figure drawn in place, with no source to disagree with",
-             expect_caught=False,
-             run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""))
+        case(
+            "a figure drawn in place, with no source to disagree with",
+            expect_caught=False,
+            run=lambda: gate.check_no_figure_is_renumbered_on_the_way_in(""),
+        )
 
     print("\nnobody opened the image")
     with tempfile.TemporaryDirectory() as directory:
@@ -123,18 +133,24 @@ def main() -> int:
 
         with sources({4: ("figure4_scatter.png", None)}):
             with figures_at(directory, {}):
-                case("an image that has never been recorded as looked at",
-                     expect_caught=True,
-                     run=gate.check_every_figure_image_has_been_looked_at)
+                case(
+                    "an image that has never been recorded as looked at",
+                    expect_caught=True,
+                    run=gate.check_every_figure_image_has_been_looked_at,
+                )
             with figures_at(directory, entry):
-                case("an image recorded at the hash it still has",
-                     expect_caught=False,
-                     run=gate.check_every_figure_image_has_been_looked_at)
+                case(
+                    "an image recorded at the hash it still has",
+                    expect_caught=False,
+                    run=gate.check_every_figure_image_has_been_looked_at,
+                )
             image.write_bytes(b"\x89PNG\r\n\x1a\n redrawn, and nobody looked again")
             with figures_at(directory, entry):
-                case("an image redrawn after it was recorded",
-                     expect_caught=True,
-                     run=gate.check_every_figure_image_has_been_looked_at)
+                case(
+                    "an image redrawn after it was recorded",
+                    expect_caught=True,
+                    run=gate.check_every_figure_image_has_been_looked_at,
+                )
 
     print("\na bounding claim without a declared scope")
     titled = "# A measured floor on index-based organ dose estimation\n\nAbstract.\n\n## 1\n"
@@ -144,23 +160,33 @@ def main() -> int:
         "cohort of forty series, and not over index-based conversion in general."
     )
     scope = f"<!-- scope-of-claim -->\n{declared}\n\n"
-    case("a title claiming a floor, with no paragraph declaring the scope",
-         expect_caught=True,
-         run=lambda: gate.check_a_bounding_claim_declares_its_scope("body text", titled))
-    case("the same title, with the scope declared and carried into the build",
-         expect_caught=False,
-         run=lambda: gate.check_a_bounding_claim_declares_its_scope(
-             scope, titled + declared))
-    case("the scope declared in the source but lost before the build",
-         expect_caught=True,
-         run=lambda: gate.check_a_bounding_claim_declares_its_scope(scope, titled))
-    case("a marked paragraph too short to delimit anything",
-         expect_caught=True,
-         run=lambda: gate.check_a_bounding_claim_declares_its_scope(
-             "<!-- scope-of-claim -->\nOver five conversions.\n\n", titled))
-    case("a title that claims no bound, so nothing is required",
-         expect_caught=False,
-         run=lambda: gate.check_a_bounding_claim_declares_its_scope("body text", plain))
+    case(
+        "a title claiming a floor, with no paragraph declaring the scope",
+        expect_caught=True,
+        run=lambda: gate.check_a_bounding_claim_declares_its_scope("body text", titled),
+    )
+    case(
+        "the same title, with the scope declared and carried into the build",
+        expect_caught=False,
+        run=lambda: gate.check_a_bounding_claim_declares_its_scope(scope, titled + declared),
+    )
+    case(
+        "the scope declared in the source but lost before the build",
+        expect_caught=True,
+        run=lambda: gate.check_a_bounding_claim_declares_its_scope(scope, titled),
+    )
+    case(
+        "a marked paragraph too short to delimit anything",
+        expect_caught=True,
+        run=lambda: gate.check_a_bounding_claim_declares_its_scope(
+            "<!-- scope-of-claim -->\nOver five conversions.\n\n", titled
+        ),
+    )
+    case(
+        "a title that claims no bound, so nothing is required",
+        expect_caught=False,
+        run=lambda: gate.check_a_bounding_claim_declares_its_scope("body text", plain),
+    )
 
     print("\nthe manuscript as it stands")
     shipped: list[str] = []
@@ -170,7 +196,8 @@ def main() -> int:
     if not built.exists():
         failures.append("paper/build/manuscript.md is missing; nothing was checked")
     present = [
-        name for name, _ in collect_figures.FIGURE_SOURCES.values()
+        name
+        for name, _ in collect_figures.FIGURE_SOURCES.values()
         if (gate.FIGURES / name).exists()
     ]
     if not present:

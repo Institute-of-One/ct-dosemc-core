@@ -117,58 +117,69 @@ def test_references_out_of_citation_order_are_caught() -> None:
     permanently red suite stops being read, and nothing then established that the
     numbered checks caught anything at all.
     """
-    check.check_references(_built(
-        "Body cites [2] and then [1].",
-        "1. Alpha A. An earlier work. J. 2019;1:1. https://doi.org/10.0000/a.",
-        "2. Zeta B. A later work. J. 2020;2:2. https://doi.org/10.0000/b.",
-    ))
-    assert any("not numbered in order of first citation" in message
-               for message in check.errors)
+    check.check_references(
+        _built(
+            "Body cites [2] and then [1].",
+            "1. Alpha A. An earlier work. J. 2019;1:1. https://doi.org/10.0000/a.",
+            "2. Zeta B. A later work. J. 2020;2:2. https://doi.org/10.0000/b.",
+        )
+    )
+    assert any("not numbered in order of first citation" in message for message in check.errors)
 
 
 def test_an_uncited_reference_is_caught() -> None:
-    check.check_references(_built(
-        "Body cites [1].",
-        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
-        "2. Orphan O. Never mentioned. J. 2021;3:3. https://doi.org/10.0000/b.",
-    ))
+    check.check_references(
+        _built(
+            "Body cites [1].",
+            "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+            "2. Orphan O. Never mentioned. J. 2021;3:3. https://doi.org/10.0000/b.",
+        )
+    )
     assert any("listed but never cited" in message for message in check.errors)
 
 
 def test_a_citation_with_no_entry_is_caught() -> None:
-    check.check_references(_built(
-        "Body cites [1] and [2].",
-        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
-    ))
+    check.check_references(
+        _built(
+            "Body cites [1] and [2].",
+            "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+        )
+    )
     assert any("cited but not listed" in message for message in check.errors)
 
 
 def test_a_gap_in_the_numbering_is_caught() -> None:
-    check.check_references(_built(
-        "Body cites [1] and [3].",
-        "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
-        "3. Gamma C. A third work. J. 2021;3:3. https://doi.org/10.0000/c.",
-    ))
+    check.check_references(
+        _built(
+            "Body cites [1] and [3].",
+            "1. Alpha A. A cited work. J. 2019;1:1. https://doi.org/10.0000/a.",
+            "3. Gamma C. A third work. J. 2021;3:3. https://doi.org/10.0000/c.",
+        )
+    )
     assert any("the reference numbers are" in message for message in check.errors)
 
 
 def test_a_reference_a_reader_cannot_follow_warns() -> None:
     """Neither a DOI nor a publisher and year is the shape of a fabrication."""
-    check.check_references(_built(
-        "Body cites [1].",
-        "1. Alpha A. A book with no identifier at all",
-    ))
+    check.check_references(
+        _built(
+            "Body cites [1].",
+            "1. Alpha A. A book with no identifier at all",
+        )
+    )
     assert any("cannot follow" in message for message in check.warnings)
 
 
 def test_a_report_with_a_publisher_and_year_is_traceable() -> None:
     """PENELOPE has no registered DOI and is not thereby suspect."""
-    check.check_references(_built(
-        "Body cites [1].",
-        "1. Salvat F, Fernandez-Varea JM, Sempau J. PENELOPE - a code system for "
-        "Monte Carlo simulation of electron and photon transport. "
-        "Issy-les-Moulineaux: NEA-OECD; 2006.",
-    ))
+    check.check_references(
+        _built(
+            "Body cites [1].",
+            "1. Salvat F, Fernandez-Varea JM, Sempau J. PENELOPE - a code system for "
+            "Monte Carlo simulation of electron and photon transport. "
+            "Issy-les-Moulineaux: NEA-OECD; 2006.",
+        )
+    )
     assert not any("cannot follow" in message for message in check.warnings)
 
 

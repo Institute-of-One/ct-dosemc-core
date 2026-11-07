@@ -92,17 +92,13 @@ def check(offline: bool = False) -> list[str]:
                 f"__init__.py declares {version!r}"
             )
     elif 'dynamic = ["version"]' not in pyproject:
-        problems.append(
-            "pyproject.toml neither declares a version nor reads one from the package"
-        )
+        problems.append("pyproject.toml neither declares a version nor reads one from the package")
     else:
         print("  pyproject.toml reads the version from the package")
 
     zenodo = json.loads(ZENODO.read_text(encoding="utf-8"))
     if zenodo.get("version") != version:
-        problems.append(
-            f".zenodo.json declares version {zenodo.get('version')!r}, not {version!r}"
-        )
+        problems.append(f".zenodo.json declares version {zenodo.get('version')!r}, not {version!r}")
     if "doi" in zenodo:
         problems.append(
             "a top-level 'doi' in .zenodo.json tells Zenodo the DOI was assigned "
@@ -114,9 +110,7 @@ def check(offline: bool = False) -> list[str]:
     if not cff_version:
         problems.append("CITATION.cff declares no version")
     elif cff_version.group(1).strip('"') != version:
-        problems.append(
-            f"CITATION.cff declares version {cff_version.group(1)!r}, not {version!r}"
-        )
+        problems.append(f"CITATION.cff declares version {cff_version.group(1)!r}, not {version!r}")
 
     concept = re.search(r"(?m)^doi:\s*(\S+)", citation)
     if not concept:
@@ -165,8 +159,10 @@ def check(offline: bool = False) -> list[str]:
         return problems
 
     recorded = (record.get("metadata") or {}).get("version")
-    print(f"  Zenodo says that DOI is version {recorded!r}, "
-          f"published {(record.get('metadata') or {}).get('publication_date')}")
+    print(
+        f"  Zenodo says that DOI is version {recorded!r}, "
+        f"published {(record.get('metadata') or {}).get('publication_date')}"
+    )
     if recorded != version:
         problems.append(
             f"the manuscript cites the archive of version {recorded!r} while this "
@@ -183,8 +179,9 @@ def check(offline: bool = False) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--offline", action="store_true",
-                        help="skip resolving the DOI against Zenodo")
+    parser.add_argument(
+        "--offline", action="store_true", help="skip resolving the DOI against Zenodo"
+    )
     args = parser.parse_args(argv)
 
     problems = check(offline=args.offline)

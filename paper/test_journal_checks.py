@@ -105,21 +105,25 @@ class CatchesAMissingDeclaration(unittest.TestCase):
     def test_no_data_availability_statement(self):
         damaged = damage(
             "**Data availability.** Openly available at "
-            "https://doi.org/10.5281/zenodo.23537665.\n\n", "")
+            "https://doi.org/10.5281/zenodo.23537665.\n\n",
+            "",
+        )
         failures, _ = run(gate.check_code_is_reachable, damaged)
         self.assertTrue(any("Data availability" in f for f in failures))
 
     def test_a_data_statement_with_no_locator(self):
         damaged = damage(
             "Openly available at https://doi.org/10.5281/zenodo.23537665.",
-            "Available in this repository.")
+            "Available in this repository.",
+        )
         failures, _ = run(gate.check_code_is_reachable, damaged)
         self.assertTrue(any("names no URL or DOI" in f for f in failures))
 
     def test_a_data_statement_with_a_url_but_no_doi(self):
         damaged = damage(
             "https://doi.org/10.5281/zenodo.23537665",
-            "https://github.com/Institute-of-One/ct-dosemc-core")
+            "https://github.com/Institute-of-One/ct-dosemc-core",
+        )
         failures, _ = run(gate.check_code_is_reachable, damaged)
         self.assertTrue(any("not an archive" in f for f in failures))
 
@@ -127,10 +131,14 @@ class CatchesAMissingDeclaration(unittest.TestCase):
         for label, line in (
             ("Funding", "**Funding.** None.\n\n"),
             ("Conflict of interest", "**Conflict of interest.** None to declare.\n\n"),
-            ("Ethics approval",
-             "**Ethics approval.** Waived; only public de-identified data were used.\n\n"),
-            ("Code availability",
-             "**Code availability.** The same archive, under the MIT licence.\n\n"),
+            (
+                "Ethics approval",
+                "**Ethics approval.** Waived; only public de-identified data were used.\n\n",
+            ),
+            (
+                "Code availability",
+                "**Code availability.** The same archive, under the MIT licence.\n\n",
+            ),
         ):
             with self.subTest(label=label):
                 failures, _ = run(gate.check_code_is_reachable, damage(line, ""))
@@ -141,7 +149,9 @@ class CatchesAMissingGenerativeAiDisclosure(unittest.TestCase):
     def test_no_disclosure_anywhere(self):
         damaged = damage(
             "**Use of generative artificial intelligence.** An assistant (Claude Opus 5,\n"
-            "Anthropic) was used as a tool in developing the software.\n", "")
+            "Anthropic) was used as a tool in developing the software.\n",
+            "",
+        )
         failures, _ = run(gate.check_generative_ai_is_declared, damaged)
         self.assertTrue(any("no generative-AI declaration" in f for f in failures))
 
@@ -150,12 +160,15 @@ class CatchesAMissingGenerativeAiDisclosure(unittest.TestCase):
         # there, it is not where this journal takes declarations.
         damaged = damage(
             "**Use of generative artificial intelligence.** An assistant (Claude Opus 5,\n"
-            "Anthropic) was used as a tool in developing the software.\n", "")
+            "Anthropic) was used as a tool in developing the software.\n",
+            "",
+        )
         damaged = damage(
             "Thanks.",
             "Thanks. A generative artificial intelligence assistant (Claude Opus 5, "
             "Anthropic) was used as a tool.",
-            damaged)
+            damaged,
+        )
         failures, _ = run(gate.check_generative_ai_is_declared, damaged)
         self.assertTrue(any("not a labelled statement" in f for f in failures))
 
@@ -185,8 +198,7 @@ class CatchesABrokenReferenceList(unittest.TestCase):
     def test_references_numbered_out_of_citation_order(self):
         damaged = damage("citing [1] and then [2, 3]", "citing [3] and then [2, 1]")
         failures, _ = run(gate.check_references, damaged)
-        self.assertTrue(any("not numbered in order of first citation" in f
-                            for f in failures))
+        self.assertTrue(any("not numbered in order of first citation" in f for f in failures))
 
     def test_an_unnumbered_entry(self):
         damaged = damage("1. Someone A.", "Someone A.")
@@ -201,7 +213,8 @@ class CatchesABrokenReferenceList(unittest.TestCase):
     def test_an_untraceable_entry_is_warned_about(self):
         damaged = damage(
             "1. Someone A. A title. A Journal. 2020;1(1):1-2. https://doi.org/10.0000/a.",
-            "1. Someone A. A title.")
+            "1. Someone A. A title.",
+        )
         _, warned = run(gate.check_references, damaged)
         self.assertTrue(any("cannot follow them" in w for w in warned))
 
@@ -213,9 +226,11 @@ class TheRealBuiltManuscriptPasses(unittest.TestCase):
         self.built = BUILT.read_text(encoding="utf-8")
 
     def test_all_three_retargeted_checks(self):
-        for check in (gate.check_code_is_reachable,
-                      gate.check_generative_ai_is_declared,
-                      gate.check_references):
+        for check in (
+            gate.check_code_is_reachable,
+            gate.check_generative_ai_is_declared,
+            gate.check_references,
+        ):
             with self.subTest(check=check.__name__):
                 failures, _ = run(check, self.built)
                 self.assertEqual(failures, [])

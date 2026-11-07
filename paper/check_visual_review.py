@@ -52,8 +52,7 @@ def digests() -> dict[str, str]:
 
 def check() -> int:
     if not LEDGER.exists():
-        print(f"{LEDGER} does not exist. Open every page in {PAGES}, then run "
-              f"this with --record.")
+        print(f"{LEDGER} does not exist. Open every page in {PAGES}, then run this with --record.")
         return 1
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     reviewed = ledger["pages"]
@@ -63,13 +62,13 @@ def check() -> int:
         print(f"no page images in {PAGES}; run paper/render_pdf.py")
         return 1
 
-    changed = sorted(name for name in current
-                     if name in reviewed and current[name] != reviewed[name])
+    changed = sorted(
+        name for name in current if name in reviewed and current[name] != reviewed[name]
+    )
     added = sorted(set(current) - set(reviewed))
     gone = sorted(set(reviewed) - set(current))
 
-    print(f"{len(reviewed)} pages opened on {ledger['reviewed_on']} by "
-          f"{ledger['looked_at_by']}")
+    print(f"{len(reviewed)} pages opened on {ledger['reviewed_on']} by {ledger['looked_at_by']}")
     approved = ledger.get("author_approved_on")
     print(f"  author's own approval: {approved or 'NOT GIVEN'}")
     for name in changed:
@@ -80,8 +79,10 @@ def check() -> int:
         print(f"  GONE     {name}  (the document is shorter than the review)")
 
     if changed or added or gone:
-        print(f"\n{len(changed) + len(added) + len(gone)} page(s) differ from the "
-              f"review. Open them, then run this with --record.")
+        print(
+            f"\n{len(changed) + len(added) + len(gone)} page(s) differ from the "
+            f"review. Open them, then run this with --record."
+        )
         return 1
     print(f"all {len(current)} pages are as they were when they were looked at")
     return 0
@@ -112,26 +113,28 @@ def record(note: str, args_reviewer: str) -> int:
         "note": note,
         "pages": current,
     }
-    LEDGER.write_text(json.dumps(ledger, ensure_ascii=False, indent=2) + "\n",
-                      encoding="utf-8", newline="\n")
+    LEDGER.write_text(
+        json.dumps(ledger, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(f"recorded {len(current)} pages in {LEDGER}")
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--record", action="store_true",
-                        help="assert that every page has been opened and looked at")
-    parser.add_argument("--note", default="",
-                        help="what the review found, for the record")
-    parser.add_argument("--by", default="",
-                        help="who opened the pages; recorded as given")
+    parser.add_argument(
+        "--record", action="store_true", help="assert that every page has been opened and looked at"
+    )
+    parser.add_argument("--note", default="", help="what the review found, for the record")
+    parser.add_argument("--by", default="", help="who opened the pages; recorded as given")
     args = parser.parse_args(argv)
     if not args.record:
         return check()
     if not args.by:
-        print('--by is required: the ledger records who opened the pages, '
-              'and a look recorded under the wrong name is a false record')
+        print(
+            "--by is required: the ledger records who opened the pages, "
+            "and a look recorded under the wrong name is a false record"
+        )
         return 2
     return record(args.note, args.by)
 

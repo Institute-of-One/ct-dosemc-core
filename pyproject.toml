@@ -57,7 +57,10 @@ spectra = ["spekpy>=2.0"]
 seg = ["TotalSegmentator>=2.0", "nibabel>=5.0"]
 # Data acquisition works over the public NBIA REST API with the standard library.
 tcia = ["tcia_utils>=2.0"]
-dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "matplotlib>=3.7"]
+# ruff is pinned exactly. An open bound let CI install a newer ruff whose added
+# rules and changed formatting turned the repository red overnight, and because
+# the lint step ran before the tests, nothing had been tested since.
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff==0.16.6", "matplotlib>=3.7"]
 # Rebuilding the paper. Found the same way scipy was: a clean checkout installed
 # into a fresh virtual environment ran the figures and resolved every number, then
 # stopped at "render the manuscript to Word" with ModuleNotFoundError: pypandoc.

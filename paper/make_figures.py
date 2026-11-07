@@ -102,7 +102,7 @@ NAME_ORGAN_ABOVE_VOXELS = 900
 
 
 def _short_licence(licence: str) -> str:
-    """"Creative Commons Attribution 4.0 International License" -> "CC BY 4.0".
+    """ "Creative Commons Attribution 4.0 International License" -> "CC BY 4.0".
 
     Derived rather than typed: the cohort holds both 3.0 and 4.0 collections, the
     series is chosen by a rule that can select either, and a credit printed into
@@ -142,8 +142,9 @@ def figure1_ladder() -> Path:
     ctdivol = meta["series"]["ctdivol_mgy"]
 
     level, width = ABDOMEN_WINDOW_HU
-    grey = dict(cmap="gray", vmin=level - width / 2, vmax=level + width / 2,
-                interpolation="nearest")
+    grey = dict(
+        cmap="gray", vmin=level - width / 2, vmax=level + width / 2, interpolation="nearest"
+    )
     # Nearest-neighbour throughout. The organ overlay is already in the pixels of
     # the panel, so a kernel that overshoots -- lanczos, bicubic -- puts the
     # complement of the overlay colour along every organ boundary, in a figure
@@ -166,8 +167,15 @@ def figure1_ladder() -> Path:
     panel_height = panel_width * rows / columns
     fig = plt.figure(figsize=(6.5, panel_height + 0.78))
     gridspec = fig.add_gridspec(
-        2, 3, height_ratios=[panel_height, 0.10], hspace=0.14, wspace=0.06,
-        left=0.012, right=0.988, top=0.93, bottom=0.14,
+        2,
+        3,
+        height_ratios=[panel_height, 0.10],
+        hspace=0.14,
+        wspace=0.06,
+        left=0.012,
+        right=0.988,
+        top=0.93,
+        bottom=0.14,
     )
     axes = [fig.add_subplot(gridspec[0, column]) for column in range(3)]
 
@@ -176,7 +184,7 @@ def figure1_ladder() -> Path:
         "(b) + the patient's own organs",
         "(c) + transport through them",
     )
-    for axis, title in zip(axes, titles):
+    for axis, title in zip(axes, titles, strict=True):
         axis.imshow(hu, **grey)
         axis.set_xticks([])
         axis.set_yticks([])
@@ -185,23 +193,32 @@ def figure1_ladder() -> Path:
         axis.set_title(title, fontsize=PANEL - 1, pad=4)
 
     axes[0].text(
-        0.5, 0.045, f"CTDIvol {ctdivol:.1f} mGy\nfor the whole examination",
-        transform=axes[0].transAxes, ha="center", va="bottom", fontsize=ANNOT,
+        0.5,
+        0.045,
+        f"CTDIvol {ctdivol:.1f} mGy\nfor the whole examination",
+        transform=axes[0].transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=ANNOT,
         color="white",
-        bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55,
-                  edgecolor="none"),
+        bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55, edgecolor="none"),
     )
 
     for axis, per_organ in ((axes[1], index), (axes[2], dose)):
-        image = axis.imshow(painted(per_organ), cmap=cmap, vmin=vmin, vmax=vmax,
-                            interpolation="nearest", alpha=0.92)
+        image = axis.imshow(
+            painted(per_organ), cmap=cmap, vmin=vmin, vmax=vmax, interpolation="nearest", alpha=0.92
+        )
         low, high = min(per_organ.values()), max(per_organ.values())
         axis.text(
-            0.5, 0.045, f"{low:.0f}–{high:.0f} mGy across the organs",
-            transform=axis.transAxes, ha="center", va="bottom", fontsize=ANNOT,
+            0.5,
+            0.045,
+            f"{low:.0f}–{high:.0f} mGy across the organs",
+            transform=axis.transAxes,
+            ha="center",
+            va="bottom",
+            fontsize=ANNOT,
             color="white",
-            bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55,
-                      edgecolor="none"),
+            bbox=dict(boxstyle="round,pad=0.28", facecolor="black", alpha=0.55, edgecolor="none"),
         )
 
     # Organ names go on (b) alone, where the geometry first enters. Repeating them
@@ -214,11 +231,14 @@ def figure1_ladder() -> Path:
             continue
         y, x = (float(c.mean()) for c in np.nonzero(where))
         axes[1].text(
-            x, y, name.replace("_", " "), fontsize=ANNOT - 0.5, ha="center",
-            va="center", color="white",
-            path_effects=[
-                matplotlib.patheffects.withStroke(linewidth=1.6, foreground="black")
-            ],
+            x,
+            y,
+            name.replace("_", " "),
+            fontsize=ANNOT - 0.5,
+            ha="center",
+            va="center",
+            color="white",
+            path_effects=[matplotlib.patheffects.withStroke(linewidth=1.6, foreground="black")],
         )
 
     # The attribution travels in the pixels, not only in the caption. A figure
@@ -229,11 +249,16 @@ def figure1_ladder() -> Path:
     attribution_axis = fig.add_subplot(gridspec[1, 0])
     attribution_axis.axis("off")
     attribution_axis.text(
-        0.5, 0.75,
+        0.5,
+        0.75,
         f"{source['collection']} (TCIA), {_short_licence(source['licence'])}\n"
         f"{meta['acquisition']['model_name']}, {meta['acquisition']['kvp']:.0f} kVp",
-        transform=attribution_axis.transAxes, ha="center", va="top",
-        fontsize=ANNOT - 0.5, color="0.35", linespacing=1.4,
+        transform=attribution_axis.transAxes,
+        ha="center",
+        va="top",
+        fontsize=ANNOT - 0.5,
+        color="0.35",
+        linespacing=1.4,
     )
 
     bar_axis = fig.add_subplot(gridspec[1, 1:])
@@ -248,8 +273,13 @@ def figure1_ladder() -> Path:
     for left, right in ((0, 1), (1, 2)):
         boxes = axes[left].get_position(), axes[right].get_position()
         fig.text(
-            (boxes[0].x1 + boxes[1].x0) / 2, (boxes[0].y0 + boxes[0].y1) / 2,
-            "→", ha="center", va="center", fontsize=PANEL + 2, color="0.25",
+            (boxes[0].x1 + boxes[1].x0) / 2,
+            (boxes[0].y0 + boxes[0].y1) / 2,
+            "→",
+            ha="center",
+            va="center",
+            fontsize=PANEL + 2,
+            color="0.25",
         )
 
     return _save(fig, "figure1_ladder.png")

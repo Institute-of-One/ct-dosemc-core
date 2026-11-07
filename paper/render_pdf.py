@@ -23,9 +23,9 @@ from its caption, a table broken across a boundary -- are invisible in the sourc
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
-import sys
 from pathlib import Path
 
 PAPER = Path(__file__).resolve().parent
@@ -48,10 +48,10 @@ def render() -> int:
     word.Visible = False
     word.DisplayAlerts = False
     try:
-        try:
+        # Background repagination is what makes a figure-heavy export never
+        # finish; an older Word that has no such option is not a reason to stop.
+        with contextlib.suppress(Exception):
             word.Options.Pagination = False
-        except Exception:                                     # noqa: BLE001
-            pass
         document = word.Documents.Open(str(DOCX), ReadOnly=True)
         try:
             document.SaveAs(str(PDF), FileFormat=17)
@@ -67,8 +67,10 @@ def page_images() -> int:
     try:
         import pypdfium2 as pdfium
     except ImportError:
-        print("pypdfium2 is not installed, so no page images were written. The visual "
-              "review is a required step, not an optional one: install pypdfium2.")
+        print(
+            "pypdfium2 is not installed, so no page images were written. The visual "
+            "review is a required step, not an optional one: install pypdfium2."
+        )
         return 1
     PAGES.mkdir(parents=True, exist_ok=True)
     for old in PAGES.glob("manuscript_p*.png"):
@@ -97,17 +99,16 @@ def check_pages() -> int:
     markdown. The file the referee opens is this one.
     """
     try:
-        import pypdf                                          # noqa: PLC0415
+        import pypdf  # noqa: PLC0415
     except ImportError:
-        print("pypdf is not installed, so the pages were not checked. A check that "
-              "passes when its dependency is absent is a check that cannot fail: "
-              "install pypdf.")
+        print(
+            "pypdf is not installed, so the pages were not checked. A check that "
+            "passes when its dependency is absent is a check that cannot fail: "
+            "install pypdf."
+        )
         return 1
 
-    lengths = [
-        len((page.extract_text() or "").strip())
-        for page in pypdf.PdfReader(str(PDF)).pages
-    ]
+    lengths = [len((page.extract_text() or "").strip()) for page in pypdf.PdfReader(str(PDF)).pages]
     if not lengths:
         print("the PDF has no pages")
         return 1
@@ -137,8 +138,7 @@ def _headings() -> set[str]:
     """
     source = (PAPER / "build" / "manuscript.md").read_text(encoding="utf-8")
     return {
-        " ".join(heading.split()).lower()
-        for heading in re.findall(r"(?m)^#{1,6}\s+(.*)$", source)
+        " ".join(heading.split()).lower() for heading in re.findall(r"(?m)^#{1,6}\s+(.*)$", source)
     }
 
 
@@ -165,8 +165,7 @@ def _candidates(line: str) -> tuple[str, ...]:
     """
     normalised = _normalise(line)
     without_trailing = re.sub(r"\s+\d+$", "", normalised)
-    return (normalised,) if without_trailing == normalised else (normalised,
-                                                                without_trailing)
+    return (normalised,) if without_trailing == normalised else (normalised, without_trailing)
 
 
 def stranded_pages(pages: list[str], headings: set[str]) -> list[tuple[int, str]]:
@@ -197,10 +196,9 @@ def check_page_endings() -> int:
     that the binding worked on the file the referee opens.
     """
     try:
-        import pypdf                                          # noqa: PLC0415
+        import pypdf  # noqa: PLC0415
     except ImportError:
-        print("pypdf is not installed, so the page endings were not checked: "
-              "install pypdf.")
+        print("pypdf is not installed, so the page endings were not checked: install pypdf.")
         return 1
 
     headings = _headings()

@@ -171,9 +171,7 @@ def derive(sources: dict[str, Any]) -> dict[str, Any]:
     if kept and dropped:
         metrics["density_gate_largest_kept_cm3"] = max(kept)
         metrics["density_gate_smallest_dropped_cm3"] = min(dropped)
-    ceilings = {
-        s["max_hu_in_body"] for s in eligibility if not s.get("eligible")
-    }
+    ceilings = {s["max_hu_in_body"] for s in eligibility if not s.get("eligible")}
     if ceilings:
         # Every excluded series reaches the ceiling by definition of the criterion, so the
         # smallest of their in-body maxima is the ceiling itself.
@@ -255,7 +253,9 @@ def freeze(check_only: bool = False) -> int:
             for name in stale:
                 print(f"  {name}")
             return 1
-        print(f"freeze current: {len(CITED) + len(CITED_BINARY)} files, {len(manifest['metrics'])} metrics")
+        print(
+            f"freeze current: {len(CITED) + len(CITED_BINARY)} files, {len(manifest['metrics'])} metrics"
+        )
         return 0
 
     FROZEN.mkdir(parents=True, exist_ok=True)
@@ -264,7 +264,9 @@ def freeze(check_only: bool = False) -> int:
     (FROZEN / "manifest.json").write_text(
         json.dumps(manifest, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
     )
-    print(f"froze {len(CITED) + len(CITED_BINARY)} files and derived {len(manifest['metrics'])} metrics")
+    print(
+        f"froze {len(CITED) + len(CITED_BINARY)} files and derived {len(manifest['metrics'])} metrics"
+    )
     return 0
 
 

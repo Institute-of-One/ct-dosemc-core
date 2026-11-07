@@ -78,9 +78,7 @@ def _plain_prose(text: str) -> str:
     not emphasise anything: removing every underscore turned ``figure4_stats.json``, a file
     this manuscript names, into ``figure4 stats.json`` and back into a citation of figure 4.
     """
-    return re.sub(
-        r"(?<![0-9A-Za-z])[_*]+|[_*]+(?![0-9A-Za-z])", " ", _strip_comments(text)
-    )
+    return re.sub(r"(?<![0-9A-Za-z])[_*]+|[_*]+(?![0-9A-Za-z])", " ", _strip_comments(text))
 
 
 def _manifest() -> dict:
@@ -246,14 +244,13 @@ def _declaration(built: str, label: str) -> str | None:
     label: **Funding.**, **Conflict of interest.**, **Data availability.** and so
     on, in the form the editor-in-chief's preparation guide prints.
     """
-    section = re.search(
-        r"^##\s*Declarations\s*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S
-    )
+    section = re.search(r"^##\s*Declarations\s*$(.*?)(?=^##\s|\Z)", built, flags=re.M | re.S)
     if section is None:
         return None
     found = re.search(
         rf"\*\*{re.escape(label)}\.\*\*(.*?)(?=\n\s*\n\*\*|\Z)",
-        section.group(1), flags=re.S,
+        section.group(1),
+        flags=re.S,
     )
     return " ".join(found.group(1).split()) if found else None
 
@@ -293,8 +290,7 @@ def check_code_is_reachable(built: str) -> None:
             "version the results came from"
         )
 
-    for label in ("Funding", "Conflict of interest", "Ethics approval",
-                  "Code availability"):
+    for label in ("Funding", "Conflict of interest", "Ethics approval", "Code availability"):
         if _declaration(built, label) is None:
             fail(f"the Declarations section makes no **{label}.** statement")
 
@@ -353,9 +349,19 @@ def check_figures(built: str) -> None:
 #: "bound" is on the list because the title was narrowed to use it. A word that this
 #: manuscript's own claim rests on and the gate does not know is a gate renamed around.
 _BOUNDING_WORDS = (
-    "floor", "ceiling", "bound", "irreducible", "fundamental limit", "cannot be improved",
-    "no better than", "any index", "all index", "any indices", "all indices",
-    "any indexes", "all indexes",
+    "floor",
+    "ceiling",
+    "bound",
+    "irreducible",
+    "fundamental limit",
+    "cannot be improved",
+    "no better than",
+    "any index",
+    "all index",
+    "any indices",
+    "all indices",
+    "any indexes",
+    "all indexes",
 )
 
 
@@ -382,8 +388,9 @@ def _title_and_abstract(built: str) -> str:
         if not name.startswith("abstract"):
             continue
         end = headings[index + 1].start() if index + 1 < len(headings) else len(built)
-        return title + built[heading.end(): end]
+        return title + built[heading.end() : end]
     return title
+
 
 #: The marker that points at the sentence delimiting the claim. An HTML comment, so it
 #: survives into paper/build/manuscript.md and vanishes from the .docx.
@@ -418,10 +425,7 @@ def check_a_bounding_claim_declares_its_scope(source: str, built: str) -> None:
     # boundaries so "all index" does not fire on "overall index", and a trailing s so a title
     # that says "two floors" is not a way past the gate.
     head = " ".join(_plain_prose(_title_and_abstract(built)).lower().split())
-    found = [
-        word for word in _BOUNDING_WORDS
-        if re.search(rf"\b{re.escape(word)}s?\b", head)
-    ]
+    found = [word for word in _BOUNDING_WORDS if re.search(rf"\b{re.escape(word)}s?\b", head)]
     if not found:
         return
 
@@ -529,9 +533,7 @@ _NUMBER_LIST = rf"(?:{_NUMBER})(?:\s*{_JOIN}\s*(?:{_NUMBER}|{_PANEL_ONLY}))*"
 #: are files this manuscript names in prose, not citations. A full stop followed by a letter
 #: is an extension; a full stop followed by a space is the end of a sentence, and "figure 6."
 #: is still a citation.
-_FIGURE_CITATION = re.compile(
-    rf"\b(?:figs?|figures?)\.?\s*({_NUMBER_LIST})(?!\w|\.\w)", re.I
-)
+_FIGURE_CITATION = re.compile(rf"\b(?:figs?|figures?)\.?\s*({_NUMBER_LIST})(?!\w|\.\w)", re.I)
 
 
 #: A plural citation continued by a comma -- "figures 1, 6" -- which this file refuses to
@@ -561,9 +563,12 @@ def _numbers_cited(citation: str) -> list[int]:
     citation = re.sub(r"\(\s*[a-z]\s*\)|(?<=\d)\s*[a-z]\b", "", citation, flags=re.I)
     parts = re.split(rf"\s*({_JOIN})\s*", citation, flags=re.I)
     numbers = [int(parts[0])]
-    for separator, value in zip((p.lower() for p in parts[1::2]), parts[2::2]):
+    # Not strict: re.split with a capturing group leaves a trailing text part, so
+    # the separator list is one shorter than the value list whenever the citation
+    # ends in a number -- which is every citation.
+    for separator, value in zip((p.lower() for p in parts[1::2]), parts[2::2], strict=False):
         if not value.strip().isdigit():
-            continue        # a bare panel letter: "1a-c" is still figure 1
+            continue  # a bare panel letter: "1a-c" is still figure 1
         number = int(value)
         if separator in {"to", "through", "-", "–", "—"} and number > numbers[-1]:
             numbers.extend(range(numbers[-1] + 1, number + 1))
@@ -617,8 +622,8 @@ def check_figures_are_first_cited_in_order(built: str) -> None:
     # be read as another paper's, which is a way to pass a manuscript that is out of order.
     foreign = re.compile(
         r"\s*(?:of|in|from)\s+(?:"
-        r"[A-Z][\w.'-]*(?:\s+et\s+al\b|\s*\(\s*\d{4}|\s+\d{4}\b)"   # Sechopoulos et al (2015)
-        r"|[A-Z]{2,}[-\s]?\d"                                        # TG-195
+        r"[A-Z][\w.'-]*(?:\s+et\s+al\b|\s*\(\s*\d{4}|\s+\d{4}\b)"  # Sechopoulos et al (2015)
+        r"|[A-Z]{2,}[-\s]?\d"  # TG-195
         r")"
     )
     for comma in _COMMA_LIST.finditer(prose):
@@ -638,9 +643,8 @@ def check_figures_are_first_cited_in_order(built: str) -> None:
                 first.setdefault(number, match.start() * 1000 + offset)
 
     cited = sorted(first)
-    out_of_order = [
-        (a, b) for a, b in zip(cited, cited[1:]) if first[a] > first[b]
-    ]
+    # Not strict: pairing a list with its own tail is one shorter by construction.
+    out_of_order = [(a, b) for a, b in zip(cited, cited[1:], strict=False) if first[a] > first[b]]
     for earlier, later in out_of_order:
         fail(
             f"figure {later} is first named before figure {earlier}; figures must be "
@@ -673,9 +677,7 @@ def check_no_figure_is_renumbered_on_the_way_in(built: str) -> None:
             continue
         # Anchored to a token boundary: unanchored, the "fig" in "config2_figure6" matched
         # and the file was reported as drawn under figure 2.
-        drawn = re.search(
-            r"(?:^|[._\- ])fig(?:ure)?[._\- ]?(\d+)", Path(source).name, re.I
-        )
+        drawn = re.search(r"(?:^|[._\- ])fig(?:ure)?[._\- ]?(\d+)", Path(source).name, re.I)
         if drawn and int(drawn.group(1)) != number:
             fail(
                 f"figure {number} is copied from {source}, which was drawn as figure "
@@ -770,11 +772,7 @@ def check_references(built: str) -> None:
         fail("the manuscript has no '## References' section")
         return
 
-    entries = [
-        entry.strip()
-        for entry in re.split(r"\n\s*\n", tail.strip())
-        if entry.strip()
-    ]
+    entries = [entry.strip() for entry in re.split(r"\n\s*\n", tail.strip()) if entry.strip()]
     numbered: dict[int, str] = {}
     for entry in entries:
         match = re.match(r"(\d+)\.\s+(\S.*)", " ".join(entry.split()))
@@ -792,10 +790,7 @@ def check_references(built: str) -> None:
 
     expected = list(range(1, len(numbered) + 1))
     if sorted(numbered) != expected:
-        fail(
-            f"the reference numbers are {sorted(numbered)}, not {expected[0]}.."
-            f"{expected[-1]}"
-        )
+        fail(f"the reference numbers are {sorted(numbered)}, not {expected[0]}..{expected[-1]}")
 
     # Citations, as the journal writes them: [9] or [11, 12].
     cited: list[int] = []
@@ -822,11 +817,7 @@ def check_references(built: str) -> None:
     # exactly why it is worth asserting: if it ever does, the numbering has
     # stopped coming from the prose and every citation is suspect.
     if cited != sorted(cited):
-        out_of_order = [
-            f"{b} before {a}"
-            for a, b in zip(cited, cited[1:], strict=False)
-            if b < a
-        ]
+        out_of_order = [f"{b} before {a}" for a, b in zip(cited, cited[1:], strict=False) if b < a]
         fail(f"references are not numbered in order of first citation: {out_of_order}")
 
     # A reference must be traceable. A DOI is the usual way; a report or a

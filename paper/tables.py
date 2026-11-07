@@ -100,8 +100,9 @@ def check_column_widths(header: list[str], rows: list[list[str]]) -> list[str]:
     for index, name in enumerate(header):
         inches = weights[index] / total * TEXT_BLOCK_INCHES - CELL_PADDING_INCHES
         cells = [name, *(row[index] for row in rows if index < len(row))]
-        longest = max((max(cell.split(), key=len, default="") for cell in cells),
-                      key=len, default="")
+        longest = max(
+            (max(cell.split(), key=len, default="") for cell in cells), key=len, default=""
+        )
         needed = len(longest) * CHARACTER_INCHES
         if needed > inches:
             problems.append(
@@ -109,6 +110,7 @@ def check_column_widths(header: list[str], rows: list[list[str]]) -> list[str]:
                 f"which needs about {needed:.2f} in: Word will break it in two"
             )
     return problems
+
 
 #: U+2212. An ASCII hyphen lets Word break a line directly after it, and a bound
 #: that begins the next line loses its sign.
@@ -173,12 +175,11 @@ def organ_doses() -> str:
     # the dose grid costs the organ's mass.
     metrics = json.loads((FROZEN / "manifest.json").read_text(encoding="utf-8"))["metrics"]
     resample = json.loads((FROZEN / "resample_cost.json").read_text(encoding="utf-8"))
-    worst_organ = max(
-        resample["by_organ"].items(), key=lambda item: item[1]["median_abs_pct"]
-    )
+    worst_organ = max(resample["by_organ"].items(), key=lambda item: item[1]["median_abs_pct"])
     stem, _, side = worst_organ[0].rpartition("_")
     worst_name = (
-        f"{side} {stem.replace('_', ' ')}" if side in {"left", "right"}
+        f"{side} {stem.replace('_', ' ')}"
+        if side in {"left", "right"}
         else worst_organ[0].replace("_", " ")
     )
 

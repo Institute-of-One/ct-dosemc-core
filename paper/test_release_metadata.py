@@ -91,8 +91,10 @@ class Repository(unittest.TestCase):
     def run_check(self, record=RECORD, **overrides):
         paths = self.write(**overrides)
         patches = {name: paths[name] for name in paths}
-        with mock.patch.multiple(release, **patches), \
-             mock.patch.object(release, "_zenodo_record", return_value=record):
+        with (
+            mock.patch.multiple(release, **patches),
+            mock.patch.object(release, "_zenodo_record", return_value=record),
+        ):
             return release.check()
 
 
@@ -103,23 +105,20 @@ class TheConsistentCasePasses(Repository):
 
 class CatchesAVersionThatDisagrees(Repository):
     def test_pyproject_pins_a_different_version(self):
-        problems = self.run_check(
-            pyproject='[project]\nname = "x"\nversion = "0.1.0"\n')
-        self.assertTrue(any("pyproject.toml declares version '0.1.0'" in p
-                            for p in problems))
+        problems = self.run_check(pyproject='[project]\nname = "x"\nversion = "0.1.0"\n')
+        self.assertTrue(any("pyproject.toml declares version '0.1.0'" in p for p in problems))
 
     def test_pyproject_pinning_the_same_version_is_allowed(self):
         self.assertEqual(
-            self.run_check(pyproject=f'[project]\nname = "x"\nversion = "{VERSION}"\n'),
-            [])
+            self.run_check(pyproject=f'[project]\nname = "x"\nversion = "{VERSION}"\n'), []
+        )
 
     def test_pyproject_with_no_version_at_all(self):
         problems = self.run_check(pyproject='[project]\nname = "x"\n')
         self.assertTrue(any("neither declares a version" in p for p in problems))
 
     def test_zenodo_json_disagrees(self):
-        problems = self.run_check(
-            zenodo=json.dumps({"title": "x", "version": "0.2.0"}))
+        problems = self.run_check(zenodo=json.dumps({"title": "x", "version": "0.2.0"}))
         self.assertTrue(any(".zenodo.json declares version" in p for p in problems))
 
     def test_citation_disagrees(self):
@@ -141,8 +140,7 @@ class CatchesADoiThatIsTheWrongKind(Repository):
         self.assertTrue(any("concept DOI" in p for p in problems))
 
     def test_citation_carrying_no_doi(self):
-        problems = self.run_check(
-            citation=CITATION.replace(f"doi: {CONCEPT}\n", ""))
+        problems = self.run_check(citation=CITATION.replace(f"doi: {CONCEPT}\n", ""))
         self.assertTrue(any("carries no doi" in p for p in problems))
 
     def test_zenodo_recording_a_different_concept_doi(self):
@@ -155,13 +153,13 @@ class CatchesADoiThatIsTheWrongKind(Repository):
         # It tells Zenodo the DOI was assigned elsewhere, and Zenodo then stops
         # minting a version DOI for the release.
         problems = self.run_check(
-            zenodo=json.dumps({"title": "x", "version": VERSION, "doi": CONCEPT}))
+            zenodo=json.dumps({"title": "x", "version": VERSION, "doi": CONCEPT})
+        )
         self.assertTrue(any("stops it minting" in p for p in problems))
 
     def test_a_doi_that_does_not_resolve(self):
         problems = self.run_check(record=None)
-        self.assertTrue(any("could not be read from the Zenodo records API" in p
-                            for p in problems))
+        self.assertTrue(any("could not be read from the Zenodo records API" in p for p in problems))
 
     def test_a_manuscript_with_no_data_statement(self):
         problems = self.run_check(built="# A title\n\nNothing here.\n")

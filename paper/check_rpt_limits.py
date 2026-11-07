@@ -84,15 +84,15 @@ def prose(text: str) -> str:
     """The text with everything that is not prose removed."""
     text = re.sub(r"```.*?```", " ", text, flags=re.S)
     text = re.sub(r"<!--.*?-->", " ", text, flags=re.S)
-    text = re.sub(r"(?m)^\s*\|.*$", " ", text)            # table rows
-    text = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", text)     # placed images
+    text = re.sub(r"(?m)^\s*\|.*$", " ", text)  # table rows
+    text = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", text)  # placed images
     # A caption is a paragraph, not a line. Stripping only the line the label
     # sits on left most of every caption in the count, and left the whole of
     # Table 1's -- a hundred and ten words. Figures and tables are outside the
     # journal's text count, and a caption is part of its figure or table.
     text = re.sub(r"(?ms)^\*\*(?:Figure|Table) \d+\.\*\*.*?(?=\n\s*\n|\Z)", " ", text)
-    text = re.sub(r"(?m)^#{1,6}\s+.*$", " ", text)        # headings
-    text = re.sub(r"(?m)^\s*-{3,}\s*$", " ", text)        # horizontal rules
+    text = re.sub(r"(?m)^#{1,6}\s+.*$", " ", text)  # headings
+    text = re.sub(r"(?m)^\s*-{3,}\s*$", " ", text)  # horizontal rules
     return text
 
 
@@ -130,9 +130,9 @@ def counted_text(text: str) -> str:
     start = re.search(r"(?m)^##\s+1\.\s", text)
     if not start:
         return ""
-    end = re.search(r"(?m)^##\s+References\b", text[start.start():])
+    end = re.search(r"(?m)^##\s+References\b", text[start.start() :])
     stop = start.start() + end.start() if end else len(text)
-    return text[start.start():stop]
+    return text[start.start() : stop]
 
 
 def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
@@ -144,8 +144,9 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
     if not title:
         problems.append("the manuscript has no level-1 title")
 
-    abstract = next((body for level, heading, body in found
-                     if heading.lower().startswith("abstract")), "")
+    abstract = next(
+        (body for level, heading, body in found if heading.lower().startswith("abstract")), ""
+    )
     if not abstract:
         problems.append("no Abstract section")
     # The keyword line sits inside the abstract section and is not abstract prose.
@@ -168,8 +169,7 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
     if re.search(r"(?i)\b(?:Fig\.|Figure|Table)\s+\d", abstract_prose):
         problems.append("the abstract names a figure or table; the guide forbids it")
 
-    numbered = [(heading, body) for level, heading, body in found
-                if re.match(r"^\d+\.\s", heading)]
+    numbered = [(heading, body) for level, heading, body in found if re.match(r"^\d+\.\s", heading)]
     names = [heading for heading, _ in numbered]
     if names != list(EXPECTED_SECTIONS):
         problems.append(
@@ -182,7 +182,7 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
     # under a section whose first subsection is 4.5 tells the reader four
     # subsections are missing.
     subsections: dict[str, list[int]] = {}
-    for level, heading, _ in found:
+    for _level, heading, _ in found:
         match = re.match(r"^(\d+)\.(\d+)\s", heading)
         if match:
             subsections.setdefault(match.group(1), []).append(int(match.group(2)))
@@ -195,8 +195,7 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
         if wanted not in headings:
             problems.append(f"no {wanted!r} section")
 
-    declarations = next((body for level, heading, body in found
-                         if heading == "Declarations"), "")
+    declarations = next((body for level, heading, body in found if heading == "Declarations"), "")
     for wanted in EXPECTED_DECLARATIONS:
         if f"**{wanted}.**" not in declarations:
             problems.append(f"the Declarations section makes no {wanted!r} declaration")
@@ -205,8 +204,9 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
     if not body_words:
         problems.append("no numbered text was found to count")
 
-    reference_section = next((body for level, heading, body in found
-                              if heading == "References"), "")
+    reference_section = next(
+        (body for level, heading, body in found if heading == "References"), ""
+    )
     references = len(re.findall(r"(?m)^\s*\d+\.\s+\S", reference_section))
 
     figures = {int(n) for n in re.findall(r"(?m)^\*\*Figure (\d+)\.\*\*", text)}
@@ -232,8 +232,9 @@ def measure(text: str) -> tuple[dict[str, int], list[str], list[str]]:
                 problems.append(f"bold text in section {heading!r}: {run[:60]!r}")
 
     if "<!-- scope-of-claim -->" not in text and re.search(
-            r"(?i)\b(floor|ceiling|irreducible|fundamental limit|sets the limit)\b",
-            title + abstract_prose):
+        r"(?i)\b(floor|ceiling|irreducible|fundamental limit|sets the limit)\b",
+        title + abstract_prose,
+    ):
         problems.append(
             "the title or abstract states a bound but there is no scope-of-claim "
             "paragraph; a referee rejected this manuscript once on exactly that"
@@ -257,7 +258,7 @@ def main(argv: list[str] | None = None) -> int:
     over = []
     for name, limit in LIMITS.items():
         value = measured[name]
-        status = "ok" if value <= limit else "OVER by %d" % (value - limit)
+        status = "ok" if value <= limit else f"OVER by {value - limit}"
         if value > limit:
             over.append(f"{name}: {value} against a limit of {limit}")
         print(f"  {name:<22} {value:>6}   limit {limit:<6} {status}")

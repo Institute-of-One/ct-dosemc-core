@@ -145,30 +145,33 @@ class CatchesAnAbstractThatBreaksTheRules(unittest.TestCase):
         self.assertTrue(any("names a figure" in p for p in problems(damaged)))
 
     def test_too_few_keywords(self):
-        damaged = damage("computed tomography, organ dose, Monte Carlo, dose index",
-            "computed tomography, organ dose")
+        damaged = damage(
+            "computed tomography, organ dose, Monte Carlo, dose index",
+            "computed tomography, organ dose",
+        )
         self.assertTrue(any("keywords" in p for p in problems(damaged)))
 
     def test_too_many_keywords(self):
-        damaged = damage("computed tomography, organ dose, Monte Carlo, dose index",
-            "a, b, c, d, e, f, g")
+        damaged = damage(
+            "computed tomography, organ dose, Monte Carlo, dose index", "a, b, c, d, e, f, g"
+        )
         self.assertTrue(any("keywords" in p for p in problems(damaged)))
 
     def test_no_keyword_line_at_all(self):
-        damaged = damage("**Keywords:** computed tomography, organ dose, Monte Carlo, dose index\n\n", "")
+        damaged = damage(
+            "**Keywords:** computed tomography, organ dose, Monte Carlo, dose index\n\n", ""
+        )
         self.assertTrue(any("Keywords" in p for p in problems(damaged)))
 
 
 class CatchesAStructureTheJournalDoesNotAskFor(unittest.TestCase):
     def test_a_section_renamed(self):
         damaged = damage("## 2. Materials and methods", "## 2. Methods")
-        self.assertTrue(any("not the ones the journal expects" in p
-                            for p in problems(damaged)))
+        self.assertTrue(any("not the ones the journal expects" in p for p in problems(damaged)))
 
     def test_a_section_missing(self):
         damaged = damage("## 5. Conclusions\n\nSome conclusions.\n\n", "")
-        self.assertTrue(any("not the ones the journal expects" in p
-                            for p in problems(damaged)))
+        self.assertTrue(any("not the ones the journal expects" in p for p in problems(damaged)))
 
     def test_a_gap_in_the_subsection_numbers(self):
         # "4.5 Limitations" under a Discussion whose other subsection is 4.1
@@ -187,8 +190,7 @@ class CatchesAStructureTheJournalDoesNotAskFor(unittest.TestCase):
 
     def test_the_generative_ai_declaration_left_out(self):
         damaged = damage("**Use of generative artificial intelligence.**", "**Note.**")
-        self.assertTrue(any("generative artificial intelligence" in p
-                            for p in problems(damaged)))
+        self.assertTrue(any("generative artificial intelligence" in p for p in problems(damaged)))
 
     def test_no_references_section(self):
         damaged = damage("## References", "## Bibliography")
@@ -215,10 +217,14 @@ class CatchesABoundWithNoStatedScope(unittest.TestCase):
         self.assertTrue(any("scope-of-claim" in p for p in problems(damaged)))
 
     def test_no_scope_paragraph_is_needed_when_nothing_is_bounded(self):
-        unbounded = damage("# Between-patient variation sets the limit on index-based organ dose",
-            "# Organ dose in abdominal CT from routine metadata"
-        ).replace("<!-- scope-of-claim -->\n", "").replace(
-            "The bound is over the conversions scored here.", "Nothing is bounded here.")
+        unbounded = (
+            damage(
+                "# Between-patient variation sets the limit on index-based organ dose",
+                "# Organ dose in abdominal CT from routine metadata",
+            )
+            .replace("<!-- scope-of-claim -->\n", "")
+            .replace("The bound is over the conversions scored here.", "Nothing is bounded here.")
+        )
         self.assertEqual([p for p in problems(unbounded) if "scope" in p], [])
 
 
@@ -229,15 +235,19 @@ class CountsAgainstTheLimits(unittest.TestCase):
         self.assertGreater(measured["text words"], limits.LIMITS["text words"])
 
     def test_an_abstract_over_the_limit(self):
-        damaged = damage("A short abstract that says what was done and what came of it, with no citation and\n"
+        damaged = damage(
+            "A short abstract that says what was done and what came of it, with no citation and\n"
             "no figure named, and comfortably under the limit.",
-            "word " * (limits.LIMITS["abstract words"] + 10))
+            "word " * (limits.LIMITS["abstract words"] + 10),
+        )
         measured, _, _ = check(damaged)
         self.assertGreater(measured["abstract words"], limits.LIMITS["abstract words"])
 
     def test_a_title_over_the_limit(self):
-        damaged = damage("# Between-patient variation sets the limit on index-based organ dose",
-            "# " + "word " * (limits.LIMITS["title words"] + 5))
+        damaged = damage(
+            "# Between-patient variation sets the limit on index-based organ dose",
+            "# " + "word " * (limits.LIMITS["title words"] + 5),
+        )
         measured, _, _ = check(damaged)
         self.assertGreater(measured["title words"], limits.LIMITS["title words"])
 
@@ -254,11 +264,13 @@ class CountsAgainstTheLimits(unittest.TestCase):
         # Figures and tables are outside the journal's count, and a caption is
         # part of its figure or table. Stripping only the line the label sits on
         # left a hundred and ten words of Table 1's caption in the total.
-        text = ("one two three\n\n"
-                "**Table 1.** A caption that runs\n"
-                "onto a second line and then\n"
-                "a third.\n\n"
-                "four five\n")
+        text = (
+            "one two three\n\n"
+            "**Table 1.** A caption that runs\n"
+            "onto a second line and then\n"
+            "a third.\n\n"
+            "four five\n"
+        )
         self.assertEqual(limits.words(text), 5)
 
     def test_a_figure_caption_paragraph_is_excluded(self):
@@ -280,8 +292,12 @@ class CountsAgainstTheLimits(unittest.TestCase):
             "## References\n\n1. A reference that is not counted at all.\n"
         )
         counted = limits.counted_text(text)
-        for inside in ("intro words", "conclusion words", "acknowledgment words",
-                       "declaration words"):
+        for inside in (
+            "intro words",
+            "conclusion words",
+            "acknowledgment words",
+            "declaration words",
+        ):
             self.assertIn(inside, counted)
         for outside in ("abstract words here", "A reference that is not counted"):
             self.assertNotIn(outside, counted)
@@ -297,8 +313,11 @@ class TheRealManuscriptPasses(unittest.TestCase):
 
     def test_within_every_limit_and_correctly_structured(self):
         measured, _, found = check(self.text)
-        over = [f"{name}: {measured[name]} > {limit}"
-                for name, limit in limits.LIMITS.items() if measured[name] > limit]
+        over = [
+            f"{name}: {measured[name]} > {limit}"
+            for name, limit in limits.LIMITS.items()
+            if measured[name] > limit
+        ]
         self.assertEqual(over, [])
         self.assertEqual(found, [])
 

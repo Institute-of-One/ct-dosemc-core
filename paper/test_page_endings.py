@@ -39,39 +39,39 @@ HEADINGS = {
 class CatchesAStrandedHeading(unittest.TestCase):
     def test_a_numbered_section_alone_at_the_foot(self):
         page = "412 some last paragraph of the section.\n413 \n414 3. Results"
-        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS),
-                         [(1, "3. results")])
+        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS), [(1, "3. results")])
 
     def test_a_subsection_alone_at_the_foot(self):
         page = "500 text\n501 4.6 Limitations"
-        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS),
-                         [(1, "4.6 limitations")])
+        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS), [(1, "4.6 limitations")])
 
     def test_a_named_back_matter_heading_alone_at_the_foot(self):
         page = "600 the last of the conclusions.\n601 References"
-        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS),
-                         [(1, "references")])
+        self.assertEqual(render_pdf.stranded_pages([page], HEADINGS), [(1, "references")])
 
     def test_several_pages_are_all_reported(self):
         pages = ["1 a\n2 3. Results", "3 b\n4 body text", "5 c\n6 Declarations"]
-        self.assertEqual([n for n, _ in render_pdf.stranded_pages(pages, HEADINGS)],
-                         [1, 3])
+        self.assertEqual([n for n, _ in render_pdf.stranded_pages(pages, HEADINGS)], [1, 3])
 
 
 class DoesNotCryWolf(unittest.TestCase):
     """The two findings the pattern-matching version reported, which were wrong."""
 
     def test_a_numbered_list_item_is_not_a_heading(self):
-        page = ("320 Five conversions are compared:\n"
-                "321 1. a single factor for the whole cohort;\n"
-                "322 2. one factor per organ, which is what a per-organ coefficient "
-                "table offers;")
+        page = (
+            "320 Five conversions are compared:\n"
+            "321 1. a single factor for the whole cohort;\n"
+            "322 2. one factor per organ, which is what a per-organ coefficient "
+            "table offers;"
+        )
         self.assertEqual(render_pdf.stranded_pages([page], HEADINGS), [])
 
     def test_a_reference_entry_is_not_a_heading(self):
-        page = ("474 McCollough C, Bakalyar D, Bostani M. Use of Water Equivalent "
-                "Diameter. AAPM; 2014. AAPM Report\n"
-                "475 220. https://doi.org/10.37206/146. 475")
+        page = (
+            "474 McCollough C, Bakalyar D, Bostani M. Use of Water Equivalent "
+            "Diameter. AAPM; 2014. AAPM Report\n"
+            "475 220. https://doi.org/10.37206/146. 475"
+        )
         self.assertEqual(render_pdf.stranded_pages([page], HEADINGS), [])
 
     def test_ordinary_prose_is_not_a_heading(self):
@@ -93,20 +93,24 @@ class ReadsTheMarginLineNumbers(unittest.TestCase):
     def test_a_heading_ending_in_a_number_is_offered_unchanged(self):
         # Stripping the trailing number unconditionally truncated this heading
         # to "... Case", so its stranding could never have been reported.
-        self.assertIn("2.3 verification against tg-195 case 4",
-                      render_pdf._candidates("138 2.3 Verification against TG-195 Case 4"))
+        self.assertIn(
+            "2.3 verification against tg-195 case 4",
+            render_pdf._candidates("138 2.3 Verification against TG-195 Case 4"),
+        )
 
     def test_a_heading_with_a_number_in_it_survives(self):
         self.assertEqual(
             render_pdf._normalise("138 2.3 Verification against TG-195 Case 4"),
-            "2.3 verification against tg-195 case 4")
+            "2.3 verification against tg-195 case 4",
+        )
 
     def test_a_heading_ending_in_a_number_is_caught_when_stranded(self):
         headings = HEADINGS | {"2.3 verification against tg-195 case 4"}
-        page = "\n".join(["137 text above",
-                          "138 2.3 Verification against TG-195 Case 4"])
-        self.assertEqual(render_pdf.stranded_pages([page], headings),
-                         [(1, "2.3 verification against tg-195 case 4")])
+        page = "\n".join(["137 text above", "138 2.3 Verification against TG-195 Case 4"])
+        self.assertEqual(
+            render_pdf.stranded_pages([page], headings),
+            [(1, "2.3 verification against tg-195 case 4")],
+        )
 
 
 class TheRealManuscriptsHeadingsAreFound(unittest.TestCase):
