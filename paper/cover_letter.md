@@ -58,7 +58,7 @@ replica-measured uncertainty and a reference code fixed before any comparison wa
 run; the difference from PENELOPE at the centre volume of interest is
 [[results:manifest.json:metrics.tg195_centre_abs_pct|.3f]] %. The software, the
 frozen result tables and the commands that regenerate every figure are openly
-archived under the MIT licence at https://doi.org/10.5281/zenodo.23537665. No
+archived under the MIT licence at https://doi.org/10.5281/zenodo.24029358. No
 imaging is redistributed: every series is identified by collection, Series
 Instance UID and licence so that a reader can re-fetch it.
 

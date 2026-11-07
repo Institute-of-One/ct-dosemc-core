@@ -533,7 +533,7 @@ recruited, no additional exposure was delivered and no identifiable data were ac
 Consent for the deposited images was obtained by the depositing institutions.
 
 **Data availability.** The frozen result tables and the commands that regenerate every
-figure are openly available at https://doi.org/10.5281/zenodo.23537665 under the MIT
+figure are openly available at https://doi.org/10.5281/zenodo.24029358 under the MIT
 licence, together with the cross-section Fig. 1 is drawn from. No other imaging is
 redistributed: the collection, Series Instance UID, licence and retrieval date of every
 series are recorded there, so any reader can re-fetch them. Every

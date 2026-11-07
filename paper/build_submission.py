@@ -33,6 +33,7 @@ sys.path.insert(0, str(PAPER))
 
 import build_manuscript  # noqa: E402
 import check_rpt_limits  # noqa: E402
+import collect_figures  # noqa: E402
 
 BUILD = PAPER / "build"
 BUILT_MANUSCRIPT = BUILD / "manuscript.md"
@@ -50,29 +51,41 @@ KIT = BUILD / "SUBMISSION_KIT.md"
 POINT_LIMIT = 100
 POINT_COUNT = (3, 5)
 
+
 #: Editorial Manager's own item types, from the same guide: M for the main
 #: document, F for a figure, S for a supporting file.
 #: Each entry is the path, relative to paper/, of a file this build writes or
 #: this repository keeps. The kit reports whether each one exists, so a file
 #: that was never built is named on the list rather than discovered at the
 #: portal.
-UPLOADS = (
-    ("build/manuscript.docx", "M", "Manuscript"),
-    ("build/figures/Figure_1.png", "F", "Figure 1"),
-    ("build/figures/Figure_2.png", "F", "Figure 2"),
-    ("build/figures/Figure_3.png", "F", "Figure 3"),
-    ("build/figures/Figure_4.png", "F", "Figure 4"),
-    ("build/figures/Figure_5.png", "F", "Figure 5"),
-    ("build/figures/Figure_6.png", "F", "Figure 6"),
-    ("build/cover_letter.docx", "S", "Cover Letter"),
-    # The filled copy in build/, not the blank template in submission/. The
-    # template is kept as downloaded and never written to.
-    (
-        "build/12194_RPT Submission Checklist_2025.xlsx",
-        "S",
-        "Supplementary Material (only for review)",
-    ),
-)
+def uploads() -> tuple[tuple[str, str, str], ...]:
+    """Everything the portal is given, in the order it is attached.
+
+    The figures are resolved from the manuscript's own figure table, not typed.
+    They were typed once, as six rows, and when a seventh figure was added the
+    kit went on naming six: the list of files to upload was one short, and the
+    one it left out was Figure 7. A kit that is a memory is the defect this
+    whole module exists to prevent, and it had the defect itself.
+
+    It is a function and not a constant so that it answers for the figure table
+    as it is when the kit is written, which is also what lets a test move the
+    table and see the kit follow.
+    """
+    return (
+        ("build/manuscript.docx", "M", "Manuscript"),
+        *(
+            (f"build/figures/Figure_{number}.png", "F", f"Figure {number}")
+            for number in sorted(collect_figures.FIGURE_SOURCES)
+        ),
+        ("build/cover_letter.docx", "S", "Cover Letter"),
+        # The filled copy in build/, not the blank template in submission/. The
+        # template is kept as downloaded and never written to.
+        (
+            "build/12194_RPT Submission Checklist_2025.xlsx",
+            "S",
+            "Supplementary Material (only for review)",
+        ),
+    )
 
 
 def _title() -> str:
@@ -168,7 +181,7 @@ def build_kit(points: list[str]) -> str:
     doi = re.search(r"10\.5281/zenodo\.\d+", built)
     present = []
     missing = []
-    for relative, kind, label in UPLOADS:
+    for relative, kind, label in uploads():
         path = PAPER / relative
         (present if path.is_file() else missing).append((Path(relative).name, kind, label, path))
 
