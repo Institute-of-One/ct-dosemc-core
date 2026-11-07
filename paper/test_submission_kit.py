@@ -51,9 +51,21 @@ class TheUploadList(unittest.TestCase):
         self.assertEqual(numbers, list(range(1, len(numbers) + 1)))
 
     def test_the_manuscript_is_first_and_the_supporting_files_last(self):
+        """Main document, then every figure, then whatever supports them.
+
+        This asserted the last two were both supporting files, which was a count
+        and not the rule: the cover letter was one of them, and it left the list
+        on 2026-11-07 because Editorial Manager has no item type for one at this
+        journal and takes the letter as text instead. The rule is the order.
+        """
         kinds = [kind for _, kind, _ in kit.uploads()]
         self.assertEqual(kinds[0], "M")
-        self.assertEqual(kinds[-2:], ["S", "S"])
+        self.assertEqual(kinds[-1], "S")
+        figures = [i for i, k in enumerate(kinds) if k == "F"]
+        supporting = [i for i, k in enumerate(kinds) if k == "S"]
+        self.assertTrue(figures, "the list has no figures")
+        self.assertTrue(supporting, "the list has no supporting files")
+        self.assertLess(max(figures), min(supporting), "a figure follows a supporting file")
 
     def test_an_added_figure_reaches_the_upload_list(self):
         """The defect itself: a figure added to the manuscript, not to the kit."""

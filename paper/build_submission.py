@@ -45,6 +45,12 @@ POINTS_SOURCE = PAPER / "novel_points.md"
 
 COVER_TEXT = BUILD / "cover_letter.txt"
 COVER_DOCX = BUILD / "cover_letter.docx"
+#: The letter as the portal's comment box takes it: no markdown emphasis, because
+#: a plain textarea prints the asterisks. This existed as a file written by hand on
+#: 2026-11-07 and was still the pre-correction letter hours later, with four claims
+#: in it the manuscript had withdrawn. Generated here for the same reason the kit
+#: is generated: a copy nobody writes is a copy nobody updates.
+COVER_PORTAL = BUILD / "cover_letter_for_portal.txt"
 POINTS_TEXT = BUILD / "novel_scientific_points.txt"
 KIT = BUILD / "SUBMISSION_KIT.md"
 
@@ -89,7 +95,15 @@ def uploads() -> tuple[tuple[str, str, str], ...]:
             (f"build/figures/Figure_{number}.png", "F", f"Figure {number}")
             for number in sorted(collect_figures.FIGURE_SOURCES)
         ),
-        ("build/cover_letter.docx", "S", "Cover Letter"),
+        # No cover letter. Editorial Manager offers no item type for one at this
+        # journal -- the list is Main Document, Response to reviewers, Figure, Table,
+        # Supplementary Material, Authorship change form, LaTeX files, ESM and links
+        # -- and its Comments step takes the letter as text instead. The kit named a
+        # `cover_letter.docx` upload with an item type this portal does not have, and
+        # the letter that actually reached the editor was pasted from a file written
+        # by hand that nothing regenerated. Both are fixed: the letter is pasted from
+        # build/cover_letter_for_portal.txt, which the build writes.
+        #
         # The filled copy in build/, not the blank template in submission/. The
         # template is kept as downloaded and never written to.
         (
@@ -102,6 +116,22 @@ def uploads() -> tuple[tuple[str, str, str], ...]:
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+#: ``*emphasis*`` or ``_emphasis_`` around text with no line break in it.
+_EMPHASIS = re.compile(r"(?<!\w)([*_])(?!\s)([^\n*_]+?)(?<!\s)\1(?!\w)")
+
+
+def for_portal(letter: str) -> str:
+    """The letter as a plain textarea takes it.
+
+    Editorial Manager's cover-letter box is a textarea, not a rich field, so a
+    journal name wrapped in asterisks for the Word letter is printed to the editor
+    with the asterisks in it. Nothing else changes: the paragraphs are already one
+    line each, which is how this letter is written, because a letter wrapped at 90
+    columns arrives in the box with every line broken in the middle.
+    """
+    return _EMPHASIS.sub(r"\2", letter)
 
 
 def stage_uploads() -> list[str]:
@@ -274,6 +304,13 @@ def build_kit(points: list[str]) -> str:
         lines.append(f"| `{name}` | {kind} | {label} — **NOT BUILT YET** ({path}) |")
     lines += [
         "",
+        "The cover letter is not among them. Editorial Manager offers no item type for",
+        'one at this journal; its Comments step says "Enter or paste your cover letter',
+        'text into the box below", and that is where it goes. Paste',
+        f"`{COVER_PORTAL.name}`, which is the letter with the markdown emphasis removed",
+        f"because a textarea prints the asterisks. `{COVER_DOCX.name}` is built as the",
+        "record of what was sent, not as an upload.",
+        "",
         "## Novel scientific points",
         "",
         f"Three to five, at most {POINT_LIMIT} characters each. Paste into the metadata",
@@ -334,6 +371,10 @@ def main(argv: list[str] | None = None) -> int:
         f"wrote {COVER_TEXT} ({len(letter.split())} words, "
         f"{len(letter.strip().split(chr(10) * 2))} paragraphs)"
     )
+
+    portal = for_portal(letter)
+    COVER_PORTAL.write_text(portal, encoding="utf-8", newline="\n")
+    print(f"wrote {COVER_PORTAL} ({portal.count('*')} asterisks remaining)")
 
     points = build_points()
     POINTS_TEXT.write_text("\n".join(points) + "\n", encoding="utf-8", newline="\n")
