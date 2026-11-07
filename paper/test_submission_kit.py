@@ -138,5 +138,60 @@ class TheWrittenKit(unittest.TestCase):
         self.assertIn(title, self.text)
 
 
+class TheStagingFolder(unittest.TestCase):
+    """The folder the portal is given must be exactly the upload list.
+
+    It was made by hand on 2026-11-07 and was stale by the end of the same day:
+    the checklist in it said 3998 words against a manuscript of 3987, and the
+    manuscript in it still carried its own line numbers. Nothing wrote it and no
+    gate read it. These plant that defect rather than describing it.
+    """
+
+    def setUp(self):
+        self.tmp = Path(__import__("tempfile").mkdtemp())
+        self.addCleanup(__import__("shutil").rmtree, self.tmp, True)
+        self.source = self.tmp / "src"
+        self.source.mkdir()
+        for name in ("manuscript.docx", "cover_letter.docx"):
+            (self.source / name).write_bytes(b"current")
+        self.listing = (
+            ("src/manuscript.docx", "M", "Manuscript"),
+            ("src/cover_letter.docx", "S", "Cover Letter"),
+        )
+
+    def stage(self):
+        with (
+            mock.patch.object(kit, "PAPER", self.tmp),
+            mock.patch.object(kit, "UPLOAD", self.tmp / "upload"),
+            mock.patch.object(kit, "uploads", lambda: self.listing),
+        ):
+            return kit.stage_uploads(), sorted(p.name for p in (self.tmp / "upload").iterdir())
+
+    def test_it_copies_every_file_on_the_list(self):
+        changes, names = self.stage()
+        self.assertEqual(names, ["cover_letter.docx", "manuscript.docx"])
+        self.assertTrue(all(c.startswith("refreshed") for c in changes), changes)
+
+    def test_a_stale_copy_is_replaced(self):
+        self.stage()
+        (self.source / "manuscript.docx").write_bytes(b"rebuilt")
+        changes, _ = self.stage()
+        self.assertIn("refreshed manuscript.docx", changes)
+        self.assertEqual((self.tmp / "upload" / "manuscript.docx").read_bytes(), b"rebuilt")
+
+    def test_a_file_not_on_the_list_is_removed(self):
+        self.stage()
+        (self.tmp / "upload" / "old_figure.png").write_bytes(b"left over")
+        changes, names = self.stage()
+        self.assertIn("removed old_figure.png", changes)
+        self.assertNotIn("old_figure.png", names)
+
+    def test_an_unbuilt_file_is_named_rather_than_skipped(self):
+        self.listing = (*self.listing, ("src/missing.docx", "S", "Nothing"))
+        changes, names = self.stage()
+        self.assertIn("NOT BUILT src/missing.docx", changes)
+        self.assertNotIn("missing.docx", names)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

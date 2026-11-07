@@ -31,8 +31,11 @@ FIGURES = PAPER / "figures"
 SOURCE = PAPER / "manuscript.md"
 BUILT = PAPER / "build" / "manuscript.md"
 DOCX = PAPER / "build" / "manuscript.docx"
+#: The folder the portal is given, file for file. See check_uploads.
+UPLOAD = PAPER / "build" / "upload"
 
 sys.path.insert(0, str(PAPER))
+import build_submission  # noqa: E402
 import collect_figures  # noqa: E402
 
 #: The pre-submission inquiry: a copy of the paper's claims that lives outside the
@@ -892,6 +895,57 @@ def check_references(built: str) -> None:
 # ------------------------------------------------------------------------- .docx
 
 
+def check_uploads() -> None:
+    """The files in the staging folder must be the files the build just wrote.
+
+    Every other check here reads something in ``paper/build/``. The portal is given
+    whatever is in ``paper/build/upload/``, and until 2026-11-07 nothing wrote that
+    folder and nothing read it. It was made by hand during a submission and, hours
+    later, held a checklist saying 3998 words against a manuscript of 3987 and a
+    manuscript still carrying its own line numbers. Sources all correct; only the
+    copy was old. That is the defect this repository has met in every other form --
+    a kit that was a memory, a supplementary manual two months behind its source --
+    and the remedy is the same: read the artefact, not the thing it was made from.
+
+    A byte comparison, because the question is whether the file on disk is the file
+    that was built, and nothing weaker answers it.
+    """
+    staged = (
+        {path.name: path for path in UPLOAD.iterdir() if path.is_file()}
+        if (UPLOAD.is_dir())
+        else {}
+    )
+    if not staged:
+        fail(
+            f"{UPLOAD.relative_to(REPO)} is empty or missing; run "
+            f"paper/build_submission.py, which stages exactly the files to attach"
+        )
+        return
+
+    expected: dict[str, Path] = {}
+    for relative, _kind, _label in build_submission.uploads():
+        source = PAPER / relative
+        if not source.exists():
+            fail(f"the upload list names {relative}, which has not been built")
+            continue
+        expected[source.name] = source
+
+    for name, source in sorted(expected.items()):
+        if name not in staged:
+            fail(f"{name} is on the upload list and is not in {UPLOAD.relative_to(REPO)}")
+        elif build_submission.digest(staged[name]) != build_submission.digest(source):
+            fail(
+                f"{UPLOAD.relative_to(REPO)}/{name} is not the file the build wrote; "
+                f"it is a stale copy and the portal would be given it"
+            )
+
+    for name in sorted(set(staged) - set(expected)):
+        fail(
+            f"{UPLOAD.relative_to(REPO)}/{name} is not on the upload list; a folder "
+            f"that is attached whole must hold the list and nothing else"
+        )
+
+
 def check_inquiry(built: str) -> None:
     """The pre-submission inquiry must quote the paper it is inquiring about.
 
@@ -1051,6 +1105,7 @@ def main(argv: list[str] | None = None) -> int:
             check_no_figure_is_renumbered_on_the_way_in(built)
             check_every_figure_image_has_been_looked_at()
             check_docx_furniture()
+            check_uploads()
             check_inquiry(built)
             check_the_cited_release_exists()
         check_references(built)

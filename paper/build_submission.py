@@ -21,7 +21,9 @@ them. The file names come from the list of files this script itself writes.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -45,6 +47,16 @@ COVER_TEXT = BUILD / "cover_letter.txt"
 COVER_DOCX = BUILD / "cover_letter.docx"
 POINTS_TEXT = BUILD / "novel_scientific_points.txt"
 KIT = BUILD / "SUBMISSION_KIT.md"
+
+#: One folder holding exactly the files the portal is given, and nothing else, so
+#: that attaching them is picking a folder rather than picking files out of a tree.
+#:
+#: It existed before this, made by hand during the submission of 2026-11-07, and by
+#: the end of that day every file in it was older than the build beside it: the
+#: checklist still said 3998 words, the manuscript still carried its own line
+#: numbers. Nothing wrote it and no gate read it. A staging folder the build does
+#: not own is a copy, and every copy in this programme has gone stale at least once.
+UPLOAD = BUILD / "upload"
 
 #: The submission system's limit on one novel scientific point, in characters
 #: including spaces, from the editor-in-chief's preparation guide.
@@ -86,6 +98,46 @@ def uploads() -> tuple[tuple[str, str, str], ...]:
             "Supplementary Material (only for review)",
         ),
     )
+
+
+def digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def stage_uploads() -> list[str]:
+    """Copy every file on the upload list into one folder, and nothing else.
+
+    Returns what it removed and what it refreshed, for the build's own output. A
+    file in the folder that is not on the list is deleted: it is either a copy of
+    something renamed or a file nobody meant to send, and either way attaching a
+    folder is only safe if the folder is exactly the list.
+    """
+    UPLOAD.mkdir(parents=True, exist_ok=True)
+    wanted: dict[str, Path] = {}
+    missing: list[str] = []
+    for relative, _kind, _label in uploads():
+        source = PAPER / relative
+        if not source.exists():
+            missing.append(relative)
+            continue
+        wanted[source.name] = source
+
+    changes: list[str] = []
+    for stale in sorted(UPLOAD.iterdir()):
+        if stale.is_file() and stale.name not in wanted:
+            stale.unlink()
+            changes.append(f"removed {stale.name}")
+
+    for name, source in sorted(wanted.items()):
+        target = UPLOAD / name
+        if target.exists() and digest(target) == digest(source):
+            continue
+        shutil.copy2(source, target)
+        changes.append(f"refreshed {name}")
+
+    for relative in missing:
+        changes.append(f"NOT BUILT {relative}")
+    return changes
 
 
 def _title() -> str:
@@ -303,6 +355,11 @@ def main(argv: list[str] | None = None) -> int:
     kit = build_kit(points)
     KIT.write_text(kit, encoding="utf-8", newline="\n")
     print(f"wrote {KIT}")
+
+    # Last, so that the folder holds the letter and the kit this run produced.
+    changes = stage_uploads()
+    staged = sum(1 for _ in UPLOAD.iterdir())
+    print(f"staged {staged} file(s) in {UPLOAD}" + (f": {', '.join(changes)}" if changes else ""))
     return 0
 
 
