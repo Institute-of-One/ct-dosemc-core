@@ -687,6 +687,26 @@ def check_no_figure_is_renumbered_on_the_way_in(built: str) -> None:
             )
 
 
+def drawing_environment() -> dict[str, str]:
+    """What a figure's bytes depend on, as far as this repository controls it."""
+    import matplotlib  # noqa: PLC0415
+
+    return {"platform": sys.platform, "matplotlib": matplotlib.__version__}
+
+
+def _a_different_drawing_environment(recorded: object) -> str:
+    """A description of ``recorded`` if it is not where we are, otherwise ""."""
+    if not isinstance(recorded, dict):
+        # No record of where the figures were drawn: assume here, and fail on a
+        # mismatch. Treating an unknown environment as a different one would
+        # turn the whole ledger into a warning, which is how a gate dies.
+        return ""
+    here = drawing_environment()
+    if all(recorded.get(key) == value for key, value in here.items()):
+        return ""
+    return ", ".join(f"{key} {recorded.get(key, '?')}" for key in sorted(here))
+
+
 def check_every_figure_image_has_been_looked_at() -> None:
     """Each image must be recorded as seen, by its hash, since it last changed.
 
@@ -706,9 +726,20 @@ def check_every_figure_image_has_been_looked_at() -> None:
     import hashlib
 
     ledger_path = PAPER / "figures_reviewed.json"
+    document: dict[str, object] = {}
     ledger = {}
     if ledger_path.exists():
-        ledger = json.loads(ledger_path.read_text(encoding="utf-8")).get("figures", {})
+        document = json.loads(ledger_path.read_text(encoding="utf-8"))
+        ledger = document.get("figures", {})
+
+    # The ledger's own `_hashes_are_environment_specific` note says it, and it was
+    # verified on 2026-10-21: a PNG's bytes depend on the matplotlib and freetype
+    # that drew it, so redrawing the figures anywhere else changes every digest
+    # here while nothing about the figures changed. On the environment that
+    # recorded them a mismatch means somebody must look again. Somewhere else it
+    # means nothing at all, and a check that cannot pass on a runner is a check
+    # the runner's owner learns to ignore.
+    elsewhere = _a_different_drawing_environment(document.get("drawn_on"))
 
     for number, (name, _source) in sorted(collect_figures.FIGURE_SOURCES.items()):
         path = FIGURES / name
@@ -728,11 +759,21 @@ def check_every_figure_image_has_been_looked_at() -> None:
                 f"then add it to paper/figures_reviewed.json with sha256 {digest[:16]}..."
             )
         elif entry.get("sha256") != digest:
-            fail(
+            message = (
                 f"figure {number} ({name}) has changed since it was last looked at on "
-                f"{entry.get('reviewed')}; open it again and update "
-                f"paper/figures_reviewed.json to sha256 {digest[:16]}..."
+                f"{entry.get('reviewed')}"
             )
+            if elsewhere:
+                warn(
+                    f"{message}, but the figures were reviewed in {elsewhere} and this "
+                    f"is not that environment, so the digest was never going to match. "
+                    f"This says nothing about the figure"
+                )
+            else:
+                fail(
+                    f"{message}; open it again and update "
+                    f"paper/figures_reviewed.json to sha256 {digest[:16]}..."
+                )
 
 
 # -------------------------------------------------------------------- references
